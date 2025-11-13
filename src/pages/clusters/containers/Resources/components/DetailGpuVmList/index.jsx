@@ -91,25 +91,26 @@ const DetailGpuVmList = props => {
   }
 
   useEffect(() => {
-    fnGetData()
     fetchData()
   }, [])
 
-
   useEffect(() => {
-
     const params = searchValue
       ? { name: searchValue, page: currentPage }
-      : { page: currentPage }
+      : { page: currentPage };
 
-    fnGetData(); 
-    const intervalId = setInterval(() => fnGetData(params), 3000);
-    return () => clearInterval(intervalId); 
-  }, []);
+    fnGetData(params);
+
+    const intervalId = setInterval(() => {
+      fnGetData(params);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [searchValue, currentPage]);
 
   const fnGetData = async ({ ...params } = {}) => {
 
-    setIsLoading(false)
+    setIsLoading(false) 
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
     const detailParams = {
