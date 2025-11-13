@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 
 .wrapper {
@@ -146,3 +146,5 @@
   background-color: $th-bg-color;
   border-radius: 4px;
 }
+
+

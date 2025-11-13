@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .inputs {
   display: flex;
@@ -119,3 +119,6 @@
   color: $dark-color06;
   background-color: $light-color04;
 }
+
+
+

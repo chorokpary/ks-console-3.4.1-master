@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .body {
   padding: 0;
@@ -92,3 +92,6 @@
     }
   }
 }
+
+
+

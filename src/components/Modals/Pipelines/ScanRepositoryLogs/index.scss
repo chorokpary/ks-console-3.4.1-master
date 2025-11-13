@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .content {
   border-radius: 4px;
@@ -28,3 +28,6 @@
   border-radius: 4px;
   background-color: #242e42;
 }
+
+
+

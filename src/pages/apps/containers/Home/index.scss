@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $content-width: 1258px;
 $toolbar-height: 52px;
@@ -142,3 +142,6 @@ $category-width: 193px;
     top: 90px;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .selectWrapper {
   display: flex;
@@ -67,3 +67,6 @@
     background-color: $dark-color06;
   }
 }
+
+
+

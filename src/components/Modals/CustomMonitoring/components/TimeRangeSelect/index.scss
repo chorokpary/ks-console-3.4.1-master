@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   position: relative;
@@ -93,3 +93,6 @@
   grid-template-columns: 265px 73px;
   justify-content: space-between;
 }
+
+
+

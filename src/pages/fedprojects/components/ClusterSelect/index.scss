@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   position: relative;
@@ -37,3 +37,6 @@
   @include vertical-center;
   right: 12px;
 }
+
+
+

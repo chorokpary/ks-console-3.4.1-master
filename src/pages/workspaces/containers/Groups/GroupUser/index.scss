@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .userWrapper {
     flex: 1;
@@ -75,3 +75,5 @@
         display: block;
     }
 }
+
+

@@ -1,4 +1,4 @@
-@import 'variables';
+@use "variables" as *;
 
 @mixin clearfix {
   zoom: 1;
@@ -138,3 +138,6 @@
   letter-spacing: normal;
   color: $color;
 }
+
+
+

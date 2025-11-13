@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .accessModeWrapper {
   :global {
@@ -56,3 +56,6 @@
     }
   }
 }
+
+
+

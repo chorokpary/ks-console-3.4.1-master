@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 :root {
   --max-height: 258px;
@@ -99,3 +99,5 @@
     cursor: not-allowed;
   }
 }
+
+

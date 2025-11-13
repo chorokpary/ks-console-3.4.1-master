@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .bar {
   padding: 10px 13px 10px 20px;
@@ -38,3 +38,6 @@
     top: 2px;
   }
 }
+
+
+

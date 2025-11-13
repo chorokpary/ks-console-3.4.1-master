@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .item {
   display: flex;
@@ -41,3 +41,6 @@
   box-shadow: 0 2px 4px 0 rgba(85, 188, 138, 0.36);
   background-color: $green;
 }
+
+
+

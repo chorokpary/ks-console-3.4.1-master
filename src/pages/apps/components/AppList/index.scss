@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .appList {
   position: relative;
@@ -66,3 +66,6 @@
     }
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   box-shadow: 0 -1px 0 0 $light-color04;
@@ -124,3 +124,6 @@
 .port {
   margin: 12px 12px 12px 10px;
 }
+
+
+

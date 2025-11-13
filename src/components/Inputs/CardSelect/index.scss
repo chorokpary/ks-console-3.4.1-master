@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 $gap: 12px;
 
@@ -52,3 +52,5 @@ li.selected {
   border-color: $dark-color01;
   box-shadow: 0 3px 6px $light-color06;  
 }
+
+

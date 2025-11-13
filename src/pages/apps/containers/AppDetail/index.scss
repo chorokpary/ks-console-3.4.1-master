@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 $toolbar-height: 52px;
 
@@ -61,3 +61,6 @@ $toolbar-height: 52px;
     max-height: none;
   }
 }
+
+
+

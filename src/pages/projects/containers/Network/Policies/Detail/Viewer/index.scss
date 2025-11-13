@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table {
   border: 1px solid $light-color06;
@@ -97,3 +97,6 @@
   padding: 12px;
   border-radius: 4px;
 }
+
+
+

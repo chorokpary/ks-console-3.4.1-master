@@ -1,6 +1,9 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .dropdown {
   width: 100%;
   max-width: 455px;
 }
+
+
+

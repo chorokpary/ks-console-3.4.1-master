@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .access {
   position: absolute;
@@ -6,3 +6,6 @@
   right: 20px;
   transform: translateY(-50%);
 }
+
+
+

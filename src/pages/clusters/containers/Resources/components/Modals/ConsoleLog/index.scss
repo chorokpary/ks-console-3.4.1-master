@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .editor {
   height: 100%;
@@ -28,3 +28,6 @@
   word-wrap: normal;
   word-break: break-word;
 }
+
+
+

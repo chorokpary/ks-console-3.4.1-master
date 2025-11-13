@@ -1,7 +1,7 @@
 @charset "utf-8";
 
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 
 .iconwrapper {
@@ -33,5 +33,8 @@
     @include TypographyParagraph($dark-color01);
   }
 }
+
+
+
 
 

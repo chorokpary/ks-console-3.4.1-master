@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .pipelineCard {
   width: 256px;
@@ -129,3 +129,6 @@
 
   vertical-align: top;
 }
+
+
+

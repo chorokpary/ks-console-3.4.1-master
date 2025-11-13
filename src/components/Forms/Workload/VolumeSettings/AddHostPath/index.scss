@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   min-height: 284px;
@@ -13,3 +13,6 @@
     height: 20px;
   }
 }
+
+
+

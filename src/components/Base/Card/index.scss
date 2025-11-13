@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .card {
   position: relative;
@@ -81,3 +81,6 @@
   background-color: $th-bg-color;
   border-radius: 4px;
 }
+
+
+

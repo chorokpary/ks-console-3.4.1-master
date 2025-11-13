@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .label {
   display: inline-block;
@@ -25,3 +25,6 @@
   border-radius: 1px;
   background-color: $dark-color06;
 }
+
+
+

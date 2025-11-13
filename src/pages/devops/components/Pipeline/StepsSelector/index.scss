@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .taskList {
   height: calc(100% - 80px);
@@ -90,3 +90,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+
+

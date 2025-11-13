@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table {
   display: flex;
@@ -73,3 +73,6 @@
     }
   }
 }
+
+
+

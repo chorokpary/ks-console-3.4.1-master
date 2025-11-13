@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .option {
   position: relative;
@@ -19,3 +19,5 @@
   @include vertical-center;
   right: 0;
 }
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 :global {
   .pipeline_status_icon {
     display: inline-block;
@@ -57,3 +57,6 @@
     transform: rotate(359deg);
   }
 }
+
+
+

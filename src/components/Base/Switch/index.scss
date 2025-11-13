@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 $slider-bar-width: 24px;
 $silder-circle-diameter: 12px;
@@ -73,3 +73,6 @@ $silder-circle-diameter: 12px;
     opacity: 0.4;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   width: 100%;
@@ -34,7 +34,7 @@
       line-height: 1.2em;
       white-space: break-spaces;
       &:before {
-        content: '•';
+        content: '●';
         font-size: 1.5em;
         margin-right: 0.3em;
         vertical-align: middle;
@@ -45,3 +45,6 @@
     }
   }
 }
+
+
+

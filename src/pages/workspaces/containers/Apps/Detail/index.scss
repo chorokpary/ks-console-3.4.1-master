@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .appName {
   display: inline-block;
@@ -12,3 +12,6 @@
     height: auto;
   }
 }
+
+
+

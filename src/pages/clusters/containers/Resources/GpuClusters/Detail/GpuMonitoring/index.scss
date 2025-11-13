@@ -1,7 +1,7 @@
 @charset "utf-8";
 
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   padding: 12px;
@@ -9,8 +9,6 @@
   background-color: #ffffff;
   border: solid 1px $light-color03;
 }
-
-@import '~scss/variables';
 
 .card {
 }
@@ -78,3 +76,6 @@
     }
   }
 }
+
+
+

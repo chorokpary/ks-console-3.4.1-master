@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table.table_rank.table_no_border {
   td {
@@ -62,3 +62,6 @@
     background: #dbefe2;
   }
 }
+
+
+

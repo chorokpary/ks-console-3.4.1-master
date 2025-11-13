@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .detailWrapper {
   margin-left: 20px;
@@ -21,3 +21,5 @@
     padding: 0px 8px;
   }
 }
+
+

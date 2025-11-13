@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .icon {
   display: block;
@@ -133,3 +133,6 @@
     opacity: 0.2;
   }
 }
+
+
+

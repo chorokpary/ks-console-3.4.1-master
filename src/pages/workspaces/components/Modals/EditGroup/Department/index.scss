@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   width: 30%;
@@ -13,3 +13,5 @@
   display: inline-block;
   padding: 20px;
 }
+
+

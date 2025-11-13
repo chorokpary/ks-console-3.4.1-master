@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .modalBody {
   padding: 0;
@@ -61,3 +61,6 @@
     }
   }
 }
+
+
+

@@ -1,4 +1,5 @@
-@import '~scss/mixins';
+@use "scss/mixins" as *;
+@use "scss/variables" as *;
 
 .apps {
   padding: 8px;
@@ -48,3 +49,6 @@
   right: 0;
   color: $sub;
 }
+
+
+

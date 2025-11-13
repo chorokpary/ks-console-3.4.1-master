@@ -27,17 +27,65 @@ import App from './App'
 import GlobalValue from './global'
 import i18n from './i18n'
 
+import { get } from 'lodash'
+
 require('@babel/polyfill')
 
+// ===============================
+// 추가 함수 expire 만료 검사 start
+// ===============================
+const getCookieValue = (name) => {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+  if (match) return match[2]
+  return null
+}
+
+const checkExpiration = async () => {
+  const expire = getCookieValue('expire')
+  if (!expire) return
+
+  try {
+    if (expire) {
+      const now = Math.floor(Date.now() / 1000)
+      const expireSec = Math.floor(expire / 1000)
+
+      if (now >= expireSec) {
+        // 만료 시 로그아웃 처리
+        const res = await request.post('logout')
+        const url = get(res, 'data.url')
+        if (url) {
+          window.location.href = url
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
+
+setInterval(checkExpiration, 5 * 60 * 1000)
+checkExpiration()
+
+// ===============================
+// 추가 함수 expire 만료 검사 end
+// ===============================
+
 // request error handler
-window.onunhandledrejection = function(e) {
+window.onunhandledrejection = async function(e) {
   if (e && (e.status === 'Failure' || e.status >= 400)) {
     if (e.status === 401 || e.reason === 'Unauthorized') {
       // session timeout handler, except app store page.
       if (!isAppsPage() && !isMemberClusterPage(location.pathname, e.message)) {
         /* eslint-disable no-alert */
-        location.href = `/login?referer=${location.pathname}`
         window.alert(t('LOGIN_AGAIN_DESC'))
+        setTimeout(async () => {
+          const res = await request.post('logout')
+          const url = get(res, 'data.url')
+          if (url) {
+            window.location.href = url
+          }
+        }, 0)
+
       } else {
         Notify.error({ title: e.reason, content: t(e.message), duration: 6000 })
       }

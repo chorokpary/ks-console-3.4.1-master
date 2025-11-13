@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .graph {
   display: flex;
@@ -66,3 +66,6 @@
   bottom: 0;
   right: 0;
 }
+
+
+

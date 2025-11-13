@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .sync_info {
   margin-bottom: 12px;
@@ -88,3 +88,6 @@
     color: $light-color03 !important;
   }
 }
+
+
+

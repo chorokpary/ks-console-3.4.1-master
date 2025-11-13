@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .defaultWrapper {
   padding: 12px;
@@ -43,3 +43,5 @@
       }
   }
 }
+
+

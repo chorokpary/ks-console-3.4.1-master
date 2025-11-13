@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 // screenshots picture setting
 $picture-width: 200px;
@@ -180,3 +180,6 @@ $N75: #8c96ad;
     cursor: pointer;
   }
 }
+
+
+

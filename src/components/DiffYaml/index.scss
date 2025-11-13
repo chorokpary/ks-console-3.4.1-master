@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .header {
   padding: 12px;
@@ -48,3 +48,6 @@
     background-color: rgba($green-color03, .7);
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 @keyframes fadeIn {
   0% {
@@ -176,3 +176,6 @@
     }
   }
 }
+
+
+

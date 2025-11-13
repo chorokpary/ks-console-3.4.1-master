@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   position: absolute;
@@ -27,3 +27,5 @@
     background-color: $dark-color08;
   }
 }
+
+

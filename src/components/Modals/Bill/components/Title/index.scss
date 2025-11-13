@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .title {
   height: 32px;
@@ -17,3 +17,6 @@
     margin-right: 10px;
   }
 }
+
+
+

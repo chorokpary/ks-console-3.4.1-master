@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   :global .h6 {
@@ -32,3 +32,6 @@
   border: 1px solid $border-color;
   background-color: $white;
 }
+
+
+

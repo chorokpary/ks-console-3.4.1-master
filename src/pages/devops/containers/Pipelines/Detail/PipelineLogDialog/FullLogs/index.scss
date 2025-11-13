@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .logs_container {
   position: relative;
@@ -50,3 +50,6 @@
     }
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .card {
   padding: 5px 0;
@@ -9,3 +9,6 @@
     }
   }
 }
+
+
+

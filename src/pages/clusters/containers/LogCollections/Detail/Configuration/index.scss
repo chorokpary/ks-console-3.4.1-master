@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .attributes {
   background: $lightest;
@@ -13,3 +13,6 @@
     border-radius: 4px;
   }
 }
+
+
+

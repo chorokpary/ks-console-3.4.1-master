@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .tips {
   border-radius: $border-radius;
@@ -146,3 +146,6 @@
     }
   }
 }
+
+
+

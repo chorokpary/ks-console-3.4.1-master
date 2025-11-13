@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   input {
@@ -25,3 +25,5 @@
     caret-color: $white;
   }
 }
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .avatar {
   display: flex;
@@ -14,3 +14,6 @@
     }
   }
 }
+
+
+

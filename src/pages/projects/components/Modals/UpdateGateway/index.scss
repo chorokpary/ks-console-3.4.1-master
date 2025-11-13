@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .modalBody {
   min-width: 320px;
@@ -34,3 +34,6 @@
   padding: 8px 20px;
   background-color: $light;
 }
+
+
+

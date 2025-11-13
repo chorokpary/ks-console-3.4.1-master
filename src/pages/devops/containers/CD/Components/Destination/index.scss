@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .tags {
   background: #eff4f9;
@@ -17,3 +17,6 @@
     }
   }
 }
+
+
+

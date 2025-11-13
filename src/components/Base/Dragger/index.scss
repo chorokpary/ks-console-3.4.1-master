@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .container {
   position: relative;
@@ -86,3 +86,6 @@
 .autoSize {
   font-size: 10px;
 }
+
+
+

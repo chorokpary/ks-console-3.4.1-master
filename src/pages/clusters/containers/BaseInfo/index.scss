@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .header {
   position: relative;
@@ -51,3 +51,6 @@
   @include button();
   min-width: 92px;
 }
+
+
+

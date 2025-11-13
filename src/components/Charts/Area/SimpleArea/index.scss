@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .chart {
   position: relative;
@@ -32,3 +32,6 @@
   line-height: 20px;
   font-weight: bold;
 }
+
+
+

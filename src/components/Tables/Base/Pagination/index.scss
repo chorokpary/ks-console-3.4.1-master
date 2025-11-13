@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .pagination {
   display: flex;
@@ -113,3 +113,6 @@
 .menuActive {
   background: $light-color02;
 }
+
+
+

@@ -1,303 +1,308 @@
-// hide
-.hide {
-  display: none !important;
-}
+@use "variables" as *;
+@use "mixins" as *;
 
-.hidden {
-  visibility: hidden !important;
-}
-
-// layout
-.block {
-  display: block !important;
-}
-
-.display-block {
-  display: block !important;
-}
-
-.inline {
-  display: inline !important;
-}
-
-.inline-block {
-  display: inline-block !important;
-}
-
-.flexbox {
-  display: flex !important;
-}
-
-.flex {
-  flex: 1 !important;
-}
-
-.relative {
-  position: relative !important;
-}
-
-// float
-.clearfix {
-  @include clearfix;
-}
-
-.clear-right {
-  zoom: 1;
-
-  &:after {
-    content: '.';
-    display: block;
-    clear: right;
-    overflow: hidden;
-    height: 0;
-    visibility: hidden;
+:global {
+  // hide
+  .hide {
+    display: none !important;
   }
-}
 
-.float-left {
-  float: left !important;
-}
+  .hidden {
+    visibility: hidden !important;
+  }
 
-.float-right {
-  float: right !important;
-}
+  // layout
+  .block {
+    display: block !important;
+  }
 
-// space
-.margin-l8 {
-  margin-left: 8px !important;
-}
+  .display-block {
+    display: block !important;
+  }
 
-.margin-l12 {
-  margin-left: 12px !important;
-}
+  .inline {
+    display: inline !important;
+  }
 
-.margin-r8 {
-  margin-right: 8px !important;
-}
+  .inline-block {
+    display: inline-block !important;
+  }
 
-.margin-r12 {
-  margin-right: 12px !important;
-}
+  .flexbox {
+    display: flex !important;
+  }
 
-.margin-t8 {
-  margin-top: 8px !important;
-}
+  .flex {
+    flex: 1 !important;
+  }
 
-.margin-t12 {
-  margin-top: 12px !important;
-}
+  .relative {
+    position: relative !important;
+  }
 
-.margin-b0 {
-  margin-bottom: 0 !important;
-}
+  // float
+  .clearfix {
+    @include clearfix;
+  }
 
-.margin-b8 {
-  margin-bottom: 8px !important;
-}
+  .clear-right {
+    zoom: 1;
 
-.margin-b12 {
-  margin-bottom: 12px !important;
-}
+    &:after {
+      content: ".";
+      display: block;
+      clear: right;
+      overflow: hidden;
+      height: 0;
+      visibility: hidden;
+    }
+  }
 
-.padding-12 {
-  padding: 12px !important;
-}
+  .float-left {
+    float: left !important;
+  }
 
-.padding-20 {
-  padding: 20px !important;
-}
+  .float-right {
+    float: right !important;
+  }
 
-// width / height
-.width-full {
-  width: 100% !important;
-}
+  // space
+  .margin-l8 {
+    margin-left: 8px !important;
+  }
 
-.max-width-full {
-  max-width: 100% !important;
-}
+  .margin-l12 {
+    margin-left: 12px !important;
+  }
 
-.width-auto {
-  width: auto !important;
-}
+  .margin-r8 {
+    margin-right: 8px !important;
+  }
 
-.height-full {
-  height: 100% !important;
-}
+  .margin-r12 {
+    margin-right: 12px !important;
+  }
 
-.height-auto {
-  height: auto !important;
-}
+  .margin-t8 {
+    margin-top: 8px !important;
+  }
 
-// font
-// size
-.font-base {
-  font-size: 14px !important;
-}
+  .margin-t12 {
+    margin-top: 12px !important;
+  }
 
-.font-sm {
-  font-size: 12px !important;
-}
+  .margin-b0 {
+    margin-bottom: 0 !important;
+  }
 
-.font-lg {
-  font-size: 16px !important;
-}
+  .margin-b8 {
+    margin-bottom: 8px !important;
+  }
 
-.font-xl {
-  font-size: 20px !important;
-}
+  .margin-b12 {
+    margin-bottom: 12px !important;
+  }
 
-.font-xxl {
-  font-size: 28px !important;
-}
+  .padding-12 {
+    padding: 12px !important;
+  }
 
-.font-xxxl {
-  font-size: 40px !important;
-}
+  .padding-20 {
+    padding: 20px !important;
+  }
 
-.font-xxxxl {
-  font-size: 56px !important;
-}
+  // width / height
+  .width-full {
+    width: 100% !important;
+  }
 
-// family
-.font-code {
-  font-family: $font-family-code !important;
-}
+  .max-width-full {
+    max-width: 100% !important;
+  }
 
-.font-id {
-  font-family: $font-family-id !important;
-}
+  .width-auto {
+    width: auto !important;
+  }
 
-// weight
-.font-thin {
-  font-weight: 300 !important;
-}
+  .height-full {
+    height: 100% !important;
+  }
 
-.font-normal {
-  font-weight: 400 !important;
-}
+  .height-auto {
+    height: auto !important;
+  }
 
-.font-bold {
-  font-weight: 600 !important;
-}
+  // font
+  // size
+  .font-base {
+    font-size: 14px !important;
+  }
 
-// color
-.text-second {
-  color: $second-text-color !important;
-}
+  .font-sm {
+    font-size: 12px !important;
+  }
 
-.text-third {
-  color: $third-text-color !important;
-}
+  .font-lg {
+    font-size: 16px !important;
+  }
 
-.text-primary {
-  color: $primary !important;
-}
+  .font-xl {
+    font-size: 20px !important;
+  }
 
-.text-title {
-  @include TypographyTitleH6($dark-color07);
-}
+  .font-xxl {
+    font-size: 28px !important;
+  }
 
-.text-desc {
-  @include TypographyParagraph($dark-color01);
-}
+  .font-xxxl {
+    font-size: 40px !important;
+  }
 
-// text align
-.text-left {
-  text-align: left !important;
-}
+  .font-xxxxl {
+    font-size: 56px !important;
+  }
 
-.text-center {
-  text-align: center !important;
-}
+  // family
+  .font-code {
+    font-family: $font-family-code !important;
+  }
 
-.text-right {
-  text-align: right !important;
-}
+  .font-id {
+    font-family: $font-family-id !important;
+  }
 
-.text-jusify {
-  text-align: justify !important;
-  text-justify: inter-ideograph !important;
-}
+  // weight
+  .font-thin {
+    font-weight: 300 !important;
+  }
 
-.align-baseline {
-  vertical-align: baseline !important;
-}
+  .font-normal {
+    font-weight: 400 !important;
+  }
 
-.align-text-top {
-  vertical-align: text-top !important;
-}
+  .font-bold {
+    font-weight: 600 !important;
+  }
 
-.align-text-bottom {
-  vertical-align: text-bottom !important;
-}
+  // color
+  .text-second {
+    color: $second-text-color !important;
+  }
 
-.align-top {
-  vertical-align: top !important;
-}
+  .text-third {
+    color: $third-text-color !important;
+  }
 
-.align-middle {
-  vertical-align: middle !important;
-}
+  .text-primary {
+    color: $primary !important;
+  }
 
-.align-bottom {
-  vertical-align: bottom !important;
-}
+  .text-title {
+    @include TypographyTitleH6($dark-color07);
+  }
 
-.ellipsis {
-  @include ellipsis;
-}
+  .text-desc {
+    @include TypographyParagraph($dark-color01);
+  }
 
-.nowrap {
-  @include nowrap;
-}
+  // text align
+  .text-left {
+    text-align: left !important;
+  }
 
-.break-all {
-  @include break-all;
-}
+  .text-center {
+    text-align: center !important;
+  }
 
-// border
-.border {
-  border: 1px solid $border-color !important;
-}
+  .text-right {
+    text-align: right !important;
+  }
 
-.border-top {
-  border-top: 1px solid $border-color !important;
-}
+  .text-jusify {
+    text-align: justify !important;
+    text-justify: inter-ideograph !important;
+  }
 
-.border-right {
-  border-right: 1px solid $border-color !important;
-}
+  .align-baseline {
+    vertical-align: baseline !important;
+  }
 
-.border-bottom {
-  border-bottom: 1px solid $border-color !important;
-}
+  .align-text-top {
+    vertical-align: text-top !important;
+  }
 
-.border-left {
-  border-top: 1px solid $border-color !important;
-}
+  .align-text-bottom {
+    vertical-align: text-bottom !important;
+  }
 
-.rounded {
-  border-radius: $border-radius !important;
-}
+  .align-top {
+    vertical-align: top !important;
+  }
 
-.rounded-circle {
-  border-radius: 100% !important;
-}
+  .align-middle {
+    vertical-align: middle !important;
+  }
 
-// shadow
-.shadow {
-  box-shadow: $base-shadow !important;
-}
+  .align-bottom {
+    vertical-align: bottom !important;
+  }
 
-.shadow-reverse {
-  box-shadow: 0 -2px 4px 0 rgba(72, 91, 127, 0.2);
-}
+  .ellipsis {
+    @include ellipsis;
+  }
 
-.no-shadow {
-  box-shadow: none !important;
-}
+  .nowrap {
+    @include nowrap;
+  }
 
-// cursor
-.pointer {
-  cursor: pointer !important;
+  .break-all {
+    @include break-all;
+  }
+
+  // border
+  .border {
+    border: 1px solid $border-color !important;
+  }
+
+  .border-top {
+    border-top: 1px solid $border-color !important;
+  }
+
+  .border-right {
+    border-right: 1px solid $border-color !important;
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid $border-color !important;
+  }
+
+  .border-left {
+    border-top: 1px solid $border-color !important;
+  }
+
+  .rounded {
+    border-radius: $border-radius !important;
+  }
+
+  .rounded-circle {
+    border-radius: 100% !important;
+  }
+
+  // shadow
+  .shadow {
+    box-shadow: $base-shadow !important;
+  }
+
+  .shadow-reverse {
+    box-shadow: 0 -2px 4px 0 rgba(72, 91, 127, 0.2);
+  }
+
+  .no-shadow {
+    box-shadow: none !important;
+  }
+
+  // cursor
+  .pointer {
+    cursor: pointer !important;
+  }
 }

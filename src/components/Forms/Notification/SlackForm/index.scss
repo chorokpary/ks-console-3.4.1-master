@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .title {
   display: flex;
@@ -48,3 +48,6 @@
 .tag + .tag {
   margin-left: 8px;
 }
+
+
+

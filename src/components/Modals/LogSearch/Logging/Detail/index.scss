@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $titleHeight: 30px;
 
@@ -213,3 +213,6 @@ $titleHeight: 30px;
   white-space: pre-wrap;
   font-family: $font-family-code;
 }
+
+
+

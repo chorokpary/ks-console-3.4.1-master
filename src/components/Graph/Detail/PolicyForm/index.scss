@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .alert {
   min-width: auto;
@@ -31,3 +31,6 @@
   background-color: #fafbfc;
   color: #363e4a;
 }
+
+
+

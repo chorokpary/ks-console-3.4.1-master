@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .message {
   margin-top: 12px;
@@ -22,3 +22,6 @@
 .type {
   max-width: unset;
 }
+
+
+

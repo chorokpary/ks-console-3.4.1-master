@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .filterInput {
   display: flex;
@@ -69,3 +69,6 @@
 .form-item.error-item .filterInput {
   border: solid 1px #ca2621 !important;
 }
+
+
+

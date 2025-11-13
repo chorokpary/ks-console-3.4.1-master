@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .row {
   margin-bottom: 12px;
@@ -17,3 +17,6 @@
   border-radius: 4px;
   background: white;
 }
+
+
+

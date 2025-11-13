@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $toolbarHeight: 48px;
 $chartHeight: 160px;
@@ -273,3 +273,6 @@ $chartContainerPadding: 8px;
   display: inline-block;
   margin-left: 5px;
 }
+
+
+

@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   margin-right: 4px;
@@ -118,3 +118,6 @@
     border-radius: 2px;
   }
 }
+
+
+

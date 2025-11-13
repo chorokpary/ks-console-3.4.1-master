@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .pipelineSuccessNumber {
   font-size: 20px;
@@ -11,3 +11,6 @@
 .sourcePipelineStatus {
   font-size: 10px;
 }
+
+
+
