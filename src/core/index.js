@@ -27,6 +27,8 @@ import App from './App'
 import GlobalValue from './global'
 import i18n from './i18n'
 
+import { get } from 'lodash'
+
 require('@babel/polyfill')
 
 // ===============================
@@ -49,7 +51,11 @@ const checkExpiration = async () => {
 
       if (now >= expireSec) {
         // 만료 시 로그아웃 처리
-        await request.post('logout')
+        const res = await request.post('logout')
+        const url = get(res, 'data.url')
+        if (url) {
+          window.location.href = url
+        }
       }
     }
   } catch (error) {
@@ -57,7 +63,7 @@ const checkExpiration = async () => {
   }
 }
 
-setInterval(checkExpiration, 10 * 1000)
+setInterval(checkExpiration, 5 * 60 * 1000)
 checkExpiration()
 
 // ===============================
@@ -65,14 +71,21 @@ checkExpiration()
 // ===============================
 
 // request error handler
-window.onunhandledrejection = function(e) {
+window.onunhandledrejection = async function(e) {
   if (e && (e.status === 'Failure' || e.status >= 400)) {
     if (e.status === 401 || e.reason === 'Unauthorized') {
       // session timeout handler, except app store page.
       if (!isAppsPage() && !isMemberClusterPage(location.pathname, e.message)) {
         /* eslint-disable no-alert */
-        location.href = `/login?referer=${location.pathname}`
         window.alert(t('LOGIN_AGAIN_DESC'))
+        setTimeout(async () => {
+          const res = await request.post('logout')
+          const url = get(res, 'data.url')
+          if (url) {
+            window.location.href = url
+          }
+        }, 0)
+
       } else {
         Notify.error({ title: e.reason, content: t(e.message), duration: 6000 })
       }
