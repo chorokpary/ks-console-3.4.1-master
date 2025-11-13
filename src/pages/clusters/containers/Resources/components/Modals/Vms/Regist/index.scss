@@ -11,14 +11,6 @@
 :global {
   .tab-content {
     padding: 0 !important;
-
-    .tab-panel {
-      display: none;
-
-      &.is-active {
-        display: none;
-      }
-    }
   }
 }
 
