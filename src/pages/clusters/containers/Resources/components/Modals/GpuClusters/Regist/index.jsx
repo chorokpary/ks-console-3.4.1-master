@@ -1953,7 +1953,9 @@ const RegistModal = props => {
                                       data.name
                                     )
                                   }
-                                  clearable
+                                  clearable={physicalnetworkCheckItems.includes(
+                                    data.name
+                                  )}
                                 />
                               </td>
                               <td>{data.cidr}</td>
