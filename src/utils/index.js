@@ -590,7 +590,6 @@ export const isMemberClusterPage = (path = location.pathname, message) => {
   const rules = [
     'token used before issued',
     'signature is invalid',
-    'token not found in cache',
   ]
   const lowerMessage = message.toLowerCase()
 

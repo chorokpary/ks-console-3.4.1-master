@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .body {
   background-color: $white;
@@ -35,3 +35,6 @@
 
 .node {
 }
+
+
+

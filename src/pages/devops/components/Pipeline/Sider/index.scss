@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .sider {
   position: relative;
@@ -103,3 +103,6 @@
     display: none;
   }
 }
+
+
+

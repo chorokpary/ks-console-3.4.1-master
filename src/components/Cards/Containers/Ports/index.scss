@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .card {
 }
@@ -32,3 +32,6 @@
     background-color: $white;
   }
 }
+
+
+

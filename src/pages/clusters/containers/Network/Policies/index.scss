@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .subtitle {
   margin-bottom: 8px;
@@ -16,3 +16,6 @@
     color: $green-color03;
   }
 }
+
+
+

@@ -23,7 +23,6 @@ import classnames from 'classnames'
 import { PATTERN_USER_NAME } from 'utils/constants'
 import NetworkStore from 'stores/resources/networks'
 
-
 const fabricKeyOptions = [
   { label: 'infiniband', value: 'infiniband' },
   { label: 'ethernet', value: 'ethernet' },
@@ -71,7 +70,7 @@ const ClusterModal = props => {
     const onOk = props.onOk
 
     form.current.validator(() => {
-      setIsDisabled(true)     
+      setIsDisabled(true)
       const { data } = form.current.props
       data.project = projectName
 
@@ -107,13 +106,13 @@ const ClusterModal = props => {
 
   const createSuccess = getListData => {
     setGetListDataFn(() => getListData)
-    setIsCreateSuccessd(true)  
-    setIsCreateSend(true)      
+    setIsCreateSuccessd(true)
+    setIsCreateSend(true)
   }
 
-  const createFail= () => {
+  const createFail = () => {
     setIsCreateSuccessd(false)
-    setIsDisabled(false)    
+    setIsDisabled(false)
   }
 
   const closeModal = () => {
@@ -124,7 +123,12 @@ const ClusterModal = props => {
     let elements = ''
     elements = (
       <>
-        <Button onClick={() => closeModal()} className={classnames(styles['btn'], styles['btn-default'])}>{t('RESOURCES_CANCEL')}</Button>
+        <Button
+          onClick={() => closeModal()}
+          className={classnames(styles['btn'], styles['btn-default'])}
+        >
+          {t('RESOURCES_CANCEL')}
+        </Button>
         {!isCreateSend && (
           <Button
             onClick={() => {
@@ -138,9 +142,13 @@ const ClusterModal = props => {
           </Button>
         )}
         {isCreateSuccessd && (
-          <Button onClick={() => { handleVmCreate() }}
+          <Button
+            onClick={() => {
+              handleVmCreate()
+            }}
             className={classnames(styles['btn'], styles['btn-control'])}
-          >{t('RESOURCES_CREATE_VM')}
+          >
+            {t('RESOURCES_CREATE_VM')}
           </Button>
         )}
       </>
@@ -243,7 +251,7 @@ const ClusterModal = props => {
                     name="fabricType"
                     defaultValue={fabricKeyOptions[0]?.value || ''}
                     options={fabricKeyOptions}
-                    onChange={e => setFabricKey(e)}
+                    onChange={e => setFabricType(e)}
                   />
                 </Form.Item>
               </Column>

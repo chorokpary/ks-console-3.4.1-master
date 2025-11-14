@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   min-height: calc(100vh - 108px);
@@ -73,3 +73,6 @@
     }
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   display: flex;
@@ -29,3 +29,6 @@
     border-radius: 50%;
   }
 }
+
+
+

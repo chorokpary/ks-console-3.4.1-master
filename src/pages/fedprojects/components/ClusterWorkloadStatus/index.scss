@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 @mixin cluster-base {
   padding: 8px;
@@ -223,3 +223,6 @@
     }
   }
 }
+
+
+

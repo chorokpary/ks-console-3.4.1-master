@@ -34,7 +34,7 @@ import styles from './index.scss'
 import './checkbox.disabled.css'
 
 const regexVmCount = /^[1-9][0-9]*$/
-const regexVmNodePrefix = /^[a-z0-9-]{1,63}$/;
+const regexVmNodePrefix = /^[a-z0-9-]{1,63}$/
 
 const RegistModal = props => {
   const form = useRef()
@@ -43,7 +43,7 @@ const RegistModal = props => {
   const vmStore = new VmStore()
   const quotaStore = new QuotaStore()
   const gpuStore = new GpuClustersStore()
-  const gpuNodeStore = new GpuNodeStore()  
+  const gpuNodeStore = new GpuNodeStore()
 
   const [modelView, setModalView] = useState(true)
   const [regStep, setRegStep] = useState(1)
@@ -64,13 +64,13 @@ const RegistModal = props => {
   const [availableSriovIpList, setAvailableSriovIpList] = useState([])
   const [selectedSriovIpList, setSelectedSriovIpList] = useState([])
   const [
-      availablePhysicalnetworkIpList,
-      setAvailablePhysicalnetworkIpList,
-    ] = useState([])
-    const [
-      selectedPhysicalnetworkIpList,
-      setSelectedPhysicalnetworkIpList,
-    ] = useState([])
+    availablePhysicalnetworkIpList,
+    setAvailablePhysicalnetworkIpList,
+  ] = useState([])
+  const [
+    selectedPhysicalnetworkIpList,
+    setSelectedPhysicalnetworkIpList,
+  ] = useState([])
 
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
@@ -112,7 +112,7 @@ const RegistModal = props => {
   const [slideMaxCount, setSlideMaxCount] = useState(0)
   const [firstGpuVmName, setFirstGpuVmName] = useState('')
   const [lastGpuVmName, setLastGpuVmName] = useState('')
-  
+
   const [vmListLoading, setVmListLoading] = useState(true)
   const [vmList, setVmList] = useState([])
 
@@ -127,7 +127,7 @@ const RegistModal = props => {
   const [clusterNetwork, setClusterNetwork] = useState('')
   const [messageAllFalse, setMessageAllFalse] = useState(true)
   const [messageState, setMessageState] = useState()
-  
+
   const [imageType, setImageType] = useState('I')
   const [osType, setOsType] = useState('linux')
 
@@ -189,13 +189,12 @@ const RegistModal = props => {
   }, [projectName])
 
   useEffect(() => {
-
     const getClusterDetail = async () => {
       const clusterDetail = await gpuStore.fetchDetail({
         clster: props.namespace,
-        name: props.name
+        name: props.name,
       })
-      const clusterNetworkName = clusterDetail.data?.spec?.sonaNetwork;
+      const clusterNetworkName = clusterDetail.data?.spec?.sonaNetwork
       setClusterNetwork(clusterNetworkName)
       handleSingleCheck(true, clusterNetworkName, 'network') //초기 셋팅
     }
@@ -205,11 +204,11 @@ const RegistModal = props => {
       const vmTotalList = await gpuStore.fetchList({ limit: 10000 })
       setVmList(getVmNameNumeric(vmTotalList))
 
-      const gpuNodesList = await gpuNodeStore.fetchList({limit: 10000})
+      const gpuNodesList = await gpuNodeStore.fetchList({ limit: 10000 })
       setSlideMaxCount(gpuNodesList.length)
 
       setVmListLoading(false)
-    }    
+    }
     getGpuVmCount()
 
     const getVmImage = async () => {
@@ -251,7 +250,7 @@ const RegistModal = props => {
         ...props,
         namespace: projectName,
       })
-      
+
       setBootVolumeDataList(listBootVolume.volumes)
       setNetworkDataList(listNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
@@ -270,7 +269,9 @@ const RegistModal = props => {
   }, [])
 
   const projectFilteredData = project => {
-    const networks = networkDataList.filter(obj => obj.project === project).filter(item => item.name === clusterNetwork)
+    const networks = networkDataList
+      .filter(obj => obj.project === project)
+      .filter(item => item.name === clusterNetwork)
     setNetworkList(networks)
     const sriovNetworks = sriovNetworkDataList.filter(
       obj => obj.project === project
@@ -336,19 +337,19 @@ const RegistModal = props => {
   }
 
   const availablePhysicalNetworkIpOptions = (name, project) => {
-      const networkIps = availablePhysicalnetworkIpList.find(
-        obj => obj.network === name && obj.project === project
-      )
-      if (networkIps !== undefined) {
-        return networkIps.ips.map(ip => {
-          return {
-            label: t(ip),
-            value: t(ip),
-          }
-        })
-      }
-   }
-  
+    const networkIps = availablePhysicalnetworkIpList.find(
+      obj => obj.network === name && obj.project === project
+    )
+    if (networkIps !== undefined) {
+      return networkIps.ips.map(ip => {
+        return {
+          label: t(ip),
+          value: t(ip),
+        }
+      })
+    }
+  }
+
   const handlePhysicalNetworkIpSelectClick = (name, val) => {
     const record = {}
     record.network_name = name
@@ -373,13 +374,14 @@ const RegistModal = props => {
   }
 
   const networkStorageOptions = () => {
-     return networkStorageDataList.filter(obj => obj.project === projectName)
+    return networkStorageDataList
+      .filter(obj => obj.project === projectName)
       .map(obj => {
-      return {
-        label: t(obj.name),
-        value: t(obj.name),
-      }
-    })
+        return {
+          label: t(obj.name),
+          value: t(obj.name),
+        }
+      })
   }
 
   const imageOptions = () => {
@@ -432,17 +434,18 @@ const RegistModal = props => {
     }))
   }
 
-  const ipToNumber = (ip) => {
-    return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+  const ipToNumber = ip => {
+    return ip
+      .split('.')
+      .reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0)
   }
 
   const handleOk = () => {
     const onOk = props.onOk
 
     form.current.validator(() => {
-      
-      if(!gpuVmName || messageAllFalse){
-        return false;
+      if (!gpuVmName || messageAllFalse) {
+        return false
       }
 
       setSubmitButtonFlag(true)
@@ -477,12 +480,12 @@ const RegistModal = props => {
 
       const networkListData = networkList
         .filter(x => networkCheckItems.includes(x.name))
-        .map(obj => {          
+        .map(obj => {
           return {
             name: obj.name,
             cidr: obj.cidr,
           }
-      })
+        })
 
       data.networkListData = networkListData
 
@@ -1175,35 +1178,37 @@ const RegistModal = props => {
   }
 
   const getMarks = max => {
-      const count = 5;
-      return range(count).reduce((marks, index) => {
-        const value = (max * index) / (count - 1);
-        const mark = value === 0 ? '0' : `${Math.floor(value)}`;
-        return { ...marks, [value]: mark };
-      }, {});
-  };
+    const count = 5
+    return range(count).reduce((marks, index) => {
+      const value = (max * index) / (count - 1)
+      const mark = value === 0 ? '0' : `${Math.floor(value)}`
+      return { ...marks, [value]: mark }
+    }, {})
+  }
 
   useEffect(() => {
     getGpuName()
   }, [firstNum, lastNum, vmNamePrefix, nodeNamePrefix])
 
-  const getNameRange = (range) => {
-    const start = range.start;
-    const end = range.end;
+  const getNameRange = range => {
+    const start = range.start
+    const end = range.end
     setFirstNum(start)
     setLastNum(end)
   }
 
-  const getMessageState = (messageStateData) => {
-    const allFalse = Object.values(messageStateData).every(value => value === false);
+  const getMessageState = messageStateData => {
+    const allFalse = Object.values(messageStateData).every(
+      value => value === false
+    )
     setMessageAllFalse(!allFalse)
     setMessageState(messageStateData)
   }
 
   const getGpuName = async () => {
     // const namePrefix = props.name
-    const vmPrefix = vmNamePrefix   
-    const nodePrefix = nodeNamePrefix   
+    const vmPrefix = vmNamePrefix
+    const nodePrefix = nodeNamePrefix
 
     const numFirst = Number(firstNum)
     const numLast = Number(lastNum)
@@ -1231,7 +1236,7 @@ const RegistModal = props => {
         nodeName = firstNodeName
       }
     }
-    
+
     setGpuVmName(gpuName)
     setGpuNodeName(nodeName)
     setFirstGpuVmName(firstVmName)
@@ -1242,16 +1247,16 @@ const RegistModal = props => {
     setVmCount(0)
   }
 
-  const handleSliderChange = (e) => {
-    const num = Number(e);      
+  const handleSliderChange = e => {
+    const num = Number(e)
 
     if (num === 0) {
-      setRangeVm('');
-      setIsCancelSelect(true);
-      setGpuVmName('');
+      setRangeVm('')
+      setIsCancelSelect(true)
+      setGpuVmName('')
     } else {
-      setRangeVm(num);
-      setIsCancelSelect(false);
+      setRangeVm(num)
+      setIsCancelSelect(false)
       setVmCount(num)
     }
   }
@@ -1259,21 +1264,21 @@ const RegistModal = props => {
   const getNetworkAssignmentRange = () => {
     const firstNetwork = Number(firstNum) + 100
     const lastNetwork = Number(lastNum) + 100
-    return firstNetwork + " ~ " + lastNetwork;
+    return firstNetwork + ' ~ ' + lastNetwork
   }
 
-  const getVmNameNumeric= (data) => {
-  return Array.from(
-    new Set(
-      data
-        .flatMap(item => item.instances || [])
-        .map(inst => inst.vmName || "")
-        .filter(name => name.length >= 3)
-        .map(name => name.slice(-3))
-        .filter(suffix => /^\d{3}$/.test(suffix))
-    )
-  ).sort((a, b) => Number(a) - Number(b));
-}
+  const getVmNameNumeric = data => {
+    return Array.from(
+      new Set(
+        data
+          .flatMap(item => item.instances || [])
+          .map(inst => inst.vmName || '')
+          .filter(name => name.length >= 3)
+          .map(name => name.slice(-3))
+          .filter(suffix => /^\d{3}$/.test(suffix))
+      )
+    ).sort((a, b) => Number(a) - Number(b))
+  }
 
   return (
     <>
@@ -1465,12 +1470,15 @@ const RegistModal = props => {
                   </Column>
                 </Columns>
 
-                 <Columns>
+                <Columns>
                   <Column>
-                    <Form.Item 
+                    <Form.Item
                       label={t('RESOURCES_VM_PREFIX')}
                       rules={[
-                        { required: true, message: t('RESOURCES_VM_PREFIX_EMPTY_DESC') },
+                        {
+                          required: true,
+                          message: t('RESOURCES_VM_PREFIX_EMPTY_DESC'),
+                        },
                         {
                           pattern: regexVmNodePrefix,
                           message: t('RESOURCES_INVALID_VM_PREFIX_DESC'),
@@ -1486,10 +1494,13 @@ const RegistModal = props => {
                     </Form.Item>
                   </Column>
                   <Column>
-                     <Form.Item 
+                    <Form.Item
                       label={t('RESOURCES_NODE_PREFIX')}
-                     rules={[
-                        { required: true, message: t('RESOURCES_NODE_PREFIX_EMPTY_DESC') },
+                      rules={[
+                        {
+                          required: true,
+                          message: t('RESOURCES_NODE_PREFIX_EMPTY_DESC'),
+                        },
                         {
                           pattern: regexVmNodePrefix,
                           message: t('RESOURCES_INVALID_NODE_PREFIX_DESC'),
@@ -1499,17 +1510,17 @@ const RegistModal = props => {
                       <Input
                         name="node_name_prefix"
                         maxLength={63}
-                        style={{ maxWidth: 'none' }}                        
+                        style={{ maxWidth: 'none' }}
                         onChange={e => setNodeNamePrefix(e)}
                       />
-                    </Form.Item>                   
+                    </Form.Item>
                   </Column>
                 </Columns>
 
                 <label className="form-item-label" htmlFor="name">
                   {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
                   <span className="form-item-required">*</span>
-                </label>                
+                </label>
                 <Form.Item
                   rules={[
                     {
@@ -1527,30 +1538,37 @@ const RegistModal = props => {
                     name="vm_count"
                     max={slideMaxCount}
                     min={0}
-                    marks={getMarks(slideMaxCount)}                    
+                    marks={getMarks(slideMaxCount)}
                     unit={''}
                     value={vmCount}
                     withInput
                     onChange={handleSliderChange}
                     style={{ padding: '5px', width: '10%' }}
                   />
-                  
                 </Form.Item>
-                
-                <div className={styles.form_item_label_description} >
+
+                <div className={styles.form_item_label_description}>
                   <label htmlFor="name">
-                  최대 {slideMaxCount}개의 가상머신을 생성할 수 있습니다.
-                  </label>      
+                    최대 {slideMaxCount}개의 가상머신을 생성할 수 있습니다.
+                  </label>
                 </div>
-                        
-                <div>  
-                  {vmListLoading 
-                      ? <Loading className="ks-page-loading" />
-                      : <GpuVmSelect isCancel={isCancelSelect} rangeValue={rangeVm} vmPrefix={vmNamePrefix} vmList={vmList} initGpuCount={slideMaxCount}
-                                       getMessageState={getMessageState} getNameRange={getNameRange}/>
-                  }
-                </div> 
-                
+
+                <div>
+                  {vmListLoading ? (
+                    <Loading className="ks-page-loading" />
+                  ) : (
+                    <GpuVmSelect
+                      isCancel={isCancelSelect}
+                      rangeValue={rangeVm}
+                      setRangeVm={setRangeVm}
+                      vmPrefix={vmNamePrefix}
+                      vmList={vmList}
+                      initGpuCount={slideMaxCount}
+                      getMessageState={getMessageState}
+                      getNameRange={getNameRange}
+                    />
+                  )}
+                </div>
 
                 {imageType === 'I' && (
                   <Form.Item>
@@ -1645,7 +1663,7 @@ const RegistModal = props => {
 
               {/* 네트워크 설정 시작========================================== */}
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
-               <Form.Item label={t('RESOURCES_NETWORK')}>
+                <Form.Item label={t('RESOURCES_NETWORK')}>
                   <div className={styles.wrapper}>
                     <div className={styles.table}>
                       <table>
@@ -1680,9 +1698,7 @@ const RegistModal = props => {
                             <tr key={data.name}>
                               <td>{data.name}</td>
                               <td>{data.type.toUpperCase()}</td>
-                              <td>
-                                {getNetworkAssignmentRange()}
-                              </td>
+                              <td>{getNetworkAssignmentRange()}</td>
                               <td>{data.cidr}</td>
                               <td>{data.gateway_ip}</td>
                             </tr>
@@ -1791,8 +1807,8 @@ const RegistModal = props => {
                               </td>
                               <td>{data.name}</td>
                               <td>{data.description}</td>
-                              <td>{data.ingress_count}</td>
-                              <td>{data.egress_count}</td>
+                              <td>{data.ingress}</td>
+                              <td>{data.egress}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -1937,7 +1953,9 @@ const RegistModal = props => {
                                       data.name
                                     )
                                   }
-                                  clearable
+                                  clearable={physicalnetworkCheckItems.includes(
+                                    data.name
+                                  )}
                                 />
                               </td>
                               <td>{data.cidr}</td>
@@ -2366,9 +2384,7 @@ const RegistModal = props => {
                           <div className={styles.list}>
                             <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
                             <div className={styles.multiline}>
-                              <div>
-                               {getNetworkAssignmentRange()}
-                              </div>
+                              <div>{getNetworkAssignmentRange()}</div>
                             </div>
                           </div>
                           <div className={styles.list}>
@@ -2433,13 +2449,13 @@ const RegistModal = props => {
                           <div className={styles.list}>
                             <label>{t('RESOURCES_INBOUND_RULE')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.ingress_count}</div>
+                              <div>{obj.ingress}</div>
                             </div>
                           </div>
                           <div className={styles.list}>
                             <label>{t('RESOURCES_OUTBOUND_RULE')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.egress_count}</div>
+                              <div>{obj.egress}</div>
                             </div>
                           </div>
                         </div>
@@ -2469,14 +2485,6 @@ const RegistModal = props => {
                         }`}</div>
                       </div>
                       <div className={styles.list}>
-                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
-                        <div>{`${
-                          networkStorage === undefined
-                            ? t('RESOURCES_AUTOMATIC')
-                            : networkStorage
-                        }`}</div>
-                      </div>
-                      <div className={styles.list}>
                         <label>{t('RESOURCES_SCRIPT')}</label>
                         {isScript && (
                           <div className={styles.multiline}>
@@ -2489,6 +2497,15 @@ const RegistModal = props => {
                           </div>
                         )}
                       </div>
+                      <div className={styles.list}>
+                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
+                        <div>{`${
+                          networkStorage === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : networkStorage
+                        }`}</div>
+                      </div>
+
                       {/* <div className={styles.list}>
                         <label>{t('RESOURCES_USER_NAME')}</label>
                         <div>{globals.user.username}</div>

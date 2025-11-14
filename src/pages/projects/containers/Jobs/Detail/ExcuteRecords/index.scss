@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table {
   :global {
@@ -11,3 +11,6 @@
 .content {
   margin: -20px;
 }
+
+
+

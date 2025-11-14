@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .pipeline_column {
   display: inline-block;
@@ -36,3 +36,6 @@
   margin-bottom: 10px;
   margin-left: -4px;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .appInfo {
   > div {
@@ -60,3 +60,6 @@
     }
   }
 }
+
+
+

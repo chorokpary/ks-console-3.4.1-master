@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .contentBox {
   display: flex;
@@ -117,3 +117,6 @@
 .scroll {
   overflow-y: scroll;
 }
+
+
+

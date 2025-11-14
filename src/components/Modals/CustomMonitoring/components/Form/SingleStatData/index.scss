@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   background: $white;
@@ -23,3 +23,6 @@
   border: none;
   background: $white;
 }
+
+
+

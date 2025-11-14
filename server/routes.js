@@ -35,6 +35,7 @@ const {
   webAppDeployProxy,
   webBaremetalProxy,
   webImageBuildProxy,
+  webAuthentikProxy,
 } = require('./proxy')
 
 const {
@@ -50,6 +51,7 @@ const {
   handleLogout,
   handleOAuthLogin,
   handleLoginConfirm,
+  handleCreateUserMfa,
 } = require('./controllers/session')
 
 const {
@@ -78,9 +80,13 @@ router
   .post('/customharbor/(.*)', parseBody, handleHarborProxyCustom)
   .get('/blank_md', renderMarkdown)
 
+  // create user mfa
+  .post('/users/auth/create/mfa', parseBody, handleCreateUserMfa)
+
   .use(proxy('/files', webImageBuildProxy))
   .use(proxy('/files/(.*)', webImageBuildProxy))
   .use(proxy('/builder/(.*)', webImageBuildProxy))
+  .use(proxy('/authentik-server/auth/(.*)', webAuthentikProxy))  
   
   .use(proxy('/app-manager/(.*)', webAppDeployProxy))
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))

@@ -1390,7 +1390,7 @@ const CustomDashboardEdit = props => {
               </div>
             </div> */}
 
-            <button className="accordion-btn" onClick={e => handleAccordion(e)}>
+            {/* <button className="accordion-btn" onClick={e => handleAccordion(e)}>
               {t('RESOURCES_ETC')}
               <i className="ico-arrow-clamp-up"></i>
             </button>
@@ -1415,7 +1415,6 @@ const CustomDashboardEdit = props => {
 
                 <div className="popover-container">
                   <div className="popover-content">
-                    {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
                       <div className="view img_20">
@@ -1426,12 +1425,9 @@ const CustomDashboardEdit = props => {
                       <i className="ico-close"></i>
                     </button>
                   </div>
-                  {/* <div className="footer">
-                    <button className="btn btn-primary">추가</button>
-                  </div> */}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="footer">
               <button

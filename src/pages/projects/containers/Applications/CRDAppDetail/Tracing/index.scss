@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .operations {
   display: flex;
@@ -47,3 +47,6 @@
     }
   }
 }
+
+
+

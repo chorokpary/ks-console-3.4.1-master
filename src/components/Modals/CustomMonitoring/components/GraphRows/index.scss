@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .rowTitle {
   @include TypographyTitleH6($dark-color07);
@@ -7,3 +7,5 @@
 
   padding: 12px;
 }
+
+

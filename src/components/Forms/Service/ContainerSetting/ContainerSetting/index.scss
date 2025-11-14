@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .message {
   margin-top: 12px;
@@ -10,3 +10,5 @@
     margin-top: 4px;
   }
 }
+
+

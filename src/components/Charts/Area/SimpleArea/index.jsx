@@ -195,7 +195,7 @@ export default class SimpleArea extends React.Component {
             />
           }
           unit={unit}
-          hide={!sortedSeries.includes(key)}
+          hide={!activeSeries.includes(key)}
           connectNulls
           {...fillProps}
         />

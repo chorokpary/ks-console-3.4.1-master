@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .label {
   margin-bottom: 4px;
@@ -8,3 +8,5 @@
 .readOnly {
   opacity: .8;
 }
+
+

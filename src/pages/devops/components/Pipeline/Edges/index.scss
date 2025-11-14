@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .connects__column {
   vertical-align: top;
@@ -21,3 +21,6 @@
     }
   }
 }
+
+
+

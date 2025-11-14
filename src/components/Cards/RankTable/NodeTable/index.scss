@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .averageload {
   white-space: nowrap;
@@ -11,3 +11,5 @@
   padding: 0 0.3em;
   margin: 0 .3em;
 }
+
+

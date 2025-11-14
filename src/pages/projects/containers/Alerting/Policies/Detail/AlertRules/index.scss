@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .item {
   display: flex;
@@ -52,3 +52,6 @@
   font-family: $font-family-code;
   font-weight: bold;
 }
+
+
+

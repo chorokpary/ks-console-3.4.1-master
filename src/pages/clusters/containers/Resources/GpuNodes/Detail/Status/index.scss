@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .resources {
   padding: 0;
@@ -11,3 +11,6 @@
   grid-column-gap: 12px;
   grid-row-gap: 12px;
 }
+
+
+

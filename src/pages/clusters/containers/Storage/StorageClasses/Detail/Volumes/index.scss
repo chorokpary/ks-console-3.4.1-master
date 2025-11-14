@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .table {
   box-shadow: none;
@@ -52,3 +52,6 @@
     margin-right: 0px;
   }
 }
+
+
+

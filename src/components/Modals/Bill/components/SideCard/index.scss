@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .side {
   width: 100%;
@@ -68,3 +68,6 @@
     }
   }
 }
+
+
+

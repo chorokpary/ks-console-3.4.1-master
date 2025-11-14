@@ -3971,7 +3971,7 @@ html {
   font-weight: bold;
 }
 .vm_grid_info .vm_dash {
-  display: none;
+  display: block;
 }
 
 .vm_grid_btn {

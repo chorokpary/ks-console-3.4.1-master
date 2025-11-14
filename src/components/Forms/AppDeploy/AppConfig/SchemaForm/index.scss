@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .group {
   padding: 12px;
@@ -36,3 +36,6 @@
 .parentGroup {
   margin: 20px 0;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 .header {
   position: relative;
   margin-bottom: 12px;
@@ -34,3 +34,6 @@
     right: 12px;
   }
 }
+
+
+

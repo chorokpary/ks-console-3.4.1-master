@@ -2,22 +2,27 @@
 # Use of this source code is governed by an Apache license
 # that can be found in the LICENSE file.
 
-# Prepare the build environment
-FROM node:14-alpine3.15 as builder
+#######################
+# Build Stage
+#######################
+FROM node:18.20.8-alpine3.20 AS builder
 
 ARG YARN_VERSION=1.22.4
 
 WORKDIR /kubesphere
 ADD . /kubesphere/
 
-RUN apk add --no-cache python2
-RUN apk add --no-cache --virtual .build-deps ca-certificates python3 py3-pip make openssl g++ bash
-RUN npm install yarn@${YARN_VERSION}
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ bash openssl ca-certificates
 
-# If you have trouble downloading the yarn binary, try the following:
-# RUN yarn config set registry https://registry.npmmirror.com
+# Install Yarn
+RUN corepack enable && corepack prepare yarn@${YARN_VERSION} --activate
 
-RUN yarn && yarn build
+# Install dependencies and build
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+ENV NODE_OPTIONS=--openssl-legacy-provider
+RUN yarn build
 
 # Copy compiled files
 RUN mkdir -p /out/server
@@ -27,13 +32,12 @@ RUN mv /kubesphere/server/locales \
        /kubesphere/server/views \
        /kubesphere/server/sample \
        /kubesphere/server/config.yaml /out/server/
-#RUN ["/bin/bash", "-c", "mv /kubesphere/server/{locales,public,sample,views,config.yaml} /out/server/"]
 RUN mv /kubesphere/package.json /out/
 
-##############
+#######################
 # Final Image
-##############
-FROM node:14-alpine3.15 as base_os_context
+#######################
+FROM node:18.20.8-alpine3.20 AS base_os_context
 
 RUN adduser -D -g kubesphere -u 1002 kubesphere && \
     mkdir -p /opt/kubesphere/console && \
@@ -42,10 +46,11 @@ RUN adduser -D -g kubesphere -u 1002 kubesphere && \
 WORKDIR /opt/kubesphere/console
 COPY --from=builder /out/ /opt/kubesphere/console/
 
+# Move server.js to correct path
 RUN mv dist/server.js server/server.js
+
 USER kubesphere
 
 EXPOSE 8080
 
 CMD ["npm", "run", "serve"]
-

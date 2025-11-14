@@ -1,4 +1,4 @@
-@import "~scss/variables";
+@use "scss/variables" as *;
 
 .password {
   width: 455px;
@@ -24,3 +24,5 @@
     overflow: hidden;
   }
 }
+
+

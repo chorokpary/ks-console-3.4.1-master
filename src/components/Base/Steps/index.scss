@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .steps {
   height: 64px;
@@ -62,3 +62,6 @@
     vertical-align: middle;
   }
 }
+
+
+

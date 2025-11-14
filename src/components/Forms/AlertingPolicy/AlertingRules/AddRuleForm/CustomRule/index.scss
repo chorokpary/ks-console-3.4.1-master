@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .label {
   font-size: 12px;
@@ -62,3 +62,6 @@
     max-width: calc(100% - 136px);
   }
 }
+
+
+

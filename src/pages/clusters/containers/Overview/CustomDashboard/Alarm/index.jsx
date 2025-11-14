@@ -404,7 +404,10 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
                           )}
                         </div>
                         <p className="alert_date">
-                          {new Date(data.activeAt).toISOString().split('T')[0]}
+                          {new Date(data.activeAt)
+                            .toISOString()
+                            .slice(0, 19)
+                            .replace('T', ' ')}
                         </p>
                       </div>
                     </li>

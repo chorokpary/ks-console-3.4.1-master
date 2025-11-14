@@ -1,8 +1,10 @@
-@import "~scss/variables";
-@import "~scss/mixins";
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .fingerprint {
     text-align: center;
     font-size: 20px;
     font-weight: bold;
 }
+
+

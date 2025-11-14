@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .buttonModalBox {
   position: relative;
@@ -30,3 +30,6 @@
 .showModal {
   display: block;
 }
+
+
+

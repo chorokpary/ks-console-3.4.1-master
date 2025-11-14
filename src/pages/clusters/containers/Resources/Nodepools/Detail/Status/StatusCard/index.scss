@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .card {
   display: inline-flex;
@@ -34,5 +34,7 @@
 
 .tooltip {
   min-width: 300px;
-  white-space: normal; /* 텍스트가 줄 바꿈되도록 설정 */
+  white-space: normal; /* ?�스?��? �?바꿈?�도�??�정 */
 }
+
+

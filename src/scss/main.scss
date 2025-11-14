@@ -1,13 +1,11 @@
 @charset "utf-8";
 
-@import '../assets/fonts/Roboto/stylesheet.css';
+@use "variables" as *;
+@use "mixins" as *;
 
-@import 'variables';
-@import 'mixins';
+@use "custom" as *;
+@use "base" as *;
+@use "utilities" as *;
+@use "markdown" as *;
 
-:global {
-  @import 'custom';
-  @import 'base';
-  @import 'utilities';
-  @import 'markdown';
-}
+@import '/assets/fonts/Roboto/stylesheet.css';

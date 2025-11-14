@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .group {
   :global {
@@ -39,3 +39,6 @@
     }
   }
 }
+
+
+

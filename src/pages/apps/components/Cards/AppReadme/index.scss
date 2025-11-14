@@ -1,6 +1,8 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .markdown {
   min-height: 160px;
 }
+
+

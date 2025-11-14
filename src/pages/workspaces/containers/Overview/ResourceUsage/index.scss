@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .clusterSelector {
   width: 200px;
@@ -22,3 +22,5 @@
     }
   }
 }
+
+

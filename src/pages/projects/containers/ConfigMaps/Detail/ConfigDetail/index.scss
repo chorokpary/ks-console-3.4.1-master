@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   padding: 20px;
@@ -23,3 +23,5 @@
     }
   }
 }
+
+

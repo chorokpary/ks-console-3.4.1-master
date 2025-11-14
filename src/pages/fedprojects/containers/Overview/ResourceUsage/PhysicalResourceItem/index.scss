@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   padding: 12px;
@@ -24,3 +24,5 @@
   font-weight: $font-bold;
   line-height: 20px;
 }
+
+

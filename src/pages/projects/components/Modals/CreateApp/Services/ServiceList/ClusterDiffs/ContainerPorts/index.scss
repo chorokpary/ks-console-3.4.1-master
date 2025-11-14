@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .form {
   width: 854px;
@@ -38,3 +38,5 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+

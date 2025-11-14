@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .title {
   display: flex;
@@ -70,3 +70,6 @@
   color: #b7c4d1;
   cursor: pointer;
 }
+
+
+

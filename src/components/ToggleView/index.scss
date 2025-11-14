@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .toggle {
   & > a {
@@ -15,3 +15,5 @@
   overflow: hidden;
   visibility: hidden;
 }
+
+

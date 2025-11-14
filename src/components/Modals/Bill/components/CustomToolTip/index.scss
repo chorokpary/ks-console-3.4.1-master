@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .tooltip {
   width: auto;
@@ -55,3 +55,6 @@
     color: $white !important;
   }
 }
+
+
+

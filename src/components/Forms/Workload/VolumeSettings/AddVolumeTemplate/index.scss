@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   :global .h6 {
@@ -30,3 +30,6 @@
 .title {
   margin-bottom: 4px;
 }
+
+
+

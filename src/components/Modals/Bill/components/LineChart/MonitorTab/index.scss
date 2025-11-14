@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   border-radius: $border-radius;
@@ -32,3 +32,6 @@
   background-color: $dark-color07;
   border-radius: $border-radius;
 }
+
+
+

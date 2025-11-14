@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   width: 620px;
@@ -36,3 +36,6 @@
 .port {
   width: 100px;
 }
+
+
+

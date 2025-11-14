@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .kubectl {
   display: flex;
@@ -46,3 +46,5 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+

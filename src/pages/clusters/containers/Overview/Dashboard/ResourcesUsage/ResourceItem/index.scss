@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .item {
   display: flex;
@@ -22,3 +22,6 @@
     margin-right: 12px;
   }
 }
+
+
+

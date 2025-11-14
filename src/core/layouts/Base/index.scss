@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .main {
   padding-top: $header-height;
@@ -17,3 +17,6 @@
   min-width: $content-width;
   z-index: 200;
 }
+
+
+

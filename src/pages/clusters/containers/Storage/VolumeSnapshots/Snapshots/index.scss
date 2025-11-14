@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .taints {
   display: inline-block;
@@ -32,3 +32,6 @@
   margin-right: 10px;
   width: 178px;
 }
+
+
+

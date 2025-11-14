@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .image {
   width: 120px;
@@ -40,3 +40,6 @@
     background-color: #ebf0f3;
   }
 }
+
+
+

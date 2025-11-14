@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper,
 .empty {
@@ -184,3 +184,6 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+
+

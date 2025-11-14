@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 $trans-speed: 0.2s;
 
@@ -176,3 +176,6 @@ $trans-speed: 0.2s;
   margin-top: -2px;
   margin-left: 4px;
 }
+
+
+

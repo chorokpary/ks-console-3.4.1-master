@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .legend {
   display: flex;
@@ -44,3 +44,6 @@
     }
   }
 }
+
+
+

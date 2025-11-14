@@ -1,7 +1,7 @@
 @charset "utf-8";
 
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 
 .iconwrapper {
@@ -152,3 +152,5 @@
   text-align: center;
   width: 40px;
 }
+
+

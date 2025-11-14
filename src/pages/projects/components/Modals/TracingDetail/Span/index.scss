@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   padding: 2px 0;
@@ -108,3 +108,6 @@
     transform: translateX(100%);
   }
 }
+
+
+

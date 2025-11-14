@@ -1,6 +1,6 @@
 @charset "utf-8";
-@import "~scss/variables";
-@import "~scss/mixins";
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .customUl {
     text-align: center;
@@ -1550,3 +1550,5 @@ $box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.06);
     width: 100%;
     padding: 12px 20px;
 }
+
+

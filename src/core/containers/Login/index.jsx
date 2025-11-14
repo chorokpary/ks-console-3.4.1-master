@@ -57,13 +57,37 @@ function mix(salt, str) {
 @inject('rootStore')
 @observer
 export default class Login extends Component {
-  state = {
-    formData: {},
-    isSubmmiting: false,
-    errorCount: 0,
-    showKS: true,
-    currentServer: {},
-  };
+
+  constructor(props) {
+    super(props);
+
+    // URL 파라미터 확인 (렌더링 전)
+    const params = new URLSearchParams(window.location.search);
+    const route = params.get('route');
+    
+    if (route != 'localuser') {   
+      const info = {
+        name: get(globals,'oauthServers[0].title', ''),
+        type: get(globals,'oauthServers[0].type', ''),
+        endSessionURL: get(globals,'oauthServers[0].endSessionURL', ''),
+      };
+      
+      cookie('oAuthLoginInfo', JSON.stringify(info));
+
+      const url = get(globals,'oauthServers[0].url', '/login');
+      window.location.replace(url);
+      return; 
+    }
+
+    // state 초기화
+    this.state = {
+      formData: {},
+      isSubmmiting: false,
+      errorCount: 0,
+      showKS: true,
+      currentServer: {},
+    };
+  }
 
   handleOAuthLogin = server => e => {
     const info = {

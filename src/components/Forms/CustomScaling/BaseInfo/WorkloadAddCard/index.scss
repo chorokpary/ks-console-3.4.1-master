@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .card {
   display: flex;
@@ -49,3 +49,6 @@
     }
   }
 }
+
+
+

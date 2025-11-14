@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .replica {
   display: flex;
@@ -11,3 +11,6 @@
     margin-right: 12px;
   }
 }
+
+
+

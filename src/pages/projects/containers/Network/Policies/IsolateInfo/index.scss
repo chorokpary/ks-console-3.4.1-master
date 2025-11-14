@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   display: flex;
@@ -27,3 +27,6 @@
   font-weight: 600;
   color: $dark-color07;
 }
+
+
+

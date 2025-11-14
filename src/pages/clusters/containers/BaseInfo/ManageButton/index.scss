@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .manage {
   width: 92px;
@@ -36,3 +36,6 @@
     width: 210px;
   }
 }
+
+
+

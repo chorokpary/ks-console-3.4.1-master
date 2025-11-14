@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .header {
   margin-bottom: 12px;
@@ -50,3 +50,6 @@
 .margin_b_10 {
   margin-bottom: 10px;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .upload {
   display: flex;
@@ -91,3 +91,6 @@
     cursor: pointer;
   }
 }
+
+
+

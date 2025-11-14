@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .main {
   padding: 12px;
@@ -181,3 +181,6 @@
   align-items: center;
   height: 56px;
 }
+
+
+

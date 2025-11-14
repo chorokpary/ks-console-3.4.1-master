@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .statusBox {
   display: inline-flex;
@@ -120,3 +120,6 @@
   color: $light-color06 !important;
   background: $light-color02 !important;
 }
+
+
+

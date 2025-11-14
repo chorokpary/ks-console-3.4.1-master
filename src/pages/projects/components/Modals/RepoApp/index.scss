@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .modal {
   background: $light-color01;
@@ -27,3 +27,6 @@
     }
   }
 }
+
+
+

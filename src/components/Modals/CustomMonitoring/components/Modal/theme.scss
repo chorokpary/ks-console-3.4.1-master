@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .dark {
   background: $dark-color07;
@@ -8,3 +8,5 @@
 .light {
   background: $light-color02;
 }
+
+

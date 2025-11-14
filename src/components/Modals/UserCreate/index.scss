@@ -1,5 +1,5 @@
-@import "~scss/variables";
-@import "~scss/mixins";
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .password {
   width: 455px;
@@ -22,3 +22,5 @@
     @include TypographyParagraph($dark-color01);
   }
 }
+
+

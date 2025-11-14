@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   margin-top: 12px;
@@ -187,3 +187,6 @@
 .tip {
   margin-top: -3px;
 }
+
+
+

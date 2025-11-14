@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .codeEditor {
   height: 382px;
@@ -30,3 +30,6 @@
 .body {
   max-height: none;
 }
+
+
+

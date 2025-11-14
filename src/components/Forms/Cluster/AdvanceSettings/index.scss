@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .wrapper {
   width: 860px;
@@ -9,3 +9,6 @@
 .form {
   width: 620px;
 }
+
+
+

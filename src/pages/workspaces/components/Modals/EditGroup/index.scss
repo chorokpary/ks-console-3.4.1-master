@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .modalBody {
   padding: 20px 12px;
@@ -17,3 +17,5 @@
 .modalFooter {
   padding: 12px 20px;
 }
+
+

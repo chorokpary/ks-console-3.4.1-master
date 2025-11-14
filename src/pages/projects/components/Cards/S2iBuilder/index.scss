@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .logContainer {
   pre {
@@ -88,3 +88,6 @@
     transform: rotate(359deg);
   }
 }
+
+
+

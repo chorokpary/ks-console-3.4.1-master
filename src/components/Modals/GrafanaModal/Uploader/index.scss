@@ -1,5 +1,5 @@
-@import '~scss/variables';
-@import '~scss/mixins';
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
 
 .container {
   height: 148px;
@@ -108,3 +108,6 @@
 .none {
   display: none;
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .icons {
   :global {
@@ -11,3 +11,5 @@
     margin-right: 8px;
   }
 }
+
+

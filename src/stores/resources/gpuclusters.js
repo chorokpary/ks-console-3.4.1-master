@@ -183,8 +183,13 @@ export default class GpuClustersStore extends Base {
       return x < y ? -1 : x > y ? 1 : 0
     })
 
+    // mm3 데이터 page 별 Slice 처리 
+    const perPage = Number(params.limit) || 10;
+    const currentPage = Number(params.page) || 1;
+    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+
     this.list.update({
-      data: more ? [...this.list.data, ...this.dataList] : this.dataList,
+      data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
       total,
       ...params,
       limit: Number(params.limit) || 10,

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .wrapper {
   margin: 0 !important;
@@ -16,3 +16,6 @@
   display: flex;
   align-items: center;
 }
+
+
+

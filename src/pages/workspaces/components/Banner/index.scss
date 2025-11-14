@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .banner {
   height: 120px;
@@ -32,3 +32,6 @@
     }
   }
 }
+
+
+

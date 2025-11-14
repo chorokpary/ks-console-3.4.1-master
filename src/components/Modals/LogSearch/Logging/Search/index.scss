@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $toolbarHeight: 48px;
 $logCountColor: #329dce;
@@ -175,3 +175,6 @@ $logCountColor: #329dce;
     font-style: normal;
   }
 }
+
+
+

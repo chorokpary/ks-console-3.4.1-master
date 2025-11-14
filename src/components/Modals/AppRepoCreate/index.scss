@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .body {
   background-color: $white;
@@ -111,3 +111,6 @@
     margin-left: 8px;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 .empty {
   text-align: center;
@@ -47,3 +47,6 @@
     }
   }
 }
+
+
+

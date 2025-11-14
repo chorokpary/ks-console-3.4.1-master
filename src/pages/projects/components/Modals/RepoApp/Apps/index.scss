@@ -1,4 +1,4 @@
-@import '~scss/variables';
+@use "scss/variables" as *;
 
 $header-height: 144px;
 $toolbar-height: 44px;
@@ -70,3 +70,6 @@ $toolbar-height: 44px;
     }
   }
 }
+
+
+
