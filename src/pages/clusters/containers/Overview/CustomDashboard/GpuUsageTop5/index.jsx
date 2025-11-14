@@ -73,7 +73,7 @@ const GpuUsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
             </div>
             <div className="gpu_usage_top color2">
               <h3 className="gpu_usage_top_title">
-                GPU {t('RESOURCES_GPU_AVG_MEMORY_USAGE')} (%)
+                {t('RESOURCES_GPU_AVG_MEMORY_USAGE')} (%)
               </h3>
               <ul className="gpu_usage_list">
                 {gpuMemUsageTop5Data?.map((item, idx) => (
