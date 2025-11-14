@@ -22,7 +22,7 @@ import PropTypes from 'prop-types'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react'
 
-import { Form, Input, Select, TextArea, Toggle } from '@kube-design/components'
+import { Form, Input, Select, TextArea } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import { InputPassword } from 'components/Inputs'
 import { isSystemRole } from 'utils'
@@ -53,7 +53,6 @@ export default class UserCreateModal extends Component {
     formTemplate: {
       apiVersion: 'iam.kubesphere.io/v1alpha2',
       kind: 'User',
-      isMfa: false,
       ...get(this.props, 'detail._originData', {}),
     },
   }
@@ -147,37 +146,6 @@ export default class UserCreateModal extends Component {
           type="password"
           disabled
         />
-
-        <Form.Item
-        >
-          <div
-            className="dash_toggle"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              minHeight: '32px',
-              padding: '2px',
-              marginLeft: '0px',
-              marginBottom: '8px',
-            }}
-          >
-            <Toggle 
-              checked={this.state.formTemplate.isMfa}    
-              onChange={(value) => {
-              this.setState((prevState) => ({
-                formTemplate: {
-                  ...prevState.formTemplate, 
-                  isMfa: value,             
-                },
-              }));
-            }}
-            />
-            <span>{' 로컬 사용자'}</span>
-          </div>
-        </Form.Item>
-    
-
         <Form.Item
           label={t('USERNAME')}
           desc={t('USERNAME_DESC')}

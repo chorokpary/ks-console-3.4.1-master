@@ -151,12 +151,6 @@ const webBaremetalProxy = {
   changeOrigin: true,
 }
 
-const webAuthentikProxy = {
-  target: `${serverConfig.apiServer.authentikUrl}`,
-  changeOrigin: true,
-  secure: false, 
-}
-
 const b2iFileProxy = {
   target: serverConfig.apiServer.url,
   changeOrigin: true,
@@ -203,5 +197,4 @@ module.exports = {
   webAppDeployProxy,
   webBaremetalProxy,
   webImageBuildProxy,
-  webAuthentikProxy,
 }

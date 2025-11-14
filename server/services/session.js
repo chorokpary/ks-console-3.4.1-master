@@ -21,10 +21,8 @@ const uniq = require('lodash/uniq')
 const isEmpty = require('lodash/isEmpty')
 const isArray = require('lodash/isArray')
 const jwtDecode = require('jwt-decode')
-const yaml = require('js-yaml/dist/js-yaml')
-const request = require('../libs/request.base')
 
-const { send_gateway_request, send_authentik_request } = require('../libs/request')
+const { send_gateway_request } = require('../libs/request')
 
 const { isAppsRoute, safeParseJSON, getServerConfig } = require('../libs/utils')
 
@@ -493,47 +491,6 @@ const createUser = (params, token) => {
   })
 }
 
-const createUserMfa = async (params, token) => {
-  const configmap = await send_gateway_request({
-    method: 'GET',
-    url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
-    token,
-  })
-
-  const yamlData = yaml.safeLoadAll(configmap.data['kubesphere.yaml'], 'utf8')[0]
-  const apiToken = get(yamlData,'authentication.oauthOptions.identityProviders[0].provider.apiToken', '');
-  const authentikBase = get(yamlData,'authentication.oauthOptions.identityProviders[0].provider.apiURL', '');
-
-  try {
-    const resUser = await send_authentik_request({
-      method: 'POST',
-      url: `${authentikBase}/api/v3/core/users/`,
-      token: apiToken,
-      params: params.userData,
-    })
-
-    await send_authentik_request({
-      method: 'POST',
-      url: `${authentikBase}/api/v3/core/users/${resUser.pk}/set_password/`,
-      token: apiToken,
-      params: params.password,
-    })
-
-    return {
-      success: true,
-      message: 'user create successful',
-    }
-
-  } catch (error) {
-    console.error('[createUserMfa] Error:', error)
-    return {
-      success: false,
-      message: error.message || 'user create fail',
-      code: error.code || 500,
-    }
-  }
-}
-
 module.exports = {
   login,
   loginThird,
@@ -544,7 +501,6 @@ module.exports = {
   getKSConfig,
   getK8sRuntime,
   createUser,
-  createUserMfa,
   getClusterRole,
   getSupportGpuList,
   getGitOpsEngine,

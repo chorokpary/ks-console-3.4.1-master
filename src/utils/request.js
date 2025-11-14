@@ -85,11 +85,7 @@ function buildRequest({
       requestURL += `?${qs.stringify(params)}`
     }
   } else if (isForm) {
-    if (typeof params === 'string') {
-      request.body = params  // 이미 문자열이면 그대로 사용
-    } else {
-      request.body = qs.stringify(params)
-    }
+    request.body = qs.stringify(params)
   } else {
     if (method === 'POST' && params.metadata) {
       set(
