@@ -234,7 +234,8 @@ export default class Slider extends React.Component {
 
   handleInputChange = value => {
     const { min, unit, onChange } = this.props
-    const _value = value === '' ? '' : Number(value)
+    // number input 에 - 값이 들어가면 NaN이 되어 - 는 빈값으로 처리
+    const _value = value === '' ? '' : isNaN(Number(value)) ? '' : Number(value)
 
     this.setState(
       {

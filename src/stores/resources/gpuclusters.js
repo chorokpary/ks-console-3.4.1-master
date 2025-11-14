@@ -217,7 +217,7 @@ export default class GpuClustersStore extends Base {
 
       return res
     } catch (err) {
-      return { ok: false }
+      return { success: false }
     }
   }
 
