@@ -261,6 +261,7 @@ module.exports = {
   RESOURCES_VM_NAME: 'Virtual Machine Name',
   RESOURCES_SELECT_VM_NAME_TIP: 'Please select a virtual machine name.',
   RESOURCES_VM: 'Virtual Machine',
+  RESOURCES_VM_SHORT: 'VM',
   RESOURCES_VM_MIGRATION_DESC:
     'The virtual machine state changes to Migration, and the virtual machine state is displayed once completed.',
   RESOURCES_CHANGE_VM_STATE:
@@ -337,6 +338,7 @@ module.exports = {
   RESOURCES_NODE_NAME: 'Node Name',
   RESOURCES_NEXT: 'Next',
   RESOURCES_STEP: 'Step',
+  RESOURCES_FOLD_LEFT_MENU: 'Left Menu',
   RESOURCES_DASHBOARD: 'Dashboard',
   RESOURCES_DELETE_DASHBOARD: 'Delete Dashboard',
   RESOURCES_DASHBOARD_NAME: 'Dashboard Name',

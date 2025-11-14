@@ -2607,7 +2607,7 @@ export const resourceUsagePanel = ({ x, y, w, h }) => {
               <div class="dash_boxtab">
                 <label htmlFor="name2_1">
                   <input type="radio" name="box-tab" id="name2_1" value="name3" checked />
-                  <span>노드</span>
+                  <span>${t('RESOURCES_NODE')}</span>
                 </label>
                 <label htmlFor="name2_2">
                   <input type="radio" name="box-tab" id="name2_2" value="name4" />
@@ -2703,7 +2703,7 @@ export const networkTrafficPanel = ({ x, y, w, h }) => {
               <div class="dash_boxtab">
                 <label htmlFor="name3">
                   <input type="radio" name="box-tab1" id="name3" value="name3" checked />
-                  <span>노드</span>
+                  <span>${t('RESOURCES_NODE')}</span>
                 </label>
                 <label htmlFor="name4">
                   <input type="radio" name="box-tab1" id="name4" value="name4" />

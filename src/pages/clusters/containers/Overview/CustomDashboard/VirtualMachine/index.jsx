@@ -100,7 +100,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
                 <div className="cont1">
                   <div className="number_wrap">
                     <i className="ico-type24-vm-gpu">
-                      <span>GPU {t('RESOURCES_VM')}</span>
+                      <span>GPU {t('RESOURCES_VM_SHORT')}</span>
                     </i>
                     <p>
                       <span className="em">{data.gpuRunning || 0}</span>/{' '}
@@ -109,7 +109,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
                   </div>
                   <div className="number_wrap">
                     <i className="ico-type24-vm">
-                      <span>CPU {t('RESOURCES_VM')}</span>
+                      <span>CPU {t('RESOURCES_VM_SHORT')}</span>
                     </i>
                     <p>
                       <span className="em">{data.vmRunning || 0}</span>/{' '}
