@@ -236,7 +236,7 @@ const CustomDashboard = props => {
                     checked={user.showMenu}
                     onChange={() => user.handlechangeShowMenu(!user.showMenu)}
                   />
-                  <span>{user.showMenu ? ' 좌측 메뉴' : ' 좌측 메뉴'}</span>
+                  <span>{user.showMenu ? t('RESOURCES_FOLD_LEFT_MENU') : t('RESOURCES_FOLD_LEFT_MENU')}</span>
                 </div>
               </div>
               {/* // Top area */}

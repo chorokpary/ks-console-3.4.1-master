@@ -253,7 +253,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
                   value="name5"
                   onClick={() => onClickRightTab('vm')}
                 />
-                <span>{t('RESOURCES_VM')}</span>
+                <span>{t('RESOURCES_VM_SHORT')}</span>
               </label>
               <label htmlFor="name2_4">
                 <input

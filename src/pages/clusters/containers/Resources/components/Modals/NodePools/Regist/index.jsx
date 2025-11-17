@@ -8,6 +8,7 @@ import {
   Slider,
   TextArea,
   Tabs,
+  Checkbox,
 } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import classnames from 'classnames'
@@ -68,10 +69,9 @@ const RegistNodePoolModal = props => {
   // 네트워크 관련 상태 추가
   const [networkFlag, setNetworkFlag] = useState(1)
   const [networkName, setNetworkName] = useState('')
-  const [networkCheckItem, setNetworkCheckItem] = useState('')
-  const [sriovCheckItem, setSriovCheckItem] = useState('')
   const [networkList, setNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
+  const [physicalNetworkList, setPhysicalNetworkList] = useState([])
 
   const [isFirst, setIsFirst] = useState(true)
 
@@ -94,6 +94,9 @@ const RegistNodePoolModal = props => {
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
         ...props,
       })
+      const listPhysicalNetwork = await vmStore.fetchVmListPhysicalNetwork({
+        ...props,
+      })
 
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
@@ -104,6 +107,7 @@ const RegistNodePoolModal = props => {
       // 네트워크 데이터 설정
       setNetworkList(listNetwork.networks)
       setSriovNetworkList(listSriovNetwork.sriovs)
+      setPhysicalNetworkList(listPhysicalNetwork.physicalnetworks)
     }
     const getAcceleratorTypeList = async () => {
       const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
@@ -152,8 +156,8 @@ const RegistNodePoolModal = props => {
       const gpuDesc =
         obj.gpus && obj.gpus.length > 0
           ? ` / ${obj.gpus
-            .map(g => `${g.name.split('/')[1]}: ${g.quantity}`)
-            .join(', ')}`
+              .map(g => `${g.name.split('/')[1]}: ${g.quantity}`)
+              .join(', ')}`
           : ''
 
       const deviceDesc =
@@ -223,6 +227,7 @@ const RegistNodePoolModal = props => {
       } else if (networkFlag === 2) {
         data.sriov_network = sriovCheckItem
       }
+      data.physical_networks = physicalnetworkCheckItems
 
       onOk({ ...data })
     })
@@ -237,7 +242,7 @@ const RegistNodePoolModal = props => {
     if (step === 1) {
       if (isFirst) {
         if (networkList.length > 0) {
-          handleSingleCheck(
+          handleNetwork(
             networkList.filter(el => el.external)[0].name,
             'network'
           )
@@ -261,7 +266,6 @@ const RegistNodePoolModal = props => {
       setRegStep(3)
     }
     if (step === 3) {
-
       setNodePoolName(data.name)
       setImageName(data.kube_image)
       setDescription(data.description)
@@ -385,7 +389,7 @@ const RegistNodePoolModal = props => {
       imageDataList.filter(
         obj =>
           obj.accelerator_type.toLowerCase() ===
-          acceleratorType.toLowerCase() &&
+            acceleratorType.toLowerCase() &&
           obj.os_distro === osDistro &&
           obj.kube_version === kubeVersion &&
           obj.arch_type === value
@@ -414,6 +418,47 @@ const RegistNodePoolModal = props => {
         )
       })
     )
+  }
+
+  // 체크 리스트 시작 ==================================================
+  const [networkCheckItem, setNetworkCheckItem] = useState('')
+  const [sriovCheckItem, setSriovCheckItem] = useState('')
+  const [physicalnetworkCheckItems, setPhysicalnetworkCheckItem] = useState([])
+
+  const dataListVariables = {
+    physicalnetwork: physicalNetworkList,
+  }
+
+  const stateVariables = {
+    physicalnetwork: physicalnetworkCheckItems,
+  }
+
+  const setVariables = {
+    network: setNetworkCheckItem,
+    sriov: setSriovCheckItem,
+    physicalnetwork: setPhysicalnetworkCheckItem,
+  }
+
+  const handleSingleCheck = (checked, name, type) => {
+    if (checked) {
+      setVariables[type](prev => [...prev, name])
+    } else {
+      setVariables[type](stateVariables[type].filter(el => el !== name))
+    }
+  }
+
+  const handleAllCheck = (checked, type) => {
+    if (checked) {
+      const nameArray = []
+      dataListVariables[type].forEach(el => nameArray.push(el.name))
+      setVariables[type](nameArray)
+    } else {
+      setVariables[type]([])
+    }
+  }
+
+  const handleDelete = (name, type) => {
+    setVariables[type](stateVariables[type].filter(el => el !== name))
   }
 
   // Validation 시작 ==================================================
@@ -461,18 +506,13 @@ const RegistNodePoolModal = props => {
   const onChangeNetwork = el => {
     setNetworkFlag(el)
     setNetworkName('')
-    handleSingleCheck('', 'sriov')
-    handleSingleCheck('', 'network')
+    handleNetwork('', 'sriov')
+    handleNetwork('', 'network')
   }
 
-  const handleSingleCheck = (name, type) => {
+  const handleNetwork = (name, type) => {
     setVariables[type](name)
     setNetworkName(name)
-  }
-
-  const setVariables = {
-    network: setNetworkCheckItem,
-    sriov: setSriovCheckItem,
   }
 
   // 스크립트 끝 ==================================================
@@ -501,12 +541,13 @@ const RegistNodePoolModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <div className={styles.basic}></div>
@@ -518,8 +559,8 @@ const RegistNodePoolModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -531,12 +572,13 @@ const RegistNodePoolModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
-                    ? styles.current
-                    : regStep > 2
+                  className={`${
+                    regStep === 2
+                      ? styles.current
+                      : regStep > 2
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <div className={styles.network}></div>
@@ -548,8 +590,8 @@ const RegistNodePoolModal = props => {
                   {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : regStep > 2
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -561,12 +603,13 @@ const RegistNodePoolModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 3
-                    ? styles.current
-                    : regStep > 3
+                  className={`${
+                    regStep === 3
+                      ? styles.current
+                      : regStep > 3
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <div className={styles.detail}></div>
@@ -578,8 +621,8 @@ const RegistNodePoolModal = props => {
                   {regStep === 3
                     ? t('RESOURCES_CURRENT')
                     : regStep > 3
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -713,7 +756,6 @@ const RegistNodePoolModal = props => {
                     </Column>
                   </Columns>
                 </Form.Group>
-
                 {t('RESOURCES_STORAGE_CLASS')}
                 <span className="form-item-required">*</span>
                 <Form.Group>
@@ -733,7 +775,10 @@ const RegistNodePoolModal = props => {
                             }
                           }}
                         >
-                          <TabPanel label={t('RESOURCES_DEFAULT')} name="default" />
+                          <TabPanel
+                            label={t('RESOURCES_DEFAULT')}
+                            name="default"
+                          />
                           <TabPanel
                             label={t('RESOURCES_IMAGE_CLASS')}
                             name="image"
@@ -906,16 +951,16 @@ const RegistNodePoolModal = props => {
                             <tbody>
                               {!networkList?.filter(el => el.external)
                                 .length && (
-                                  <tr>
-                                    <td colSpan="6" className="no-data">
-                                      <p>
-                                        {t(
-                                          'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-                                        )}
-                                      </p>
-                                    </td>
-                                  </tr>
-                                )}
+                                <tr>
+                                  <td colSpan="6" className="no-data">
+                                    <p>
+                                      {t(
+                                        'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                      )}
+                                    </p>
+                                  </td>
+                                </tr>
+                              )}
                               {networkList
                                 ?.filter(el => el.external)
                                 .map(data => (
@@ -925,10 +970,7 @@ const RegistNodePoolModal = props => {
                                         name={`select-${data.name}`}
                                         checked={data.name === networkCheckItem}
                                         onChange={() =>
-                                          handleSingleCheck(
-                                            data.name,
-                                            'network'
-                                          )
+                                          handleNetwork(data.name, 'network')
                                         }
                                       />
                                     </td>
@@ -1001,7 +1043,7 @@ const RegistNodePoolModal = props => {
                                       name={`select-${data.name}`}
                                       checked={data.name === sriovCheckItem}
                                       onChange={() =>
-                                        handleSingleCheck(data.name, 'sriov')
+                                        handleNetwork(data.name, 'sriov')
                                       }
                                     />
                                   </td>
@@ -1017,12 +1059,140 @@ const RegistNodePoolModal = props => {
                       </div>
                     </Form.Item>
                     <div
-                      className={`form-item-error ${!networkName ? '' : 'hide'
-                        }`}
+                      className={`form-item-error ${
+                        !networkName ? '' : 'hide'
+                      }`}
                     >
                       {t('RESOURCES_SELECT_NETWORK_TIP')}
                     </div>
                   </Form.Group>
+                  <Form.Item label={t('RESOURCES_DEDICATED_NETWORK')}>
+                    <div className={styles.wrapper}>
+                      {stateVariables['physicalnetwork'].length > 0 && (
+                        <div
+                          className={classnames(
+                            styles.table_title,
+                            styles.table_title_bg
+                          )}
+                        >
+                          <Button
+                            className={styles.table_title_button}
+                            onClick={() =>
+                              handleAllCheck(false, 'physicalnetwork')
+                            }
+                          >
+                            {t('RESOURCES_ALL_DESELECT')}
+                          </Button>{' '}
+                          {stateVariables['physicalnetwork'].length}
+                          {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                        </div>
+                      )}
+                      <div className={styles.table}>
+                        <table>
+                          <colgroup>
+                            <col width="5%" />
+                            <col width="25%" />
+                            <col width="25%" />
+                            <col width="25%" />
+                            <col width="20%" />
+                          </colgroup>
+                          <thead>
+                            <tr>
+                              <th>
+                                <Checkbox
+                                  name="select-all-physicalnetwork"
+                                  onChange={checked =>
+                                    handleAllCheck(checked, 'physicalnetwork')
+                                  }
+                                  checked={
+                                    !!(
+                                      dataListVariables['physicalnetwork']
+                                        .length > 0 &&
+                                      stateVariables['physicalnetwork']
+                                        .length ===
+                                        dataListVariables['physicalnetwork']
+                                          .length
+                                    )
+                                  }
+                                />
+                              </th>
+                              <th>
+                                <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
+                              </th>
+                              <th>
+                                <strong>
+                                  {t('RESOURCES_NETWORK_TYPE_YOO')}
+                                </strong>
+                              </th>
+                              <th>
+                                <strong>{t('RESOURCES_CIDR')}</strong>
+                              </th>
+                              <th>
+                                <strong>{t('RESOURCES_GATEWAY')}</strong>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {!physicalNetworkList?.length && (
+                              <tr>
+                                <td colSpan="5" className="no-data">
+                                  <p>
+                                    {t(
+                                      'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                    )}
+                                  </p>
+                                </td>
+                              </tr>
+                            )}
+                            {physicalNetworkList?.map(data => (
+                              <tr key={data.name}>
+                                <td>
+                                  <Checkbox
+                                    name={`select-${data.name}`}
+                                    checked={
+                                      !!stateVariables[
+                                        'physicalnetwork'
+                                      ].includes(data.name)
+                                    }
+                                    onChange={checked =>
+                                      handleSingleCheck(
+                                        checked,
+                                        data.name,
+                                        'physicalnetwork'
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td>{data.name}</td>
+                                <td>{data.type.toUpperCase()}</td>
+                                <td>{data.cidr}</td>
+                                <td>{data.gateway_ip}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        <div className={styles.removeCheckWrapper}>
+                          {physicalnetworkCheckItems?.map(id => {
+                            const name = physicalNetworkList
+                              ?.filter(data => data.name === id)
+                              .map(item => item.name)[0]
+                            return (
+                              <span key={id}>
+                                <Button
+                                  icon="close"
+                                  onClick={() =>
+                                    handleDelete(id, 'physicalnetwork')
+                                  }
+                                >
+                                  {name}
+                                </Button>
+                              </span>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </Form.Item>
                 </div>
               </div>
               {/* 네트워크 설정 끝========================================== */}
@@ -1031,8 +1201,9 @@ const RegistNodePoolModal = props => {
                 <Form.Item label={t('ADD_NODE_SELECTOR')}>
                   <div className={styles.box_wrapper}>
                     <div
-                      className={`form-item-error ${nodeSelectorError ? '' : 'hide'
-                        }`}
+                      className={`form-item-error ${
+                        nodeSelectorError ? '' : 'hide'
+                      }`}
                     >
                       {t('ADD_NODE_SELECTOR_TIP')}
                     </div>
@@ -1205,7 +1376,10 @@ const RegistNodePoolModal = props => {
                     <div className={styles.greybgbox}>
                       <div className={styles.list}>
                         {Object.keys(nodeSelector).length > 0 && (
-                          <div className={styles.list} style={{ width: '100%' }}>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
                             <label style={{ width: '100%' }}>
                               {t('ADD_NODE_SELECTOR')}
                             </label>

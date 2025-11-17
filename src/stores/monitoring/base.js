@@ -291,7 +291,7 @@ export default class BaseMonitoringStore {
     const api = `apis${this.cluster && globals.app.isMultiCluster
         ? `/clusters/${this.cluster}`
         : ''
-      }/monitoring.coreos.com/v1/namespaces/kubesphere-monitoring-system/servicemonitors/etcd`
+      }/monitoring.coreos.com/v1/namespaces/monitoring-system/servicemonitors/etcd`
     this.etcdChecking = true
 
     try {

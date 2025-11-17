@@ -63,7 +63,7 @@ const CustomRule = (props, ref) => {
 
       const params = {
         cluster: 'default',
-        namespace: 'kubesphere-monitoring-system',
+        namespace: 'monitoring-system',
         name: 'alert-rule-resource-type',
       }
 

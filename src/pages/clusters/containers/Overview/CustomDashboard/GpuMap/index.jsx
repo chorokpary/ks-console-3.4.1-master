@@ -14,7 +14,7 @@ const typeOption = [
   },
   {
     value: 'vm',
-    label: t('RESOURCES_VM'),
+    label: t('RESOURCES_VM_SHORT'),
   },
   {
     value: 'gpu',
