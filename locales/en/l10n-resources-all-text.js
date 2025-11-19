@@ -1214,7 +1214,7 @@ module.exports = {
     'Number of Virtual Machines Available for Creation',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
     'Please enter a value greater than or equal to 1 for the number of virtual machines to create.',
-
+  RESOURCES_GPU_CLUSTER_VM_NAME: 'Virtual Machine Name',
   RESOURCES_VM_SETTINGS: 'Virtual Machine Settings',
   RESOURCES_NO_VM: 'No Virtual Machines Found.',
   RESOURCES_CREATE_REQUEST_SUCCESSFUL: 'Creation request has been made.',

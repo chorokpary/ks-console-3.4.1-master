@@ -1199,7 +1199,7 @@ module.exports = {
   RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT: '생성 가능한 가상머신 수',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
     '가상머신 생성 수를  1 이상 입력해주세요',
-
+  RESOURCES_GPU_CLUSTER_VM_NAME: '가상머신 이름',
   RESOURCES_VM_SETTINGS: '가상머신 설정',
   RESOURCES_NO_VM: '가상머신이 없습니다.',
   RESOURCES_CREATE_REQUEST_SUCCESSFUL: '생성 요청 했습니다.',

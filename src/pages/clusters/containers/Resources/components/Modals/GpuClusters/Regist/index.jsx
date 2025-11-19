@@ -1553,6 +1553,10 @@ const RegistModal = props => {
                   </label>
                 </div>
 
+                <label className="form-item-label" htmlFor="name">
+                  {t('RESOURCES_GPU_CLUSTER_VM_NAME')}
+                  <span className="form-item-required">*</span>
+                </label>
                 <div>
                   {vmListLoading ? (
                     <Loading className="ks-page-loading" />
