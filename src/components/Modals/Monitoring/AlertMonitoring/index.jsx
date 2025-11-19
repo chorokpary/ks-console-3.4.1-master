@@ -14,7 +14,7 @@ export default class AlertMonitor extends React.Component {
   state = {
     metrics: [],
     currentMetric: [],
-    step: '30s',
+    step: '1m',
     times: 60,
     isLoading: true,
     autoFetch: false,
