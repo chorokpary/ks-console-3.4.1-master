@@ -429,7 +429,7 @@ const ResourceImageModal = props => {
       tagRegex = RegExp(`^v\\d+\\.\\d+\\.\\d+(-${arch})$`)
     } else {
       tagRegex = RegExp(
-        `^v\\d+\\.\\d+\\.\\d+(-${accel.toLowerCase()}(?:-\\d+)?-${arch})$`
+        `^v\\d+\\.\\d+\\.\\d+(-${accel.toLowerCase()}(?:-\\d+)?(?:-[a-zA-Z0-9]+)*-${arch})$`
       )
     }
     const matchingTags = tags
