@@ -112,14 +112,14 @@ export default class UsersStore extends Base {
         },
       };
 
-      const params = {
+      const mfaParams = {
         userData,
         password: {password: get(data, 'spec.password', '')}
       }
 
-      console.log("params : "+ JSON.stringify(params))
+      console.log("mfaParams : "+ JSON.stringify(mfaParams))
 
-      const result = await this.submitting(request.post(`/users/auth/create/mfa`, params))
+      const result = await this.submitting(request.post(`/users/auth/create/mfa`, mfaParams))
       console.log("result : "+ JSON.stringify(result))
       return result.success; 
 
