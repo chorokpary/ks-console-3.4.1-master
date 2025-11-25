@@ -101,6 +101,9 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     }
   }
 
+  const backdropRef = useRef(null)
+  const popoverRef = useRef(null)
+
   // 바깥 클릭 감지
   useEffect(() => {
     const handleClickOutside = e => {
@@ -115,8 +118,21 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       }
     }
 
+    const handleClickPopOutside = e => {
+      // popover 내부 클릭이면 종료(닫지 않음)
+      if (popoverRef.current?.contains(e.target)) return
+
+      if (backdropRef.current && backdropRef.current.contains(e.target)) {
+        setPopOpen(false)
+      }
+    }
+
     document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
+    document.addEventListener('click', handleClickPopOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('click', handleClickPopOutside)
+    }
   }, [])
 
   useEffect(() => {
@@ -645,6 +661,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 selectCluster={selectCluster}
                 gpuDataList={gpuDataList}
                 popOpen={popOpen}
+                backdropRef={backdropRef}
+                popoverRef={popoverRef}
                 {...props}
               />
             )}
@@ -665,6 +683,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 selectCluster={selectCluster}
                 gpuDataList={gpuDataList}
                 popOpen={popOpen}
+                backdropRef={backdropRef}
+                popoverRef={popoverRef}
                 {...props}
               />
             )}
@@ -678,6 +698,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
                 range={range}
                 popOpen={popOpen}
                 vmList={vmList}
+                backdropRef={backdropRef}
+                popoverRef={popoverRef}
                 {...props}
               />
             )}
