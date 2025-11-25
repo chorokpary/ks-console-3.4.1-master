@@ -28,15 +28,22 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class ImageBuildStore extends Base {
-
   records = new List()
 
   module = 'imagebuild'
 
-  postResourceUrl = (params = {}) => `builder/`
-  getResourceUrl = (params = {}) => `builder`
-  getListUrl = (params = {}) => `builder/list`
-  getDetailUrl = (params = {}) => `${this.getResourceUrl(params)}/${params.name}`
+  getResourceUrl = (params = {}) =>
+    `kapis/imagebuilder.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/image-builder/builder`
+
+  postResourceUrl = (params = {}) =>
+    `kapis/imagebuilder.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/image-builder/builder/`
+  getListUrl = (params = {}) => `${this.getResourceUrl(params)}/list`
+  getDetailUrl = (params = {}) =>
+    `${this.getResourceUrl(params)}/${params.name}`
 
   @action
   async fetchList({
@@ -48,7 +55,6 @@ export default class ImageBuildStore extends Base {
     silent,
     ...params
   } = {}) {
-
     if (!silent) {
       this.list.isLoading = true
     }
@@ -64,63 +70,69 @@ export default class ImageBuildStore extends Base {
 
     params.limit = params.limit || 10
 
-    const result = await request.get(
-      this.getListUrl()
-    )
+    const result = await request.get(this.getListUrl())
 
-    const data = (get(result, 'locations') || []);
+    const data = get(result, 'locations') || []
 
     // 정렬
-    const promises = data.map(async (item) => {
+    const promises = data.map(async item => {
       const tags = get(item, 'tags')
-      const imagename = get(tags, 'image-name', "-")
-      item.imagename = imagename;
+      const imagename = get(tags, 'image-name', '-')
+      item.imagename = imagename
     })
-    await Promise.all(promises);
-    
-    // 초기 데이터 처리 
-    this.dataList = data;
+    await Promise.all(promises)
 
-    // 검색 관련 처리 
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-    const searchArray = Object.keys(params).map((key) => {
-      let value = params[key];
-      let searchData = {
-        "searchKeywordType": key,
-        "searchKeywordText": value
-      }
-      return searchData
-    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+    // 초기 데이터 처리
+    this.dataList = data
+
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const searchArray = Object.keys(params)
+      .map(key => {
+        let value = params[key]
+        let searchData = {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        }
+        return searchData
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
 
     if (searchArray.length > 0) {
-      searchArray.map((search) => {
-        let resultList = this.dataList.filter((row) => {
-          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-        });
-        this.dataList = resultList;
+      searchArray.map(search => {
+        let resultList = this.dataList.filter(row => {
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase())
+        })
+        this.dataList = resultList
       })
     }
 
     //정렬 처리
-    const sortType = !!params.ascending ? "asc" : "desc";
+    const sortType = !!params.ascending ? 'asc' : 'desc'
     this.dataList.sort((a, b) => {
-      var x = a[params.sortBy];
-      var y = b[params.sortBy];
-      if (sortType == "desc") {
-        return x > y ? -1 : x < y ? 1 : 0;
-      } else if (sortType == "asc") {
-        return x < y ? -1 : x > y ? 1 : 0;
+      var x = a[params.sortBy]
+      var y = b[params.sortBy]
+      if (sortType == 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0
+      } else if (sortType == 'asc') {
+        return x < y ? -1 : x > y ? 1 : 0
       }
-    });
+    })
 
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || result.total_count || this.dataList.length || 0,
+      total:
+        result.totalItems || result.total_count || this.dataList.length || 0,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -136,13 +148,13 @@ export default class ImageBuildStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.postResourceUrl(params);
+    const url = this.postResourceUrl(params)
 
-    const jsonData = {};
-    const tagsData = {};
-    const containerData = {};
+    const jsonData = {}
+    const tagsData = {}
+    const containerData = {}
 
-    const registUrl = (data.registUrl).replace('https://','')
+    const registUrl = data.registUrl.replace('https://', '')
     tagsData.cpuType = data.cpuType
     tagsData.tag = data.tag
     tagsData.os = data.os
@@ -150,7 +162,7 @@ export default class ImageBuildStore extends Base {
     tagsData.description = data.description
 
     containerData.destination = registUrl
-    containerData.id = data.user
+    containerData.id = data.username
     containerData.password = data.password
 
     jsonData['name'] = data.name
@@ -158,13 +170,10 @@ export default class ImageBuildStore extends Base {
     jsonData['container-registry'] = containerData
 
     // console.log("url : "+ url)
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
 
-    const res = await this.submitting(request.post(url, jsonData));
-    // console.log("res : "+ JSON.stringify(res))
+    const res = await this.submitting(request.post(url, jsonData))
     return res
   }
-
 
   @action
   async fetchDetail(params) {
@@ -173,7 +182,7 @@ export default class ImageBuildStore extends Base {
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.id}`
     )
-    set(result, "imagename", result['tags']['image-name'])
+    set(result, 'imagename', result['tags']['image-name'])
 
     const detail = result
 
@@ -181,7 +190,6 @@ export default class ImageBuildStore extends Base {
     this.isLoading = false
     return detail
   }
-
 
   @action
   async batchDelete({ rowKeys, ...params }) {
@@ -191,9 +199,7 @@ export default class ImageBuildStore extends Base {
       await this.submitting(
         Promise.all(
           rowKeys.map(name =>
-            request.delete(
-              `${this.getDetailUrl({ name, ...params })}`
-            )
+            request.delete(`${this.getDetailUrl({ name, ...params })}`)
           )
         )
       )
@@ -207,9 +213,10 @@ export default class ImageBuildStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-    console.log("`${this.getDetailUrl(user)}` : "+ `${this.getDetailUrl(user)}`)
+    console.log(
+      '`${this.getDetailUrl(user)}` : ' + `${this.getDetailUrl(user)}`
+    )
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
-
 }

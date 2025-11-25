@@ -1,6 +1,14 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
-import { Form, Input, TextArea, Button } from '@kube-design/components'
+import {
+  Columns,
+  Column,
+  Form,
+  Input,
+  TextArea,
+  Button,
+} from '@kube-design/components'
+import { ProjectSelect } from 'components/Inputs'
 import {
   RadioButton,
   RadioGroup,
@@ -10,27 +18,26 @@ import { Modal } from 'components/Base'
 import classnames from 'classnames'
 
 import { PATTERN_USER_NAME } from 'utils/constants'
+import ContainerForm from './ContainerForm'
+
 import styles from './index.scss'
 
+import SecretStore from 'stores/secret'
+
 const RegistModal = props => {
+  const imageRegistryStore = new SecretStore()
+
   const form = useRef()
   const [modelView, setModalView] = useState(true)
   const [formData, setFormData] = useState({})
 
   const [cpuType, setCpuType] = useState('ARM')
 
-  const [registryUrl, setRegistryUrl] = useState('')
-  const [userName, setUserName] = useState('')
-  const [userPassword, setUserPassword] = useState('')
+  const [projectName, setProjectName] = useState('default')
+  const [imageRegistries, setImageRegistries] = useState([])
 
-  const [harborValid, setHarborValid] = useState(false)
-
-  const [userValid, setUserValid] = useState(false)
-  const [userValidError, setUserValidError] = useState(false)
-  const [userValidCheck, setuserValidCheck] = useState(false)
-  const [userValidCheckError, setUserValidCheckError] = useState(false)
-
-  const [userValidSuccess, setUserValidSuccess] = useState(false)
+  const [secret, setSecret] = useState({})
+  const [imageDetail, setImageDetail] = useState('')
 
   const cpuTypeOptions = [
     { label: t('ARM'), value: 'ARM' },
@@ -40,31 +47,27 @@ const RegistModal = props => {
   const handleOk = () => {
     const onOk = props.onOk
 
-    form.current.validator(() => {
+    form.current.validator(async () => {
       const { data } = form.current.props
 
-      data.registUrl = registryUrl
-      data.user = userName
-      data.password = userPassword
+      data.username = ''
+      data.password = ''
+      data.registUrl = imageDetail
 
-      if (!!registryUrl && !!userName && !!userPassword) {
-        setHarborValid(false)
-      } else {
-        setHarborValid(true)
-        return false
+      if (secret.isPublic === false) {
+        const secretsData = await imageRegistryStore.fetchDetail({
+          cluster: props.cluster,
+          namespace: projectName,
+          name: secret.value,
+        })
+
+        const secrets =
+          secretsData?.data?.['.dockerconfigjson']?.auths?.[secret.url] || {}
+        data.username = secrets.username
+        data.password = secrets.password
       }
 
-      if (!userValidCheck) {
-        setUserValidCheckError(true)
-        setUserValidError(false)
-        return false
-      }
-
-      if (!userValid) {
-        return false
-      }
-
-      // console.log("data : "+ JSON.stringify(data))
+      console.log('data : ', data)
       onOk({ ...data })
     })
   }
@@ -73,41 +76,13 @@ const RegistModal = props => {
     setModalView(false)
   }
 
-  const checkUserValid = async () => {
-    const userAuth = Base64.encode(`${userName}:${userPassword}`)
-
-    const originUrl = new URL(registryUrl)
-    await request
-      .post(`customharbor/build`, {
-        auth: userAuth,
-        originUrl: originUrl.origin,
-      })
-      .then(res => {
-        Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
-        setuserValidCheck(true)
-        setUserValidCheckError(false)
-        setUserValid(true)
-        setUserValidError(false)
-      })
-      .catch(err => {
-        if (err.status) {
-          // 유효하지 않음
-          setuserValidCheck(false)
-          setUserValidCheckError(false)
-          setUserValid(false)
-          setUserValidError(true)
-
-          setUserValidSuccess(false)
-        } else {
-          // 유효함
-          setuserValidCheck(true)
-          setUserValidCheckError(false)
-          setUserValid(true)
-          setUserValidError(false)
-
-          setUserValidSuccess(true)
-        }
-      })
+  const getImageRegistries = async () => {
+    const imageRegistries = await imageRegistryStore.fetchListByK8s({
+      cluster: props.cluster,
+      namespace: projectName,
+      fieldSelector: `type=kubernetes.io/dockerconfigjson`,
+    })
+    setImageRegistries(imageRegistries)
   }
 
   const tagValidator = (rule, value, callback) => {
@@ -124,9 +99,16 @@ const RegistModal = props => {
     callback()
   }
 
+  useEffect(() => {
+    getImageRegistries()
+  }, [projectName])
+
+  const onChangeImageDetail = value => {
+    setImageDetail(value)
+  }
+
   const fnGetModalFooter = () => {
-    let elements = ''
-    elements = (
+    return (
       <>
         <Button
           onClick={() => closeModal()}
@@ -134,31 +116,18 @@ const RegistModal = props => {
         >
           {t('RESOURCES_CANCEL')}
         </Button>
-        {props.isSubmitting ? (
-          <Button
-            onClick={() => {
-              handleOk()
-            }}
-            className={classnames(styles['btn'], styles['btn-control'])}
-            loading={props.store.isSubmitting}
-            disabled={props.store.isSubmitting}
-          >
-            {t('RESOURCES_CREATE')}
-          </Button>
-        ) : (
-          <Button
-            onClick={() => {
-              handleOk()
-            }}
-            className={classnames(styles['btn'], styles['btn-control'])}
-          >
-            {t('RESOURCES_CREATE')}
-          </Button>
-        )}
+        <Button
+          onClick={() => {
+            handleOk()
+          }}
+          className={classnames(styles['btn'], styles['btn-control'])}
+          loading={props.store.isSubmitting}
+          disabled={imageDetail.length === 0}
+        >
+          {t('RESOURCES_CREATE')}
+        </Button>
       </>
     )
-
-    return elements
   }
 
   return (
@@ -174,180 +143,119 @@ const RegistModal = props => {
         hideFooter
       >
         <Form data={formData} ref={form}>
-          <div className={styles.cont_boxwrap}>
-            <Form.Item
-              label={t('RESOURCES_NAME')}
-              rules={[
-                { required: true, message: t('NAME_EMPTY_DESC') },
-                {
-                  pattern: PATTERN_USER_NAME,
-                  message: t('RESOURCES_INVALID_NAME_DESC'),
-                },
-              ]}
-              desc={t('NAME_DESC')}
-            >
-              <Input
-                name="name"
-                autoFocus={true}
-                maxLength={63}
-                style={{ maxWidth: 'none' }}
-              />
-            </Form.Item>
+          {/* Content */}
+          <div className={styles.pop_overflow_y}>
+            <div className={styles.cont_boxwrap}>
+              <Columns>
+                <Column>
+                  <Form.Item
+                    label={t('RESOURCES_NAME')}
+                    rules={[
+                      { required: true, message: t('NAME_EMPTY_DESC') },
+                      {
+                        pattern: PATTERN_USER_NAME,
+                        message: t('RESOURCES_INVALID_NAME_DESC'),
+                      },
+                    ]}
+                    desc={t('NAME_DESC')}
+                  >
+                    <Input
+                      name="name"
+                      autoFocus={true}
+                      maxLength={63}
+                      style={{ maxWidth: 'none' }}
+                    />
+                  </Form.Item>
+                </Column>
+                <Column>
+                  <Form.Item
+                    label={t('PROJECT')}
+                    desc={t('SELECT_PROJECT_DESC')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('PROJECT_NOT_SELECT_DESC'),
+                      },
+                    ]}
+                  >
+                    <ProjectSelect
+                      name="metadata.namespace"
+                      defaultValue={projectName}
+                      cluster={props.cluster}
+                      onChange={e => {
+                        setProjectName(e)
+                      }}
+                    />
+                  </Form.Item>
+                </Column>
+              </Columns>
 
-            <Form.Item
-              label={t('RESOURCES_CPU_TYPE')}
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <RadioGroup
-                name="cpuType"
-                wrapClassName="radio"
-                defaultValue={cpuType}
-                onChange={value => setCpuType(value)}
+              <Form.Item
+                label={t('RESOURCES_CPU_TYPE')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
               >
-                {cpuTypeOptions.map(option => (
-                  <RadioButton key={option.value} value={option.value}>
-                    {option.label}
-                  </RadioButton>
-                ))}
-              </RadioGroup>
-            </Form.Item>
+                <RadioGroup
+                  name="cpuType"
+                  wrapClassName="radio"
+                  defaultValue={cpuType}
+                  onChange={value => setCpuType(value)}
+                >
+                  {cpuTypeOptions.map(option => (
+                    <RadioButton key={option.value} value={option.value}>
+                      {option.label}
+                    </RadioButton>
+                  ))}
+                </RadioGroup>
+              </Form.Item>
 
-            <Form.Item
-              label={t('RESOURCES_TAG')}
-              rules={[{ required: true, validator: tagValidator }]}
-              desc={t('RESOURCES_TAG_DESC')}
-            >
-              <Input name="tag" maxLength={63} style={{ maxWidth: 'none' }} />
-            </Form.Item>
+              <Form.Item
+                label={t('RESOURCES_TAG')}
+                rules={[{ required: true, validator: tagValidator }]}
+                desc={t('RESOURCES_TAG_DESC')}
+              >
+                <Input name="tag" maxLength={63} style={{ maxWidth: 'none' }} />
+              </Form.Item>
 
-            <Form.Item
-              label={t('RESOURCES_OS_INFORMATION')}
-              rules={[{ required: true, validator: osValidator }]}
-              desc={t('RESOURCES_OS_DESC')}
-            >
-              <Input name="os" maxLength={63} style={{ maxWidth: 'none' }} />
-            </Form.Item>
+              <Form.Item
+                label={t('RESOURCES_OS_INFORMATION')}
+                rules={[{ required: true, validator: osValidator }]}
+                desc={t('RESOURCES_OS_DESC')}
+              >
+                <Input name="os" maxLength={63} style={{ maxWidth: 'none' }} />
+              </Form.Item>
+              <Form.Item
+                label={t('CONTAINER_SETTINGS')}
+                desc={t('CONTAINER_SETTINGS_DESC')}
+              >
+                <ContainerForm
+                  type={'Add'}
+                  namespace={projectName}
+                  imageRegistries={imageRegistries}
+                  cluster={props.cluster}
+                  onSecretChange={setSecret}
+                  onChangeImageDetail={onChangeImageDetail}
+                />
+              </Form.Item>
 
-            <Form.Item>
-              <>
-                Harbor URL<span className="form-item-required">*</span>
-                <div className={styles.content_box_wrap}>
-                  <div className={styles.cont_box_section}>
-                    <div className={styles.cont_box_wrap}>
-                      <div className={styles.regi_group_area}>
-                        <div className={styles.formarea}>
-                          <div
-                            className={classnames(
-                              styles.custom_input,
-                              styles.w_1
-                            )}
-                          >
-                            <label>Registry URL</label>
-                            <input
-                              type="text"
-                              placeholder={
-                                'http://{url}/api/v2.0/projects/{project_name}/repositories'
-                              }
-                              defaultValue={registryUrl}
-                              onChange={e => setRegistryUrl(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className={styles.regi_group_area}>
-                        <div className={styles.formarea}>
-                          <div className={styles.custom_input}>
-                            <label>{t('RESOURCES_USER_NAME')}</label>
-                            <input
-                              type="text"
-                              name="username"
-                              defaultValue={userName}
-                              onChange={e => setUserName(e.target.value)}
-                            />
-                          </div>
-                          <div className={styles.custom_input}>
-                            <label>{t('RESOURCES_PASSWORD')}</label>
-                            <input
-                              type="password"
-                              name="password"
-                              defaultValue={userPassword}
-                              onChange={e => setUserPassword(e.target.value)}
-                            />
-                          </div>
-                          <button
-                            type="button"
-                            className={classnames(
-                              styles.btn,
-                              styles.btn_control
-                            )}
-                            onClick={() => checkUserValid()}
-                          >
-                            {t('RESOURCES_VALID')}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* //Harbor URL 정보를 입력해 주세요. */}
-                      {harborValid && (
-                        <div
-                          className="form-item-error"
-                          style={{ color: '#ca2621' }}
-                        >
-                          {t('RESOURCES_HARBOR_VALID_TIP')}
-                        </div>
-                      )}
-                      {/* //유효성을 체크해주세요.. */}
-                      {userValidCheckError && (
-                        <div
-                          className="form-item-error"
-                          style={{ color: '#ca2621' }}
-                        >
-                          {t('RESOURCES_VALID_TIP')}
-                        </div>
-                      )}
-                      {/* //유효하지 않은 사용자 입니다. */}
-                      {userValidError && (
-                        <div
-                          className="form-item-error"
-                          style={{ color: '#ca2621' }}
-                        >
-                          {t('RESOURCES_FAIL_VALID_TIP')}
-                        </div>
-                      )}
-                      {/* //유효성 체크가 완료 되었습니다. */}
-                      {userValidSuccess && (
-                        <div
-                          className="form-item-error"
-                          style={{ color: '#55bc8a' }}
-                        >
-                          {t('RESOURCES_SUCCESS_VALID_DESC')}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </>
-            </Form.Item>
-
-            <Form.Item
-              className={styles.textarea}
-              label={t('RESOURCES_DESCRIPTION')}
-              desc={t('DESCRIPTION_DESC')}
-            >
-              <TextArea
-                name="description"
-                maxLength={256}
-                rows="1"
-                defaultValue=""
-              />
-            </Form.Item>
+              <Form.Item
+                className={styles.textarea}
+                label={t('RESOURCES_DESCRIPTION')}
+                desc={t('DESCRIPTION_DESC')}
+              >
+                <TextArea
+                  name="description"
+                  maxLength={256}
+                  rows="1"
+                  defaultValue=""
+                />
+              </Form.Item>
+            </div>
           </div>
-
+          {/* Footer */}
           <div className={styles['modal-footer']}>{fnGetModalFooter()}</div>
         </Form>
       </Modal>

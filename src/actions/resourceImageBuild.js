@@ -34,7 +34,10 @@ export default {
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-              setTimeout(success && success(), 1000);
+
+              // setTimeout(() => {
+              success && success()
+              // }, 1000)
             })
         },
         title: t('RESOURCES_IMAGE_BUILD'),
@@ -59,7 +62,6 @@ export default {
       devops,
       ...props
     }) {
-      console.log("detail :"+JSON.stringify(detail))
       const modal = Modal.open({
         onOk: () => {
           store
@@ -84,10 +86,10 @@ export default {
   'imagebuild.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
+      let arr = new Array()
       store.dataList.map(obj => {
         if (rowKeys.includes(obj.name)) {
-            arr.push(obj.imagename)
+          arr.push(obj.imagename)
         }
       })
       const names = arr.join(', ')
