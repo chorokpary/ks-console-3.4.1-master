@@ -93,20 +93,10 @@ export default class UsersStore extends Base {
   getListUrl = this.getResourceUrl
 
   getAuthentikResourceUrl = "/api/v3/core/users/"
-  
+
 
   @action
   async create(data, params = {}) {
-
-    if(data.isMfa){
-      const res = await this.submitting(          
-        request.post(this.getListUrl(params), data)
-      )
-      if (this.afterChange) {
-        this.afterChange(res)
-      }
-      return res      
-    }else{     
 
       const userData = {
         username: get(data, 'metadata.name', ''),         
@@ -114,7 +104,7 @@ export default class UsersStore extends Base {
         email: get(data, 'spec.email', ''),              
         is_active: true,
         groups: [],
-        path: 'petasus.io',          
+        path: data.isMfa ? 'petasus.io' : 'local-petasus.io',          
         type: 'internal',           
         attributes: {
           role: get(data, 'metadata.annotations["iam.kubesphere.io/globalrole"]'),
@@ -132,7 +122,7 @@ export default class UsersStore extends Base {
       const result = await this.submitting(request.post(`/users/auth/create/mfa`, params))
       console.log("result : "+ JSON.stringify(result))
       return result.success; 
-    }
+
 
   }
 

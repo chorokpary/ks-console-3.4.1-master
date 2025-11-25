@@ -53,7 +53,7 @@ export default class UserCreateModal extends Component {
     formTemplate: {
       apiVersion: 'iam.kubesphere.io/v1alpha2',
       kind: 'User',
-      isMfa: false,
+      isMfa: true,
       ...get(this.props, 'detail._originData', {}),
     },
   }
@@ -173,7 +173,7 @@ export default class UserCreateModal extends Component {
               }));
             }}
             />
-            <span>{' 로컬 사용자'}</span>
+            <span>{t('MFA')}</span>
           </div>
         </Form.Item>
     
