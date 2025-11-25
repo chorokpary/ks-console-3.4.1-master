@@ -131,6 +131,14 @@ export default class DropdownContent extends React.Component {
     if (this.props.type !== 'Edit' && this.secretValue !== '') {
       this.handleSecretChange(this.secretValue)
     }
+
+    // if (this.hubType === 'dockerHub') {
+    //   this.fetchDockerList()
+    // }
+
+    // if (this.hubType === 'harbor') {
+    //   this.fetchHarborList('', this.state.harborData)
+    // }
   }
 
   componentWillUnmount() {
@@ -146,6 +154,15 @@ export default class DropdownContent extends React.Component {
     ) {
       this.hideContent()
     }
+  }
+
+  showContent = () => {
+    this.setState({ visible: true }, () => {
+      document.addEventListener('click', this.handleDOMClick)
+      if (this.hubType !== 'dockerHub') {
+        this.fetchHarborList('', this.state.harborData)
+      }
+    })
   }
 
   hideContent = () => {
@@ -193,7 +210,19 @@ export default class DropdownContent extends React.Component {
     image = image.replace(/\s+/g, '')
     this.props.onChange(image)
     this.context.setImageDetail && this.context.setImageDetail({ image })
-    this.props.onChangeImageDetail(image)
+  }
+
+  handleKeyUp = e => {
+    if (e.keyCode === 13) {
+      this.handleConfirm()
+    }
+  }
+
+  handleConfirm = () => {
+    if (this.imageName) {
+      this.props.onEnter()
+      this.props.onImageTag({})
+    }
   }
 
   handleDockerImageSelected = async e => {
@@ -211,6 +240,86 @@ export default class DropdownContent extends React.Component {
     this.props.onChange(`${this.registryUrl}/${image}`)
     this.hideContent()
     this.props.onEnter({ logo, short_description })
+  }
+
+  handleSearchDockerHub = keyword => {
+    this.fetchDockerList(keyword)
+  }
+
+  handleSearchHarbor = keyword => {
+    this.fetchHarborList(keyword, this.state.harborData)
+  }
+
+  fetchDockerList = async keyword => {
+    this.setState({ isLoading: true })
+
+    const result = await this.store
+      .getDockerImagesLists({
+        q: keyword || '',
+        image_filter: keyword ? undefined : 'official',
+        page_size: 50,
+        type: 'image',
+      })
+      .finally(() => {
+        !this.isUnMounted && this.setState({ isLoading: false })
+      })
+
+    !this.isUnMounted &&
+      this.setState({ dockerList: get(result, 'summaries', []) })
+  }
+
+  fetchHarborList = async (keyword, harborData) => {
+    const url = get(harborData, 'url')
+
+    if (!url || isEmpty(harborData)) return
+
+    this.setState({ isLoading: true })
+
+    const result = await this.store
+      .getHarborImagesLists({
+        harborData,
+        params: {
+          q: keyword || '',
+        },
+      })
+      .finally(() => {
+        !this.isUnMounted && this.setState({ isLoading: false })
+      })
+
+    !this.isUnMounted &&
+      this.setState({ harborList: get(result, 'repository', []) })
+  }
+
+  renderContent = () => {
+    if (this.state.visible) {
+      return (
+        <div
+          className={classnames(styles.dropContent, {
+            [styles.dropContent_hide]: !this.state.visible,
+          })}
+          ref={this.dropContentRef}
+        >
+          <div className={styles.header}>
+            <InputSearch
+              className={styles.search}
+              onSearch={
+                this.hubType === 'dockerHub'
+                  ? this.handleSearchDockerHub
+                  : this.handleSearchHarbor
+              }
+              placeholder={t('SEARCH')}
+            />
+            {this.state.isLoading && (
+              <Loading className="float-left" size={28} />
+            )}
+          </div>
+          {this.hubType === 'dockerHub'
+            ? this.renderDockerList()
+            : this.renderHarborList()}
+        </div>
+      )
+    }
+    return null
   }
 
   renderDockerList() {
@@ -330,6 +439,8 @@ export default class DropdownContent extends React.Component {
           placeholder={
             this.secretValue ? 'nginx:latest' : t('IMAGE_PLACEHOLDER')
           }
+          onBlur={this.handleConfirm}
+          onKeyUp={this.handleKeyUp}
         >
           <Select
             value={this.secretValue}
@@ -339,6 +450,16 @@ export default class DropdownContent extends React.Component {
             disabled={this.secretsOptions.length <= 1}
           />
         </Input>
+        {this.hubType !== 'others' &&
+        !globals.config.enableImageSearch ? null : (
+          <Icon
+            name="templet"
+            changeable
+            className={styles.dropDownIcon}
+            onClick={this.showContent}
+          />
+        )}
+        {this.renderContent()}
       </>
     )
   }

@@ -154,11 +154,12 @@ export default class ContainerSetting extends React.Component {
         name="image"
         namespace={namespace}
         formTemplate={formTemplate}
+        handleFormData={this.props.handleFormData}
         imageRegistries={imageRegistries}
+        onImageTag={this.props.onImageTag}
         onSecretChange={this.props.onSecretChange}
         cluster={cluster}
         type={isEdit ? 'Edit' : type}
-        onChangeImageDetail={this.props.onChangeImageDetail}
       />
     )
   }
@@ -258,7 +259,12 @@ export default class ContainerSetting extends React.Component {
   render() {
     const { className } = this.props
     return (
-      <Form.Group className={className} noWrapper>
+      <Form.Group
+        className={className}
+        label={t('CONTAINER_SETTINGS')}
+        desc={t('CONTAINER_SETTINGS_DESC')}
+        noWrapper
+      >
         {this.renderImageForm()}
       </Form.Group>
     )

@@ -21,6 +21,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
+import { ReactComponent as BackIcon } from 'assets/back.svg'
 import { Form } from '@kube-design/components'
 
 import ContainerSetting from './ContainerSetting'
@@ -90,6 +91,9 @@ export default class ContaineForm extends React.Component {
       imageDetail: {},
     }
   }
+  handleFormData = () => {
+    this.setState({ formData: {} })
+  }
 
   componentDidMount() {
     this.registerForm()
@@ -108,6 +112,14 @@ export default class ContaineForm extends React.Component {
     const { onCancel } = this.props
 
     registerSubRoute && registerSubRoute(this.handleSubmit, onCancel)
+  }
+
+  handleGoBack = () => {
+    const { resetSubRoute } = this.context
+
+    resetSubRoute && resetSubRoute()
+
+    this.props.onCancel()
   }
 
   handleSubmit = callback => {
@@ -176,8 +188,8 @@ export default class ContaineForm extends React.Component {
       imageRegistries,
       namespace,
       type,
+      onImageTag,
       onSecretChange,
-      onChangeImageDetail,
     } = this.props
     const { containerType, formData } = this.state
     return (
@@ -185,13 +197,14 @@ export default class ContaineForm extends React.Component {
         <Form ref={this.formRef} data={formData}>
           <ContainerSetting
             data={formData}
+            handleFormData={this.handleFormData}
             cluster={cluster}
             namespace={namespace}
+            onImageTag={onImageTag}
             onSecretChange={onSecretChange}
             imageRegistries={imageRegistries}
             defaultContainerType={containerType}
             onContainerTypeChange={this.handleContainerTypeChange}
-            onChangeImageDetail={onChangeImageDetail}
             type={type}
           />
         </Form>
