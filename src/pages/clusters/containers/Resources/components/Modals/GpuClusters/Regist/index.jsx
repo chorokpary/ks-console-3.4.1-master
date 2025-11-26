@@ -1506,6 +1506,7 @@ const RegistModal = props => {
                           message: t('RESOURCES_INVALID_NODE_PREFIX_DESC'),
                         },
                       ]}
+                      desc={t('RESOURCES_NODE_PREFIX_DESC')}
                     >
                       <Input
                         name="node_name_prefix"

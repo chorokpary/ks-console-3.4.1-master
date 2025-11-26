@@ -1230,6 +1230,8 @@ module.exports = {
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
   RESOURCES_NODE_PREFIX: 'Node Name prefix',
   RESOURCES_NODE_PREFIX_EMPTY_DESC: 'Please enter a Node name prefix.',
+  RESOURCES_NODE_PREFIX_DESC:
+    'Please refer to the node name in the Cluster Settings > GPU Nodes menu.',
   RESOURCES_INVALID_NODE_PREFIX_DESC:
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
   RESOURCES_GPUCLUSTER_CRITICAL: 'Critical',
