@@ -234,7 +234,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                           bgColor="transparent"
                           width={180}
                           height={100}
-                          pointCount={8}
+                          pointCount={item.values.length}
                         />
                       </div>
                     )
@@ -264,7 +264,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                           bgColor="transparent"
                           width={180}
                           height={100}
-                          pointCount={8}
+                          pointCount={item.values.length}
                         />
                       </div>
                     )
@@ -293,7 +293,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                           bgColor="transparent"
                           width={180}
                           height={100}
-                          pointCount={8}
+                          pointCount={item.values.length}
                         />
                       </div>
                     )
@@ -322,7 +322,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                           bgColor="transparent"
                           width={180}
                           height={100}
-                          pointCount={8}
+                          pointCount={item.values.length}
                         />
                       </div>
                     )
@@ -349,7 +349,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                           bgColor="transparent"
                           width={180}
                           height={100}
-                          pointCount={8}
+                          pointCount={item.values.length}
                         />
                       </div>
                     )
@@ -382,7 +382,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                               bgColor="transparent"
                               width={180}
                               height={50}
-                              pointCount={8}
+                              pointCount={item.values.length}
                             />
                           </div>
                         )
@@ -410,7 +410,7 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
                               bgColor="transparent"
                               width={180}
                               height={50}
-                              pointCount={8}
+                              pointCount={item.values.length}
                             />
                           </div>
                         )
