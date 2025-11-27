@@ -14,8 +14,8 @@ export default class AlertMonitor extends React.Component {
   state = {
     metrics: [],
     currentMetric: [],
-    step: '1m',
-    times: 60,
+    step: '720s',
+    times: 10,
     isLoading: true,
     autoFetch: false,
   }
@@ -252,7 +252,7 @@ export default class AlertMonitor extends React.Component {
       <div className={styles.opts}>
         <div className={styles.time}>
           <TimeSelector
-            step={step}
+            // step={step}
             times={times}
             onChange={this.handleChange}
           />
