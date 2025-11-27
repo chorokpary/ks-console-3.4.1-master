@@ -1114,6 +1114,8 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
   RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC:
     '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
+  RESOURCES_KEYPAIR_PASSWORD_DESC:
+    '키페어 또는 스크립트 내 패스워드 정보 중 1개는 필수 입력 정보입니다.',
   RESOURCES_FILE_WIRTE_EMPTY_DESC: '파일 쓰기 정보를 입력해 주세요.',
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
   RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',

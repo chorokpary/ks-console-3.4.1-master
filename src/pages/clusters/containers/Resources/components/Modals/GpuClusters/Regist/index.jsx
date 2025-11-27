@@ -1996,7 +1996,10 @@ const RegistModal = props => {
 
               {/* 세부 설정 시작========================================== */}
               <div className={`${regStep === 3 ? '' : 'hide'}`}>
-                <Form.Item label={t('RESOURCES_KEYPAIR')}>
+                <Form.Item
+                  label={t('RESOURCES_KEYPAIR')}
+                  desc={t('RESOURCES_KEYPAIR_PASSWORD_DESC')}
+                >
                   <Select
                     name="keypair"
                     placeholder={t('RESOURCES_SELECT')}

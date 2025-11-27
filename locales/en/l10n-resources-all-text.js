@@ -1122,6 +1122,8 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: 'Image build & push completed.',
   RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC:
     'Please enter keypair or password script information.',
+  RESOURCES_KEYPAIR_PASSWORD_DESC:
+    'One of keypair or password information in the script is required.',
   RESOURCES_FILE_WIRTE_EMPTY_DESC: 'Please enter file write information.',
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC:
     'Please enter package installation information.',
