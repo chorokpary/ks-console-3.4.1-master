@@ -2403,6 +2403,36 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
+
+                    <label>{t('RESOURCES_SECURITY_GROUP')}</label>
+                    {securityGroupList
+                      .filter(x => securityGroupCheckItems.includes(x.name))
+                      .map((obj, index) => (
+                        <div className={styles.greybgbox} key={index}>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_NAME')}</label>
+                            <div>{obj.name}</div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_DESCRIPTION')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.description}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_INBOUND_RULE')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.ingress}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_OUTBOUND_RULE')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.egress}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
                     {physicalNetworkList
                       .filter(x => physicalnetworkCheckItems.includes(x.name))
@@ -2438,36 +2468,6 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
-
-                    <label>{t('RESOURCES_SECURITY_GROUP')}</label>
-                    {securityGroupList
-                      .filter(x => securityGroupCheckItems.includes(x.name))
-                      .map((obj, index) => (
-                        <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_NAME')}</label>
-                            <div>{obj.name}</div>
-                          </div>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_DESCRIPTION')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.description}</div>
-                            </div>
-                          </div>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_INBOUND_RULE')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.ingress}</div>
-                            </div>
-                          </div>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_OUTBOUND_RULE')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.egress}</div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
                   </div>
 
                   <div className={styles.box_style}>
@@ -2493,6 +2493,14 @@ const RegistModal = props => {
                         }`}</div>
                       </div>
                       <div className={styles.list}>
+                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
+                        <div>{`${
+                          networkStorage === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : networkStorage
+                        }`}</div>
+                      </div>
+                      <div className={styles.list}>
                         <label>{t('RESOURCES_SCRIPT')}</label>
                         {isScript && (
                           <div className={styles.multiline}>
@@ -2504,14 +2512,6 @@ const RegistModal = props => {
                             </div>
                           </div>
                         )}
-                      </div>
-                      <div className={styles.list}>
-                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
-                        <div>{`${
-                          networkStorage === undefined
-                            ? t('RESOURCES_AUTOMATIC')
-                            : networkStorage
-                        }`}</div>
                       </div>
 
                       {/* <div className={styles.list}>
