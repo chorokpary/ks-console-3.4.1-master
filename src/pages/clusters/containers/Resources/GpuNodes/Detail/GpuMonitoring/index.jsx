@@ -12,11 +12,10 @@ import { SimpleArea } from 'components/Charts'
 const index = props => {
   const store = props.detailStore
   const customStore = new CustomStore()
-  const vmStore = new VmStore()  
+  const vmStore = new VmStore()
 
   const [vmProject, setVmProject] = useState('')
   const [vmDataList, setVmDataList] = useState([])
-  const [fetchParams, setFetchParams] = useState({})
 
   const [vmGpuUtilData, setVmGpuUtilData] = useState([])
   const [vmGpuRamData, setVmGpuRamData] = useState([])
@@ -58,9 +57,9 @@ const index = props => {
   }
 
   useEffect(() => {
-      fnGetData()
-    }, [])
-  
+    fnGetData()
+  }, [])
+
   const fnGetData = async () => {
     const params = {
       cluster: store.detail.cluster,
@@ -68,15 +67,19 @@ const index = props => {
     }
 
     const vmList = await vmStore.fetchList(params)
-    const project = vmList.filter(item => item.node === store.detail.name)[0].project
-    const vmData = vmList.filter(item => item.node === store.detail.name).map(item => item.name).join('|') || ''
+    const project = vmList.filter(item => item.node === store.detail.name)[0]
+      .project
+    const vmData =
+      vmList
+        .filter(item => item.node === store.detail.name)
+        .map(item => item.name)
+        .join('|') || ''
 
     setVmProject(project)
     setVmDataList(vmData)
   }
 
   const fetchData = async params => {
-    setFetchParams(params)
     const paramsData = Object.assign(params, {
       start: params.start,
       end: params.end,
@@ -182,7 +185,7 @@ const index = props => {
 
   const getMonitoringCfgs = () => {
     return [
-       {
+      {
         type: 'utilisation',
         title: 'RESOURCES_GPU_UTILIZATION',
         unit: '%',
@@ -235,28 +238,24 @@ const index = props => {
     ]
   }
 
-  useEffect(() => {
-    if (vmDataList) {
-      fetchData({ ...fetchParams })
-    }
-  }, [vmDataList])  
-
   const { isLoading, isRefreshing } = customStore
   const configs = getMonitoringCfgs()
 
   return (
-    <MonitoringController
-      title={t('RESOURCES_GPU_MONITORING')}
-      onFetch={fetchData}
-      loading={isLoading}
-      refreshing={isRefreshing}
-    >
-      {configs.map(item => {
-        const config = getAreaChartOps(item)
-        if (isEmpty(config.data)) return null
-        return <SimpleArea key={config.title} width="100%" {...config} />
-      })}
-    </MonitoringController>
+    vmDataList.length > 0 && (
+      <MonitoringController
+        title={t('RESOURCES_GPU_MONITORING')}
+        onFetch={fetchData}
+        loading={isLoading}
+        refreshing={isRefreshing}
+      >
+        {configs.map(item => {
+          const config = getAreaChartOps(item)
+          if (isEmpty(config.data)) return null
+          return <SimpleArea key={config.title} width="100%" {...config} />
+        })}
+      </MonitoringController>
+    )
   )
 }
 

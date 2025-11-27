@@ -45,7 +45,7 @@ export default class MonitoringController extends React.Component {
 
   static defaultProps = {
     step: '10m',
-    times: 50,
+    times: 10,
     createTime: '',
     onFetch() {},
     loading: false,
