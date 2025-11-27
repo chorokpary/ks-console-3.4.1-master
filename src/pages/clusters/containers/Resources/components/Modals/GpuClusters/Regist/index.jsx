@@ -1519,7 +1519,7 @@ const RegistModal = props => {
                 </Columns>
 
                 <label className="form-item-label" htmlFor="name">
-                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
+                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT')}
                   <span className="form-item-required">*</span>
                 </label>
                 <Form.Item
@@ -1555,7 +1555,7 @@ const RegistModal = props => {
                 </div>
 
                 <label className="form-item-label" htmlFor="name">
-                  {t('RESOURCES_GPU_CLUSTER_VM_NAME')}
+                  {t('RESOURCES_NODE')} {t('RESOURCES_SELECT')}
                   <span className="form-item-required">*</span>
                 </label>
                 <div>
