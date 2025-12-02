@@ -103,24 +103,16 @@ export default class GpuClustersStore extends Base {
     // 상태 추가
     const updatedData = await Promise.all(
       data.map(async item => {
-        const newParams = {
-          name: item.name,
-          limit: 10000,
-        }
-
-        let resultDetail = await this.fetchVmsDetail({
-          ...newParams,
-          namespace: item.namespace,
-        })
+        const vmList = item?.instances || []
 
         let isRunningCount = 0
-        resultDetail.vmList.forEach(data => {
+        vmList.forEach(data => {
           if (data.vmPhase === 'Running') {
             isRunningCount += 1
           }
         })
 
-        const is_normal = isRunningCount === resultDetail.vmList.length
+        const is_normal = isRunningCount === vmList.length
         const state = is_normal ? 'normal' : 'abnormal'
 
         return {
