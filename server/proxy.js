@@ -112,7 +112,7 @@ const devopsWebhookProxy = {
 // }
 
 const webMm3Proxy = {
-  target: serverConfig.apiServer.url+'/kapis/edgestack.kubesphere.io/v1alpha1',
+  target: serverConfig.apiServer.url,
   changeOrigin: true,
   events: {
     proxyReq(proxyReq, req) {
@@ -123,15 +123,103 @@ const webMm3Proxy = {
 
       NEED_OMIT_HEADERS.forEach(key => proxyReq.removeHeader(key))
     },
-  },  
+  },
 }
 
+// const INTERNAL_ORIGIN = serverConfig.apiServer.url.replace(/\/$/, '') // 예: "http://ks-apiserver:32572"
+const IMAGE_EXTERNAL_PREFIX =
+  '/kapis/imagebuilder.kubesphere.io/v1alpha1/imagebuilder/{resourcename}/image-builder'
+// '/kapis/imagebuilder.kubesphere.io/v1alpha1/imagebuilder'
+
 const webImageBuildProxy = {
-  target: `${serverConfig.apiServer.imagebuildlUrl}`,
+  target: `${serverConfig.apiServer.imagebuildUrl}` + IMAGE_EXTERNAL_PREFIX,
   changeOrigin: true,
+  xfwd: true,
   events: {
     proxyReq(proxyReq, req) {
-        proxyReq.setHeader('X-Forwarded-Host', req.headers.host)
+      console.log('pathname : ', req.url)
+
+      let resourcename = 'builder'
+      if (req.url.startsWith('/files')) {
+        resourcename = 'files'
+      }
+
+      const replacedPrefix = IMAGE_EXTERNAL_PREFIX.replace(
+        '{resourcename}',
+        resourcename
+      )
+      proxyReq.path = replacedPrefix + req.url
+
+      proxyReq.setHeader('Authorization', `Bearer ${req.token}`)
+      proxyReq.setHeader('X-Forwarded-Host', req.headers.host)
+      console.log('proxyReq.path : ', proxyReq.path)
+    },
+
+    proxyRes(proxyRes, req) {
+      console.log(
+        '[imagebuild] <-',
+        proxyRes && proxyRes.statusCode,
+        req && req.url
+      )
+
+      const loc = proxyRes && proxyRes.headers && proxyRes.headers['location']
+
+      // 수신한 Location 헤더 로그
+      console.log('[imagebuild] Received Location:', loc)
+
+      if (!loc) return
+
+      // 1) 상대경로(/files/...)면 /kapis prefix 붙여서 돌려주기
+      if (typeof loc === 'string' && loc.startsWith('/files/')) {
+        proxyRes.headers['location'] = `${IMAGE_EXTERNAL_PREFIX}${loc}`
+        console.log(
+          '[imagebuild] Sending Location (relative):',
+          proxyRes.headers['location']
+        )
+        return
+      }
+      console.log(
+        '[imagebuild] Sending Location (absolute):',
+        proxyRes.headers['location']
+      )
+      // 2) 절대 URL이면 원점 기준으로 판단해서 치환
+      // try {
+      //   const u = new URL(loc, INTERNAL_ORIGIN) // base 지정 → 상대/절대 모두 파싱
+      //   console.log('u.origin : ', u)
+      //   if (u.pathname.startsWith('/files/')) {
+      //     // console.log(`${IMAGE_EXTERNAL_PREFIX}${u.pathname}`)
+      //     // proxyRes.headers['location'] = `${IMAGE_EXTERNAL_PREFIX}${u.pathname}`
+      //     // proxyRes.headers['location'] = u.href
+      //     console.log(
+      //       '[imagebuild] Sending Location (absolute):',
+      //       proxyRes.headers['location']
+      //     )
+      //   }
+      // } catch {
+      //   // 문자열 치환 fallback
+      //   proxyRes.headers['location'] = String(loc).replace(
+      //     INTERNAL_ORIGIN,
+      //     IMAGE_EXTERNAL_PREFIX
+      //   )
+      //   console.log(
+      //     '[imagebuild] Sending Location (fallback):',
+      //     proxyRes.headers['location']
+      //   )
+      // }
+    },
+    error(err, req, res) {
+      console.error(
+        '[imagebuild] proxy error:',
+        (err && err.code) || '',
+        err && err.message,
+        req && req.url
+      )
+      try {
+        if (res && !res.headersSent) {
+          res.writeHead(502, { 'Content-Type': 'text/plain' })
+          res.end('Bad Gateway (imagebuild proxy)')
+        }
+      } catch (_) {}
     },
   },
 }
@@ -142,7 +230,7 @@ const webAppDeployProxy = {
 }
 
 const webCmpProxy = {
-  target: serverConfig.apiServer.url+'/kapis/cmp.kubesphere.io/v1alpha1',
+  target: serverConfig.apiServer.url + '/kapis/cmp.kubesphere.io/v1alpha1',
   changeOrigin: true,
 }
 
@@ -154,7 +242,7 @@ const webBaremetalProxy = {
 const webAuthentikProxy = {
   target: `${serverConfig.apiServer.authentikUrl}`,
   changeOrigin: true,
-  secure: false, 
+  secure: false,
 }
 
 const b2iFileProxy = {

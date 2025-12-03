@@ -159,6 +159,7 @@ export default class ContainerSetting extends React.Component {
         cluster={cluster}
         type={isEdit ? 'Edit' : type}
         onChangeImageDetail={this.props.onChangeImageDetail}
+        onSecretValueNull={this.props.onSecretValueNull}
       />
     )
   }

@@ -94,8 +94,6 @@ export default class ImageSearch extends Component {
             store={this.store}
             name="image"
             onLoading={this.handleLoadingChange}
-            onSecretChange={this.props.onSecretChange}
-            onChangeImageDetail={this.props.onChangeImageDetail}
           />
         </Form.Item>
       </>

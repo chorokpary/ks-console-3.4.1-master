@@ -171,8 +171,7 @@ export default class DropdownContent extends React.Component {
       )[0]
 
       this.setState({ harborData })
-      this.props.onSecretChange &&
-        this.props.onSecretChange({ ...harborData, isPublic: false })
+      this.props.onSecretChange && this.props.onSecretChange({ ...harborData })
     }
 
     const { formTemplate } = this.props
@@ -182,7 +181,7 @@ export default class DropdownContent extends React.Component {
 
     if (value === '')
       this.props.onSecretChange &&
-        this.props.onSecretChange({ url: 'https://docker.io', isPublic: true })
+        this.props.onSecretChange({ url: 'https://docker.io' })
   }
 
   handleInputChange = (e, value) => {
@@ -328,15 +327,19 @@ export default class DropdownContent extends React.Component {
           value={this.imageName}
           autoComplete="off"
           placeholder={
-            this.secretValue ? 'nginx:latest' : t('IMAGE_PLACEHOLDER')
+            // this.secretValue ? 'nginx:latest' : t('IMAGE_PLACEHOLDER')
+            '{repositories}'
           }
         >
           <Select
+            // key={this.secretValue}
             value={this.secretValue}
             className={styles.secretSelect}
             options={this.secretsOptions}
             onChange={this.handleSecretChange}
+            onChangeInput={this.props.onChangeImageDetail}
             disabled={this.secretsOptions.length <= 1}
+            onSecretValueNull={this.props.onSecretValueNull}
           />
         </Input>
       </>

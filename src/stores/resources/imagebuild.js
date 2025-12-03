@@ -32,15 +32,9 @@ export default class ImageBuildStore extends Base {
 
   module = 'imagebuild'
 
-  getResourceUrl = (params = {}) =>
-    `kapis/imagebuilder.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/image-builder/builder`
+  getResourceUrl = (params = {}) => `${this.getPath(params)}/builder`
 
-  postResourceUrl = (params = {}) =>
-    `kapis/imagebuilder.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/image-builder/builder/`
+  postResourceUrl = (params = {}) => `${this.getPath(params)}/builder/`
   getListUrl = (params = {}) => `${this.getResourceUrl(params)}/list`
   getDetailUrl = (params = {}) =>
     `${this.getResourceUrl(params)}/${params.name}`
@@ -161,7 +155,37 @@ export default class ImageBuildStore extends Base {
     tagsData.registUrl = registUrl
     tagsData.description = data.description
 
-    containerData.destination = registUrl
+    // containerData.destination = registUrl
+    // containerData.id = data.username
+    // containerData.password = data.password
+
+    // jsonData['name'] = data.name
+    // jsonData['tags'] = tagsData
+    // jsonData['container-registry'] = containerData
+
+    // 3) destination 구성 요소
+    const imageName = (data.name || '').trim()
+    const tag = (data.tag || 'latest').trim()
+
+    // host / (optional) basePath(project/subpaths) 분리
+    const [host, ...pathParts] = registUrl.split('/')
+    if (!host) {
+      throw new Error('registUrl(host) is required')
+    }
+    const basePath = pathParts.join('/') // '' or 'ewy' or 'foo/bar'
+
+    // 4) repo path = (basePath 있으면) basePath/imageName, 아니면 imageName
+    if (!imageName) {
+      throw new Error('image name is required to form destination')
+    }
+    const repoPath = basePath ? `${basePath}/${imageName}` : `${imageName}`
+
+    // Docker 레포지토리는 소문자 권장
+    const normalizedRepoPath = repoPath.toLowerCase()
+
+    // 최종 destination: <host>/<repoPath>:<tag>
+    containerData.destination = `${host}/${normalizedRepoPath}:${tag}`
+
     containerData.id = data.username
     containerData.password = data.password
 
@@ -169,7 +193,7 @@ export default class ImageBuildStore extends Base {
     jsonData['tags'] = tagsData
     jsonData['container-registry'] = containerData
 
-    // console.log("url : "+ url)
+    console.log('jsonData : ', jsonData)
 
     const res = await this.submitting(request.post(url, jsonData))
     return res

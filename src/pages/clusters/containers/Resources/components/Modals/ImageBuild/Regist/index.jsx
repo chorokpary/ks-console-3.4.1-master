@@ -23,6 +23,7 @@ import ContainerForm from './ContainerForm'
 import styles from './index.scss'
 
 import SecretStore from 'stores/secret'
+import { set } from 'mobx'
 
 const RegistModal = props => {
   const imageRegistryStore = new SecretStore()
@@ -37,6 +38,7 @@ const RegistModal = props => {
   const [imageRegistries, setImageRegistries] = useState([])
 
   const [secret, setSecret] = useState({})
+  const [secretValueNull, setSecretValueNull] = useState(false)
   const [imageDetail, setImageDetail] = useState('')
 
   const cpuTypeOptions = [
@@ -54,7 +56,7 @@ const RegistModal = props => {
       data.password = ''
       data.registUrl = imageDetail
 
-      if (secret.isPublic === false) {
+      if (!secretValueNull) {
         const secretsData = await imageRegistryStore.fetchDetail({
           cluster: props.cluster,
           namespace: projectName,
@@ -67,7 +69,7 @@ const RegistModal = props => {
         data.password = secrets.password
       }
 
-      console.log('data : ', data)
+      // console.log('data : ', data)
       onOk({ ...data })
     })
   }
@@ -101,6 +103,7 @@ const RegistModal = props => {
 
   useEffect(() => {
     getImageRegistries()
+    setImageDetail('')
   }, [projectName])
 
   const onChangeImageDetail = value => {
@@ -232,12 +235,14 @@ const RegistModal = props => {
                 desc={t('CONTAINER_SETTINGS_DESC')}
               >
                 <ContainerForm
+                  key={imageRegistries}
                   type={'Add'}
                   namespace={projectName}
                   imageRegistries={imageRegistries}
                   cluster={props.cluster}
                   onSecretChange={setSecret}
                   onChangeImageDetail={onChangeImageDetail}
+                  onSecretValueNull={setSecretValueNull}
                 />
               </Form.Item>
 

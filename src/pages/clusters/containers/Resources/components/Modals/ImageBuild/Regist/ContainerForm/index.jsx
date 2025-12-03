@@ -178,6 +178,7 @@ export default class ContaineForm extends React.Component {
       type,
       onSecretChange,
       onChangeImageDetail,
+      onSecretValueNull,
     } = this.props
     const { containerType, formData } = this.state
     return (
@@ -193,6 +194,7 @@ export default class ContaineForm extends React.Component {
             onContainerTypeChange={this.handleContainerTypeChange}
             onChangeImageDetail={onChangeImageDetail}
             type={type}
+            onSecretValueNull={onSecretValueNull}
           />
         </Form>
       </div>

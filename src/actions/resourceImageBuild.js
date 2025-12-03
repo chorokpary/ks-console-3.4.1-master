@@ -30,7 +30,8 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .create(data, { cluster, workspace, namespace, devops })
+            // .create(data, { cluster, workspace, namespace, devops })
+            .create(data, { workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
@@ -64,13 +65,11 @@ export default {
     }) {
       const modal = Modal.open({
         onOk: () => {
-          store
-            .delete({ ...detail, cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-              success && success()
-            })
+          store.delete({ ...detail, workspace, namespace, devops }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
@@ -96,7 +95,8 @@ export default {
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            // .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            .batchDelete({ rowKeys, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
