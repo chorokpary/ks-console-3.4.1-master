@@ -304,7 +304,7 @@ const GpuVmSelect = props => {
               )}
 
               {rangeValue.trim() !== '' && (
-                <div className="vm_name mt-2">
+                <div className="mt-2" style={{display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: '800px'}}>
                   <span
                     className={`vm_start_name ${
                       messageState.unavailable || messageState.nocapacity
