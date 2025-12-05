@@ -1,14 +1,12 @@
 import { get } from 'lodash'
-import React, { useState, useRef, useEffect } from 'react'
-import { observer, inject } from 'mobx-react'
+import React, { useRef, useState } from 'react'
 
 import { Modal } from 'components/Base'
 
-import classnames from 'classnames'
 import * as common from 'utils/resources'
 
+import { Button, Form, Icon, Input } from '@kube-design/components'
 import * as tus from 'tus-js-client'
-import { Form, Input, Select, Button, Icon } from '@kube-design/components'
 import styles from './index.scss'
 
 const UploadModal = props => {
@@ -41,87 +39,74 @@ const UploadModal = props => {
   const [fileName, setFileName] = useState()
 
   const handleButtonClick = () => {
-    fileInputRef.current.click()
+    console.log('Button clicked, fileInputRef:', fileInputRef.current)
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
+    }
   }
 
   const onFileChange = async e => {
+    const f = e.target?.files?.[0]
+    if (!f) return
+
+    setFileName(f.name)
+
+    // 이어받기용 ID가 제공되면 uploadUrl 사용
     const uploadInfo = get(props.detail, ['upload-info-list', 'upload-info'])
+    const uploadId =
+      uploadInfo?.[0]?.['upload-file-info']?.['file-info']?.['ID'] ?? ''
+    const hasId = Boolean(uploadId)
 
-    let uplaod_id = ''
-    if (uploadInfo) {
-      uplaod_id = uploadInfo[0]['upload-file-info']['file-info']['ID']
-    }
-
-    // console.log(`uplaod_id : ${!!uplaod_id}`);
-
-    const file = e.target.files[0]
-
-    setFileName(file.name)
-
-    const hasId = Boolean(uplaod_id)
-
-    const upload = new tus.Upload(file, {
-      // Endpoint is the upload creation URL from your tus server
-      // endpoint: 'https://tusd.tusdemo.net/files/',
-
-      // endpoint: uplaod_id ? null : `/files/${job_uuid}`,
-      endpoint: `/files/${job_uuid}`,
-      uploadUrl: hasId ? `/files/${job_uuid}/${uplaod_id}` : null,
-
-      // Retry delays will enable tus-js-client to automatically retry on errors
-      // retryDelays: [0, 3000, 5000, 10000, 20000],
-      // Attach additional meta data about the file for the server
+    const upload = new tus.Upload(f, {
+      endpoint: `/files/${job_uuid}`, // 새 업로드
+      uploadUrl: hasId ? `/files/${job_uuid}/${uploadId}` : null, // 이어받기
+      retryDelays: [0, 3000, 5000, 10000, 20000],
       metadata: {
-        filename: file.name,
-        filetype: file.type,
-        fileid: file.name,
+        filename: f.name,
+        filetype: f.type || '',
+        fileid: f.name,
       },
-      // Callback for errors which cannot be fixed using retries
       onError(error) {
-        console.log(`Failed because: ${error}`)
+        console.error('[tus] upload error:', error)
+        console.error(this.endpoint)
+        console.error(this.uploadUrl)
+        setFileValidError(true)
       },
-      // Callback for reporting upload progress
       onProgress(bytesUploaded, bytesTotal) {
         const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
-        const percentageNotDecimalPoint = (
-          (bytesUploaded / bytesTotal) *
-          100
-        ).toFixed(0)
-        console.log(bytesUploaded, bytesTotal, `${percentage}%`)
-        fnProgress(bytesTotal, bytesUploaded, percentage)
+        fnProgress(bytesUploaded, bytesTotal, percentage)
       },
-      // Callback for once the upload is completed
       onSuccess() {
         setFileUploadCompleteFlag(true)
-        console.log('Download %s from %s', upload.file.name, upload.url)
         closeModal()
         onOk({})
       },
-
-      // 업로드 중 응답 콜백
-      onAfterResponse: (req, res) => {
-        console.log(`upload :`, upload)
-        console.log(res)
-        response = res.getBody()
-        console.log('response : ' + response)
+      onAfterResponse(req, res) {
+        try {
+          if (typeof res?.getStatus === 'function') {
+            // 간단한 상태 확인 로그
+            // console.log('[tus] status:', res.getStatus());
+          }
+        } catch (e) {
+          // console.warn('[tus] onAfterResponse log failed:', e);
+        }
       },
     })
 
-    setFile(file)
     setUploader(upload)
   }
 
   const startOrResumeUpload = upload => {
-    upload.findPreviousUploads().then(function(previousUploads) {
-      // console.log(`previousUploads : ${previousUploads}`);
-      // Found previous uploads so we select the first one.
-      if (previousUploads.length) {
+    if (!upload) {
+      setFileValidError(true)
+      return
+    }
+    upload.findPreviousUploads().then(previousUploads => {
+      if (previousUploads?.length) {
         upload.resumeFromPreviousUpload(previousUploads[0])
         setFileUploadingFlag(true)
       }
-
       setFileUploadStartFlag(true)
-      // Start the upload
       upload.start()
     })
   }
@@ -163,9 +148,8 @@ const UploadModal = props => {
                     type="file"
                     onChange={onFileChange}
                     style={{ display: 'none' }}
-                    ref={el => {
-                      fileInputRef.current = el
-                    }}
+                    ref={fileInputRef}
+                    accept="image/*,.tar,.gz,.zip"
                   />
                   <Input
                     name="fileName"

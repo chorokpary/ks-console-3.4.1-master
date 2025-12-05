@@ -132,7 +132,7 @@ const IMAGE_EXTERNAL_PREFIX =
 // '/kapis/imagebuilder.kubesphere.io/v1alpha1/imagebuilder'
 
 const webImageBuildProxy = {
-  target: `${serverConfig.apiServer.imagebuildUrl}` + IMAGE_EXTERNAL_PREFIX,
+  target: `${serverConfig.apiServer.url}` + IMAGE_EXTERNAL_PREFIX,
   changeOrigin: true,
   xfwd: true,
   events: {
