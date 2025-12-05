@@ -177,8 +177,13 @@ export default class WorkloadTable extends React.Component {
   }
 
   handleFilterInput = filters => {
-    if (!isEqual(filters, this.props.filters)) {
-      this.props.onFetch(filters, true)
+    const { columns } = this.props
+    const hasFilter = columns.filter(item => item.filters)
+
+    const converted = this.convertFilters(filters, hasFilter)
+
+    if (!isEqual(converted, this.props.filters)) {
+      this.props.onFetch(converted, true)
     }
   }
 
@@ -286,6 +291,33 @@ export default class WorkloadTable extends React.Component {
         onChange={this.handleFilterInput}
       />
     )
+  }
+
+  convertFilters(filters, hasfilter) {
+    const result = {}
+
+    Object.entries(filters).forEach(([key, selectedText]) => {
+      // key가 builtin 같은 기본 필드일 경우 그대로 삽입
+      if (key === 'builtin') {
+        result[key] = selectedText
+        return
+      }
+
+      // hasfilter 에서 해당 key(dataIndex)가 있는 column 찾기
+      const column = hasfilter.find(h => h.dataIndex === key)
+      if (!column) {
+        result[key] = selectedText
+        return
+      }
+
+      // filters 배열에서 text가 일치하는 value 찾기
+      const matched = column.filters.find(f => f.text === selectedText)
+
+      // 매칭되면 value로 치환, 못 찾으면 원래 값
+      result[key] = matched ? matched.value : selectedText
+    })
+
+    return result
   }
 
   renderActions() {
