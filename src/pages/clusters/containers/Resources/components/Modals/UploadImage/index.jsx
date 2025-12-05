@@ -100,7 +100,7 @@ const UploadModal = props => {
 
       // 업로드 중 응답 콜백
       onAfterResponse: (req, res) => {
-        console.log(`upload : ${JSON.stringify(upload)}`)
+        console.log(`upload :`, upload)
         console.log(res)
         response = res.getBody()
         console.log('response : ' + response)

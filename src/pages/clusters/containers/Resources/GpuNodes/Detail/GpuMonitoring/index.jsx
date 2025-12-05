@@ -9,6 +9,7 @@ import VmStore from 'stores/resources/vms'
 import { Controller as MonitoringController } from 'components/Cards/Monitoring'
 import { SimpleArea } from 'components/Charts'
 
+import styles from './index.scss'
 const index = props => {
   const store = props.detailStore
   const customStore = new CustomStore()
@@ -249,9 +250,15 @@ const index = props => {
         loading={isLoading}
         refreshing={isRefreshing}
       >
-        {configs.map(item => {
+        {configs.map((item, idx) => {
           const config = getAreaChartOps(item)
-          if (isEmpty(config.data)) return null
+          if (isEmpty(config.data)) {
+            return (
+              <div className={styles.divwrap} key={idx}>
+                <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+              </div>
+            )
+          }
           return <SimpleArea key={config.title} width="100%" {...config} />
         })}
       </MonitoringController>
