@@ -31,7 +31,7 @@ export default class VolumeStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/volumes`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/volumes`
 
   getListUrl = this.getResourceUrl
 
@@ -131,7 +131,7 @@ export default class VolumeStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params)
+    const url = this.getResourceUrl({ ...params, name: data.name })
 
     const jsonData = {}
     const volumeData = {}

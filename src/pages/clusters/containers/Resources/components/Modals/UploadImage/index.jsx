@@ -60,7 +60,8 @@ const UploadModal = props => {
     const upload = new tus.Upload(f, {
       endpoint: `/files/${job_uuid}`, // 새 업로드
       uploadUrl: hasId ? `/files/${job_uuid}/${uploadId}` : null, // 이어받기
-      retryDelays: [0, 3000, 5000, 10000, 20000],
+      //retryDelays: [0, 3000, 5000, 10000, 20000],
+      retryDelays: [],
       metadata: {
         filename: f.name,
         filetype: f.type || '',
@@ -68,9 +69,16 @@ const UploadModal = props => {
       },
       onError(error) {
         console.error('[tus] upload error:', error)
-        console.error(this.endpoint)
-        console.error(this.uploadUrl)
+        console.error('endpoint:', this.endpoint)
+        console.error('uploadUrl:', this.uploadUrl)
+
+        // 업로드 상태 리셋
+        setFileUploadingFlag(false)
+        setFileUploadStartFlag(false)
         setFileValidError(true)
+
+        // 사용자에게 에러 알림 (선택적)
+        // alert(`업로드 실패: ${error.message || '네트워크 오류'}`);
       },
       onProgress(bytesUploaded, bytesTotal) {
         const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
@@ -79,7 +87,7 @@ const UploadModal = props => {
       onSuccess() {
         setFileUploadCompleteFlag(true)
         closeModal()
-        onOk({})
+        //onOk({});
       },
       onAfterResponse(req, res) {
         try {
@@ -167,8 +175,11 @@ const UploadModal = props => {
                   <Button
                     type="control"
                     onClick={() => startOrResumeUpload(uploader)}
+                    disabled={
+                      !uploader || fileUploadingFlag || fileUploadCompleteFlag
+                    }
                   >
-                    {t('RESOURCES_UPLOAD')}
+                    {fileUploadingFlag ? '업로드 중...' : t('RESOURCES_UPLOAD')}
                   </Button>
                 </div>
                 <div className={fileUploadStartFlag ? '' : styles.hide}>

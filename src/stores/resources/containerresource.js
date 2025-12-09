@@ -31,7 +31,7 @@ export default class ResourceStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/capk/clusters`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/capk/clusters`
 
   getListUrl = this.getResourceUrl
 
@@ -187,7 +187,7 @@ export default class ResourceStore extends Base {
     jsonData.cluster = reqData
 
     return await this.submitting(
-      request.post(this.getListUrl(params), jsonData)
+      request.post(this.getListUrl({ ...params, name: data.name }), jsonData)
     )
   }
 

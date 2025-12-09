@@ -151,8 +151,9 @@ const webImageBuildProxy = {
       proxyReq.path = replacedPrefix + req.url
 
       proxyReq.setHeader('Authorization', `Bearer ${req.token}`)
-      proxyReq.setHeader('X-Forwarded-Host', req.headers.host)
+      // proxyReq.setHeader('X-Forwarded-Host', req.headers.host)
       console.log('proxyReq.path : ', proxyReq.path)
+      console.log('header', proxyReq.getHeaders())
     },
 
     proxyRes(proxyRes, req) {

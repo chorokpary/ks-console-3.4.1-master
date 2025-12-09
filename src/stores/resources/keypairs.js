@@ -16,81 +16,84 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { observable, action } from 'mobx';
-import { Notify } from '@kube-design/components';
+import { observable, action } from 'mobx'
+import { Notify } from '@kube-design/components'
 
-import Base from '../basemm3'; // mm3 관련 추가 파일
-import List from '../base.list';
+import Base from '../basemm3' // mm3 관련 추가 파일
+import List from '../base.list'
 
 export default class KeypairStore extends Base {
-  records = new List();
+  records = new List()
 
-  module = 'keypairs';
+  module = 'keypairs'
 
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/keypairs`;
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/keypairs`
 
-  getListUrl = this.getResourceUrl;
-  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`;
-  getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
+  getListUrl = this.getResourceUrl
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+  getDeleteUrl = (params = {}) =>
+    `${this.getListUrl(params)}/${params.name}/${params.project}`
 
   @action
   async create(data, params = {}) {
-
     const getResourceUrlTmp = (params = {}) =>
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/resources/kubevirt/keypairs`;
+      )}${this.getOditLogUrl({
+        ...params,
+        name: data.name,
+      })}/edgetron/resources/kubevirt/keypairs`
 
     //const url = this.getResourceUrl(params);
-    const url = getResourceUrlTmp(params);
+    const url = getResourceUrlTmp(params)
 
-    const jsonData = {};
-    const keypairData = {};
+    const jsonData = {}
+    const keypairData = {}
 
-    keypairData.name = data.name;
-    keypairData.public_key = data.publicKey;
-    keypairData.project = data.project;
-    keypairData.description = data?.description;
+    keypairData.name = data.name
+    keypairData.public_key = data.publicKey
+    keypairData.project = data.project
+    keypairData.description = data?.description
 
-    jsonData.keypair = keypairData;
+    jsonData.keypair = keypairData
 
-    const res = await this.submitting(request.post(url, jsonData));
-    return res;
+    const res = await this.submitting(request.post(url, jsonData))
+    return res
   }
 
   @action
   async update({ name, ...params }, data) {
-    const jsonData = {};
-    const keypairData = {};
+    const jsonData = {}
+    const keypairData = {}
 
-    keypairData.description = data?.description;
-    keypairData.project = data.project;
+    keypairData.description = data?.description
+    keypairData.project = data.project
 
-    jsonData.keypair = keypairData;
+    jsonData.keypair = keypairData
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    );
+    )
   }
 
   @action
   async fetchDetail(params) {
-    this.isLoading = true;
+    this.isLoading = true
     const project = params.project ? params.project : params.namespace
     const result = await request.get(`${this.getDetailUrl(params)}`, {
       project,
     })
-    const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' };
+    const detail = { ...params, ...this.mapper(result), kind: 'Keypairs' }
 
     // Yaml 파일 관련
-    await this.fetchYaml(params);
+    await this.fetchYaml(params)
 
-    this.detail = detail;
-    this.isLoading = false;
-    return detail;
+    this.detail = detail
+    this.isLoading = false
+    return detail
   }
 
   @action
@@ -124,7 +127,11 @@ export default class KeypairStore extends Base {
       Promise.all(
         rowKeyDict.map(rowKey =>
           request.delete(
-            `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
+            `${this.getDeleteUrl({
+              name: rowKey.name,
+              project: rowKey.project,
+              ...params,
+            })}`
           )
         )
       )
@@ -135,10 +142,10 @@ export default class KeypairStore extends Base {
   @action
   delete(user) {
     if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
-      return;
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      return
     }
 
-    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`));
+    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
   }
 }

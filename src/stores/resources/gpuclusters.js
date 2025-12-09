@@ -34,10 +34,13 @@ export default class GpuClustersStore extends Base {
   getVmResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/vms`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/vms`
 
   getResourceUrl = (params = {}) =>
-    `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
+    `kapis/gpucluster.kubesphere.io/v1alpha1${this.getOditLogUrl(
+      params,
+      'dyal'
+    )}/dyal/clusters`
   getResourceListUrl = (params = {}) =>
     `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
 
@@ -175,10 +178,13 @@ export default class GpuClustersStore extends Base {
       return x < y ? -1 : x > y ? 1 : 0
     })
 
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
@@ -195,7 +201,7 @@ export default class GpuClustersStore extends Base {
 
   @action
   async createCluster(data, params = {}) {
-    const url = this.getResourceUrl(params)
+    const url = this.getResourceUrl({ ...params, name: data.name })
 
     const jsonData = {}
 

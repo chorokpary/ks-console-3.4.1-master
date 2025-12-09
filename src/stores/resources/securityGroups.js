@@ -25,47 +25,65 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class SecurityGroupStore extends Base {
-
   records = new List()
 
   module = 'security_groups'
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_groups`
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/security_groups`
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
-  getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
+  getDeleteUrl = (params = {}) =>
+    `${this.getListUrl(params)}/${params.name}/${params.project}`
 
   @action
   async create(data, params = {}) {
+    let res = await this.submitting(
+      request.post(
+        this.getListUrl({ ...params, name: data.security_group.name }),
+        data
+      )
+    )
+    if (res.message === 'OK') {
+      const project = data.security_group.project
 
-    let res = await this.submitting(request.post(this.getListUrl(params), data))
-    if (res.message === "OK") {
+      const jsonData = {}
+      const promises = data.security_group.security_group_rules.map(
+        async obj => {
+          const item = {}
+          item.security_group_name = res.name
+          item.direction = obj.direction.toLowerCase()
+          item.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase()
+          item.protocol = obj.protocol.toLowerCase()
+          item.port_range_min =
+            obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
+          item.port_range_max = obj.portRangeMax
+          item.project = project
 
-      const project = data.security_group.project;
+          item.ethernet_type =
+            obj.ethernetType === 'ALL' ? 'all' : obj.ethernetType
 
-      const jsonData = {};
-      const promises = data.security_group.security_group_rules.map(async (obj) => {
-        const item = {};
-        item.security_group_name = res.name;
-        item.direction = obj.direction.toLowerCase();
-        item.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
-        item.protocol = obj.protocol.toLowerCase();
-        item.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
-        item.port_range_max = obj.portRangeMax;
-        item.project = project;
+          jsonData.security_group_rule = item
 
-        item.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
-
-        jsonData.security_group_rule = item;
-
-        await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
-      })
-      await Promise.all(promises);
-
+          await this.submitting(
+            request.post(
+              `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+                params
+              )}${this.getOditLogUrl({
+                ...params,
+                name: res.name,
+              })}/edgetron/resources/kubevirt/security_group_rules`,
+              jsonData
+            )
+          )
+        }
+      )
+      await Promise.all(promises)
     }
     return res
   }
-
 
   @action
   async fetchDetail(params) {
@@ -76,8 +94,8 @@ export default class SecurityGroupStore extends Base {
     })
     const detail = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
 
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
+    // Yaml 파일 관련
+    await this.fetchYaml(params)
 
     this.detail = detail
     this.isLoading = false
@@ -91,13 +109,16 @@ export default class SecurityGroupStore extends Base {
     const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
       project,
     })
-    const yamlData = { ...params, ...this.mapper(result), kind: 'SecurityGroups' }
+    const yamlData = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'SecurityGroups',
+    }
 
     this.yaml = yamlData.manifest
     this.isLoading = false
     return yamlData
   }
-
 
   @action
   async batchDelete({ rowKeys, ...params }) {
@@ -116,7 +137,11 @@ export default class SecurityGroupStore extends Base {
       Promise.all(
         rowKeyDict.map(rowKey =>
           request.delete(
-            `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
+            `${this.getDeleteUrl({
+              name: rowKey.name,
+              project: rowKey.project,
+              ...params,
+            })}`
           )
         )
       )
@@ -136,46 +161,69 @@ export default class SecurityGroupStore extends Base {
 
   @action
   async update({ ...params }, data) {
+    let delOriginRule = data.security_group.originRules
+    const rules = data.security_group.rules
 
-    let delOriginRule = data.security_group.originRules;
-    const rules = data.security_group.rules;
-
-    const jsonData = {};
-    const promises = rules.map(async (obj) => {
+    const jsonData = {}
+    const promises = rules.map(async obj => {
       if (!obj.originRuleId) {
-        const jData = {};
-        jData.security_group_name = data.security_group.security_group_name;
-        jData.direction = obj.direction.toLowerCase();
-        jData.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase();
-        jData.protocol = obj.protocol.toLowerCase();
-        jData.port_range_min = obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
-        jData.port_range_max = obj.portRangeMax;
-        jData.ethernet_type = obj.ethernetType === "ALL" ? "all" : obj.ethernetType;
-        jData.project = data.security_group.project;
-        jsonData.security_group_rule = jData;
+        const jData = {}
+        jData.security_group_name = data.security_group.security_group_name
+        jData.direction = obj.direction.toLowerCase()
+        jData.remote_ip_prefix = obj.remoteIpPrefix.toLowerCase()
+        jData.protocol = obj.protocol.toLowerCase()
+        jData.port_range_min =
+          obj.portRangeMin === null ? obj.portRangeMax : obj.portRangeMin
+        jData.port_range_max = obj.portRangeMax
+        jData.ethernet_type =
+          obj.ethernetType === 'ALL' ? 'all' : obj.ethernetType
+        jData.project = data.security_group.project
+        jsonData.security_group_rule = jData
 
-        await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules`, jsonData));
+        await this.submitting(
+          request.post(
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+              params
+            )}${this.getOditLogUrl({
+              ...params,
+              name: data.security_group.security_group_name,
+            })}/edgetron/resources/kubevirt/security_group_rules`,
+            jsonData
+          )
+        )
       } else {
         // 기존 rule 중 삭제건
         let idx = delOriginRule.indexOf(obj.originRuleId)
         if (idx > -1) delOriginRule.splice(idx, 1)
       }
     })
-    await Promise.all(promises);
+    await Promise.all(promises)
 
     if (delOriginRule.length > 0) {
       // 기존 rule 중 삭제건 처리
-      await this.deleteSgRules({ ...params }, delOriginRule, data.security_group.project)
+      await this.deleteSgRules(
+        { ...params },
+        delOriginRule,
+        data.security_group.project
+      )
     }
   }
-
 
   @action
   async deleteSgRules({ ...params }, rules, project) {
     console.log(project)
-    const promises = rules.map(async (id) => {
-      await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/security_group_rules/${id}/${project}`));
+    const promises = rules.map(async id => {
+      await this.submitting(
+        request.delete(
+          `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+            ...params,
+            name: id,
+          })}${this.getOditLogUrl(
+            params
+          )}/edgetron/resources/kubevirt/security_group_rules/${id}/${project}`
+        )
+      )
     })
-    await Promise.all(promises);
+    await Promise.all(promises)
   }
 }

@@ -32,7 +32,7 @@ export default class VmStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/vms`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/vms`
 
   getListUrl = this.getResourceUrl
 
@@ -134,7 +134,7 @@ export default class VmStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params)
+    const url = this.getResourceUrl({ ...params, name: data.name })
 
     const jsonData = {}
     const resourceData = {}
@@ -271,7 +271,10 @@ export default class VmStore extends Base {
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
-        )}/edgetron/resources/kubevirt/vms/${detail.name}/security_groups`,
+        )}${this.getOditLogUrl({
+          ...params,
+          name: detail.name,
+        })}/edgetron/resources/kubevirt/vms/${detail.name}/security_groups`,
         jsonDataSecurity
       )
     )
@@ -292,7 +295,10 @@ export default class VmStore extends Base {
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
-        )}/edgetron/resources/kubevirt/vms/${detail.name}/flavor`,
+        )}${this.getOditLogUrl({
+          ...params,
+          name: detail.name,
+        })}/edgetron/resources/kubevirt/vms/${detail.name}/flavor`,
         jsonData
       )
     )
@@ -1019,7 +1025,10 @@ export default class VmStore extends Base {
   snapshotDelete({ id, ...props }) {
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       props
-    )}/edgetron/resources/kubevirt/vms/snapshots/${id}`
+    )}${this.getOditLogUrl({
+      ...props,
+      name: id,
+    })}/edgetron/resources/kubevirt/vms/snapshots/${id}`
     return this.submitting(request.delete(url, { project: props.project }))
   }
 
@@ -1062,7 +1071,10 @@ export default class VmStore extends Base {
     // let cluster = globals.currentCluster
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       props
-    )}/edgetron/resources/kubevirt/vms/restores/${id}`
+    )}${this.getOditLogUrl({
+      ...props,
+      name: id,
+    })}/edgetron/resources/kubevirt/vms/restores/${id}`
     return this.submitting(request.delete(url, { project: props.project }))
   }
 
@@ -1070,7 +1082,10 @@ export default class VmStore extends Base {
   async cloneCreate(data, params = {}) {
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/vms/clones`
+    )}${this.getOditLogUrl({
+      ...params,
+      name: data.target_vm_name,
+    })}/edgetron/resources/kubevirt/vms/clones`
 
     const jsonData = {}
     const cloneData = {}
@@ -1111,7 +1126,10 @@ export default class VmStore extends Base {
     // let cluster = globals.currentCluster
     const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       props
-    )}/edgetron/resources/kubevirt/vms/clones/${id}`
+    )}${this.getOditLogUrl({
+      ...props,
+      name: id,
+    })}/edgetron/resources/kubevirt/vms/clones/${id}`
     return this.submitting(request.delete(url, { project: props.project }))
   }
 

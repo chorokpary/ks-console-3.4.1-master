@@ -23,33 +23,36 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class RouterStore extends Base {
-
   records = new List()
 
-  networkDataList = [];
+  networkDataList = []
 
   module = 'routers'
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/routers`
   getListUrl = this.getResourceUrl
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
-  getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
+  getDeleteUrl = (params = {}) =>
+    `${this.getListUrl(params)}/${params.name}/${params.project}`
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
+    const url = this.getResourceUrl({ ...params, name: data.routerName })
 
-    const jsonData = {};
-    const routersData = {};
+    const jsonData = {}
+    const routersData = {}
 
-    routersData.name = data.routerName;
-    routersData.project = data.project;
-    routersData.enable_snat = data.snatType == "T" ? true : false;
-    routersData.internal = data.internal;
-    routersData.external = data.external;
-    routersData.description = data.description;
+    routersData.name = data.routerName
+    routersData.project = data.project
+    routersData.enable_snat = data.snatType == 'T' ? true : false
+    routersData.internal = data.internal
+    routersData.external = data.external
+    routersData.description = data.description
 
-    jsonData.router = routersData;
+    jsonData.router = routersData
 
     const res = await this.submitting(request.post(url, jsonData))
     return res
@@ -57,21 +60,20 @@ export default class RouterStore extends Base {
 
   @action
   async update(params, data) {
+    const jsonData = {}
+    const routersData = {}
 
-    const jsonData = {};
-    const routersData = {};
+    routersData.name = data.name
+    routersData.project = data.project
+    routersData.enable_snat = data.snatType == 'T' ? true : false
+    routersData.internal = data.internal
+    routersData.external = data.external
+    routersData.description = data.description
 
-    routersData.name = data.name;
-    routersData.project = data.project;
-    routersData.enable_snat = data.snatType == "T" ? true : false;
-    routersData.internal = data.internal;
-    routersData.external = data.external;
-    routersData.description = data.description;
-
-    jsonData.router = routersData;
+    jsonData.router = routersData
 
     await this.submitting(
-      request.put(this.getDetailUrl(params), jsonData)
+      request.put(this.getDetailUrl({ ...params, name: data.name }), jsonData)
     )
   }
 
@@ -84,8 +86,8 @@ export default class RouterStore extends Base {
     })
     const detail = { ...params, ...this.mapper(result), kind: 'Routers' }
 
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
+    // Yaml 파일 관련
+    await this.fetchYaml(params)
 
     this.detail = detail
     this.isLoading = false
@@ -123,7 +125,11 @@ export default class RouterStore extends Base {
       Promise.all(
         rowKeyDict.map(rowKey =>
           request.delete(
-            `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
+            `${this.getDeleteUrl({
+              name: rowKey.name,
+              project: rowKey.project,
+              ...params,
+            })}`
           )
         )
       )
@@ -143,14 +149,16 @@ export default class RouterStore extends Base {
 
   @action
   async networkList(params) {
-
-    const cluster = params.cluster;
-    const namespace = params.namespace;
+    const cluster = params.cluster
+    const namespace = params.namespace
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({ cluster, namespace })}/edgetron/resources/kubevirt/networks`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+        cluster,
+        namespace,
+      })}/edgetron/resources/kubevirt/networks`
     )
-    this.networkDataList = result.networks;
+    this.networkDataList = result.networks
 
     return this.networkDataList
   }
