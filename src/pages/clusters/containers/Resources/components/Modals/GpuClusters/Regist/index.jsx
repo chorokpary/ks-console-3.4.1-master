@@ -1178,7 +1178,7 @@ const RegistModal = props => {
   }
 
   const getMarks = max => {
-    const count = max < 4 ? max+1 : 5
+    const count = max < 4 ? max + 1 : 5
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1)
       const mark = value === 0 ? '0' : `${Math.floor(value)}`
@@ -2443,9 +2443,10 @@ const RegistModal = props => {
                             <div>{obj.name}</div>
                           </div>
                           <div className={styles.list}>
-                            <label>{t('RESOURCES_FABRIC')}</label>
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.fabric.toUpperCase()}</div>
+                              {/* <div>{obj.fabric.toUpperCase()}</div> */}
+                              <div>{obj.type.toUpperCase()}</div>
                             </div>
                           </div>
                           <div className={styles.list}>

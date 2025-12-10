@@ -40,7 +40,7 @@ export default class GpuClustersStore extends Base {
     `kapis/gpucluster.kubesphere.io/v1alpha1${this.getOditLogUrl(
       params,
       'dyal'
-    )}/dyal/clusters`
+    )}/clusters`
   getResourceListUrl = (params = {}) =>
     `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
 

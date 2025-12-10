@@ -2698,9 +2698,10 @@ const RegistModal = props => {
                             <div>{obj.name}</div>
                           </div>
                           <div className={styles.list}>
-                            <label>{t('RESOURCES_FABRIC')}</label>
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
-                              <div>{obj.fabric.toUpperCase()}</div>
+                              {/* <div>{obj.fabric.toUpperCase()}</div> */}
+                              <div>{obj.type.toUpperCase()}</div>
                             </div>
                           </div>
                           <div className={styles.list}>
