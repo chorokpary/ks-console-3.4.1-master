@@ -90,6 +90,9 @@ export default class AlertMonitor extends React.Component {
   }
 
   get chartTitle() {
+    if (this.props.stateType === 'builtin') {
+      return 'DEFAULT_RULES'
+    }
     if (this.ruleType === 'Custom') {
       return 'CUSTOM_RULE'
     }
