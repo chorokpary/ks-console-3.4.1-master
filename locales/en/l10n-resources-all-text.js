@@ -1273,4 +1273,6 @@ module.exports = {
   RESOURCES_SORT_LATEST: 'Latest',
   RESOURCES_SORT_OLDEST: 'Oldest',
   RESOURCES_GPU_STATUS_MAP: 'GPU Status Map',
+  RESOURCES_GPUCLUSTER_NO_VM_LIST:
+    'No virtual machines found in the GPU cluster.',
 }

@@ -97,20 +97,19 @@ const DetailGpuVmList = props => {
   useEffect(() => {
     const params = searchValue
       ? { name: searchValue, page: currentPage }
-      : { page: currentPage };
+      : { page: currentPage }
 
-    fnGetData(params);
+    fnGetData(params)
 
     const intervalId = setInterval(() => {
-      fnGetData(params);
-    }, 5000);
+      fnGetData(params)
+    }, 5000)
 
-    return () => clearInterval(intervalId);
-  }, [searchValue, currentPage]);
+    return () => clearInterval(intervalId)
+  }, [searchValue, currentPage])
 
   const fnGetData = async ({ ...params } = {}) => {
-
-    setIsLoading(false) 
+    setIsLoading(false)
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
     const detailParams = {
@@ -123,21 +122,25 @@ const DetailGpuVmList = props => {
     }
 
     if (params.name !== '' && params.name !== undefined) {
-        (detailParams.searchType = 'vmName'),
+      ;(detailParams.searchType = 'vmName'),
         (detailParams.searchName = params.name)
     }
 
     const vmData = await store.fetchVmsDetail(detailParams)
     const vmList = vmData.vmList
+    props.setVmList(vmList)
 
     setTotal(vmData.total)
     setCurrentPage(page)
     setVmDataList(vmList)
     setIsLoading(false)
-    
-    if(vmList.length === 0 && !detailParams.searchType && !detailParams.searchName){
+    if (
+      vmList.length === 0 &&
+      !detailParams.searchType &&
+      !detailParams.searchName
+    ) {
       props.handleEmpty()
-    }  
+    }
   }
 
   const fetchData = async () => {
@@ -345,7 +348,7 @@ const DetailGpuVmList = props => {
       if (data.metric.pod === vmId) return data
     })
 
-     const vmGpuMemoryMetricData = _.find(vmGpuRamData, data => {
+    const vmGpuMemoryMetricData = _.find(vmGpuRamData, data => {
       if (data.metric.pod === vmId) return data
     })
 
@@ -365,7 +368,12 @@ const DetailGpuVmList = props => {
     const vmGpuMemoryArray = []
     vmGpuMemoryArray.push(vmGpuMemoryMetricData)
 
-    const configs = getMonitoringCfgs(vmCpuArray, vmMemoryArray, vmGpuArray, vmGpuMemoryArray)
+    const configs = getMonitoringCfgs(
+      vmCpuArray,
+      vmMemoryArray,
+      vmGpuArray,
+      vmGpuMemoryArray
+    )
 
     return (
       <div className={styles.monitors}>
@@ -395,7 +403,7 @@ const DetailGpuVmList = props => {
   }
 
   const handleSearch = value => {
-    setSearchValue(value)    
+    setSearchValue(value)
     fnGetData({
       name: value,
     })

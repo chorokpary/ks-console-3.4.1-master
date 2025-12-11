@@ -1256,4 +1256,5 @@ module.exports = {
   RESOURCES_SORT_LATEST: '최신 순',
   RESOURCES_SORT_OLDEST: '오래된 순',
   RESOURCES_GPU_STATUS_MAP: 'GPU 현황 맵',
+  RESOURCES_GPUCLUSTER_NO_VM_LIST: 'GPU 클러스터에 가상머신이 없습니다.',
 }
