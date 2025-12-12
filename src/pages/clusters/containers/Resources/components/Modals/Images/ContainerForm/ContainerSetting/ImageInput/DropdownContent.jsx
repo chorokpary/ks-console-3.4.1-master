@@ -131,14 +131,6 @@ export default class DropdownContent extends React.Component {
     if (this.props.type !== 'Edit' && this.secretValue !== '') {
       this.handleSecretChange(this.secretValue)
     }
-
-    // if (this.hubType === 'dockerHub') {
-    //   this.fetchDockerList()
-    // }
-
-    // if (this.hubType === 'harbor') {
-    //   this.fetchHarborList('', this.state.harborData)
-    // }
   }
 
   componentWillUnmount() {
@@ -182,14 +174,16 @@ export default class DropdownContent extends React.Component {
   }
 
   handleSecretChange = value => {
+    this.store.resetTagList()
+    this.props.resetImageTag()
+    this.props.onImageTag({})
     if (value) {
       const harborData = this.props.imageRegistries.filter(
         hub => hub.value === value
       )[0]
 
       this.setState({ harborData })
-      this.props.onSecretChange &&
-        this.props.onSecretChange({ ...harborData, isPublic: false })
+      this.props.onSecretChange && this.props.onSecretChange({ ...harborData })
     }
 
     const { formTemplate } = this.props
@@ -199,7 +193,7 @@ export default class DropdownContent extends React.Component {
 
     if (value === '')
       this.props.onSecretChange &&
-        this.props.onSecretChange({ url: 'https://docker.io', isPublic: true })
+        this.props.onSecretChange({ url: 'https://docker.io' })
   }
 
   handleInputChange = (e, value) => {
@@ -436,9 +430,7 @@ export default class DropdownContent extends React.Component {
           onChange={this.handleInputChange}
           value={this.imageName}
           autoComplete="off"
-          placeholder={
-            this.secretValue ? 'nginx:latest' : t('IMAGE_PLACEHOLDER')
-          }
+          placeholder={'{project}/repository'}
           onBlur={this.handleConfirm}
           onKeyUp={this.handleKeyUp}
         >
@@ -448,18 +440,9 @@ export default class DropdownContent extends React.Component {
             options={this.secretsOptions}
             onChange={this.handleSecretChange}
             disabled={this.secretsOptions.length <= 1}
+            onSecretValueNull={this.props.onSecretValueNull}
           />
         </Input>
-        {this.hubType !== 'others' &&
-        !globals.config.enableImageSearch ? null : (
-          <Icon
-            name="templet"
-            changeable
-            className={styles.dropDownIcon}
-            onClick={this.showContent}
-          />
-        )}
-        {this.renderContent()}
       </>
     )
   }

@@ -91,6 +91,13 @@ export default class ImageSearch extends Component {
     this.isUnMounted = true
   }
 
+  resetImageTag = () => {
+    this.setState({
+      selectedImage: undefined,
+      selectedImageTag: '',
+      isLoading: false,
+    })
+  }
   getTag = image => {
     const result = PATTERN_IMAGE_TAG.exec(image)
     const tag = get(result, `[${result.length - 1}]`, ':latest').slice(1)
@@ -424,10 +431,10 @@ export default class ImageSearch extends Component {
           desc={t.html('IMAGE_DESC', {
             link: getDocsUrl('imageregistry'),
           })}
-          rules={[
-            { required: true, message: t('IMAGE_EMPTY') },
-            { pattern: PATTERN_IMAGE, message: t('INVALID_IMAGE') },
-          ]}
+          // rules={[
+          //   { required: true, message: t('IMAGE_EMPTY') },
+          //   { pattern: PATTERN_IMAGE, message: t('INVALID_IMAGE') },
+          // ]}
         >
           <DropdownContent
             {...this.props}
@@ -435,8 +442,7 @@ export default class ImageSearch extends Component {
             onEnter={this.handleEnter}
             name="image"
             onLoading={this.handleLoadingChange}
-            onSecretChange={this.props.onSecretChange}
-            onImageTag={this.props.onImageTag}
+            resetImageTag={this.resetImageTag}
           />
         </Form.Item>
         {globals.config.enableImageSearch && this.renderSelectedContent()}

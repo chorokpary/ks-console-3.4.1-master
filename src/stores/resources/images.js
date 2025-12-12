@@ -34,10 +34,23 @@ export default class ImageStore extends Base {
 
   getListUrl = this.getResourceUrl
 
+  getPostUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/registrysecrets/${
+      params.registrysecrets
+    }/estk/edgetron/resources/kubevirt/images`
+
   @action
   async create(data, params = {}) {
     let res = await this.submitting(
-      request.post(this.getListUrl({ ...params, name: data.name }), data)
+      request.post(
+        this.getPostUrl({
+          ...params,
+          registrysecrets: data.image.registrysecrets,
+        }),
+        data
+      )
     )
 
     // this.afterChange(res, params)

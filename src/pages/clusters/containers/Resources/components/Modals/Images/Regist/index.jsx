@@ -101,7 +101,9 @@ const ResourceImageModal = ({
   const [projectName, setProjectName] = useState('default')
   const [imageRegistries, setImageRegistries] = useState([])
   const [imageTag, setImageTag] = useState({})
+
   const [secret, setSecret] = useState({})
+  const [secretValueNull, setSecretValueNull] = useState(false)
 
   useEffect(() => {
     const getDistroTypeList = async () => {
@@ -276,7 +278,7 @@ const ResourceImageModal = ({
       data.password = ''
       data.source = `docker://${imageTag.image}`
 
-      if (secret.isPublic === false) {
+      if (!secretValueNull) {
         const secretsData = await imageRegistryStore.fetchDetail({
           cluster: cluster,
           namespace: projectName,
@@ -287,12 +289,14 @@ const ResourceImageModal = ({
           secretsData?.data?.['.dockerconfigjson']?.auths?.[secret.url] || {}
         data.username = secrets.username
         data.password = secrets.password
+        data.registrysecrets = secret.value
       }
 
       if (distroType === 'rocky') {
         data.boot_type = 'uefi'
       }
-      console.log('data : ', data)
+      // console.log('data : ', data)
+
       onOk({ image: data })
     })
   }
@@ -849,14 +853,19 @@ const ResourceImageModal = ({
               </Form.Item>
             </div>
             <div className={`${regStep === 3 ? '' : 'hide'}`}>
-              <Form.Item>
+              <Form.Item
+                label={t('CONTAINER_SETTINGS')}
+                desc={t('CONTAINER_SETTINGS_DESC')}
+              >
                 <ContainerForm
+                  key={imageRegistries}
                   type={'Add'}
                   namespace={projectName}
                   imageRegistries={imageRegistries}
                   cluster={cluster}
                   onImageTag={setImageTag}
                   onSecretChange={setSecret}
+                  onSecretValueNull={setSecretValueNull}
                 />
               </Form.Item>
             </div>

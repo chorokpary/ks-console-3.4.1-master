@@ -100,6 +100,11 @@ export default class Select extends React.Component {
     const { options, disabled } = this.props
     const { value } = this.state
 
+    if (value === '') {
+      this.props.onSecretValueNull(true)
+    } else {
+      this.props.onSecretValueNull(false)
+    }
     if (disabled || isEmpty(options)) {
       return null
     }

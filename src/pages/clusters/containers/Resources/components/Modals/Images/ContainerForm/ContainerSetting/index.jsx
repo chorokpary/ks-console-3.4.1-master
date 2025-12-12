@@ -160,6 +160,7 @@ export default class ContainerSetting extends React.Component {
         onSecretChange={this.props.onSecretChange}
         cluster={cluster}
         type={isEdit ? 'Edit' : type}
+        onSecretValueNull={this.props.onSecretValueNull}
       />
     )
   }
@@ -259,12 +260,7 @@ export default class ContainerSetting extends React.Component {
   render() {
     const { className } = this.props
     return (
-      <Form.Group
-        className={className}
-        label={t('CONTAINER_SETTINGS')}
-        desc={t('CONTAINER_SETTINGS_DESC')}
-        noWrapper
-      >
+      <Form.Group className={className} noWrapper>
         {this.renderImageForm()}
       </Form.Group>
     )
