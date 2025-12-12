@@ -130,6 +130,7 @@ export default class DropdownContent extends React.Component {
   componentDidMount() {
     if (this.props.type !== 'Edit' && this.secretValue !== '') {
       this.handleSecretChange(this.secretValue)
+      this.props.onChangeImageDetail(this.registryUrl)
     }
   }
 
@@ -326,10 +327,7 @@ export default class DropdownContent extends React.Component {
           onChange={this.handleInputChange}
           value={this.imageName}
           autoComplete="off"
-          placeholder={
-            // this.secretValue ? 'nginx:latest' : t('IMAGE_PLACEHOLDER')
-            '{repositories}'
-          }
+          placeholder={'{project}/repository'}
         >
           <Select
             // key={this.secretValue}

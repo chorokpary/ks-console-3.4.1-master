@@ -84,10 +84,10 @@ export default class ImageSearch extends Component {
           desc={t.html('IMAGE_DESC', {
             link: getDocsUrl('imageregistry'),
           })}
-          rules={[
-            { required: true, message: t('IMAGE_EMPTY') },
-            { pattern: PATTERN_IMAGE, message: t('INVALID_IMAGE') },
-          ]}
+          // rules={[
+          //   { required: true, message: t('IMAGE_EMPTY') },
+          //   { pattern: PATTERN_IMAGE, message: t('INVALID_IMAGE') },
+          // ]}
         >
           <DropdownContent
             {...this.props}

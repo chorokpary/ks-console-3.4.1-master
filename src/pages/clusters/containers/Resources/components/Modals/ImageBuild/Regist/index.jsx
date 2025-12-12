@@ -125,7 +125,6 @@ const RegistModal = props => {
           }}
           className={classnames(styles['btn'], styles['btn-control'])}
           loading={props.store.isSubmitting}
-          disabled={imageDetail.length === 0}
         >
           {t('RESOURCES_CREATE')}
         </Button>
