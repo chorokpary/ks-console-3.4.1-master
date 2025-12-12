@@ -153,34 +153,8 @@ const send_harbor_request = ({ path, params }) => {
   })
 }
 
-const send_authentik_request = ({
-  method,
-  url,
-  params,
-  token,
-  headers = {},
-  ...rest
-}) => {
-  const options = { headers, ...rest }
-
-  if (token) {
-    options.headers = {
-      Authorization: `Bearer ${token}`,
-      'content-type': 'application/json',
-      'Accept': 'application/json',
-    }
-  }
-
-  return request[method.toLowerCase()](
-    `${url}`,
-    params,
-    options
-  )
-}
-
 module.exports = {
   send_gateway_request,
   send_dockerhub_request,
   send_harbor_request,
-  send_authentik_request,
 }

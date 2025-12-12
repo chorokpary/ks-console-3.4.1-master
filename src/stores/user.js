@@ -26,8 +26,6 @@ import cookie from 'utils/cookie'
 import Base from './base'
 import List from './base.list'
 
-import { getAllYAMLValue } from 'utils/yaml'
-
 export default class UsersStore extends Base {
   records = new List()
 
@@ -44,7 +42,7 @@ export default class UsersStore extends Base {
 
   @action
   handlechangeShowMenu(state) {
-    this.showMenu = state;
+    this.showMenu = state
   }
 
   getPath({ cluster, workspace, namespace, devops } = {}) {
@@ -92,38 +90,39 @@ export default class UsersStore extends Base {
 
   getListUrl = this.getResourceUrl
 
-  getAuthentikResourceUrl = "/api/v3/core/users/"
-
+  getAuthentikResourceUrl = '/api/v3/core/users/'
 
   @action
   async create(data, params = {}) {
+    const userData = {
+      username: get(data, 'metadata.name', ''),
+      name: get(data, 'metadata.name', ''),
+      email: get(data, 'spec.email', ''),
+      is_active: true,
+      groups: [],
+      path: data.isMfa ? 'petasus.io' : 'local-petasus.io',
+      type: 'internal',
+      attributes: {
+        role: get(data, 'metadata.annotations["iam.kubesphere.io/globalrole"]'),
+        description: get(
+          data,
+          'metadata.annotations["kubesphere.io/description"]'
+        ),
+      },
+    }
 
-      const userData = {
-        username: get(data, 'metadata.name', ''),         
-        name: get(data, 'metadata.name', ''),                
-        email: get(data, 'spec.email', ''),              
-        is_active: true,
-        groups: [],
-        path: data.isMfa ? 'petasus.io' : 'local-petasus.io',          
-        type: 'internal',           
-        attributes: {
-          role: get(data, 'metadata.annotations["iam.kubesphere.io/globalrole"]'),
-          description: get(data, 'metadata.annotations["kubesphere.io/description"]'),
-        },
-      };
+    const mfaParams = {
+      userData,
+      password: { password: get(data, 'spec.password', '') },
+    }
 
-      const mfaParams = {
-        userData,
-        password: {password: get(data, 'spec.password', '')}
-      }
+    console.log('mfaParams : ' + JSON.stringify(mfaParams))
 
-      console.log("mfaParams : "+ JSON.stringify(mfaParams))
-
-      const result = await this.submitting(request.post(`/users/auth/create/mfa`, mfaParams))
-      console.log("result : "+ JSON.stringify(result))
-      return result.success; 
-
-
+    const result = await this.submitting(
+      request.post(`/users/auth/create/mfa`, mfaParams)
+    )
+    console.log('result : ' + JSON.stringify(result))
+    return result.success
   }
 
   @action
@@ -136,14 +135,14 @@ export default class UsersStore extends Base {
     } else if (params.cluster) {
       module = 'clusterroles'
     }
-               
+
     const resp = await request.get(
       `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
         params
       )}/${name}/${module}`,
       {},
       {},
-      () => { }
+      () => {}
     )
 
     let rules = {}
