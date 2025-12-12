@@ -14,6 +14,7 @@ import {
   LevelItem,
   LevelRight,
   Notify,
+  Tooltip,
 } from '@kube-design/components'
 import { TinyArea } from 'components/Charts'
 import { getAreaChartOps } from 'utils/monitoring'
@@ -346,6 +347,20 @@ const Node = props => {
     )
   }
 
+  const handleOpenVnc = (name, namespace) => {
+    // 실제 URL 로 변경 요망
+    const apiUrl = `http://${location.hostname}:30020`
+    let param = `path=k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${namespace}/virtualmachineinstances/`
+    param = `${param + name}/vnc`
+
+    const popupName = name.replaceAll('-', '')
+    window.open(
+      `${apiUrl}/vnc_lite.html?${param}`,
+      popupName,
+      'resizable=yes,toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=1280,height=840'
+    )
+  }
+
   return (
     <>
       <Panel title={'ControlPlane Nodes'}>
@@ -388,7 +403,18 @@ const Node = props => {
                     </div>
                     <div className={styles.content}>
                       <div className={styles.text} style={{ width: '25%' }}>
-                        <div>{detail.name}</div>
+                        <div>
+                          {detail.name}
+                          <Tooltip content={t('VNC')}>
+                            <Icon
+                              className="margin-l8"
+                              name="terminal"
+                              size={16}
+                              clickable
+                              onClick={() => handleOpenVnc(detail.name, props.match.params.namespace)}
+                            />
+                          </Tooltip>
+                        </div>
                         <p>
                           {getLocalTime(detail.timestamp).format(
                             'YYYY-MM-DD HH:mm:ss'
