@@ -93,7 +93,7 @@ export default class UsersStore extends Base {
   getAuthentikResourceUrl = '/api/v3/core/users/'
 
   @action
-  async create(data, params = {}) {
+  async mfaCreate(data, params = {}) {
     const userData = {
       username: get(data, 'metadata.name', ''),
       name: get(data, 'metadata.name', ''),
