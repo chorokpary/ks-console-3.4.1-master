@@ -32,6 +32,14 @@ const GpuClustersDetail = props => {
     store.fetchDetail(props.match.params)
   }
 
+  const getActiveVmData = async () => {
+    const activeVmData = await store.fetchVmsDetail({
+      ...props.match.params,
+      namespace: store.detail.data.namespace,
+    })
+    return activeVmData.vmList
+  }
+
   const getNetworkList = async () => {
     const listNetwork = await vmStore.fetchVmListNetwork(props.match.params)
     const networks = listNetwork.networks
@@ -77,8 +85,8 @@ const GpuClustersDetail = props => {
         icon: 'restart',
         text: t('RESOURCES_VM_ALL_RESTART'),
         action: 'view',
-        onClick: () => {
-          const vmList = getActiveVmData()
+        onClick: async () => {
+          const vmList = await getActiveVmData()
           if (vmList.length > 0) {
             props.rootStore.triggerAction('gpuclusters.actionState', {
               actionType: 'restart',
@@ -97,8 +105,8 @@ const GpuClustersDetail = props => {
         icon: 'stop',
         text: t('RESOURCES_VM_ALL_STOP'),
         action: 'view',
-        onClick: () => {
-          const vmList = getActiveVmData()
+        onClick: async () => {
+          const vmList = await getActiveVmData()
           if (vmList.length > 0) {
             props.rootStore.triggerAction('gpuclusters.actionState', {
               actionType: 'stop',
@@ -117,8 +125,8 @@ const GpuClustersDetail = props => {
         icon: 'start',
         text: t('RESOURCES_VM_ALL_START'),
         action: 'view',
-        onClick: () => {
-          const vmList = getActiveVmData()
+        onClick: async () => {
+          const vmList = await getActiveVmData()
           if (vmList.length > 0) {
             props.rootStore.triggerAction('gpuclusters.actionState', {
               actionType: 'start',
@@ -137,8 +145,8 @@ const GpuClustersDetail = props => {
         icon: 'trash',
         text: t('RESOURCES_VM_ALL_DELETE'),
         action: 'view',
-        onClick: () => {
-          const vmList = getActiveVmData()
+        onClick: async () => {
+          const vmList = await getActiveVmData()
           if (vmList.length > 0) {
             props.rootStore.triggerAction('gpuclusters.vmAllDelete', {
               vmList: store.detail.data.instances.map(
@@ -172,14 +180,6 @@ const GpuClustersDetail = props => {
     ]
 
     return [...attr]
-  }
-
-  const getActiveVmData = async () => {
-    const activeVmData = await store.fetchVmsDetail({
-      ...props.match.params,
-      namespace: store.detail.data.namespace,
-    })
-    return activeVmData.vmList
   }
 
   const getAttrs = () => {
