@@ -134,11 +134,14 @@ export default class VmStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl({ ...params, name: data.name })
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.name,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
     const resourceData = {}
-
     resourceData.project = data.project
     resourceData.name = data.name
     resourceData.image = data.imageType === 'I' ? data.image : ''
@@ -484,7 +487,11 @@ export default class VmStore extends Base {
       Promise.all(
         rowKeyDict.map(rowKey =>
           request.delete(
-            `${this.getDetailUrl({ name: rowKey.name, ...params })}`,
+            `${this.getDetailUrl({
+              name: rowKey.name,
+              ...params,
+              namespace: rowKey.project,
+            })}`,
             {
               project: rowKey.project,
             }
@@ -500,7 +507,10 @@ export default class VmStore extends Base {
     const project = params.project ? params.project : params.namespace
 
     return this.submitting(
-      request.delete(`${this.getDetailUrl(params)}`, { project })
+      request.delete(
+        `${this.getDetailUrl({ ...params, namespace: project })}`,
+        { project }
+      )
     )
   }
 
@@ -987,7 +997,7 @@ export default class VmStore extends Base {
   async snapshotCreate(data, params = {}) {
     const url = `${this.getResourceUrl({
       cluster: params.cluster,
-      namespace: params.namespace,
+      namespace: params.namespace ? params.namespace : data.project,
     })}/snapshots`
 
     const jsonData = {}
@@ -1028,19 +1038,23 @@ export default class VmStore extends Base {
     )}${this.getOditLogUrl({
       ...props,
       name: id,
+      namespace: props.namespace,
     })}/edgetron/resources/kubevirt/vms/snapshots/${id}`
     return this.submitting(request.delete(url, { project: props.project }))
   }
 
   @action
   async restoreCreate(data, params = {}) {
-    const url = `${this.getResourceUrl(params)}/restores`
+    const url = `${this.getResourceUrl({
+      ...params,
+      namespace: params.namespace ? params.namespace : data.project,
+    })}/restores`
 
     const jsonData = {}
     const restoreData = {}
 
     restoreData.vm_id = params.name
-    restoreData.project = params.namespace
+    restoreData.project = params.namespace ? params.namespace : data.project
     restoreData.snapshot_id = data.snapshotId
     restoreData.description = data.description
     jsonData.restore = restoreData
@@ -1074,6 +1088,7 @@ export default class VmStore extends Base {
     )}${this.getOditLogUrl({
       ...props,
       name: id,
+      namespace: props.namespace,
     })}/edgetron/resources/kubevirt/vms/restores/${id}`
     return this.submitting(request.delete(url, { project: props.project }))
   }
@@ -1085,6 +1100,7 @@ export default class VmStore extends Base {
     )}${this.getOditLogUrl({
       ...params,
       name: data.target_vm_name,
+      namespace: params.namespace ? params.namespace : data.project,
     })}/edgetron/resources/kubevirt/vms/clones`
 
     const jsonData = {}
@@ -1092,7 +1108,7 @@ export default class VmStore extends Base {
 
     cloneData.source_vm_id = data.source_vm_id
     cloneData.target_vm_id = data.target_vm_name
-    cloneData.project = params.namespace
+    cloneData.project = params.namespace ? params.namespace : data.project
     cloneData.description = data.description
 
     jsonData.clone = cloneData
@@ -1129,6 +1145,7 @@ export default class VmStore extends Base {
     )}${this.getOditLogUrl({
       ...props,
       name: id,
+      namespace: props.namespace,
     })}/edgetron/resources/kubevirt/vms/clones/${id}`
     return this.submitting(request.delete(url, { project: props.project }))
   }

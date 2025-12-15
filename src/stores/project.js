@@ -341,6 +341,12 @@ export default class ProjectStore extends Base {
     return path
   }
 
+  getOditLogUrl(params, urlType = 'estk') {
+    return `/${this.module}/${
+      params.name ? `${params.name}` : 'resources'
+    }/${urlType}`
+  }
+
   getProjectResourceData = async (params, resourceName) => {
     const result = await request.get(
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPathResource(

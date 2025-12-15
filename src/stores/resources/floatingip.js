@@ -38,10 +38,20 @@ export default class FloatingIpStore extends Base {
 
   @action
   async create(data, params = {}) {
+    console.log('floating ip create data', data)
     let res
     if (params.workspace) {
       res = await this.submitting(
-        request.post(this.getResourceUrl({ ...params, name: params.id }), data)
+        request.post(
+          this.getResourceUrl({
+            ...params,
+            name: params.id,
+            namespace: params.namespace
+              ? params.namespace
+              : data.floating_ip.project,
+          }),
+          data
+        )
       )
     } else {
       res = this.submitting(request.post(this.getListUrl(params), data))
@@ -56,7 +66,14 @@ export default class FloatingIpStore extends Base {
     jsonData.floating_ip = params
 
     await this.submitting(
-      request.put(this.getDetailUrl({ ...params, name: params.id }), jsonData)
+      request.put(
+        this.getDetailUrl({
+          ...params,
+          name: params.id,
+          namespace: params.namespace ? params.namespace : params.project,
+        }),
+        jsonData
+      )
     )
   }
 
@@ -95,6 +112,7 @@ export default class FloatingIpStore extends Base {
               id: rowKey.id,
               project: rowKey.project,
               ...params,
+              namespace: params.namespace ? params.namespace : rowKey.project,
             })}`
           )
         )
@@ -113,7 +131,14 @@ export default class FloatingIpStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 
   @action

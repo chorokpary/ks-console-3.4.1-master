@@ -40,7 +40,11 @@ export default class RouterStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl({ ...params, name: data.routerName })
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.routerName,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
     const routersData = {}
@@ -73,7 +77,14 @@ export default class RouterStore extends Base {
     jsonData.router = routersData
 
     await this.submitting(
-      request.put(this.getDetailUrl({ ...params, name: data.name }), jsonData)
+      request.put(
+        this.getDetailUrl({
+          ...params,
+          name: data.name,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
     )
   }
 
@@ -129,6 +140,7 @@ export default class RouterStore extends Base {
               name: rowKey.name,
               project: rowKey.project,
               ...params,
+              namespace: params.namespace ? params.namespace : rowKey.project,
             })}`
           )
         )
@@ -144,7 +156,14 @@ export default class RouterStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 
   @action

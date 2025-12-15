@@ -37,10 +37,9 @@ export default class GpuClustersStore extends Base {
     )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/vms`
 
   getResourceUrl = (params = {}) =>
-    `kapis/gpucluster.kubesphere.io/v1alpha1${this.getOditLogUrl(
-      params,
-      'dyal'
-    )}/clusters`
+    `kapis/gpucluster.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params, 'dyal')}/clusters`
   getResourceListUrl = (params = {}) =>
     `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
 
@@ -201,7 +200,11 @@ export default class GpuClustersStore extends Base {
 
   @action
   async createCluster(data, params = {}) {
-    const url = this.getResourceUrl({ ...params, name: data.name })
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.name,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
 
@@ -226,7 +229,10 @@ export default class GpuClustersStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getVmResourceUrl(params)
+    const url = this.getVmResourceUrl({
+      ...params,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
     const resourceData = {}
@@ -371,9 +377,6 @@ export default class GpuClustersStore extends Base {
   }
 
   @action
-  async update({ name, ...params }, data) {}
-
-  @action
   async fetchDetail({ ...params }) {
     this.isLoading = true
 
@@ -418,10 +421,11 @@ export default class GpuClustersStore extends Base {
     return await this.submitting(
       Promise.all(
         params.retypeList.map(async id => {
-          const namespace = params.namespace
-          const url = `${this.getVmResourceUrl(params)}/${id}${
-            namespace === 'default' ? '' : '?project=' + namespace
-          }`
+          const namespace = params.namespace ? params.namespace : params.project
+          const url = `${this.getVmResourceUrl({
+            ...params,
+            namespace,
+          })}/${id}${namespace === 'default' ? '' : '?project=' + namespace}`
           request.delete(url)
         })
       )
@@ -430,16 +434,27 @@ export default class GpuClustersStore extends Base {
 
   @action
   async delete(params) {
+    console.log('params in delete:', params)
     return await this.submitting(
       Promise.all(
         params?.instances && params.instances?.length > 0
           ? params.instances.map(vmdata =>
               request.delete(
-                `${this.getVmResourceUrl(params)}/${vmdata.vmName}`
+                `${this.getVmResourceUrl({
+                  ...params,
+                  namespace: params.namespace
+                    ? params.namespace
+                    : params.project,
+                })}/${vmdata.vmName}`
               )
             )
           : [],
-        request.delete(`${this.getDeleteUrl(params)}`)
+        request.delete(
+          `${this.getDeleteUrl({
+            ...params,
+            namespace: params.namespace ? params.namespace : params.project,
+          })}`
+        )
       )
     )
   }
@@ -449,8 +464,11 @@ export default class GpuClustersStore extends Base {
     return await this.submitting(
       Promise.all(
         params.vmList.map(async vmName => {
-          const namespace = params.namespace
-          const url = `${this.getVmResourceUrl(params)}/${vmName}${
+          const namespace = params.namespace ? params.namespace : params.project
+          const url = `${this.getVmResourceUrl({
+            ...params,
+            namespace,
+          })}/${vmName}${
             namespace === 'default' ? '' : '?project=' + namespace
           }`
           request.delete(url)
@@ -545,6 +563,9 @@ export default class GpuClustersStore extends Base {
                 `${this.getVmResourceUrl({
                   name,
                   ...paramData,
+                  namespace: params.namespace
+                    ? params.namespace
+                    : params.project,
                 })}/${name}/action`,
                 jsonData
               )

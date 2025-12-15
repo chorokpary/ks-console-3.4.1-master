@@ -58,12 +58,29 @@ export default class NetworkStore extends Base {
     if (params.workspace) {
       res = await this.submitting(
         request.post(
-          this.getResourceUrl({ ...params, name: data.network.name }),
+          this.getResourceUrl({
+            ...params,
+            name: data.network.name,
+            namespace: params.namespace
+              ? params.namespace
+              : data.network.project,
+          }),
           data
         )
       )
     } else {
-      res = await this.submitting(request.post(this.getListUrl(params), data))
+      res = await this.submitting(
+        request.post(
+          this.getListUrl({
+            ...params,
+            name: data.network.name,
+            namespace: params.namespace
+              ? params.namespace
+              : data.network.project,
+          }),
+          data
+        )
+      )
     }
     // this.afterChange(res, params)
     return res
@@ -74,7 +91,15 @@ export default class NetworkStore extends Base {
     const jsonData = {}
     jsonData.network = data
 
-    await this.submitting(request.put(this.getDetailUrl(params), jsonData))
+    await this.submitting(
+      request.put(
+        this.getDetailUrl({
+          ...params,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
+    )
   }
 
   @action
@@ -146,6 +171,7 @@ export default class NetworkStore extends Base {
           request.delete(
             `${this.getDeleteUrl({
               name: rowKey.name,
+              namespace: rowKey.project,
               project: rowKey.project,
               ...params,
             })}`
@@ -163,6 +189,13 @@ export default class NetworkStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 }

@@ -48,6 +48,7 @@ export default class ImageStore extends Base {
         this.getPostUrl({
           ...params,
           registrysecrets: data.image.registrysecrets,
+          namespace: params.namespace ? params.namespace : data.image.project,
         }),
         data
       )
@@ -63,7 +64,14 @@ export default class ImageStore extends Base {
     jsonData.image = data
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(
+        this.getDetailUrl({
+          name,
+          ...params,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
     )
   }
 
@@ -126,11 +134,25 @@ export default class ImageStore extends Base {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
+      const rowKeyDict = rowKeys.map(key => {
+        if (key.includes('/')) {
+          const [project, name] = key.split('/')
+          return { project, name }
+        } else {
+          const project = params.namespace
+          const name = key
+          return { project, name }
+        }
+      })
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
+          rowKeyDict.map(rowKey =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${this.getDetailUrl({
+                name: rowKey.name,
+                namespace: rowKey.project,
+                ...params,
+              })}`
             )
           )
         )
@@ -146,6 +168,10 @@ export default class ImageStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDetailUrl({ ...user, namespace: user.project })}`
+      )
+    )
   }
 }

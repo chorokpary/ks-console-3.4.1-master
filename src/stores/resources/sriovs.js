@@ -35,7 +35,11 @@ export default class SriovStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl({ ...params, name: data.resource_name })
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.resource_name,
+      namespace: params.namesapce ? params.namespace : data.project,
+    })
 
     if (data.type == 'flat') {
       delete data.segment_id
@@ -84,7 +88,14 @@ export default class SriovStore extends Base {
     // console.log("jsonData : "+ JSON.stringify(jsonData))
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(
+        this.getDetailUrl({
+          name,
+          ...params,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
     )
   }
 
@@ -124,11 +135,27 @@ export default class SriovStore extends Base {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
+      const rowKeyDict = rowKeys.map(key => {
+        if (key.includes('/')) {
+          const [project, name] = key.split('/')
+          return { project, name }
+        } else {
+          const project = params.namespace
+          const name = key
+          return { project, name }
+        }
+      })
+
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
+          rowKeyDict.map(rowKey =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${this.getDetailUrl({
+                name: rowKey.name,
+                namespace: rowKey.project,
+                project: rowKey.project,
+                ...params,
+              })}`
             )
           )
         )
@@ -144,7 +171,14 @@ export default class SriovStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDetailUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 
   @action

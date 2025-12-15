@@ -40,11 +40,13 @@ export default class KeypairStore extends Base {
   @action
   async create(data, params = {}) {
     const getResourceUrlTmp = (params = {}) =>
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}${this.getOditLogUrl({
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+        ...params,
+        namespace: params.namespace ? params.namespace : data.project,
+      })}${this.getOditLogUrl({
         ...params,
         name: data.name,
+        namespace: params.namespace ? params.namespace : data.project,
       })}/edgetron/resources/kubevirt/keypairs`
 
     //const url = this.getResourceUrl(params);
@@ -75,7 +77,14 @@ export default class KeypairStore extends Base {
     jsonData.keypair = keypairData
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(
+        this.getDetailUrl({
+          name,
+          ...params,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
     )
   }
 
@@ -130,6 +139,7 @@ export default class KeypairStore extends Base {
             `${this.getDeleteUrl({
               name: rowKey.name,
               project: rowKey.project,
+              namespace: rowKey.project,
               ...params,
             })}`
           )
@@ -146,6 +156,10 @@ export default class KeypairStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({ ...user, namespace: user.project })}`
+      )
+    )
   }
 }

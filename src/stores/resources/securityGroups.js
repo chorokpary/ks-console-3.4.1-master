@@ -42,7 +42,13 @@ export default class SecurityGroupStore extends Base {
   async create(data, params = {}) {
     let res = await this.submitting(
       request.post(
-        this.getListUrl({ ...params, name: data.security_group.name }),
+        this.getListUrl({
+          ...params,
+          name: data.security_group.name,
+          namespace: params.namespace
+            ? params.namespace
+            : data.security_group.project,
+        }),
         data
       )
     )
@@ -141,6 +147,7 @@ export default class SecurityGroupStore extends Base {
               name: rowKey.name,
               project: rowKey.project,
               ...params,
+              namespace: params.namespace ? params.namespace : rowKey.project,
             })}`
           )
         )
@@ -156,7 +163,14 @@ export default class SecurityGroupStore extends Base {
       return
     }
 
-    return await this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
+    return await this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 
   @action
@@ -180,12 +194,17 @@ export default class SecurityGroupStore extends Base {
         jData.project = data.security_group.project
         jsonData.security_group_rule = jData
 
+        const namespace = params.namespace
+          ? params.namespace
+          : data.security_group.project
         await this.submitting(
           request.post(
             `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-              params
+              params,
+              namespace
             )}${this.getOditLogUrl({
               ...params,
+              namespace,
               name: data.security_group.security_group_name,
             })}/edgetron/resources/kubevirt/security_group_rules`,
             jsonData
@@ -211,16 +230,17 @@ export default class SecurityGroupStore extends Base {
 
   @action
   async deleteSgRules({ ...params }, rules, project) {
-    console.log(project)
     const promises = rules.map(async id => {
       await this.submitting(
         request.delete(
           `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
             ...params,
             name: id,
-          })}${this.getOditLogUrl(
-            params
-          )}/edgetron/resources/kubevirt/security_group_rules/${id}/${project}`
+            namespace: project,
+          })}${this.getOditLogUrl({
+            ...params,
+            namespace: project,
+          })}/edgetron/resources/kubevirt/security_group_rules/${id}/${project}`
         )
       )
     })

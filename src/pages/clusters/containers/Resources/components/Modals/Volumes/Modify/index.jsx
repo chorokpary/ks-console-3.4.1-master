@@ -1,5 +1,5 @@
-import { get } from 'lodash';
-import React, { useState, useRef } from 'react';
+import { get } from 'lodash'
+import React, { useState, useRef } from 'react'
 
 import {
   Form,
@@ -8,27 +8,27 @@ import {
   TextArea,
   Button,
   Loading,
-} from '@kube-design/components';
-import { Modal } from 'components/Base';
-import styles from './index.scss';
+} from '@kube-design/components'
+import { Modal } from 'components/Base'
+import styles from './index.scss'
 
 const ModifyModal = props => {
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData, setFormData] = useState({})
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
 
     form.current.validator(() => {
-      const { data } = form.current.props;
-      onOk({ ...data });
-    });
-  };
+      const { data } = form.current.props
+      onOk({ ...data, namespace: props.store.detail.namespace })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   return (
     <>
@@ -66,7 +66,7 @@ const ModifyModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default ModifyModal;
+export default ModifyModal

@@ -42,7 +42,14 @@ export default class LoadBalancerStore extends Base {
   @action
   async create(data, params = {}) {
     let res = await this.submitting(
-      request.post(this.getListUrl({ ...params, name: data.name }), data)
+      request.post(
+        this.getListUrl({
+          ...params,
+          name: data.lb.name,
+          namespace: params.namespace ? params.namespace : data.lb.project,
+        }),
+        data
+      )
     )
     if (res.message === 'OK') {
       const jsonData = {}
@@ -68,11 +75,13 @@ export default class LoadBalancerStore extends Base {
 
         await this.submitting(
           request.post(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-              params
-            )}${this.getOditLogUrl({
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+              ...params,
+              namespace: res.project,
+            })}${this.getOditLogUrl({
               ...params,
               name: res.name,
+              namespace: res.project,
             })}/edgetron/resources/kubevirt/lb_rules`,
             jsonData
           )
@@ -132,7 +141,14 @@ export default class LoadBalancerStore extends Base {
   @action
   async update(params, data) {
     let res = await this.submitting(
-      request.put(this.getDetailUrl({ ...params, name: params.name }), data)
+      request.put(
+        this.getDetailUrl({
+          ...params,
+          name: params.name,
+          namespace: params.namespace ? params.namespace : data.lb.project,
+        }),
+        data
+      )
     )
     if (res.message === 'OK') {
       const jsonData = {}
@@ -223,11 +239,13 @@ export default class LoadBalancerStore extends Base {
     const promises = rules.map(async id => {
       await this.submitting(
         request.delete(
-          `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-            params
-          )}${this.getOditLogUrl({
+          `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+            ...params,
+            namespace: project,
+          })}${this.getOditLogUrl({
             ...params,
             name: id,
+            namespace: project,
           })}/edgetron/resources/kubevirt/lb_rules/${id}/${project}`
         )
       )
@@ -256,6 +274,7 @@ export default class LoadBalancerStore extends Base {
               name: rowKey.name,
               project: rowKey.project,
               ...params,
+              namespace: params.namespace ? params.namespace : rowKey.project,
             })}`
           )
         )
@@ -271,7 +290,14 @@ export default class LoadBalancerStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 
   @action
