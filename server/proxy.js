@@ -292,4 +292,5 @@ module.exports = {
   webAppDeployProxy,
   webBaremetalProxy,
   webImageBuildProxy,
+  webAuthentikProxy,
 }

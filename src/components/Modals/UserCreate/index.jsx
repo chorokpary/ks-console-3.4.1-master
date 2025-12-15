@@ -147,37 +147,36 @@ export default class UserCreateModal extends Component {
           type="password"
           disabled
         />
-      
-      { !detail && 
-        <Form.Item
-        >
-          <div
-            className="dash_toggle"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              minHeight: '32px',
-              padding: '2px',
-              marginLeft: '0px',
-              marginBottom: '8px',
-            }}
-          >
-            <Toggle 
-              checked={this.state.formTemplate.isMfa}    
-              onChange={(value) => {
-              this.setState((prevState) => ({
-                formTemplate: {
-                  ...prevState.formTemplate, 
-                  isMfa: value,             
-                },
-              }));
-            }}
-            />
-            <span>{t('MFA')}</span>
-          </div>
-        </Form.Item>
-      }
+
+        {!detail && (
+          <Form.Item>
+            <div
+              className="dash_toggle"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                minHeight: '32px',
+                padding: '2px',
+                marginLeft: '0px',
+                marginBottom: '8px',
+              }}
+            >
+              <Toggle
+                checked={this.state.formTemplate.isMfa}
+                onChange={value => {
+                  this.setState(prevState => ({
+                    formTemplate: {
+                      ...prevState.formTemplate,
+                      isMfa: value,
+                    },
+                  }))
+                }}
+              />
+              <span>{t('MFA')}</span>
+            </div>
+          </Form.Item>
+        )}
 
         <Form.Item
           label={t('USERNAME')}
