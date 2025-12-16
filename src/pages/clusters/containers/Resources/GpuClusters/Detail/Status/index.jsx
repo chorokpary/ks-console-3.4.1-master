@@ -98,7 +98,8 @@ const Status = props => {
       }
       setVmNameList(vmJoinData)
     } catch (error) {
-      console.log('VM 상세 정보 조회 중 오류 발생:', error)
+      // console.log('VM 상세 정보 조회 중 오류 발생:', error)
+      void error // intentionally ignored
     } finally {
       setLoading(false)
     }

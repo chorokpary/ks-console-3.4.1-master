@@ -1,67 +1,67 @@
-import { get } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
-import { observer, inject } from 'mobx-react';
+import { get } from 'lodash'
+import React, { useState, useRef, useEffect } from 'react'
+import { observer, inject } from 'mobx-react'
 
-import { Form, Input, Notify, Select } from '@kube-design/components';
-import { Modal } from 'components/Base';
+import { Form, Input, Notify, Select } from '@kube-design/components'
+import { Modal } from 'components/Base'
 
-import LoadBalancerStore from 'stores/resources/loadbalancers';
-import FloatingIpStore from 'stores/resources/floatingip';
-import styles from './index.scss';
+import LoadBalancerStore from 'stores/resources/loadbalancers'
+import FloatingIpStore from 'stores/resources/floatingip'
+import styles from './index.scss'
 
 const FloatingIpModal = props => {
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData, setFormData] = useState({})
 
-  const lbName = props.store.detail.name;
-  const project = props.store.detail.namespace;
+  const lbName = props.store.detail.name
+  const project = props.store.detail.namespace
 
-  const [floatingList, setFloatingList] = useState([]);
+  const [floatingList, setFloatingList] = useState([])
 
-  const [vIp, setVIp] = useState('');
-  const [networkName, setNetworkName] = useState('');
-  const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT'));
+  const [vIp, setVIp] = useState('')
+  const [networkName, setNetworkName] = useState('')
+  const [floatingIp, setFloatingIp] = useState(t('RESOURCES_SELECT'))
 
-  const [floatingId, setFloatingId] = useState();
+  const [floatingId, setFloatingId] = useState()
 
   const handleOk = () => {
-    const success = props.success;
+    const success = props.success
     form.current.validator(() => {
       if (floatingId == undefined) {
-        return false;
+        return false
       }
 
-      const floatingStore = new FloatingIpStore();
+      const floatingStore = new FloatingIpStore()
 
-      const data = {};
-      data.name = floatingId;
-      data.id = floatingId;
-      data.instance_type = 'lb';
-      data.instance_id = lbName;
-      data.target_network = networkName;
-      data.project = project;
-      data.target_ip = vIp;
+      const data = {}
+      data.name = floatingId
+      data.id = floatingId
+      data.instance_type = 'lb'
+      data.instance_id = lbName
+      data.target_network = networkName
+      data.project = project
+      data.target_ip = vIp
       floatingStore
         .update({ cluster: props.cluster, namespace: props.namespace, ...data })
         .then(() => {
-          Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') });
-          success();
-          closeModal();
-        });
-    });
-  };
+          Notify.success({ content: t('RESOURCES_CONNECT_SUCCESS_DESC') })
+          success()
+          closeModal()
+        })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   useEffect(() => {
     const getCreateData = async () => {
       const routerList = await props.store.routerList({
         cluster: props.cluster,
         namespace: props.namespace,
-      });
+      })
 
       /*
       fip list
@@ -71,64 +71,64 @@ const FloatingIpModal = props => {
       floating.target_ip 가 없는것들만 (할당 안된것들)
       */
 
-      const routerArr = [];
+      const routerArr = []
       routerList?.routers.map(obj => {
         obj.internal?.map(it => {
           if (it.name === props.store.detail.lb.network.name) {
-            routerArr.push(obj.external.name);
+            routerArr.push(obj.external.name)
           }
-        });
-      });
+        })
+      })
 
-      const floatingListData = props.store.floatingIpsList;
-      console.log(floatingListData)
+      const floatingListData = props.store.floatingIpsList
+
       // Floating 리스트 중 external 관련해서 target_ip 가 없는 floatingIp 추가
-      const floatingIpArray = [];
+      const floatingIpArray = []
       floatingListData.map(floating => {
         if (!floating.target_ip && routerArr.includes(floating.network)) {
-          const jsonData = {};
-          jsonData.id = floating.id;
-          jsonData.floating_ip = floating.floating_ip;
-          jsonData.network = floating.network;
-          floatingIpArray.push(jsonData);
+          const jsonData = {}
+          jsonData.id = floating.id
+          jsonData.floating_ip = floating.floating_ip
+          jsonData.network = floating.network
+          floatingIpArray.push(jsonData)
         }
-      });
+      })
 
-      setFloatingList(floatingIpArray);
-      setVIp(props.store.detail.lb.virtual_ip);
-    };
+      setFloatingList(floatingIpArray)
+      setVIp(props.store.detail.lb.virtual_ip)
+    }
 
-    getCreateData();
-  }, []);
+    getCreateData()
+  }, [])
 
   const floatingOptions = () => {
     const opt = floatingList.map(obj => ({
       label: t(obj.floating_ip),
       value: t(obj.floating_ip),
-    }));
-    return opt;
-  };
+    }))
+    return opt
+  }
 
   const handleSelect = ip => {
     // 셀렉트 선택 시 셋팅 변경
     if (floatingList.length > 0) {
       floatingList.map(data => {
         if (data.floating_ip === ip) {
-          setFloatingId(data.id);
-          setFloatingIp(data.floating_ip);
-          setNetworkName(data.network);
+          setFloatingId(data.id)
+          setFloatingIp(data.floating_ip)
+          setNetworkName(data.network)
         }
-      });
+      })
     }
-  };
+  }
 
   // Validation 시작 ==================================================
   const floatingValidator = (rule, value, callback) => {
     if (value == t('RESOURCES_SELECT') || value == 'select') {
-      return callback({ message: t('RESOURCES_SELECT_FLOATING_IP_TIP') });
+      return callback({ message: t('RESOURCES_SELECT_FLOATING_IP_TIP') })
     }
-    callback();
-  };
+    callback()
+  }
   // Validation 끝 ==================================================
 
   return (
@@ -160,7 +160,7 @@ const FloatingIpModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default FloatingIpModal;
+export default FloatingIpModal

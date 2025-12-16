@@ -52,11 +52,12 @@ app
   .use(routes.routes())
 
 app.server = app.listen(global.PORT, err => {
-  if (err) {
-    return console.error(err)
-  }
+  void err // intentionally ignored
+  // if (err) {
+  //   return console.error(err)
+  // }
   /* eslint-disable no-console */
-  console.log(`Dashboard app running at port ${global.PORT}`)
+  // console.log(`Dashboard app running at port ${global.PORT}`)
 })
 
 app.apply(wsProxy)

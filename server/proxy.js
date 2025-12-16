@@ -137,7 +137,7 @@ const webImageBuildProxy = {
   xfwd: true,
   events: {
     proxyReq(proxyReq, req) {
-      console.log('pathname : ', req.url)
+      // console.log('pathname : ', req.url)
 
       let resourcename = 'builder'
       if (req.url.startsWith('/files')) {
@@ -152,37 +152,37 @@ const webImageBuildProxy = {
 
       proxyReq.setHeader('Authorization', `Bearer ${req.token}`)
       // proxyReq.setHeader('X-Forwarded-Host', req.headers.host)
-      console.log('proxyReq.path : ', proxyReq.path)
-      console.log('header', proxyReq.getHeaders())
+      // console.log('proxyReq.path : ', proxyReq.path)
+      // console.log('header', proxyReq.getHeaders())
     },
 
     proxyRes(proxyRes, req) {
-      console.log(
-        '[imagebuild] <-',
-        proxyRes && proxyRes.statusCode,
-        req && req.url
-      )
+      // console.log(
+      //   '[imagebuild] <-',
+      //   proxyRes && proxyRes.statusCode,
+      //   req && req.url
+      // )
 
       const loc = proxyRes && proxyRes.headers && proxyRes.headers['location']
 
       // 수신한 Location 헤더 로그
-      console.log('[imagebuild] Received Location:', loc)
+      // console.log('[imagebuild] Received Location:', loc)
 
       if (!loc) return
 
       // 1) 상대경로(/files/...)면 /kapis prefix 붙여서 돌려주기
       if (typeof loc === 'string' && loc.startsWith('/files/')) {
         proxyRes.headers['location'] = `${IMAGE_EXTERNAL_PREFIX}${loc}`
-        console.log(
-          '[imagebuild] Sending Location (relative):',
-          proxyRes.headers['location']
-        )
+        // console.log(
+        //   '[imagebuild] Sending Location (relative):',
+        //   proxyRes.headers['location']
+        // )
         return
       }
-      console.log(
-        '[imagebuild] Sending Location (absolute):',
-        proxyRes.headers['location']
-      )
+      // console.log(
+      //   '[imagebuild] Sending Location (absolute):',
+      //   proxyRes.headers['location']
+      // )
       // 2) 절대 URL이면 원점 기준으로 판단해서 치환
       // try {
       //   const u = new URL(loc, INTERNAL_ORIGIN) // base 지정 → 상대/절대 모두 파싱
@@ -209,18 +209,20 @@ const webImageBuildProxy = {
       // }
     },
     error(err, req, res) {
-      console.error(
-        '[imagebuild] proxy error:',
-        (err && err.code) || '',
-        err && err.message,
-        req && req.url
-      )
+      // console.error(
+      //   '[imagebuild] proxy error:',
+      //   (err && err.code) || '',
+      //   err && err.message,
+      //   req && req.url
+      // )
       try {
         if (res && !res.headersSent) {
           res.writeHead(502, { 'Content-Type': 'text/plain' })
           res.end('Bad Gateway (imagebuild proxy)')
         }
-      } catch (_) {}
+      } catch (err) {
+        void err // intentionally ignored
+      }
     },
   },
 }
@@ -271,7 +273,7 @@ const b2iFileProxy = {
           body = Buffer.concat(body).toString()
           client_res.writeHead(500, proxyRes.headers)
           client_res.end(body)
-          console.error(`get b2i file failed, message: ${body}`)
+          // console.error(`get b2i file failed, message: ${body}`)
         }
         const proxy = http.get(proxyRes.headers.location, res => {
           client_res.writeHead(res.statusCode, res.headers)

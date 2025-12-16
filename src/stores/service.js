@@ -106,7 +106,9 @@ export default class ServiceStore extends Base {
         }
       )
       endpoints = result.subsets || []
-    } catch (err) {}
+    } catch (err) {
+      void err // intentionally ignored
+    }
 
     this.endpoints.data = endpoints.map(ObjectMapper.endpoints)
     this.endpoints.isLoading = false

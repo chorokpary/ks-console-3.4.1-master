@@ -261,7 +261,9 @@ export default class ApplicationStore extends Base {
       if (result && result.data) {
         this.tracing.data = transformTraces(result.data)
       }
-    } catch (error) {}
+    } catch (error) {
+      void error // intentionally ignored
+    }
 
     this.isTracingLoading = false
   }

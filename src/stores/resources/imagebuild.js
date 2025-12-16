@@ -193,7 +193,7 @@ export default class ImageBuildStore extends Base {
     jsonData['tags'] = tagsData
     jsonData['container-registry'] = containerData
 
-    console.log('jsonData : ', jsonData)
+    // console.log('jsonData : ', jsonData)
 
     const res = await this.submitting(request.post(url, jsonData))
     return res
@@ -237,9 +237,9 @@ export default class ImageBuildStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-    console.log(
-      '`${this.getDetailUrl(user)}` : ' + `${this.getDetailUrl(user)}`
-    )
+    // console.log(
+    //   '`${this.getDetailUrl(user)}` : ' + `${this.getDetailUrl(user)}`
+    // )
 
     return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }

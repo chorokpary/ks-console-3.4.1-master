@@ -24,7 +24,10 @@ const jwtDecode = require('jwt-decode')
 const yaml = require('js-yaml/dist/js-yaml')
 const request = require('../libs/request.base')
 
-const { send_gateway_request, send_authentik_request } = require('../libs/request')
+const {
+  send_gateway_request,
+  send_authentik_request,
+} = require('../libs/request')
 
 const { isAppsRoute, safeParseJSON, getServerConfig } = require('../libs/utils')
 
@@ -235,7 +238,9 @@ const getUserDetail = async (token, clusterRole, isMulticluster) => {
     }
 
     user.globalRules = roles
-  } catch (error) {}
+  } catch (error) {
+    void error // intentionally ignored
+  }
 
   return user
 }
@@ -300,7 +305,8 @@ const getKSConfig = async token => {
       resp.k8sVersion = get(version, 'kubernetes.gitVersion')
     }
   } catch (error) {
-    console.error(error)
+    // console.error(error)
+    void error // intentionally ignored
   }
 
   return resp
@@ -323,7 +329,8 @@ const getK8sRuntime = async ctx => {
       resp = runTime.split(':')[0]
     }
   } catch (error) {
-    console.error(error)
+    // console.error(error)
+    void error // intentionally ignored
   }
 
   return resp
@@ -350,7 +357,8 @@ const getClusterRole = async ctx => {
         ['host', 'member'].indexOf(clusterRole) === -1 ? 'host' : clusterRole
     }
   } catch (error) {
-    console.error(error)
+    // console.error(error)
+    void error // intentionally ignored
   }
 
   return role
@@ -379,7 +387,9 @@ const getSupportGpuList = async ctx => {
 
       gpuKinds = [...defaultGpu, ...otherGpus]
     }
-  } catch (error) {}
+  } catch (error) {
+    void error // intentionally ignored
+  }
 
   return gpuKinds
 }
@@ -419,7 +429,8 @@ const getOAuthInfo = async () => {
       url: `/kapis/config.kubesphere.io/v1alpha2/configs/oauth`,
     })
   } catch (error) {
-    console.error(error)
+    void error // intentionally ignored
+    // console.error(error)
   }
 
   const servers = []
@@ -500,9 +511,20 @@ const createUserMfa = async (params, token) => {
     token,
   })
 
-  const yamlData = yaml.safeLoadAll(configmap.data['kubesphere.yaml'], 'utf8')[0]
-  const apiToken = get(yamlData,'authentication.oauthOptions.identityProviders[0].provider.apiToken', '');
-  const authentikBase = get(yamlData,'authentication.oauthOptions.identityProviders[0].provider.apiURL', '');
+  const yamlData = yaml.safeLoadAll(
+    configmap.data['kubesphere.yaml'],
+    'utf8'
+  )[0]
+  const apiToken = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiToken',
+    ''
+  )
+  const authentikBase = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiURL',
+    ''
+  )
 
   try {
     const resUser = await send_authentik_request({
@@ -523,9 +545,8 @@ const createUserMfa = async (params, token) => {
       success: true,
       message: 'user create successful',
     }
-
   } catch (error) {
-    console.error('[createUserMfa] Error:', error)
+    // console.error('[createUserMfa] Error:', error)
     return {
       success: false,
       message: error.message || 'user create fail',

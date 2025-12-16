@@ -399,73 +399,74 @@ const handleLogout = async ctx => {
   const oAuthLoginInfo = safeParseJSON(
     decodeURIComponent(ctx.cookies.get('oAuthLoginInfo'))
   )
- 
-  console.log("=== 로그아웃 디버깅 ===")
-  console.log("oAuthLoginInfo:", JSON.stringify(oAuthLoginInfo, null, 2))
- 
+
+  // console.log("=== 로그아웃 디버깅 ===")
+  // console.log("oAuthLoginInfo:", JSON.stringify(oAuthLoginInfo, null, 2))
+
   const token = ctx.cookies.get('token')
   const idToken = ctx.cookies.get('id_token') // id_token이 있다면 사용
- 
+
   ctx.cookies.set('token', null)
   ctx.cookies.set('expire', null)
   ctx.cookies.set('refreshToken', null)
   ctx.cookies.set('oAuthLoginInfo', null)
   ctx.cookies.set('id_token', null) // id_token도 정리
- 
+
   // ctx.cookies.set('mm3AccessToken', null)
   // ctx.cookies.set('mm3RefreshToken', null)
- 
+
   const hdrOrigin = (ctx.headers && ctx.headers.origin) || ''
   const baseOrigin = hdrOrigin || `${ctx.protocol}://${ctx.host}`
-  const postLogoutRedirectURI  = `${baseOrigin}/login`
-  
+  const postLogoutRedirectURI = `${baseOrigin}/login`
+
   // end-session URL 구성 개선
   const endSessionBase = `http://${ctx.hostname}:30081/application/o/ks-console/end-session/`
   const params = new URLSearchParams()
   params.set('post_logout_redirect_uri', postLogoutRedirectURI)
-  
+
   // id_token_hint가 있으면 추가 (더 안전한 로그아웃)
   if (idToken) {
     params.set('id_token_hint', idToken)
   }
-  
+
   const endSessionURI = `${endSessionBase}?${params.toString()}`
- 
+
   if (
     !isEmpty(oAuthLoginInfo) &&
     oAuthLoginInfo.type &&
     oAuthLoginInfo.type === 'OIDCIdentityProvider' &&
     oAuthLoginInfo.endSessionURL
   ) {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAA")
     const baseEndSessionURL = `${oAuthLoginInfo.endSessionURL}`
-    console.log("url : "+ baseEndSessionURL)
-    
+    // console.log("url : "+ baseEndSessionURL)
+
     // 원래 endSessionURL에 필요한 파라미터 추가
     const endSessionURL = new URL(baseEndSessionURL)
-    endSessionURL.searchParams.set('post_logout_redirect_uri', postLogoutRedirectURI)
+    endSessionURL.searchParams.set(
+      'post_logout_redirect_uri',
+      postLogoutRedirectURI
+    )
     if (idToken) {
       endSessionURL.searchParams.set('id_token_hint', idToken)
     }
-    
+
     // 클라이언트에서 직접 이동하도록 URL 반환
-    ctx.body = { 
-      success: true, 
-      data: { 
-        url: endSessionURL.toString()
-      } 
+    ctx.body = {
+      success: true,
+      data: {
+        url: endSessionURL.toString(),
+      },
     }
   } else {
-    console.log("BBBBBBBBBBBBBBBBBBBBBBBBB")
     const { origin = '', referer = '' } = ctx.headers
     const refererPath = referer.replace(origin, '')
- 
+
     await send_gateway_request({
       method: 'GET',
       url: '/oauth/logout',
       token,
     })
- 
+
     if (isAppsRoute(refererPath)) {
       ctx.redirect(refererPath)
     } else {
@@ -473,8 +474,6 @@ const handleLogout = async ctx => {
     }
   }
 }
-
-
 
 const handleOAuthLogin = async ctx => {
   let user = null
@@ -487,7 +486,7 @@ const handleOAuthLogin = async ctx => {
     user = await oAuthLogin({ ...oauthParams, oauthName: ctx.params.name })
   } catch (err) {
     /* eslint-disable no-console */
-    console.log(err)
+    // console.log(err)
 
     ctx.app.emit('error', err)
     Object.assign(error, {
@@ -526,7 +525,8 @@ const handleOAuthLogin = async ctx => {
       }
     } catch (err) {
       /* eslint-disable no-console */
-      console.log(err)
+      // console.log(err)
+      void err // intentionally ignored
     }
   }
 
@@ -564,7 +564,7 @@ const handleCreateUserMfa = async ctx => {
 
   const result = await createUserMfa(params, token)
 
-  ctx.status = result.success ? 200 : (result.code || 500)
+  ctx.status = result.success ? 200 : result.code || 500
   ctx.body = result
 }
 

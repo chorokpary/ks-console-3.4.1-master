@@ -39,7 +39,7 @@ const UploadModal = props => {
   const [fileName, setFileName] = useState()
 
   const handleButtonClick = () => {
-    console.log('Button clicked, fileInputRef:', fileInputRef.current)
+    // console.log('Button clicked, fileInputRef:', fileInputRef.current)
     if (fileInputRef.current) {
       fileInputRef.current.click()
     }
@@ -68,9 +68,9 @@ const UploadModal = props => {
         fileid: f.name,
       },
       onError(error) {
-        console.error('[tus] upload error:', error)
-        console.error('endpoint:', this.endpoint)
-        console.error('uploadUrl:', this.uploadUrl)
+        // console.error('[tus] upload error:', error)
+        // console.error('endpoint:', this.endpoint)
+        // console.error('uploadUrl:', this.uploadUrl)
 
         // 업로드 상태 리셋
         setFileUploadingFlag(false)
@@ -96,6 +96,7 @@ const UploadModal = props => {
             // console.log('[tus] status:', res.getStatus());
           }
         } catch (e) {
+          void e // intentionally ignored
           // console.warn('[tus] onAfterResponse log failed:', e);
         }
       },

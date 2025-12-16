@@ -30,16 +30,16 @@ import styles from './index.scss'
 
 class Header extends React.Component {
   constructor(props) {
-    super(props);
-    this.licenseStore = new LicenseStore();
+    super(props)
+    this.licenseStore = new LicenseStore()
     this.state = {
       licenseStatus: null,
       isLoading: true,
-    };
+    }
   }
 
   componentDidMount() {
-    this.fetchValidation();
+    this.fetchValidation()
   }
 
   static propTypes = {
@@ -54,11 +54,11 @@ class Header extends React.Component {
 
   async fetchValidation() {
     try {
-      const result = await this.licenseStore.defaultValidation();
-      this.setState({ licenseStatus: result, isLoading: false });
+      const result = await this.licenseStore.defaultValidation()
+      this.setState({ licenseStatus: result, isLoading: false })
     } catch (error) {
-      console.error('License validation result fetching failed:', error);
-      this.setState({ isLoading: false });
+      // console.error('License validation result fetching failed:', error);
+      this.setState({ isLoading: false })
     }
   }
 
@@ -87,23 +87,27 @@ class Header extends React.Component {
   render() {
     const { className, innerRef, location } = this.props
     const logo = globals.config.logo || '/assets/logo.svg'
-    const { licenseStatus } = this.state;
+    const { licenseStatus } = this.state
 
     return (
       <div>
-        {licenseStatus && licenseStatus.validate_result === false && 
+        {licenseStatus &&
+          licenseStatus.validate_result === false &&
           this.state.isLoading === false && (
-          <div className="header-license">
-            {t(`RESOURCES_MMS_ERROR_DESC_${licenseStatus.validate_code}`)}
-          </div>
-        )}
+            <div className="header-license">
+              {t(`RESOURCES_MMS_ERROR_DESC_${licenseStatus.validate_code}`)}
+            </div>
+          )}
         <div
           ref={innerRef}
           className={classnames(
             styles.header,
             {
               [styles.inAppsPage]: isAppsPage(),
-              [styles.hasNotification]: licenseStatus && licenseStatus.validate_result === false && this.state.isLoading === false,
+              [styles.hasNotification]:
+                licenseStatus &&
+                licenseStatus.validate_result === false &&
+                this.state.isLoading === false,
             },
             className
           )}

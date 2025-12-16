@@ -66,7 +66,7 @@ export default class EventBus {
 
   handleError(eventName, error) {
     if (!this.errors.has(eventName)) {
-      console.error(`Error in event "${eventName}":`, error)
+      // console.error(`Error in event "${eventName}":`, error)
       return
     }
     this.errors.get(eventName)(error)

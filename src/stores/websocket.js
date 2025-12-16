@@ -53,7 +53,7 @@ export default class WebSocketStore {
         onmessage: onMsg,
         onerror: e => {
           setTimeout(onErr, 1000)
-          console.error(e)
+          // console.error(e)
         },
       }
     )

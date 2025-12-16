@@ -24,7 +24,7 @@ module.exports = function(app) {
     app.use(
       logger(str => {
         /* eslint-disable no-console */
-        console.log(str, moment().format('YYYY/MM/DDTHH:mm:ss.SSS'))
+        // console.log(str, moment().format('YYYY/MM/DDTHH:mm:ss.SSS'))
       })
     )
   }

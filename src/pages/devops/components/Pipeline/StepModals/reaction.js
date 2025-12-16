@@ -101,14 +101,16 @@ export function runTemplate(template, values) {
     const tmp = template.replace(reg, (_, expression) => {
       try {
         // eslint-disable-next-line
-        const result = new Function('root', `with(root) {return ${expression}}`)(values)
+        const result = new Function(
+          'root',
+          `with(root) {return ${expression}}`
+        )(values)
         if (typeof result === 'object') {
           res.push(result)
           return `res[${res.length - 1}]`
         }
         return result
       } catch (error) {
-        console.error('Error evaluating expression:', error)
         return 'undefined'
       }
     })
@@ -116,7 +118,10 @@ export function runTemplate(template, values) {
     try {
       if (res.length) {
         // eslint-disable-next-line
-    let re = new Function('root', `with(root) {return ${tmp}}`)({ res, ...values })
+        let re = new Function('root', `with(root) {return ${tmp}}`)({
+          res,
+          ...values,
+        })
         return re
       }
       return tmp

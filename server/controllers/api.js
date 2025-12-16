@@ -52,7 +52,8 @@ const handleSampleData = async ctx => {
       )
       cache.set(sampleName, resources)
     } catch (error) {
-      console.error(error)
+      // console.error(error)
+      void error // intentionally ignored
     }
   }
 
@@ -156,28 +157,34 @@ const handleHarborProxy = async ctx => {
   }
 }
 
-
 const handleHarborProxyCustom = async ctx => {
   const requestUrl = ctx.url.slice(14)
   const headers = ctx.request.headers
   const data = ctx.request.body
 
   let path = ''
-  const harborUrl = data.originUrl ? data.originUrl : serverConfig.apiServer.harborUrl
+  const harborUrl = data.originUrl
+    ? data.originUrl
+    : serverConfig.apiServer.harborUrl
 
-  if (requestUrl === 'users') { // 사용자 유효성 체크
-    path = `${harborUrl}/api/v2.0/users/current`;
-  } else if (requestUrl === 'public') { // private 이지만 url 입력 안한 경우
-    path = `${harborUrl}/api/v2.0/repositories?page=${data.page}&page_size=100`;
-  } else if (requestUrl === 'private') { // 직접 url 입력한 경우
-    path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories?page=${data.page}&page_size=100`;
-  } else if (requestUrl === 'tags') { // tag list
-    path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`;
-  } else if (requestUrl === 'build') { // 사용자 유효성 체크
-    path = `${harborUrl}/api/v2.0/users/current`;
+  if (requestUrl === 'users') {
+    // 사용자 유효성 체크
+    path = `${harborUrl}/api/v2.0/users/current`
+  } else if (requestUrl === 'public') {
+    // private 이지만 url 입력 안한 경우
+    path = `${harborUrl}/api/v2.0/repositories?page=${data.page}&page_size=100`
+  } else if (requestUrl === 'private') {
+    // 직접 url 입력한 경우
+    path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories?page=${data.page}&page_size=100`
+  } else if (requestUrl === 'tags') {
+    // tag list
+    path = `${harborUrl}/api/v2.0/projects/${data.projectName}/repositories/${data.repositoryName}/artifacts`
+  } else if (requestUrl === 'build') {
+    // 사용자 유효성 체크
+    path = `${harborUrl}/api/v2.0/users/current`
   }
 
-  console.log("path : "+ path)
+  // console.log('path : ' + path)
 
   const [, protocol] = `${harborUrl}`.match(/^(https?:\/\/)/)
 

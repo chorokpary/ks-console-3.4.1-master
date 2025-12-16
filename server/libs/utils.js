@@ -148,7 +148,9 @@ const safeParseJSON = (json, defaultValue) => {
   let result
   try {
     result = JSON.parse(json)
-  } catch (e) {}
+  } catch (e) {
+    void e // intentionally ignored
+  }
 
   if (!result && defaultValue !== undefined) {
     return defaultValue
@@ -179,7 +181,9 @@ const getManifest = entry => {
     try {
       const dataStream = fs.readFileSync(root('dist/manifest.json'))
       data = safeParseJSON(dataStream.toString(), {})
-    } catch (error) {}
+    } catch (error) {
+      void error // intentionally ignored
+    }
     manifestCache = get(data, `entrypoints.${entry}`)
     cache.set(`${MANIFEST_CACHE_KEY_PREFIX}${entry}`, manifestCache)
   }
@@ -195,7 +199,9 @@ const getLocaleManifest = () => {
     try {
       const dataStream = fs.readFileSync(root('dist/manifest.locale.json'))
       data = safeParseJSON(dataStream.toString(), {})
-    } catch (error) {}
+    } catch (error) {
+      void error // intentionally ignored
+    }
     manifestCache = pick(
       data,
       Object.keys(data).filter(key => key.startsWith('locale-'))
