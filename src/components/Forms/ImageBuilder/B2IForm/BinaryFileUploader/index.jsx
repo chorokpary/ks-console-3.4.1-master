@@ -26,6 +26,7 @@ import { B2I_SUPPORTED_TYPES } from 'utils/constants'
 
 import BuilderStore from 'stores/s2i/builder'
 import styles from './index.scss'
+import crypto from 'crypto'
 
 const headers = {
   'x-kubernetes-action': 'post',
@@ -81,11 +82,19 @@ class Uploader extends React.Component {
   }
 
   formatFileName = name => {
-    this.binaryName =
-      name.toLowerCase().replace(/([^a-zA-Z0-9])/g, '-') +
-      Math.random()
-        .toString(36)
-        .slice(-4)
+    // this.binaryName =
+    //   name.toLowerCase().replace(/([^a-zA-Z0-9])/g, '-') +
+    //   Math.random()
+    //     .toString(36)
+    //     .slice(-4)
+    // return this.binaryName
+
+    const safeName = name.toLowerCase().replace(/([^a-zA-Z0-9])/g, '-')
+
+    const rand = crypto.randomBytes(4).readUInt32BE(0)
+    const suffix = rand.toString(36).slice(-4)
+
+    this.binaryName = `${safeName}${suffix}`
     return this.binaryName
   }
 

@@ -30,6 +30,7 @@ import { generateId, safeParseJSON } from 'utils'
 import { CREDENTIAL_DISPLAY_KEY } from 'utils/constants'
 
 import cookie from 'utils/cookie'
+import crypto from 'crypto'
 
 const formatPipeLineJson = json => {
   if (!get(json, 'pipeline.stages')) return
@@ -133,7 +134,11 @@ export default class Store extends BaseStore {
     return {
       branches: [
         {
-          id: String(Math.random()),
+          // id: String(Math.random()),
+          id: crypto
+            .randomBytes(4)
+            .readUInt32BE(0)
+            .toString(36),
           name: '',
           steps: [],
         },
