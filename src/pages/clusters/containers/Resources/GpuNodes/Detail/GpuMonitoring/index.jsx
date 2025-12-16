@@ -69,7 +69,7 @@ const index = props => {
 
     const vmList = await vmStore.fetchList(params)
     const project = vmList.filter(item => item.node === store.detail.name)[0]
-      .project
+      ?.project
     const vmData =
       vmList
         .filter(item => item.node === store.detail.name)
@@ -243,26 +243,25 @@ const index = props => {
   const configs = getMonitoringCfgs()
 
   return (
-    vmDataList.length > 0 && (
-      <MonitoringController
-        title={t('RESOURCES_GPU_MONITORING')}
-        onFetch={fetchData}
-        loading={isLoading}
-        refreshing={isRefreshing}
-      >
-        {configs.map((item, idx) => {
-          const config = getAreaChartOps(item)
-          if (isEmpty(config.data)) {
-            return (
-              <div className={styles.divwrap} key={idx}>
-                <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
-              </div>
-            )
-          }
-          return <SimpleArea key={config.title} width="100%" {...config} />
-        })}
-      </MonitoringController>
-    )
+    // vmDataList.length > 0 &&
+    <MonitoringController
+      title={t('RESOURCES_GPU_MONITORING')}
+      onFetch={fetchData}
+      loading={isLoading}
+      refreshing={isRefreshing}
+    >
+      {configs.map((item, idx) => {
+        const config = getAreaChartOps(item)
+        if (isEmpty(config.data)) {
+          return (
+            <div className={styles.divwrap} key={idx}>
+              <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+            </div>
+          )
+        }
+        return <SimpleArea key={config.title} width="100%" {...config} />
+      })}
+    </MonitoringController>
   )
 }
 
