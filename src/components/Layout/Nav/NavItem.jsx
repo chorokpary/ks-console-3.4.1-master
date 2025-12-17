@@ -78,8 +78,21 @@ export default class NavItem extends React.Component {
   }
 
   render() {
-    const { item, prefix, disabled, onClick, isOpen } = this.props
+    const { item, prefix, disabled, onClick, isOpen, exceptionMenu } = this.props
     const itemDisabled = (disabled || item.disabled) && !item.showInDisable
+
+    let exceptionMenuList = []
+
+    if(globals.user.globalrole == "platform-admin"){
+      exceptionMenuList = []
+    }else(
+      exceptionMenuList = exceptionMenu
+    )
+
+    const isExcpetionkMenu = exceptionMenuList.includes(item.name)
+    if(isExcpetionkMenu){
+      return false;
+    }
 
     if (item.children) {
       return (
