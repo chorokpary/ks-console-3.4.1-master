@@ -65,33 +65,38 @@ class RevisionControl extends React.Component {
   }
 
   getRevisionItems(data, curRevision) {
-    return sortBy(data, item => parseInt(item.revision, 10))
-      .reverse()
-      .map(item => {
-        let label = `#${item.revision} (${item.name.replace(
-          `${item.ownerName}-`,
-          ''
-        )})`
+    if (!Array.isArray(data) || data.length === 0) {
+      return []
+    }
 
-        if (item.revision === curRevision) {
-          label = (
-            <span>
-              <span>{label}</span> <Tag type="primary">{t('RUNNING')}</Tag>
-            </span>
-          )
-        }
+    const sorted = sortBy(data, item => parseInt(item.revision, 10))
+    const reversed = sorted.reverse()
 
-        const description = t('CREATED_TIME', {
-          diff: getLocalTime(item.createTime).format('YYYY-MM-DD HH:mm:ss'),
-        })
+    return reversed.map(item => {
+      let label = `#${item.revision} (${item.name.replace(
+        `${item.ownerName}-`,
+        ''
+      )})`
 
-        return {
-          label,
-          description,
-          icon: 'timed-task',
-          value: item.revision,
-        }
+      if (item.revision === curRevision) {
+        label = (
+          <span>
+            <span>{label}</span> <Tag type="primary">{t('RUNNING')}</Tag>
+          </span>
+        )
+      }
+
+      const description = t('CREATED_TIME', {
+        diff: getLocalTime(item.createTime).format('YYYY-MM-DD HH:mm:ss'),
       })
+
+      return {
+        label,
+        description,
+        icon: 'timed-task',
+        value: item.revision,
+      }
+    })
   }
 
   @computed
