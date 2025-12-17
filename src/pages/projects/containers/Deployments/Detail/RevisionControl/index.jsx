@@ -64,12 +64,7 @@ class RevisionControl extends React.Component {
     return getCurrentRevision(this.store.detail, list.data, this.module)
   }
 
-  @computed
-  get revisions() {
-    const list = this.revisionStore.list
-    const data = list.data
-    const curRevision = this.getCurrentRevisionValue()
-
+  getRevisionItems(data, curRevision) {
     return sortBy(data, item => parseInt(item.revision, 10))
       .reverse()
       .map(item => {
@@ -77,6 +72,7 @@ class RevisionControl extends React.Component {
           `${item.ownerName}-`,
           ''
         )})`
+
         if (item.revision === curRevision) {
           label = (
             <span>
@@ -84,9 +80,11 @@ class RevisionControl extends React.Component {
             </span>
           )
         }
+
         const description = t('CREATED_TIME', {
           diff: getLocalTime(item.createTime).format('YYYY-MM-DD HH:mm:ss'),
         })
+
         return {
           label,
           description,
@@ -94,6 +92,12 @@ class RevisionControl extends React.Component {
           value: item.revision,
         }
       })
+  }
+
+  @computed
+  get revisions() {
+    const list = this.revisionStore.list
+    return this.getRevisionItems(list.data, this.curRevision)
   }
 
   fetchData = () => {
