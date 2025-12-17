@@ -65,6 +65,8 @@ class RevisionControl extends React.Component {
   get revisions() {
     const list = this.revisionStore.list
     const data = list.data
+    const curRevision = this.curRevision
+
     return sortBy(data, item => parseInt(item.revision, 10))
       .reverse()
       .map(item => {
@@ -72,7 +74,7 @@ class RevisionControl extends React.Component {
           `${item.ownerName}-`,
           ''
         )})`
-        if (item.revision === this.curRevision) {
+        if (item.revision === curRevision) {
           label = (
             <span>
               <span>{label}</span> <Tag type="primary">{t('RUNNING')}</Tag>

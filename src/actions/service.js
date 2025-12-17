@@ -54,7 +54,7 @@ export default {
             }
           }
 
-          store.create(data, { cluster, namespace }).then(() => {
+          store.createService(data, { cluster, namespace }).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('CREATE_SUCCESSFUL') })
             success && success()

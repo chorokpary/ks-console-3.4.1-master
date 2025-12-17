@@ -122,7 +122,7 @@ export default class ServiceStore extends Base {
   }
 
   @action
-  create(data, params) {
+  createService(data, params) {
     const requests = []
 
     if (has(data, 'metadata')) {
