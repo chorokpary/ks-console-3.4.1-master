@@ -125,7 +125,7 @@ export const convertTreeToEntities = (
 // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
 export const conductExpandParent = (keyList, keyEntities) => {
   const expandedKeys = {}
-
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   function conductUp(key) {
     if (expandedKeys[key]) return
 
@@ -137,11 +137,13 @@ export const conductExpandParent = (keyList, keyEntities) => {
     const { parent } = entity
 
     if (parent) {
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
       conductUp(parent.key)
     }
   }
 
   ;(keyList || []).forEach(key => {
+    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
     conductUp(key)
   })
 

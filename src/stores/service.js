@@ -122,7 +122,6 @@ export default class ServiceStore extends Base {
   }
 
   // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-  // Reason: calls store method, not recursive call
   @action
   create(data, params) {
     const requests = []
@@ -132,6 +131,7 @@ export default class ServiceStore extends Base {
     } else {
       if (data.S2i) {
         updateS2iServiceParams(data)
+        // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
         this.S2iBuilderStore.create(data.S2i, params)
       }
 

@@ -52,11 +52,11 @@ export default class ServiceDetail extends Component {
   }
 
   // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-  // Reason: calls store method, not recursive call
   fetchDetail(id) {
     const { store, match } = this.props
     const { cluster, namespace } = match.params
     if (id) {
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
       store.fetchDetail({
         cluster,
         namespace,

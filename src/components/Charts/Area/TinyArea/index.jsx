@@ -69,21 +69,22 @@ export default class TinyArea extends React.Component {
   }
 
   // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-  // Reason: calls store method, not recursive call
   renderTitle() {
     const { title, renderTitle } = this.props
 
     return renderTitle ? (
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
       renderTitle()
     ) : (
       <div className={styles.title}>{`${t(title)} ${this.lastValue}`}</div>
     )
   }
-
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   renderArea() {
     const { unit, areaColors, renderArea } = this.props
 
     if (renderArea) {
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
       return renderArea()
     }
 

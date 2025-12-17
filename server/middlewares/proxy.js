@@ -67,7 +67,7 @@ module.exports = (context, options) => (ctx, next) => {
     }
 
     proxy.web(ctx.req, ctx.res, httpProxyOpts, e => {
-      console.error(e)
+      // console.error(e)
       const status = {
         ECONNREFUSED: 503,
         ETIMEOUT: 504,

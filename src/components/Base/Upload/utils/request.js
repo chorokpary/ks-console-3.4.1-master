@@ -55,12 +55,12 @@ option {
 */
 
 // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-// Reason: calls store method, not recursive call
 export default function upload(option) {
   /* eslint-disable-next-line no-underscore-dangle */
   const xhr = new window.XMLHttpRequest()
-
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   if (option.onProgress && xhr.upload) {
+    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
     xhr.upload.onprogress = function progress(e) {
       if (e.total > 0) {
         e.percent = (e.loaded / e.total) * 100
@@ -112,10 +112,10 @@ export default function upload(option) {
 
   xhr.send(formData)
 
-  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-  // Reason: calls store method, not recursive call
   return {
+    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
     abort() {
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
       xhr.abort()
     },
   }
