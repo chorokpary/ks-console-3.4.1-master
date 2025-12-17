@@ -21,6 +21,7 @@ import { isEmpty } from 'lodash'
 import { InputPassword, Icon, Dropdown } from '@kube-design/components'
 import classNames from 'classnames'
 import { PATTERN_PASSWORD } from 'utils/constants'
+import { getPasswordPolicy } from 'utils/passwordPattern'
 
 import styles from './index.scss'
 
@@ -58,6 +59,12 @@ export default class Password extends React.Component {
   state = {
     strength: -1,
     showTip: false,
+    passwordPolicy: {},
+  }
+
+  async componentDidMount() {
+    const policy = await getPasswordPolicy()
+    this.setState({ passwordPolicy: policy })
   }
 
   ref = React.createRef()
@@ -114,6 +121,7 @@ export default class Password extends React.Component {
 
   renderStrengthContent() {
     const { value = '' } = this.props
+    const policyData = this.state.passwordPolicy
 
     return (
       <div className={styles.content}>
@@ -128,7 +136,7 @@ export default class Password extends React.Component {
               size={12}
               type="light"
             />
-            {t('PASSWORD_LETTER')}
+            {t.html('RESOURCE_PASSWORD_LETTER', { uppercaseCount: policyData?.uppercaseCount,  lowercaseCount: policyData?.lowercaseCount })}
           </li>
           <li>
             <Icon
@@ -139,7 +147,7 @@ export default class Password extends React.Component {
               size={12}
               type="light"
             />
-            {t('PASSWORD_NUMBER')}
+            {t.html('RESOURCE_PASSWORD_NUMBER', { minNum: policyData?.minNum })}
           </li>
           <li>
             <Icon
@@ -150,7 +158,7 @@ export default class Password extends React.Component {
               size={12}
               type="light"
             />
-            {t('PASSWORD_LENGTH')}
+            {t.html('RESOURCE_PASSWORD_LENGTH', { minLength: policyData?.minLength })}
           </li>
         </ul>
         <p>{t('PASSWORD_STRENGTH')}:</p>

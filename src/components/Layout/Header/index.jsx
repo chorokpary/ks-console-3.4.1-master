@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { Link } from 'react-router-dom'
@@ -28,6 +28,9 @@ import LoginInfo from '../LoginInfo'
 
 import styles from './index.scss'
 
+import PasswordNoticeModal  from 'components/Modals/PasswordNotice'
+import UserStore from 'stores/user'
+
 class Header extends React.Component {
   constructor(props) {
     super(props)
@@ -35,11 +38,16 @@ class Header extends React.Component {
     this.state = {
       licenseStatus: null,
       isLoading: true,
+      showNotice: null,
+      noticeData: null,
     }
+
+    this.userStore = new UserStore()
   }
 
   componentDidMount() {
     this.fetchValidation()
+    this.getUserPasswordExpire()
   }
 
   static propTypes = {
@@ -84,8 +92,54 @@ class Header extends React.Component {
     )
   }
 
+  // 비밀번호 변경 알림 팝업 함수 start ###################################
+  getUserPasswordExpire = async () => {         
+    const result = await this.userStore.getUserPasswordExpireInfo()
+    this.setState({ noticeData: result.noticeData, showNotice: result.showNotice })
+  }
+
+  logout = async () => {
+      await request.post('logout')
+  }
+
+  onNoticeModalClose = () => {
+      this.setState({ showNotice: false })
+  }
+
+  handlePassword = async (data) => {
+      const { currentPassword, password } = data
+
+      if (currentPassword && password) {
+          await this.userStore.modifyPassword({ name: globals.user.username },{ currentPassword, password })
+          setTimeout(() => {
+              location.href = '/login'
+          }, 1000)
+      } 
+  }
+  // 비밀번호 변경 알림 팝업 함수 end ###################################
+
   render() {
     const { className, innerRef, location } = this.props
+
+    const { showNotice, noticeData } = this.state
+
+    // 아직 비밀번호 만료 정보 로딩 전
+    if (showNotice === null) {
+      return null
+    }
+
+    // 비밀번호 정책에 걸린 경우 → Header 대신 모달만 노출
+    if (showNotice === true) {
+      return (
+        <PasswordNoticeModal
+          visible
+          noticeData={noticeData}
+          onCancel={noticeData?.isExpired ? this.logout : this.onNoticeModalClose}
+          onOk={this.handlePassword}
+        />
+      )
+    }
+
     const logo = globals.config.logo || '/assets/logo.svg'
     const { licenseStatus } = this.state
 

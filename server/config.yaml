@@ -34,6 +34,8 @@ server:
     cmpUrl: http://cmp-apiserver.cmp.svc.cluster.local:10000
     harborUrl: http://registry-harbor-portal.harbor.svc.cluster.local:80
     imagebuildlUrl: http://cmp-imageuploader.cmp.svc.cluster.local:8080
+    authentikUrl: http://192.168.15.157:30081
+
 
     # url: http://172.30.0.11:30107
     # wsUrl: ws://172.30.0.11:30107
@@ -427,7 +429,12 @@ client:
                 - { name: wecom, title: WeCom, authKey: platform-settings }
                 - { name: slack, title: Slack, authKey: platform-settings }
                 - { name: webhook, title: Webhook, authKey: platform-settings }
-
+        - {
+            name: passwordpolicy,
+            title: RESOURCES_PASSWORD_POLICY_MANAGEMENT,
+            icon: ssh,
+            authKey: platform-settings,
+          }
   # workspace page navigations
   workspaceNavs:
     - cate: 'workspace'

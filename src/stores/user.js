@@ -26,6 +26,11 @@ import cookie from 'utils/cookie'
 import Base from './base'
 import List from './base.list'
 
+import moment from 'moment-mini'
+import { getLocalTime } from 'utils';
+
+import { getPasswordPolicy } from 'utils/passwordPattern'; 
+
 export default class UsersStore extends Base {
   records = new List()
 
@@ -116,12 +121,10 @@ export default class UsersStore extends Base {
       password: { password: get(data, 'spec.password', '') },
     }
 
-    // console.log('mfaParams : ' + JSON.stringify(mfaParams))
-
     const result = await this.submitting(
       request.post(`/users/auth/create/mfa`, mfaParams)
     )
-    // console.log('result : ' + JSON.stringify(result))
+    
     return result.success
   }
 
@@ -361,6 +364,15 @@ export default class UsersStore extends Base {
   }
 
   @action
+  async getUserDetail(name) {
+    const result = await request.get(
+      `kapis/iam.kubesphere.io/v1alpha2/users/${name}`,      
+    )
+    
+    return result
+  }
+
+  @action
   async fetchLoginRecords({ name, ...params }) {
     this.records.isLoading = true
 
@@ -414,4 +426,75 @@ export default class UsersStore extends Base {
     })
     return data
   }
+
+   @action
+  async getUserPasswordExpireInfo() {
+
+    const policyData = await getPasswordPolicy()
+    const userData = await this.getUserDetail(globals.user.username)
+
+    const identifyProvider = userData?.metadata?.labels?.['iam.kubesphere.io/identify-provider']
+    const lastPasswordChangeTime = userData?.metadata?.annotations?.['iam.kubesphere.io/last-password-change-time']
+
+    const isPetasusOidcUser = identifyProvider === 'petasus-oidc'
+
+    let result = {}
+    if (isPetasusOidcUser && lastPasswordChangeTime) {
+        const noticeData = this.checkPasswordPolicy( lastPasswordChangeTime, Number(policyData.period), Number(policyData.notice) )
+
+        // 알림 구간이거나 만료된 경우만 노출
+        if (noticeData.isNotice || noticeData.isExpired) {
+           result.noticeData = noticeData
+           result.showNotice = true
+        }
+
+    }else{
+      result.noticeData = {}
+      result.showNotice = false
+    }
+
+    return result
+  }
+
+  checkPasswordPolicy  = (lastPasswordChangeTime, period, notice) => {  
+        if (!lastPasswordChangeTime || !period || notice == null) {
+            return {
+                diffDays: 0,
+                remainDays: period,
+                isNotice: false,
+                noticeOverDays: 0,
+                isExpired: false,
+                expiredDays: 0,
+            }
+        }
+
+        const lastChangedAt = getLocalTime(lastPasswordChangeTime)
+        const now = moment()
+
+        // 변경 후 경과 일수
+        const diffDays = now.diff(lastChangedAt, 'days')
+
+        // 만료까지 남은 일 수 (음수 방지)
+        const remainDays = Math.max(period - diffDays, 0)
+
+        // 알림 시작 기준일
+        const noticeStartDay = period - notice
+
+        // 알림 여부
+        const isNotice = diffDays >= noticeStartDay && diffDays < period
+        const noticeOverDays = isNotice ? diffDays - noticeStartDay : 0
+
+        // 만료 여부
+        const isExpired = diffDays >= period
+        const expiredDays = isExpired ? diffDays - period : 0
+
+        return {
+            diffDays,        // 변경 후 경과 일수
+            remainDays,      // 만료까지 남은 일 수 (D-day
+            isNotice,        // 알림 구간 진입 여부
+            noticeOverDays,  // 알림 기준 초과 일수
+            isExpired,       // 만료 여부
+            expiredDays,     // 만료 후 경과 일수        
+        }
+    }
 }

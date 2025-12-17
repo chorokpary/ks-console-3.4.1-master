@@ -23,6 +23,7 @@ import { Form, Input } from '@kube-design/components'
 import { Modal } from 'components/Base'
 import { InputPassword } from 'components/Inputs'
 import { PATTERN_PASSWORD } from 'utils/constants'
+import { getPasswordRegex, getPasswordErrorMessage } from 'utils/passwordPattern'
 
 import styles from './index.scss'
 
@@ -43,6 +44,14 @@ export default class ModifyPasswordModal extends Component {
   state = {
     password: '',
     formData: {},
+    passwordPattern: null,
+    passwordErrorMessage: '',
+  }
+
+  async componentDidMount() {
+    const regex = await getPasswordRegex()
+    const errorMessage = await getPasswordErrorMessage()
+    this.setState({ passwordPattern: regex, passwordErrorMessage: errorMessage })
   }
 
   handlePassswordChange = value => {
@@ -63,6 +72,29 @@ export default class ModifyPasswordModal extends Component {
 
     callback()
   }
+
+  passwordPolicyValidator = (rule, value, callback) => {
+    const { passwordPattern, passwordErrorMessage } = this.state
+
+    if (!value) {
+      return callback()
+    }
+
+    // 아직 정책이 로딩 안 된 경우
+    if (!passwordPattern) {
+      return callback()
+    }
+
+    if (!passwordPattern.test(value)) {
+      return callback({
+        message: t(passwordErrorMessage),
+        field: rule.field,
+      })
+    }
+
+    callback()
+  }
+
 
   render() {
     const { detail, ...rest } = this.props
@@ -90,7 +122,7 @@ export default class ModifyPasswordModal extends Component {
           label={t('NEW_PASSWORD')}
           rules={[
             { required: true, message: t('PASSWORD_EMPTY_DESC') },
-            { pattern: PATTERN_PASSWORD, message: t('PASSWORD_DESC') },
+            { validator: this.passwordPolicyValidator },
           ]}
         >
           <InputPassword

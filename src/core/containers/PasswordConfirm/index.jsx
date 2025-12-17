@@ -28,6 +28,7 @@ import {
 import { get } from 'lodash'
 import UserStore from 'stores/user'
 import { PATTERN_PASSWORD } from 'utils/constants'
+import { getPasswordRegex, getPasswordErrorMessage, getPasswordPolicy } from 'utils/passwordPattern';
 
 import styles from './index.scss'
 
@@ -40,6 +41,16 @@ export default class PasswordConfirm extends Component {
   state = {
     formData: {},
     password: '',
+    passwordPattern: null,
+    passwordErrorMessage: '',
+    passwordPolicy: {}
+  }
+
+  async componentDidMount() {
+      const regex = await getPasswordRegex()
+      const errorMessage = await getPasswordErrorMessage()
+      const policy = await getPasswordPolicy()
+      this.setState({ passwordPattern: regex, passwordErrorMessage: errorMessage, passwordPolicy: policy })
   }
 
   store = new UserStore()
@@ -79,8 +90,30 @@ export default class PasswordConfirm extends Component {
     this.setState({ password: value })
   }
 
+  passwordPolicyValidator = (rule, value, callback) => {
+    const { passwordPattern, passwordErrorMessage } = this.state
+
+    if (!value) {
+      return callback()
+    }
+
+    // 아직 정책이 로딩 안 된 경우
+    if (!passwordPattern) {
+      return callback()
+    }
+
+    if (!passwordPattern.test(value)) {
+      return callback({
+        message: t(passwordErrorMessage),
+        field: rule.field,
+      })
+    }
+
+    callback()
+  }
+
   render() {
-    const { formData, password } = this.state
+    const { formData, password, passwordPolicy: policyData } = this.state
 
     return (
       <div>
@@ -96,10 +129,7 @@ export default class PasswordConfirm extends Component {
               label={t('PASSWORD')}
               rules={[
                 { required: true, message: t('PASSWORD_EMPTY_DESC') },
-                {
-                  pattern: PATTERN_PASSWORD,
-                  message: t('PASSWORD_DESC'),
-                },
+                { validator: this.passwordPolicyValidator },
               ]}
             >
               <InputPassword
@@ -115,21 +145,21 @@ export default class PasswordConfirm extends Component {
                     name="success"
                     type={PATTERN_WORD.test(password) ? 'coloured' : 'dark'}
                   />
-                  {t('PASSWORD_LETTER')}
+                  {t.html('RESOURCE_PASSWORD_LETTER', { uppercaseCount: policyData?.uppercaseCount,  lowercaseCount: policyData?.lowercaseCount })}
                 </div>
                 <div>
                   <Icon
                     name="success"
                     type={PATTERN_NUMBER.test(password) ? 'coloured' : 'dark'}
                   />
-                  {t('PASSWORD_NUMBER')}
+                  {t.html('RESOURCE_PASSWORD_NUMBER', { minNum: policyData?.minNum })}
                 </div>
                 <div>
                   <Icon
                     name="success"
                     type={password.length >= 6 ? 'coloured' : 'dark'}
                   />
-                  {t('PASSWORD_LENGTH')}
+                  {t.html('RESOURCE_PASSWORD_LENGTH', { minLength: policyData?.minLength })}
                 </div>
               </div>
             </div>
