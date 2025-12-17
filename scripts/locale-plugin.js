@@ -31,19 +31,12 @@ class LocalePlugin {
       assets.forEach(asset => {
         let content = asset.source.source()
         try {
-          const obj = parseLocale(content)
-
-          if (Array.isArray(obj)) {
+          const obj = eval(content)
+          if (obj.default) {
             content = JSON.stringify(
-              obj.reduce((prev, cur) => ({ ...prev, ...cur }), {})
+              obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
             )
           }
-          // const obj = eval(content)
-          // if (obj.default) {
-          //   content = JSON.stringify(
-          //     obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
-          //   )
-          // }
 
           if (isDev) {
             if (!fs.existsSync(compiler.outputPath)) {
@@ -54,9 +47,7 @@ class LocalePlugin {
               content
             )
           }
-        } catch (error) {
-          void error // intentionally ignored
-        }
+        } catch (error) {}
 
         compilation.updateAsset(asset.name, new RawSource(content))
       })
@@ -65,7 +56,7 @@ class LocalePlugin {
         only(lang)
       })
 
-      // isExistFilesInEN()
+      isExistFilesInEN()
     })
   }
 }
@@ -89,7 +80,7 @@ function only(lang) {
 
     Object.keys(fileObj).forEach(key => {
       if (allKeyArr.indexOf(key) > -1) {
-        // console.log(lang, '语言环境下重复UI词条为:', key)
+        console.log(lang, '语言环境下重复UI词条为:', key)
       } else {
         allKeyArr.push(key)
       }
@@ -97,19 +88,19 @@ function only(lang) {
   })
 }
 
-// const isExistFilesInEN = () => {
-//   const enFiles = read('en')
+const isExistFilesInEN = () => {
+  const enFiles = read('en')
 
-//   langArr.forEach(lang => {
-//     const files = read(lang)
-//     files.forEach(file => {
-//       const isExist = enFiles.indexOf(file)
+  langArr.forEach(lang => {
+    const files = read(lang)
+    files.forEach(file => {
+      const isExist = enFiles.indexOf(file)
 
-//       if (isExist < 0) {
-//         console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
-//       }
-//     })
-//   })
-// }
+      if (isExist < 0) {
+        console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
+      }
+    })
+  })
+}
 
 module.exports = LocalePlugin
