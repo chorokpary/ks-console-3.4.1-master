@@ -42,12 +42,16 @@ export default class StorageClassStore extends Base {
       this.module
     }`
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   async delete(params) {
     await super.delete(params)
     const volumeSnapshotClassStore = new VolumeSnapshotClasses()
     await volumeSnapshotClassStore.deleteSilent(params)
   }
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   async batchDelete(rowKeys) {
     await super.batchDelete(rowKeys)
     const volumeSnapshotClassStore = new VolumeSnapshotClasses()

@@ -122,6 +122,7 @@ export const convertTreeToEntities = (
   return wrapper
 }
 
+// sparrow-disable-next-line INFINITE_RECURSIVE_CALL
 export const conductExpandParent = (keyList, keyEntities) => {
   const expandedKeys = {}
 

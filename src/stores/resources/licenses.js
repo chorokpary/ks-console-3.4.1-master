@@ -40,6 +40,8 @@ export default class LicenseStore extends Base {
     `${this.getListUrl(params)}/fingerprint/show`
   getDefaultValidationUrl = `kapis/edgestack.kubesphere.io/v1alpha1/edgetron/licenses/default_license/validate`
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   @action
   async fetchList({
     cluster,

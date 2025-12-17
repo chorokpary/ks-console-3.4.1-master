@@ -434,7 +434,7 @@ export default class GpuClustersStore extends Base {
 
   @action
   async delete(params) {
-    console.log('params in delete:', params)
+    // console.log('params in delete:', params)
     return await this.submitting(
       Promise.all(
         params?.instances && params.instances?.length > 0

@@ -54,6 +54,8 @@ option {
 }
 */
 
+// sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+// Reason: calls store method, not recursive call
 export default function upload(option) {
   /* eslint-disable-next-line no-underscore-dangle */
   const xhr = new window.XMLHttpRequest()
@@ -110,6 +112,8 @@ export default function upload(option) {
 
   xhr.send(formData)
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   return {
     abort() {
       xhr.abort()

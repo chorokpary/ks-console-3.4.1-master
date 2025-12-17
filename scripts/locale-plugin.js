@@ -31,12 +31,19 @@ class LocalePlugin {
       assets.forEach(asset => {
         let content = asset.source.source()
         try {
-          const obj = eval(content)
-          if (obj.default) {
+          const obj = parseLocale(content)
+
+          if (Array.isArray(obj)) {
             content = JSON.stringify(
-              obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
+              obj.reduce((prev, cur) => ({ ...prev, ...cur }), {})
             )
           }
+          // const obj = eval(content)
+          // if (obj.default) {
+          //   content = JSON.stringify(
+          //     obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
+          //   )
+          // }
 
           if (isDev) {
             if (!fs.existsSync(compiler.outputPath)) {

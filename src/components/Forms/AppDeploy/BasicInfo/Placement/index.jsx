@@ -127,6 +127,8 @@ export default class Placement extends Component {
     })
   }
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   async fetchClusters(params = {}) {
     const { workspace } = this.state.formData
     if (workspace) {

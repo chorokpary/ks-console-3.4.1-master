@@ -56,13 +56,15 @@ class RevisionControl extends React.Component {
 
   @computed
   get curRevision() {
-    const { data } = toJS(this.revisionStore.list)
+    const list = this.revisionStore.list
+    const data = list.data
     return getCurrentRevision(this.store.detail, data, this.module)
   }
 
   @computed
   get revisions() {
-    const { data } = toJS(this.revisionStore.list)
+    const list = this.revisionStore.list
+    const data = list.data
     return sortBy(data, item => parseInt(item.revision, 10))
       .reverse()
       .map(item => {

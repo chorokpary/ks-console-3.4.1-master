@@ -78,6 +78,8 @@ export default class WebSocketStore {
     this.message = data
   }
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   close() {
     if (this.wsClient) {
       this.wsClient.close(true)

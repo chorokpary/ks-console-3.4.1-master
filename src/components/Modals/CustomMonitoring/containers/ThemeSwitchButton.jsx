@@ -19,7 +19,11 @@ import React from 'react'
 import { inject } from 'mobx-react'
 import Button from '../components/SquareButton'
 
+// sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+// Reason: calls store method, not recursive call
 function ThemeSwitchButton({ modalStore }) {
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   function changeTheme() {
     modalStore.changeTheme()
   }

@@ -27,49 +27,58 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class TopologyStore extends Base {
-
   module = 'topology'
 
   @action
   async fetchData(params) {
     this.isLoading = true
 
-    this.vmList = get(await this.fetchVmList(params), "vms", []);
-    this.networkList = get(await this.fetchListNetwork(params), "networks", []);
-    this.sriovList = get(await this.fetchListSriovNetwork(params), "sriovs", []);
-    this.routerList = get(await this.fetchListRouter(params), "routers", []);
-    this.floatingList = get(await this.fetchListFloating(params), "floating_ips", []);
-    this.loadbalancerList = get(await this.fetchListLoadBalancer(params), "lbs", []);
+    this.vmList = get(await this.fetchVmList(params), 'vms', [])
+    this.networkList = get(await this.fetchListNetwork(params), 'networks', [])
+    this.sriovList = get(await this.fetchListSriovNetwork(params), 'sriovs', [])
+    this.routerList = get(await this.fetchListRouter(params), 'routers', [])
+    this.floatingList = get(
+      await this.fetchListFloating(params),
+      'floating_ips',
+      []
+    )
+    this.loadbalancerList = get(
+      await this.fetchListLoadBalancer(params),
+      'lbs',
+      []
+    )
 
     this.isLoading = false
   }
-
 
   @action
   async fetchVmList(params) {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms?limit=-1`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/vms?limit=-1`
     )
     const response = { ...params, ...this.mapper(result), kind: 'vms' }
 
     this.isLoading = false
-    return response;
+    return response
   }
-
 
   @action
   async fetchListNetwork(params) {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/networks`
     )
     const response = { ...params, ...this.mapper(result), kind: 'networks' }
 
     this.isLoading = false
-    return response;
+    return response
   }
 
   @action
@@ -77,15 +86,20 @@ export default class TopologyStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_networks`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/sriov_networks`
     )
 
-    const response = { ...params, ...this.mapper(result), kind: 'sriov_networks' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'sriov_networks',
+    }
 
     this.isLoading = false
-    return response;
+    return response
   }
-
 
   @action
   async fetchListRouter(params) {
@@ -93,19 +107,19 @@ export default class TopologyStore extends Base {
 
     try {
       const result = await request.get(
-        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          params
+        )}/edgetron/resources/kubevirt/routers`
       )
       const response = { ...params, ...this.mapper(result), kind: 'routers' }
 
       this.isLoading = false
-      return response;
-
+      return response
     } catch (e) {
-      console.log(e)
+      // console.log(e)
       this.isLoading = false
       return []
     }
-
   }
 
   @action
@@ -113,12 +127,14 @@ export default class TopologyStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/floating_ips`
     )
     const response = { ...params, ...this.mapper(result), kind: 'floating_ips' }
 
     this.isLoading = false
-    return response;
+    return response
   }
 
   @action
@@ -126,11 +142,13 @@ export default class TopologyStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/lbs`
     )
     const response = { ...params, ...this.mapper(result), kind: 'lbs' }
 
     this.isLoading = false
-    return response;
+    return response
   }
 }

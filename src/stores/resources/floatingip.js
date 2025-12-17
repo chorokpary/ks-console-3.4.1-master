@@ -38,7 +38,7 @@ export default class FloatingIpStore extends Base {
 
   @action
   async create(data, params = {}) {
-    console.log('floating ip create data', data)
+    // console.log('floating ip create data', data)
     let res
     if (params.workspace) {
       res = await this.submitting(

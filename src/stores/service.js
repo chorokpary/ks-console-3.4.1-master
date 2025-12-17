@@ -121,6 +121,8 @@ export default class ServiceStore extends Base {
     this.endpoints.isLoading = false
   }
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   @action
   create(data, params) {
     const requests = []

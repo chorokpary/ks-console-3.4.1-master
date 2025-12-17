@@ -493,7 +493,7 @@ const RegistModal = props => {
         data.makeScript = getScript()
       }
 
-      console.log('생성 실행~!!!')
+      // console.log('생성 실행~!!!')
       //console.log(JSON.stringify(data))
       onOk({ ...data })
     })

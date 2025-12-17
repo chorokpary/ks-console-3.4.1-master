@@ -302,14 +302,14 @@ export default class ProjectStore extends Base {
         const resource = resources.find(r => r.step === step)
 
         if (!resource) {
-          console.log('##전체 삭제 처리 완료!!')
+          // console.log('##전체 삭제 처리 완료!!')
           resolve({ message: 'success' })
           return
         }
 
         const currentData = data[resource.name]
         if (currentData.length > 0) {
-          console.log(`${resource.name} 삭제 안했으면 삭제 처리~`)
+          // console.log(`${resource.name} 삭제 안했으면 삭제 처리~`)
           if (!deleteFlag) {
             await Promise.all(
               currentData.map(obj =>
@@ -318,10 +318,10 @@ export default class ProjectStore extends Base {
             )
           }
 
-          console.log(`${resource.name} 삭제 루프 끝났으면 다음 단계.....`)
+          // console.log(`${resource.name} 삭제 루프 끝났으면 다음 단계.....`)
           setTimeout(() => processResource(step + 1), 1000)
         } else {
-          console.log(`${resource.name} 삭제 완료!!`)
+          // console.log(`${resource.name} 삭제 완료!!`)
           setTimeout(() => processResource(step + 1), 1000)
         }
       }

@@ -20,7 +20,7 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { Select, Icon } from '@kube-design/components'
 import { extendObservable, action, computed } from 'mobx'
-import { saveAs } from 'file-saver'
+import { saveAs as saveAsFilleSaver } from 'file-saver'
 import classnames from 'classnames'
 import yaml from 'js-yaml/dist/js-yaml'
 
@@ -102,7 +102,7 @@ export default class TextPreview extends React.Component {
     const blob = new Blob([text], {
       type: 'text/plain;charset=utf-8',
     })
-    saveAs(blob, fileName)
+    saveAsFilleSaver(blob, fileName)
   }
 
   render() {

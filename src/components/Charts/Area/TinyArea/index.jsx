@@ -68,6 +68,8 @@ export default class TinyArea extends React.Component {
     return series.length === 1 ? `${last(data)[series[0]]} ${unit}` : ''
   }
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  // Reason: calls store method, not recursive call
   renderTitle() {
     const { title, renderTitle } = this.props
 
