@@ -72,7 +72,7 @@ class RevisionControl extends React.Component {
     const sorted = sortBy(data, item => parseInt(item.revision, 10))
     const reversed = sorted.reverse()
 
-    return reversed.map(item => {
+    const result = reversed.map(item => {
       let label = `#${item.revision} (${item.name.replace(
         `${item.ownerName}-`,
         ''
@@ -97,6 +97,7 @@ class RevisionControl extends React.Component {
         value: item.revision,
       }
     })
+    return result
   }
 
   @computed

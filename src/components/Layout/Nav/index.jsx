@@ -70,65 +70,67 @@ class Nav extends React.Component {
         const configMap = configMapList.items.find(
           item => item.metadata.name === 'exception-menu-config'
         )
-        exceptionMenuData = JSON.parse(
-          configMap?.data?.exceptionmenu || '[]'
-        )
+        exceptionMenuData = JSON.parse(configMap?.data?.exceptionmenu || '[]')
       }
 
       this.setState({ exceptionMenu: exceptionMenuData })
     } catch (e) {
-      console.error('exception menu load failed', e)
+      // console.error('exception menu load failed', e)
     }
   }
 
   createMenuConfig = async () => {
     const data = {
-          "apiVersion":"v1",
-          "kind":"ConfigMap",
-          "metadata":{
-            "namespace":"default",
-            "labels":{
+      apiVersion: 'v1',
+      kind: 'ConfigMap',
+      metadata: {
+        namespace: 'default',
+        labels: {},
+        name: 'exception-menu-config',
+        annotations: {
+          'kubesphere.io/creator': 'admin',
+        },
+      },
+      spec: {
+        template: {
+          metadata: {
+            labels: {},
+            annotations: {
+              'kubesphere.io/creator': 'admin',
             },
-            "name":"exception-menu-config",
-            "annotations":{
-                "kubesphere.io/creator":"admin"
-            }
           },
-          "spec":{
-            "template":{
-              "metadata":{
-                "labels":{
-                },
-                "annotations":{
-                  "kubesphere.io/creator":"admin"
-                }
-              }
-            }
+        },
+      },
+      data: {
+        clustermenu: JSON.stringify(
+          {
+            overview: '대시보드',
+            'cluster-settings': '클러스터 설정',
+            projects: '프로젝트',
+            'app-workloads': '애플리케이션 워크로드',
+            'computing-workloads': '컴퓨팅 워크로드',
+            computing: '컴퓨팅 설정',
+            resources: '컴퓨팅 템플릿',
+            config: '환경설정',
+            network: '네트워크',
+            storage: '스토리지',
+            'monitoring-alerting': '모니터링 및 알림',
           },
-          "data":{  
-            "clustermenu" : JSON.stringify( {
-                "overview": "대시보드",
-                "cluster-settings": "클러스터 설정",
-                "projects": "프로젝트",
-                "app-workloads": "애플리케이션 워크로드",
-                "computing-workloads": "컴퓨팅 워크로드",
-                "computing": "컴퓨팅 설정",
-                "resources": "컴퓨팅 템플릿",
-                "config": "환경설정",
-                "network": "네트워크",
-                "storage": "스토리지",
-                "monitoring-alerting": "모니터링 및 알림"
-              }, null, 2),
-            "exceptionmenu": JSON.stringify([
-                'app-workloads',
-                'config',
-                'network',
-                'storage',
-              ], null, 2)
-            }
-          }
+          null,
+          2
+        ),
+        exceptionmenu: JSON.stringify(
+          ['app-workloads', 'config', 'network', 'storage'],
+          null,
+          2
+        ),
+      },
+    }
 
-    const result = await request.post(`/api/v1/namespaces/default/configmaps`,  data)
+    const result = await request.post(
+      `/api/v1/namespaces/default/configmaps`,
+      data
+    )
     return result
   }
 
@@ -188,7 +190,7 @@ class Nav extends React.Component {
     const { openedNav, exceptionMenu } = this.state
     const current = this.currentPath
     const prefix = trimEnd(match.url, '/')
-    console.log("exceptionMenu : "+ JSON.stringify(exceptionMenu))
+    // console.log("exceptionMenu : "+ JSON.stringify(exceptionMenu))
     return (
       <div ref={innerRef} className={className}>
         {navs.map(nav => (
