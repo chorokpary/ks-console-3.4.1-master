@@ -220,7 +220,7 @@ export default {
               )
             )
 
-            reqs.push(store.delete({ cluster, name }))
+            reqs.push(store.deleteStorage({ cluster, name }))
           })
 
           await Promise.all([...updateAccessor, ...reqs])
@@ -253,7 +253,7 @@ export default {
             }
           )
 
-          store.delete(detail).then(() => {
+          store.deleteStorage(detail).then(() => {
             Modal.close(modal)
             Notify.success({ content: t('DELETED_SUCCESSFULLY') })
             success && success()

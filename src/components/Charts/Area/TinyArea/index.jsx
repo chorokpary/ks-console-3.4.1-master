@@ -68,24 +68,22 @@ export default class TinyArea extends React.Component {
     return series.length === 1 ? `${last(data)[series[0]]} ${unit}` : ''
   }
 
-  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   renderTitle() {
-    const { title, renderTitle } = this.props
+    const { title, renderTitle: renderTitleProp } = this.props
 
-    return renderTitle ? (
+    return renderTitleProp ? (
       // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-      renderTitle()
+      renderTitleProp()
     ) : (
       <div className={styles.title}>{`${t(title)} ${this.lastValue}`}</div>
     )
   }
-  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   renderArea() {
-    const { unit, areaColors, renderArea } = this.props
+    const { unit, areaColors, renderArea: renderAreaProp } = this.props
 
-    if (renderArea) {
+    if (renderAreaProp) {
       // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-      return renderArea()
+      return renderAreaProp()
     }
 
     return this.series.map((key, index) => {

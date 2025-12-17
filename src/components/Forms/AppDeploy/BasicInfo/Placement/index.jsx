@@ -127,11 +127,13 @@ export default class Placement extends Component {
     })
   }
 
-  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   async fetchClusters(params = {}) {
+    return this._fetchClusters(params)
+  }
+
+  async _fetchClusters(params = {}) {
     const { workspace } = this.state.formData
     if (workspace) {
-      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
       await this.workspaceStore.fetchClusters({
         ...params,
         workspace,

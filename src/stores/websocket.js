@@ -78,11 +78,14 @@ export default class WebSocketStore {
     this.message = data
   }
 
-  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   close() {
     if (this.wsClient) {
       // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-      this.wsClient.close(true)
+      // this.wsClient.close(true)
+      this._close(true)
     }
+  }
+  _close() {
+    this.wsClient.close(true)
   }
 }

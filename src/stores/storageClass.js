@@ -43,20 +43,17 @@ export default class StorageClassStore extends Base {
     }`
 
   // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-  async delete(params) {
-    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  async deleteStorage(params) {
     await super.delete(params)
     const volumeSnapshotClassStore = new VolumeSnapshotClasses()
     await volumeSnapshotClassStore.deleteSilent(params)
   }
 
-  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-  async batchDelete(rowKeys) {
-    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-    await super.batchDelete(rowKeys)
-    const volumeSnapshotClassStore = new VolumeSnapshotClasses()
-    volumeSnapshotClassStore.silentBatchDelete(rowKeys)
-  }
+  // async batchDelete(rowKeys) {
+  //   await super.batchDelete(rowKeys)
+  //   const volumeSnapshotClassStore = new VolumeSnapshotClasses()
+  //   volumeSnapshotClassStore.silentBatchDelete(rowKeys)
+  // }
 
   @action
   create(data, params) {

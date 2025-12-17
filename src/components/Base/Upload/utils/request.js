@@ -112,11 +112,15 @@ export default function upload(option) {
 
   xhr.send(formData)
 
+  function _abort() {
+    xhr.abort()
+  }
+
   return {
-    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
     abort() {
       // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-      xhr.abort()
+      _abort()
+      // xhr.abort()
     },
   }
 }

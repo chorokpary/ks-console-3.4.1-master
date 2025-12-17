@@ -52,8 +52,12 @@ export default class LicenseStore extends Base {
     ...params
   } = {}) {
     // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
-    await super.fetchList(params)
+    await this._fetchList(params)
     await this.fetchFingerprint(params)
+  }
+
+  async _fetchList(params) {
+    await super.fetchList(params)
   }
 
   @action
