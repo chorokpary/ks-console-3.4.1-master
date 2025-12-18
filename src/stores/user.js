@@ -262,7 +262,11 @@ export default class UsersStore extends Base {
     )
 
     if (data.password && name === globals.user.username) {
-      return await request.post('logout')
+      const res = await request.post('logout')
+      const url = get(res, 'data.url')
+      if (url) {
+        window.location.href = url
+      }
     }
 
     const lang = get(data, 'spec.lang')

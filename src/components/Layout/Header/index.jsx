@@ -23,6 +23,7 @@ import { Link } from 'react-router-dom'
 import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
 import { isAppsPage, getCustomizedWebsiteUrl } from 'utils'
 import LicenseStore from 'stores/resources/licenses'
+import { get } from 'lodash'
 
 import LoginInfo from '../LoginInfo'
 
@@ -116,7 +117,7 @@ class Header extends React.Component {
       if (currentPassword && password) {
           await this.userStore.modifyPassword({ name: globals.user.username },{ currentPassword, password })
           setTimeout(() => {
-              location.href = '/login'
+              this.logout()
           }, 1000)
       } 
   }
