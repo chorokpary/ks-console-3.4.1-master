@@ -31,7 +31,10 @@ class LocalePlugin {
       assets.forEach(asset => {
         let content = asset.source.source()
         try {
-          const obj = eval(content)
+          const filePath = path.join(compiler.outputPath, asset.name)
+          delete require.cache[filePath] // 캐시 제거
+          const obj = require(filePath)
+          // const obj = eval(content)
           if (obj.default) {
             content = JSON.stringify(
               obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
