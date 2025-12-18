@@ -24,6 +24,13 @@ const langArr = fs.readdirSync(`./locales/`)
 
 const isDev = process.env.NODE_ENV === 'development'
 
+function parseLocale(content) {
+  const cleaned = content
+    .replace(/^export\s+default\s+/, '')
+    .replace(/;?\s*$/, '')
+
+  return JSON.parse(cleaned)
+}
 class LocalePlugin {
   apply(compiler) {
     compiler.hooks.emit.tap('LocalePlugin', compilation => {
@@ -31,12 +38,19 @@ class LocalePlugin {
       assets.forEach(asset => {
         let content = asset.source.source()
         try {
-          const obj = eval(content)
-          if (obj.default) {
+          const obj = parseLocale(content)
+
+          if (Array.isArray(obj)) {
             content = JSON.stringify(
-              obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
+              obj.reduce((prev, cur) => ({ ...prev, ...cur }), {})
             )
           }
+          // const obj = eval(content)
+          // if (obj.default) {
+          //   content = JSON.stringify(
+          //     obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
+          //   )
+          // }
 
           if (isDev) {
             if (!fs.existsSync(compiler.outputPath)) {
@@ -48,7 +62,7 @@ class LocalePlugin {
             )
           }
         } catch (error) {
-          void error
+          void error // intentionally ignored
         }
 
         compilation.updateAsset(asset.name, new RawSource(content))
@@ -58,7 +72,7 @@ class LocalePlugin {
         only(lang)
       })
 
-      isExistFilesInEN()
+      // isExistFilesInEN()
     })
   }
 }
@@ -90,20 +104,19 @@ function only(lang) {
   })
 }
 
-const isExistFilesInEN = () => {
-  const enFiles = read('en')
+// const isExistFilesInEN = () => {
+//   const enFiles = read('en')
 
-  langArr.forEach(lang => {
-    const files = read(lang)
-    files.forEach(file => {
-      const isExist = enFiles.indexOf(file)
+//   langArr.forEach(lang => {
+//     const files = read(lang)
+//     files.forEach(file => {
+//       const isExist = enFiles.indexOf(file)
 
-      if (isExist < 0) {
-        // console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
-        chalk`{#372121.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`
-      }
-    })
-  })
-}
+//       if (isExist < 0) {
+//         console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
+//       }
+//     })
+//   })
+// }
 
 module.exports = LocalePlugin
