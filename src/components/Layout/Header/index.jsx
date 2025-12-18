@@ -99,7 +99,11 @@ class Header extends React.Component {
   }
 
   logout = async () => {
-      await request.post('logout')
+    const res = await request.post('logout')
+    const url = get(res, 'data.url')
+    if (url) {
+      window.location.href = url
+    }
   }
 
   onNoticeModalClose = () => {
@@ -122,11 +126,6 @@ class Header extends React.Component {
     const { className, innerRef, location } = this.props
 
     const { showNotice, noticeData } = this.state
-
-    // 아직 비밀번호 만료 정보 로딩 전
-    if (showNotice === null) {
-      return null
-    }
 
     // 비밀번호 정책에 걸린 경우 → Header 대신 모달만 노출
     if (showNotice === true) {

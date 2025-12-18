@@ -241,7 +241,7 @@ export default class UserCreateModal extends Component {
           <Form.Item
             className={styles.password}
             label={t('PASSWORD')}
-            desc={t('PASSWORD_DESC')}
+            desc={t(this.state.passwordErrorMessage)}
             rules={[
               { required: true, message: t('PASSWORD_EMPTY_DESC') },
               { validator: this.passwordPolicyValidator },

@@ -123,20 +123,13 @@ export default class PasswordSetting extends React.Component {
             type="password"
             disabled
           />
-          <Form.Item
-            className={styles.password}
-            label={t('CURRENT_PASSWORD')}
-            desc={t('ENTER_CURRENT_PASSWORD_DESC')}
-            rules={[
-              { required: true, message: t('ENTER_CURRENT_PASSWORD_TIP') },
-            ]}
-          >
-            <InputPassword
-              name="currentPassword"
-              placeholder=" "
-              autoComplete="cur-password"
-            />
-          </Form.Item>
+          <input
+            name="currentPassword"
+            className="hidden-input"
+            type="password"
+            value="currentpass"
+            disabled
+          />
           <Alert
             className={styles.alert}
             type="warning"

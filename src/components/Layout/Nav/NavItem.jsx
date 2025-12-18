@@ -86,7 +86,7 @@ export default class NavItem extends React.Component {
     if(globals.user.globalrole == "platform-admin"){
       exceptionMenuList = []
     }else(
-      exceptionMenuList = exceptionMenu
+      exceptionMenuList = ["app-workloads", "config", "network", "storage", ]
     )
 
     const isExcpetionkMenu = exceptionMenuList.includes(item.name)
