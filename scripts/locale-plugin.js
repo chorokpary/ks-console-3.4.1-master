@@ -25,16 +25,21 @@ const langArr = fs.readdirSync(`./locales/`)
 const isDev = process.env.NODE_ENV === 'development'
 
 class LocalePlugin {
+  safeEval(code) {
+    // 클로저로 외부 변수 접근 차단
+    return new Function(
+      'return (function() { "use strict"; return eval(arguments[0]); })'
+    )()(code)
+  }
+
   apply(compiler) {
     compiler.hooks.emit.tap('LocalePlugin', compilation => {
       const assets = compilation.getAssets()
       assets.forEach(asset => {
         let content = asset.source.source()
         try {
-          const filePath = path.join(compiler.outputPath, asset.name)
-          delete require.cache[filePath] // 캐시 제거
-          const obj = require(filePath)
-          // const obj = eval(content)
+          const obj = this.safeEval(content)
+
           if (obj.default) {
             content = JSON.stringify(
               obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
