@@ -25,21 +25,13 @@ const langArr = fs.readdirSync(`./locales/`)
 const isDev = process.env.NODE_ENV === 'development'
 
 class LocalePlugin {
-  safeEval(code) {
-    // 클로저로 외부 변수 접근 차단
-    return new Function(
-      'return (function() { "use strict"; return eval(arguments[0]); })'
-    )()(code)
-  }
-
   apply(compiler) {
     compiler.hooks.emit.tap('LocalePlugin', compilation => {
       const assets = compilation.getAssets()
       assets.forEach(asset => {
         let content = asset.source.source()
         try {
-          const obj = this.safeEval(content)
-
+          const obj = eval(content)
           if (obj.default) {
             content = JSON.stringify(
               obj.default.reduce((prev, cur) => ({ ...prev, ...cur }), {})
@@ -108,7 +100,7 @@ const isExistFilesInEN = () => {
 
       if (isExist < 0) {
         // console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
-        chalk`{#372121.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`
+        chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`
       }
     })
   })
