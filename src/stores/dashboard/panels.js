@@ -148,12 +148,6 @@ export const nodePanel = ({ x, y, w, h }) => {
                                       <span>스케줄링 불가</span>
                                     </p>
                                   </div>
-                                  <div class="status_wrap">
-                                    <div class="value">150</div>
-                                    <p class="status total">
-                                      <span>전체</span>
-                                    </p>
-                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -237,7 +231,7 @@ export const gpuStatusPanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>GPU 현황</label>
+                        <label>GPU</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -907,7 +901,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                               <h3 class="gpu_usage_card_title">
                                 GPU 메모리 사용률
                               </h3>
-                              <p class="gpu_usage_card_value">52%</p>
+                              <p class="gpu_usage_card_value">213 Bytes</p>
                               <div class="gpu_usage_card_chart">
                                 <img
                                   src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
@@ -917,9 +911,9 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
 
                             <div class="gpu_usage_card">
                               <h3 class="gpu_usage_card_title">
-                                GPU 온도 (최고 / 평균)
+                                GPU 온도 평균
                               </h3>
-                              <p class="gpu_usage_card_value">95℃ / 72℃</p>
+                              <p class="gpu_usage_card_value">72℃</p>
                               <div class="gpu_usage_card_chart">
                                 <img
                                   src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
@@ -931,7 +925,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                               <h3 class="gpu_usage_card_title">
                                 전력 사용량 (Total)
                               </h3>
-                              <p class="gpu_usage_card_value">3,200w</p>
+                              <p class="gpu_usage_card_value">3,200 W</p>
                               <div class="gpu_usage_card_chart">
                                 <img
                                   src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
@@ -943,7 +937,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                               <h3 class="gpu_usage_card_title">
                                 NVLink (Total)
                               </h3>
-                              <p class="gpu_usage_card_value">38GB/s</p>
+                              <p class="gpu_usage_card_value">38 Bps</p>
                               <div class="gpu_usage_card_chart">
                                 <img
                                   src="/assets/resources/images/dummy/img-dummy-chart-dash-gpuusage.png"
@@ -960,7 +954,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                                 <section class="network_section">
                                   <p>
                                     <span class="badge">TX</span>
-                                    <span class="value">95GB/s</span>
+                                    <span class="value">95 kbps</span>
                                   </p>
                                   <div class="network_chart">
                                     <img
@@ -971,7 +965,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                                 <section class="network_section">
                                   <p>
                                     <span class="badge">RX</span>
-                                    <span class="value">90GB/s</span>
+                                    <span class="value">90 kbps</span>
                                   </p>
                                   <div class="network_chart">
                                     <img
@@ -996,7 +990,7 @@ export const gpuUsageTop5Panel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                   <div class="grid_item">
                     <div class="grid_title">
-                      <label>GPU 사용 현황 Top5</label>
+                      <label>GPU 사용률 Top5</label>
                       <div class="right"></div>
                       <i class="ico-btn-trash"></i>
                     </div>
