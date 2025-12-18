@@ -310,7 +310,7 @@ export default class AlertMonitor extends React.Component {
           {metrics.length < 1 ? (
             <div className={styles.metricEmpty}>{t('NO_MONITOR_METRIC')}</div>
           ) : (
-            <Chart {...options} />
+            <Chart {...options} width={'90%'} />
           )}
         </Loading>
         <div className={styles.current}>
