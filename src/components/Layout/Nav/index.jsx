@@ -76,6 +76,7 @@ class Nav extends React.Component {
       this.setState({ exceptionMenu: exceptionMenuData })
     } catch (e) {
       // console.error('exception menu load failed', e)
+      void e
     }
   }
 
