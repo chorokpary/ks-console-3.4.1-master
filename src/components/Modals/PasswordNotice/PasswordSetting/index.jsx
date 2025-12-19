@@ -18,7 +18,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Alert, Form } from '@kube-design/components'
+import { Alert, Form, Input } from '@kube-design/components'
 import { InputPassword } from 'components/Inputs'
 import { PATTERN_PASSWORD } from 'utils/constants'
 import { getPasswordRegex, getPasswordErrorMessage } from 'utils/passwordPattern';
@@ -123,18 +123,13 @@ export default class PasswordSetting extends React.Component {
             type="password"
             disabled
           />
-          <Form.Item
-            className={styles.password}
-            label={t('CURRENT_PASSWORD')}
-            desc={t('ENTER_CURRENT_PASSWORD_DESC')}
-            rules={[
-              { required: true, message: t('ENTER_CURRENT_PASSWORD_TIP') },
-            ]}
-          >
-            <InputPassword
+          <Form.Item>
+            <Input
               name="currentPassword"
               placeholder=" "
               autoComplete="cur-password"
+              hidden={true}
+              defaultValue="currentpass"
             />
           </Form.Item>
           <Alert
