@@ -445,15 +445,14 @@ export default class UsersStore extends Base {
     let result = {}
     if (isPetasusOidcUser && lastPasswordChangeTime) {
         const noticeData = this.checkPasswordPolicy( lastPasswordChangeTime, Number(policyData.period), Number(policyData.notice) )
-
-        if(noticeData.isChangedWithinPeriod){ // period 이내 변경 여부   
-           result.noticeData = {}
-           result.showNotice = false
-        }else if (noticeData.isNotice || noticeData.isExpired) { // 알림 구간이거나 만료된 경우만 노출
-           result.noticeData = noticeData
-           result.showNotice = true
+                
+        if (noticeData.isExpired) {
+          result.noticeData = noticeData
+          result.showNotice = true
+        }else if(noticeData.isChangedWithinPeriod){
+          result.noticeData = noticeData.isNotice ? noticeData : {}
+          result.showNotice = noticeData.isNotice ? true : false
         }
-
     }else{
       result.noticeData = {}
       result.showNotice = false
@@ -479,7 +478,7 @@ export default class UsersStore extends Base {
         const now = moment()
 
         // 변경 후 경과 일수
-        const diffDays = now.diff(lastChangedAt, 'days')
+        const diffDays = now.startOf('day').diff(lastChangedAt.startOf('day'), 'days')
 
         // period 안에 변경했는지 여부 (오늘 포함)
         const isChangedWithinPeriod = diffDays <= period
