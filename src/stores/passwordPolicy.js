@@ -39,72 +39,34 @@ export default class PasswordPolicyStore extends Base {
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
+  getPasswordApiUrl = () => `/kapis/config.kubesphere.io/v1alpha2/namespaces/default/policy/password-policy-config`
+
   @action
   async createPasswordPolicy() {
-
-    const configMapParams = {
-      namespace: 'default',
-      name: 'password-policy-config',
-    }
-
     const data = {
-          "apiVersion":"v1",
-          "kind":"ConfigMap",
-          "metadata":{
-            "namespace":"default",
-            "labels":{
-            },
-            "name":"password-policy-config",
-            "annotations":{
-                "kubesphere.io/creator":"admin"
-            }
-          },
-          "spec":{
-            "template":{
-              "metadata":{
-                "labels":{
-                },
-                "annotations":{
-                  "kubesphere.io/creator":"admin"
-                }
-              }
-            }
-          },
           "data":{
             "policy":"{\n \"minLength\": \"8\",\n \"maxLength\": \"64\",\n \"uppercaseCount\": \"1\",\n \"lowercaseCount\": 1,\n \"minNum\": 1,\n \"special\": \"1\",\n \"symbol\": \"(!@#$%^&*(-_=+\\\\|[{}];:', <.>/?)\",\n \"period\": 10,\n \"notice\": 7,\n \"errorMessage\": \"비밀번호에는 숫자 1개 이상, 소문자 1개 이상, 대문자 1개 이상, 특수 문자 1개 이상((!@#$%^&*(-_=+\\\\|[{}];:', <.>/?))이(가) 포함되어야 합니다. 길이는 8자에서 64자 사이여야 합니다.\"\n}"
             }
           }
 
-    const result = await request.post(this.getListUrl(configMapParams),  data)
+    const result = await request.put(this.getPasswordApiUrl(),  data)
     return result
   }
 
   @action
   async update(data) {
 
-    const configMapParams = {
-      namespace: 'default',
-      name: 'password-policy-config',
-    }
-
-    // 원본 데이터 가져오기
-    const resultConfigMap = await request.get(
-      this.getDetailUrl(configMapParams)
-    )
-
-    // config.yaml 추출
-    const dataObject = get(resultConfigMap, ['data'])
-
-    // 기존 데이터 삭제
-    delete dataObject['policy']
+    const dataObject = {}
+    dataObject['data'] = {}
 
     // 변경 데이터 추가
-    dataObject['policy'] = JSON.stringify(data, null, 2)
-
+    dataObject['data']['policy'] = JSON.stringify(data, null, 2)
+    
     try {
       const res = await this.submitting(
-        request.put(this.getDetailUrl(configMapParams), resultConfigMap)
+        request.put(this.getPasswordApiUrl(), dataObject)
       )
+
       return res
     } catch (err) {
       return { success: false }
@@ -114,28 +76,16 @@ export default class PasswordPolicyStore extends Base {
   @action
   async getPasswordPolicy() {
 
-    const configMapList = await request.get(`/api/v1/namespaces/default/configmaps`)
-    const exists = configMapList.items.some(
-      item => item?.metadata?.name === 'password-policy-config'
-    )
+    const passwordPolicyData = await request.get(this.getPasswordApiUrl())
+    const policyString = get(passwordPolicyData, ['data', 'policy'])
 
-    if (!exists) {
+    if(!passwordPolicyData){
       const createResult = await this.createPasswordPolicy()
-      const yamlString = get(createResult, ['data', 'policy'])
-      return yaml.load(yamlString)
+      const createPolicyString = get(createResult, ['data', 'policy'])
+      return yaml.load(createPolicyString)   
     }
 
-    const configMapParams = {
-      namespace: 'default',
-      name: 'password-policy-config',
-    }
-
-    const resultConfigMap = await request.get(
-      this.getDetailUrl(configMapParams),
-    )
-
-    const yamlString = get(resultConfigMap, ['data', 'policy'])
-    return yaml.load(yamlString)   
+    return yaml.load(policyString)   
   }
 
 }
