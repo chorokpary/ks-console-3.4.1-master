@@ -25,36 +25,6 @@ import { getPasswordPolicy } from 'utils/passwordPattern'
 
 import styles from './index.scss'
 
-const PATTERN_WORD = /(?=.*?[A-Z])(?=.*?[a-z])/
-const PATTERN_NUMBER = /(?=.*?[0-9])/
-
-const getStrength = value => {
-  if (isEmpty(value)) {
-    return -1
-  }
-
-  let ret = 0
-  if (PATTERN_WORD.test(value)) {
-    ret += 4
-  }
-
-  if (PATTERN_NUMBER.test(value)) {
-    ret += 2
-  }
-
-  if (value.length >= 6 && value < 12) {
-    ret += 2
-  } else if (value.length >= 12) {
-    ret += 4
-  }
-
-  if (!PATTERN_PASSWORD.test(value)) {
-    return 0
-  }
-
-  return ret
-}
-
 export default class Password extends React.Component {
   state = {
     strength: -1,
@@ -74,7 +44,7 @@ export default class Password extends React.Component {
     onChange && onChange(e, value)
 
     if (withStrength) {
-      const strength = getStrength(value)
+      const strength = this.getStrength(value)
       this.setState({ strength, showTip: strength > -1 })
     }
   }
@@ -119,6 +89,56 @@ export default class Password extends React.Component {
     }
   }
 
+  getStrength = value => {
+  if (isEmpty(value)) {
+    return -1
+  }
+
+  let ret = 0
+  if (this.checkLetter(value)) {
+    ret += 4
+  }
+
+  if (this.checkNumber(value)) {
+    ret += 2
+  }
+
+  if (value.length >= 6 && value < 12) {
+    ret += 2
+  } else if (value.length >= 12) {
+    ret += 4
+  }
+
+  if (!PATTERN_PASSWORD.test(value)) {
+    return 0
+  }
+
+  return ret
+}
+
+  checkLetter = value => {
+    const { uppercaseCount = 0, lowercaseCount = 0 } = this.state.passwordPolicy
+    if (!value) return false
+
+    const upper = (value.match(/[A-Z]/g) || []).length
+    const lower = (value.match(/[a-z]/g) || []).length
+
+    return upper >= uppercaseCount && lower >= lowercaseCount
+  }
+
+  checkNumber = value => {
+    const { minNum = 0 } = this.state.passwordPolicy
+    if (!value) return false
+
+    const number = (value.match(/[0-9]/g) || []).length
+    return number >= minNum
+  }
+
+  checkLength = value => {
+    const { minLength = 0 } = this.state.passwordPolicy
+    return value.length >= minLength
+  }
+
   renderStrengthContent() {
     const { value = '' } = this.props
     const policyData = this.state.passwordPolicy
@@ -130,7 +150,7 @@ export default class Password extends React.Component {
           <li>
             <Icon
               className={classNames(styles.icon, {
-                [styles.selected]: PATTERN_WORD.test(value),
+                [styles.selected]: this.checkLetter(value),
               })}
               name="check"
               size={12}
@@ -141,7 +161,7 @@ export default class Password extends React.Component {
           <li>
             <Icon
               className={classNames(styles.icon, {
-                [styles.selected]: PATTERN_NUMBER.test(value),
+                [styles.selected]: this.checkNumber(value),
               })}
               name="check"
               size={12}
@@ -152,7 +172,7 @@ export default class Password extends React.Component {
           <li>
             <Icon
               className={classNames(styles.icon, {
-                [styles.selected]: value.length >= 8,
+                [styles.selected]: this.checkLength(value),
               })}
               name="check"
               size={12}

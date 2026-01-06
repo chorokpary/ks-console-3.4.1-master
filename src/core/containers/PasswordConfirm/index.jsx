@@ -32,9 +32,6 @@ import { getPasswordRegex, getPasswordErrorMessage, getPasswordPolicy } from 'ut
 
 import styles from './index.scss'
 
-const PATTERN_WORD = /(?=.*?[A-Z])(?=.*?[a-z])/
-const PATTERN_NUMBER = /(?=.*?[0-9])/
-
 @inject('rootStore')
 @observer
 export default class PasswordConfirm extends Component {
@@ -112,6 +109,24 @@ export default class PasswordConfirm extends Component {
     callback()
   }
 
+  checkLetter = value => {
+    const { uppercaseCount = 0, lowercaseCount = 0 } = this.state.passwordPolicy
+    if (!value) return false
+
+    const upper = (value.match(/[A-Z]/g) || []).length
+    const lower = (value.match(/[a-z]/g) || []).length
+
+    return upper >= uppercaseCount && lower >= lowercaseCount
+  }
+
+  checkNumber = value => {
+    const { minNum = 0 } = this.state.passwordPolicy
+    if (!value) return false
+
+    const number = (value.match(/[0-9]/g) || []).length
+    return number >= minNum
+  }
+
   render() {
     const { formData, password, passwordPolicy: policyData } = this.state
 
@@ -143,21 +158,21 @@ export default class PasswordConfirm extends Component {
                 <div>
                   <Icon
                     name="success"
-                    type={PATTERN_WORD.test(password) ? 'coloured' : 'dark'}
+                    type={this.checkLetter(password) ? 'coloured' : 'dark'}
                   />
                   {t.html('RESOURCE_PASSWORD_LETTER', { uppercaseCount: policyData?.uppercaseCount,  lowercaseCount: policyData?.lowercaseCount })}
                 </div>
                 <div>
                   <Icon
                     name="success"
-                    type={PATTERN_NUMBER.test(password) ? 'coloured' : 'dark'}
+                    type={this.checkNumber(password) ? 'coloured' : 'dark'}
                   />
                   {t.html('RESOURCE_PASSWORD_NUMBER', { minNum: policyData?.minNum })}
                 </div>
                 <div>
                   <Icon
                     name="success"
-                    type={password.length >= 6 ? 'coloured' : 'dark'}
+                    type={password.length >= policyData?.minLength ? 'coloured' : 'dark'}
                   />
                   {t.html('RESOURCE_PASSWORD_LENGTH', { minLength: policyData?.minLength })}
                 </div>
