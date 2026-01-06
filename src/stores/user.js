@@ -26,6 +26,8 @@ import cookie from 'utils/cookie'
 import Base from './base'
 import List from './base.list'
 
+import { getAllYAMLValue } from 'utils/yaml'
+
 export default class UsersStore extends Base {
   records = new List()
 
@@ -89,6 +91,50 @@ export default class UsersStore extends Base {
     )}`
 
   getListUrl = this.getResourceUrl
+
+  getAuthentikResourceUrl = "/api/v3/core/users/"
+  
+
+  @action
+  async create(data, params = {}) {
+
+    if(data.isMfa){
+      const res = await this.submitting(          
+        request.post(this.getListUrl(params), data)
+      )
+      if (this.afterChange) {
+        this.afterChange(res)
+      }
+      return res      
+    }else{     
+
+      const userData = {
+        username: get(data, 'metadata.name', ''),         
+        name: get(data, 'metadata.name', ''),                
+        email: get(data, 'spec.email', ''),              
+        is_active: true,
+        groups: [],
+        path: 'petasus.io',          
+        type: 'internal',           
+        attributes: {
+          role: get(data, 'metadata.annotations["iam.kubesphere.io/globalrole"]'),
+          description: get(data, 'metadata.annotations["kubesphere.io/description"]'),
+        },
+      };
+
+      const params = {
+        userData,
+        password: {password: get(data, 'spec.password', '')}
+      }
+
+      console.log("params : "+ JSON.stringify(params))
+
+      const result = await this.submitting(request.post(`/users/auth/create/mfa`, params))
+      console.log("result : "+ JSON.stringify(result))
+      return result.success; 
+    }
+
+  }
 
   @action
   async fetchRules({ name, ...params }) {
