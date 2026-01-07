@@ -55,16 +55,18 @@ const ClusterModal = props => {
         limit: 1000,
         cluster: props.cluster,
       })
-      const opt = networkList.map(el => {
-        return {
-          label: `${el.name} / ${el.cidr}`,
-          value: el.name,
-        }
-      })
+      const opt = networkList
+        .filter(el => el.project === projectName)
+        .map(el => {
+          return {
+            label: `${el.name} / ${el.cidr}`,
+            value: el.name,
+          }
+        })
       setNetworkOptions(opt)
     }
     getNetworkData()
-  }, [])
+  }, [projectName])
 
   const handleOk = () => {
     const onOk = props.onOk
@@ -158,7 +160,6 @@ const ClusterModal = props => {
   }
 
   const handleVmCreate = () => {
-    console.log('handleVmCreate~~!!') // 실제 API 가 연동되면 재개발 해야 함...
     rootStore.triggerAction('gpuclusters.regist', {
       store: store,
       cluster: projectName,
@@ -228,7 +229,12 @@ const ClusterModal = props => {
                     name="namespace"
                     defaultValue={projectName}
                     cluster={props.cluster}
-                    onChange={e => setProjectName(e)}
+                    onChange={e => {
+                      setProjectName(e)
+                      if (form.current) {
+                        form.current.props.data.sonaNetwork = undefined
+                      }
+                    }}
                     style={{ maxWidth: 'none' }}
                     disabled={isDisabled}
                   />
@@ -266,8 +272,9 @@ const ClusterModal = props => {
                   ]}
                 >
                   <Select
+                    key={projectName}
                     name="sonaNetwork"
-                    defaultValue={networkOptions[0]?.value || ''}
+                    placeholder={t('RESOURCES_SELECT')}
                     options={networkOptions}
                   />
                 </Form.Item>

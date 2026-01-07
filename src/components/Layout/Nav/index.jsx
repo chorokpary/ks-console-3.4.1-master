@@ -47,6 +47,7 @@ class Nav extends React.Component {
 
     this.state = {
       openedNav: this.getOpenedNav(),
+      exceptionMenu: [],
     }
   }
 
@@ -103,7 +104,7 @@ class Nav extends React.Component {
       disabled,
     } = this.props
 
-    const { openedNav } = this.state
+    const { openedNav, exceptionMenu } = this.state
     const current = this.currentPath
     const prefix = trimEnd(match.url, '/')
 
@@ -123,6 +124,7 @@ class Nav extends React.Component {
                   isOpen={item.name === openedNav}
                   onOpen={this.handleItemOpen}
                   disabled={disabled}
+                  exceptionMenu={exceptionMenu}
                 />
               ))}
             </ul>

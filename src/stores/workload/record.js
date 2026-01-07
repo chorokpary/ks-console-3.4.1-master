@@ -82,7 +82,9 @@ export default class RecordStore extends Base {
         ...value,
         id: key,
       }))
-    } catch (e) {}
+    } catch (e) {
+      void e // intentionally ignored
+    }
 
     this.excute = {
       data,

@@ -24,5 +24,4 @@ langArr.forEach(lang => {
 
 if (errorMessage.length > 0) {
   const error = errorMessage.join('\n')
-  console.log(error)
 }

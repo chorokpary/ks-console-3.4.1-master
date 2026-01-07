@@ -180,7 +180,7 @@ export default class AlertRuleItem extends React.Component {
   }
 
   handleMonitor = e => {
-    const { rule, store, cluster, namespace, status } = this.props
+    const { rule, store, cluster, namespace, status, stateType } = this.props
 
     this.trigger('alerting.rule.monitor', {
       rule,
@@ -189,6 +189,7 @@ export default class AlertRuleItem extends React.Component {
       namespace,
       ruleStatus: status,
       expr: rule.expr,
+      stateType,
     })
     e.stopPropagation()
   }

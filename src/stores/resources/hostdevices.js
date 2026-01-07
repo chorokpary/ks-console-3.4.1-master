@@ -32,7 +32,7 @@ export default class HostDeviceStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/host_devices`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/host_devices`
 
   getListUrl = this.getResourceUrl
 
@@ -243,7 +243,7 @@ export default class HostDeviceStore extends Base {
     jsonData.host_device = data
 
     await this.submitting(
-      request.put(this.getDetailUrl({ id, ...params }), jsonData)
+      request.put(this.getDetailUrl({ id, ...params, name: id }), jsonData)
     )
   }
 
@@ -255,7 +255,7 @@ export default class HostDeviceStore extends Base {
       await this.submitting(
         Promise.all(
           rowKeys.forEach(id => {
-            request.delete(`${this.getDetailUrl({ id, ...params })}`)
+            request.delete(`${this.getDetailUrl({ id, ...params, name: id })}`)
           })
         )
       )
@@ -269,7 +269,9 @@ export default class HostDeviceStore extends Base {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    return this.submitting(
+      request.delete(`${this.getDetailUrl({ ...user, name: user.id })}`)
+    )
   }
 
   // 등록 관련 데이터

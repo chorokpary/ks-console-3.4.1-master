@@ -10,8 +10,8 @@ import AlertingPolicyStore from 'stores/alerting/policy'
 
 import styles from './index.scss'
 
-const Status = (props) => {
-  const store = props.detailStore;
+const Status = props => {
+  const store = props.detailStore
 
   const detail = store.message.detailMessage
 
@@ -19,49 +19,55 @@ const Status = (props) => {
 
   const policyStore = new AlertingPolicyStore()
 
-  const [rule, setRule] = useState(null);
-  const [expandIndex, setExpandIndex] = useState("");
+  const [rule, setRule] = useState(null)
+  const [expandIndex, setExpandIndex] = useState('')
 
   useEffect(() => {
-     if (detail) {
+    if (detail) {
       fnGetData()
-     }
-    }, [detail])
-  
+    }
+  }, [detail])
+
   const fnGetData = async () => {
-    
-    if (!detail) return;
+    if (!detail) return
 
     const params = {
       cluster,
       name: detail.labels.rule_group,
-      type : detail?.state_type == "builtin" ? "builtin" : '',      
+      type: detail?.state_type == 'builtin' ? 'builtin' : '',
     }
 
     const policyData = await policyStore.fetchDetail(params)
     const rules = policyData._originData.spec.rules
-    const matctRuleData = rules.find(item => item.alert === detail.labels.alertname) || {}
-    const matctRuleDataIndex = rules.findIndex(item =>  item.alert === detail.labels.alertname )
-    const stateData = get(policyData,`_originDataWithStatus.status.rulesStatus[${matctRuleDataIndex}]`, {} ) || {}
-    
+    const matctRuleData =
+      rules.find(item => item.alert === detail.labels.alertname) || {}
+    const matctRuleDataIndex = rules.findIndex(
+      item => item.alert === detail.labels.alertname
+    )
+    const stateData =
+      get(
+        policyData,
+        `_originDataWithStatus.status.rulesStatus[${matctRuleDataIndex}]`,
+        {}
+      ) || {}
+
     const ruleData = {
       ...matctRuleData,
-      state: stateData
+      state: stateData,
     }
 
     setRule(ruleData)
   }
 
   const handleExpandClick = index => {
-    setExpandIndex((prevIndex) =>
-      prevIndex === index ? "" : index
-    );
-  }  
-  
+    setExpandIndex(prevIndex => (prevIndex === index ? '' : index))
+  }
+
   return (
     <>
-       <Panel title={t('ALERTING_RULE')}>
-        {rule && ( <AlertRuleItem
+      <Panel title={t('ALERTING_RULE')}>
+        {rule && (
+          <AlertRuleItem
             key={0}
             rule={rule}
             index={0}
@@ -71,12 +77,12 @@ const Status = (props) => {
             onExpandClick={handleExpandClick}
             cluster={cluster}
             namespace={namespace}
-          ></AlertRuleItem> 
+            stateType={detail?.state_type}
+          ></AlertRuleItem>
         )}
       </Panel>
     </>
-  );
-};
+  )
+}
 
 export default inject('detailStore')(observer(Status))
-

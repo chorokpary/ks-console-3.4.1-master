@@ -85,9 +85,10 @@ router
 
   .use(proxy('/files', webImageBuildProxy))
   .use(proxy('/files/(.*)', webImageBuildProxy))
+  .use(proxy('/builder', webImageBuildProxy))
   .use(proxy('/builder/(.*)', webImageBuildProxy))
-  .use(proxy('/authentik-server/auth/(.*)', webAuthentikProxy))  
-  
+  .use(proxy('/authentik-server/auth/(.*)', webAuthentikProxy))
+
   .use(proxy('/app-manager/(.*)', webAppDeployProxy))
   .use(proxy('/cmp-apiserver/(.*)', webCmpProxy))
   // .use(proxy('/baremetal-monitor/(.*)', webBaremetalProxy))

@@ -189,6 +189,7 @@ export default class AlertRuleItem extends React.Component {
       namespace,
       ruleStatus: status,
       expr: rule.expr,
+      stateType: store.detail.type,
     })
     e.stopPropagation()
   }

@@ -23,6 +23,7 @@ import { LIST_DEFAULT_ORDER } from 'utils/constants'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
+import { param } from 'jquery'
 
 export default class ContainerImagesStore extends Base {
   records = new List()
@@ -32,13 +33,13 @@ export default class ContainerImagesStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/capk/images`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/capk/images`
 
   getListUrl = this.getResourceUrl
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params)
+    const url = this.getResourceUrl({ ...params, name: data.image.name })
 
     return await this.submitting(request.post(url, data))
   }

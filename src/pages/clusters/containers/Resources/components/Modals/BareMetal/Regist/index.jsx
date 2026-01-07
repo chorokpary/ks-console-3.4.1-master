@@ -1,6 +1,6 @@
-import { toJS } from 'mobx';
-import React, { useState, useRef, useEffect } from 'react';
-import { get, omit } from 'lodash';
+import { toJS } from 'mobx'
+import React, { useState, useRef, useEffect } from 'react'
+import { get, omit } from 'lodash'
 import {
   Form,
   Input,
@@ -10,227 +10,227 @@ import {
   Checkbox,
   Tabs,
   InputPassword,
-} from '@kube-design/components';
+} from '@kube-design/components'
 import {
   Column,
   Columns,
   LevelLeft,
-} from '@kube-design/components/lib/components/Layout';
-import axios from 'axios';
-import classnames from 'classnames';
+} from '@kube-design/components/lib/components/Layout'
+import axios from 'axios'
+import classnames from 'classnames'
 
-import { Modal } from 'components/Base';
-import { PATTERN_USER_NAME } from 'utils/constants';
-import NodeStore from 'stores/node';
-import styles from './index.scss';
+import { Modal } from 'components/Base'
+import { PATTERN_USER_NAME } from 'utils/constants'
+import NodeStore from 'stores/node'
+import styles from './index.scss'
 
 const RegistModal = props => {
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
+  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/
 
-  const nodeStore = new NodeStore();
+  const nodeStore = new NodeStore()
 
-  const dataList = props.store.dataList;
+  const dataList = props.store.dataList
 
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData, setFormData] = useState({})
 
-  const [tab, setTab] = useState('C');
-  const { TabPanel } = Tabs;
+  const [tab, setTab] = useState('C')
+  const { TabPanel } = Tabs
 
-  const [systemType, setSystemType] = useState('C');
+  const [systemType, setSystemType] = useState('C')
 
-  const [clusterNodeDataList, setClusterNodeDataList] = useState([]);
+  const [clusterNodeDataList, setClusterNodeDataList] = useState([])
 
-  const [bmcCheck, setBmcCheck] = useState(false);
+  const [bmcCheck, setBmcCheck] = useState(false)
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
 
     form.current.validator(() => {
-      const { data } = form.current.props;
-      data.systemType = systemType;
-      data.bmcCheck = bmcCheck;
+      const { data } = form.current.props
+      data.systemType = systemType
+      data.bmcCheck = bmcCheck
 
       // console.log('data :' + JSON.stringify(data));
-      onOk({ ...data });
-    });
-  };
+      onOk({ ...data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
-  const [nodeIp, setNodeIp] = useState();
-  const [nodeInterval, setNodeInterval] = useState();
-  const [nodePort, setNodePort] = useState();
-  const [chkValidation, setChkValidation] = useState(true);
+    setModalView(false)
+  }
+  const [nodeIp, setNodeIp] = useState()
+  const [nodeInterval, setNodeInterval] = useState()
+  const [nodePort, setNodePort] = useState()
+  const [chkValidation, setChkValidation] = useState(true)
 
-  const [bmcUsername, setBmcUsername] = useState();
-  const [bmcPassword, setBmcPassword] = useState();
-  const [bmcIp, setBmcIp] = useState();
-  const [bmcInterval, setBmcInterval] = useState();
+  const [bmcUsername, setBmcUsername] = useState()
+  const [bmcPassword, setBmcPassword] = useState()
+  const [bmcIp, setBmcIp] = useState()
+  const [bmcInterval, setBmcInterval] = useState()
 
   useEffect(() => {
     const getClusterNodeData = async () => {
-      const clusterNodeData = await nodeStore.fetchList();
-      const clusterNodeArray = clusterNodeData.map(item => item.name);
-      setClusterNodeDataList(clusterNodeArray);
-    };
+      const clusterNodeData = await nodeStore.fetchList()
+      const clusterNodeArray = clusterNodeData.map(item => item.name)
+      setClusterNodeDataList(clusterNodeArray)
+    }
 
-    getClusterNodeData();
-  }, []);
+    getClusterNodeData()
+  }, [])
 
   useEffect(() => {
     if (systemType == 'C') {
-      setChkValidation(false);
+      setChkValidation(false)
     }
     if (systemType == 'B') {
-      setChkValidation(true);
+      setChkValidation(true)
     }
-  }, [systemType]);
+  }, [systemType])
 
   useEffect(() => {
     if (systemType == 'C' && bmcCheck) {
-      setChkValidation(true);
+      setChkValidation(true)
     }
     if (systemType == 'C' && !bmcCheck) {
-      setChkValidation(false);
+      setChkValidation(false)
     }
     if (systemType == 'B' && !bmcCheck && userValidSuccess) {
-      setChkValidation(false);
+      setChkValidation(false)
     }
-  }, [bmcCheck]);
+  }, [bmcCheck])
 
   const nodeNameOptions = clusterNodeDataList.map(name => {
     return {
       label: name,
       value: name,
-    };
-  });
+    }
+  })
 
   // Validation 시작 ==================================================
   const instanceIpValidator = (rule, value, callback) => {
-    const duplicate = dataList.filter(el => el.ip == value);
+    const duplicate = dataList.filter(el => el.ip == value)
 
     if (value && duplicate.length > 0) {
       return callback({
         message: t('RESOURCES_REGISTED_IP_EXISTS'),
-      });
+      })
     }
 
     if (!value) {
       return callback({
         message: t('RESOURCES_IP_EMPTY_DESC'),
-      });
+      })
     }
 
     if (!regexIp.test(value)) {
       return callback({
         message: t('INVALID_IP_DESC'),
-      });
+      })
     }
 
-    setNodeIp(value);
-    callback();
-  };
+    setNodeIp(value)
+    callback()
+  }
 
   const intervalNodeValidator = (rule, value, callback) => {
     if (!value) {
       return callback({
         message: t('RESOURCES_INTERVAL_EMPTY_DESC'),
-      });
+      })
     }
 
     if (value < 60) {
       return callback({
         message: t('RESOURCES_ENTER_60_MORE'),
-      });
+      })
     }
-    setNodeInterval(value);
-    callback();
-  };
+    setNodeInterval(value)
+    callback()
+  }
 
   const portValidator = (rule, value, callback) => {
     if (!value) {
       return callback({
         message: t('RESOURCES_PORT_EMPTY_DESC'),
-      });
+      })
     }
 
     if (!(value >= 1 && value <= 65535)) {
       return callback({
         message: t('RESOURCES_ENTER_1_MORE_AS_65535'),
-      });
+      })
     }
-    setNodePort(value);
-    callback();
-  };
+    setNodePort(value)
+    callback()
+  }
 
   const bmcIpValidator = (rule, value, callback) => {
     if (!value) {
       return callback({
         message: t('RESOURCES_IP_EMPTY_DESC'),
-      });
+      })
     }
 
     if (!regexIp.test(value)) {
       return callback({
         message: t('INVALID_IP_DESC'),
-      });
+      })
     }
-    setBmcIp(value);
-    callback();
-  };
+    setBmcIp(value)
+    callback()
+  }
 
   const intervalValidator = (rule, value, callback) => {
     if (!value) {
       return callback({
         message: t('RESOURCES_INTERVAL_EMPTY_DESC'),
-      });
+      })
     }
 
     if (value < 60) {
       return callback({
         message: t('RESOURCES_ENTER_60_MORE'),
-      });
+      })
     }
-    setBmcInterval(value);
-    callback();
-  };
+    setBmcInterval(value)
+    callback()
+  }
 
   const bmcIdValidator = (rule, value, callback) => {
     if (!value) {
       return callback({
         message: t('RESOURCES_ID_EMPTY_DESC'),
-      });
+      })
     }
-    setBmcUsername(value);
-    callback();
-  };
+    setBmcUsername(value)
+    callback()
+  }
 
   const bmcPasswordValidator = (rule, value, callback) => {
     if (!value) {
       return callback({
         message: t('RESOURCES_PASSWORD_EMPTY_DESC'),
-      });
+      })
     }
-    setBmcPassword(value);
-    callback();
-  };
+    setBmcPassword(value)
+    callback()
+  }
 
   const clusteNodeNameValidator = (rule, value, callback) => {
     if (value == t('SELECT') || value == '') {
       return callback({
         message: t('RESOURCES_SELECT_NAME_TIP'),
-      });
+      })
     }
-    callback();
-  };
+    callback()
+  }
 
-  const [userValidError, setUserValidError] = useState(false);
-  const [userValidBmcError, setUserValidBmcError] = useState(false);
-  const [userValidSuccess, setUserValidSuccess] = useState(false);
-  const [userValidBmcSuccess, setUserValidBmcSuccess] = useState(false);
+  const [userValidError, setUserValidError] = useState(false)
+  const [userValidBmcError, setUserValidBmcError] = useState(false)
+  const [userValidSuccess, setUserValidSuccess] = useState(false)
+  const [userValidBmcSuccess, setUserValidBmcSuccess] = useState(false)
 
   /*
   // const [duplicate, setDuplicate] = useState();
@@ -340,10 +340,10 @@ const RegistModal = props => {
   */
 
   const onClickValChk = () => {
-    const params = {};
-    params.ip = nodeIp;
-    params.port = Number(nodePort);
-    params.timeout = Number(nodeInterval);
+    const params = {}
+    params.ip = nodeIp
+    params.port = Number(nodePort)
+    params.timeout = Number(nodeInterval)
 
     axios
       .post(
@@ -351,26 +351,26 @@ const RegistModal = props => {
         params
       )
       .then(res => {
-        setChkValidation(false); // 저장버튼 활성화
+        setChkValidation(false) // 저장버튼 활성화
         // 유효성 체크 validation 문구
-        setUserValidError(false);
-        setUserValidSuccess(true);
+        setUserValidError(false)
+        setUserValidSuccess(true)
       })
       .catch(error => {
-        console.error('Regist error :  ', error);
-        setChkValidation(true); // 저장버튼 비활성화
+        // console.error('Regist error :  ', error);
+        setChkValidation(true) // 저장버튼 비활성화
         // 유효성 체크 validation 문구
-        setUserValidError(true);
-        setUserValidSuccess(false);
-      });
-  };
+        setUserValidError(true)
+        setUserValidSuccess(false)
+      })
+  }
 
   const onClickBmcValChk = () => {
-    const params = {};
-    params.username = bmcUsername;
-    params.password = bmcPassword;
-    params.address = bmcIp;
-    params.timeout = Number(bmcInterval);
+    const params = {}
+    params.username = bmcUsername
+    params.password = bmcPassword
+    params.address = bmcIp
+    params.timeout = Number(bmcInterval)
 
     axios
       .post(
@@ -379,21 +379,21 @@ const RegistModal = props => {
       )
       .then(res => {
         if (!userValidError) {
-          setChkValidation(false);
+          setChkValidation(false)
         } else {
-          setChkValidation(true);
+          setChkValidation(true)
         }
-        setUserValidBmcError(false);
-        setUserValidBmcSuccess(true);
+        setUserValidBmcError(false)
+        setUserValidBmcSuccess(true)
       })
       .catch(error => {
-        console.error('Regist error :  ', error);
+        // console.error('Regist error :  ', error);
 
-        setChkValidation(true);
-        setUserValidBmcError(true);
-        setUserValidBmcSuccess(false);
-      });
-  };
+        setChkValidation(true)
+        setUserValidBmcError(true)
+        setUserValidBmcSuccess(false)
+      })
+  }
   // Validation 끝 ==================================================+
 
   return (
@@ -414,8 +414,8 @@ const RegistModal = props => {
               type="button"
               activeName={tab}
               onChange={newTab => {
-                setTab(newTab);
-                setSystemType(newTab);
+                setTab(newTab)
+                setSystemType(newTab)
               }}
             >
               <TabPanel label={t('RESOURCES_CLUSTER')} name="C" />
@@ -585,8 +585,8 @@ const RegistModal = props => {
             <Checkbox
               name="bmc"
               onClick={() => {
-                setBmcCheck(!bmcCheck);
-                setChkValidation(true);
+                setBmcCheck(!bmcCheck)
+                setChkValidation(true)
                 // setUserValidError(false);
                 // setUserValidSuccess(false);
               }}
@@ -734,7 +734,7 @@ const RegistModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default RegistModal;
+export default RegistModal

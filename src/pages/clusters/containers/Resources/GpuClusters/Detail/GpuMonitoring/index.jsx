@@ -356,7 +356,13 @@ const index = props => {
         >
           {configs.map((item, idx) => {
             const config = getAreaChartOps(item)
-            if (isEmpty(config.data)) return null
+            if (isEmpty(config.data)) {
+              return (
+                <div className={styles.divwrap} key={idx}>
+                  <div className={styles.empty}>{t('NO_MONITORING_DATA')}</div>
+                </div>
+              )
+            }
             return (
               <div key={config.title} style={{ marginBottom: '10px' }}>
                 <SimpleArea {...config} />

@@ -27,6 +27,8 @@ import { Modal } from 'components/Base'
 import { InputPassword } from 'components/Inputs'
 import { isSystemRole } from 'utils'
 import { PATTERN_USER_NAME, PATTERN_PASSWORD } from 'utils/constants'
+import { getPasswordRegex, getPasswordErrorMessage } from 'utils/passwordPattern'
+
 import RoleStore from 'stores/role'
 
 import styles from './index.scss'
@@ -53,16 +55,23 @@ export default class UserCreateModal extends Component {
     formTemplate: {
       apiVersion: 'iam.kubesphere.io/v1alpha2',
       kind: 'User',
-      isMfa: false,
+      isMfa: true,
       ...get(this.props, 'detail._originData', {}),
+      passwordPattern: null,
+      passwordErrorMessage: '',
     },
   }
 
   globalRoleStore = new RoleStore('globalroles')
 
-  componentDidMount() {
+  async componentDidMount() {
     this.globalRoleStore.fetchList({ limit: -1, sortBy: 'createTime' })
+
+    const regex = await getPasswordRegex()
+    const errorMessage = await getPasswordErrorMessage()
+    this.setState({ passwordPattern: regex, passwordErrorMessage: errorMessage })
   }
+  
 
   @computed
   get globalRoles() {
@@ -99,6 +108,28 @@ export default class UserCreateModal extends Component {
       }
       callback()
     })
+  }
+
+  passwordPolicyValidator = (rule, value, callback) => {
+    const { passwordPattern, passwordErrorMessage } = this.state
+
+    if (!value) {
+      return callback()
+    }
+
+    // 아직 정책이 로딩 안 된 경우
+    if (!passwordPattern) {
+      return callback()
+    }
+
+    if (!passwordPattern.test(value)) {
+      return callback({
+        message: t(passwordErrorMessage),
+        field: rule.field,
+      })
+    }
+
+    callback()
   }
 
   optionRenderer = option => (
@@ -148,35 +179,35 @@ export default class UserCreateModal extends Component {
           disabled
         />
 
-        <Form.Item
-        >
-          <div
-            className="dash_toggle"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              minHeight: '32px',
-              padding: '2px',
-              marginLeft: '0px',
-              marginBottom: '8px',
-            }}
-          >
-            <Toggle 
-              checked={this.state.formTemplate.isMfa}    
-              onChange={(value) => {
-              this.setState((prevState) => ({
-                formTemplate: {
-                  ...prevState.formTemplate, 
-                  isMfa: value,             
-                },
-              }));
-            }}
-            />
-            <span>{' 로컬 사용자'}</span>
-          </div>
-        </Form.Item>
-    
+        {!detail && (
+          <Form.Item>
+            <div
+              className="dash_toggle"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                minHeight: '32px',
+                padding: '2px',
+                marginLeft: '0px',
+                marginBottom: '8px',
+              }}
+            >
+              <Toggle
+                checked={this.state.formTemplate.isMfa}
+                onChange={value => {
+                  this.setState(prevState => ({
+                    formTemplate: {
+                      ...prevState.formTemplate,
+                      isMfa: value,
+                    },
+                  }))
+                }}
+              />
+              <span>{t('MFA')}</span>
+            </div>
+          </Form.Item>
+        )}
 
         <Form.Item
           label={t('USERNAME')}
@@ -210,13 +241,10 @@ export default class UserCreateModal extends Component {
           <Form.Item
             className={styles.password}
             label={t('PASSWORD')}
-            desc={t('PASSWORD_DESC')}
+            desc={t(this.state.passwordErrorMessage)}
             rules={[
               { required: true, message: t('PASSWORD_EMPTY_DESC') },
-              {
-                pattern: PATTERN_PASSWORD,
-                message: t('PASSWORD_INVALID_DESC'),
-              },
+              { validator: this.passwordPolicyValidator },
             ]}
           >
             <InputPassword

@@ -19,12 +19,13 @@ import React from 'react'
 import { inject } from 'mobx-react'
 import Button from '../components/SquareButton'
 
+// sparrow-disable-next-line INFINITE_RECURSIVE_CALL
 function ThemeSwitchButton({ modalStore }) {
-  function changeTheme() {
+  function _changeTheme() {
     modalStore.changeTheme()
   }
 
-  return <Button type="control" icon="theme" onClick={changeTheme} />
+  return <Button type="control" icon="theme" onClick={_changeTheme} />
 }
 
 export default inject('modalStore')(ThemeSwitchButton)

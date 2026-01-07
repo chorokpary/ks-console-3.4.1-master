@@ -29,9 +29,9 @@ export default class ResourceStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
-      params.name
-    }`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/capk/clusters/${
+      params.clustername
+    }/nodepools/${params.name}`
 
   @action
   async fetchNodePoolDetail(params) {
@@ -146,7 +146,10 @@ export default class ResourceStore extends Base {
       request.post(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/capk/clusters/${params.name}/nodepools`,
+        )}${this.getOditLogUrl({
+          ...params,
+          name: data.name,
+        })}/edgetron/resources/capk/clusters/${params.name}/nodepools`,
         jsonData
       )
     )
@@ -167,7 +170,10 @@ export default class ResourceStore extends Base {
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
+        )}${this.getOditLogUrl({
+          ...params,
+          name: data.name,
+        })}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
           params.name
         }?project=${params.namespace}`,
         jsonData
@@ -181,9 +187,9 @@ export default class ResourceStore extends Base {
       request.delete(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           params
-        )}/edgetron/resources/capk/clusters/${params.clustername}/nodepools/${
-          params.name
-        }`,
+        )}${this.getOditLogUrl(params)}/edgetron/resources/capk/clusters/${
+          params.clustername
+        }/nodepools/${params.name}`,
         { project: params.namespace }
       )
     )

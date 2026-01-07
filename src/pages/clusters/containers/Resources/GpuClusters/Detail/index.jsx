@@ -14,13 +14,14 @@ import routes from './routes'
 
 import VmStore from 'stores/resources/vms'
 import GpuClustersStore from 'stores/resources/gpuclusters'
+import { namespace } from 'd3-selection'
+import { Notify } from '@kube-design/components'
 
 const vmStore = new VmStore()
 const store = new GpuClustersStore()
 
 const GpuClustersDetail = props => {
-
-  const [ networkCidr, setNetworkCidr ] = useState('')
+  const [networkCidr, setNetworkCidr] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -31,13 +32,23 @@ const GpuClustersDetail = props => {
     store.fetchDetail(props.match.params)
   }
 
+  const getActiveVmData = async () => {
+    const activeVmData = await store.fetchVmsDetail({
+      ...props.match.params,
+      namespace: store.detail.data.namespace,
+    })
+    return activeVmData.vmList
+  }
+
   const getNetworkList = async () => {
     const listNetwork = await vmStore.fetchVmListNetwork(props.match.params)
     const networks = listNetwork.networks
-    const cidr = networks?.find(item => item.name === store.detail.data?.spec?.sonaNetwork)?.cidr ?? '';
+    const cidr =
+      networks?.find(item => item.name === store.detail.data?.spec?.sonaNetwork)
+        ?.cidr ?? ''
 
     setNetworkCidr(cidr)
-  }  
+  }
 
   const { cluster } = props.match.params
   const listUrl = `/clusters/${cluster}/gpuclusters`
@@ -47,102 +58,129 @@ const GpuClustersDetail = props => {
     props.match.params.name
   )
 
-  const getOperations = () => [ 
-    {
-      key: 'delete',
-      icon: 'trash',
-      text: t('DELETE'),
-      action: 'delete',
-      type: 'danger',
-      show: showEdit,
-      onClick: () =>
-        props.rootStore.triggerAction('gpuclusters.remove', {
-          type: 'GPUCLUSTERS_DETAIL',
-          detail: { ...toJS(store.detail.data), cluster },
-          namespace: store.detail.data.namespace,
-          store: store,
-          success: () => {
-            setTimeout(() => {
-              routing.push(listUrl)
-            }, 200)
-          },
-        }),
-    },
-    {
-      key: 'restart',
-      icon: 'restart',
-      text: t('RESOURCES_VM_ALL_RESTART'),
-      action: 'view',
-      onClick: () => {       
-        props.rootStore.triggerAction('gpuclusters.actionState', {
-          actionType: "restart",
-          detail: { ...toJS(store.detail.data), cluster },
-          namespace: store.detail.data.namespace,
-          store,
-          success: fetchData,
-        })    
+  const getOperations = () => {
+    const attr = [
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('gpuclusters.remove', {
+            type: 'GPUCLUSTERS_DETAIL',
+            detail: { ...toJS(store.detail.data), cluster },
+            namespace: store.detail.data.namespace,
+            store: store,
+            success: () => {
+              setTimeout(() => {
+                routing.push(listUrl)
+              }, 200)
+            },
+          }),
       },
-    },
-    {
-      key: 'stop',
-      icon: 'stop',
-      text: t('RESOURCES_VM_ALL_STOP'),
-      action: 'view',
-      onClick: () => { 
-        props.rootStore.triggerAction('gpuclusters.actionState', {
-          actionType: "stop",
-          detail: { ...toJS(store.detail.data), cluster },
-          namespace: store.detail.data.namespace,
-          store,
-          success: fetchData,
-        })
+      {
+        key: 'restart',
+        icon: 'restart',
+        text: t('RESOURCES_VM_ALL_RESTART'),
+        action: 'view',
+        onClick: async () => {
+          const vmList = await getActiveVmData()
+          if (vmList.length > 0) {
+            props.rootStore.triggerAction('gpuclusters.actionState', {
+              actionType: 'restart',
+              detail: { ...toJS(store.detail.data), cluster },
+              namespace: store.detail.data.namespace,
+              store,
+              success: fetchData,
+            })
+          } else {
+            Notify.warning({ content: t('RESOURCES_GPUCLUSTER_NO_VM_LIST') })
+          }
+        },
       },
-    },
-    {
-      key: 'start',
-      icon: 'start',
-      text: t('RESOURCES_VM_ALL_START'),
-      action: 'view',
-      onClick: () => {    
-        props.rootStore.triggerAction('gpuclusters.actionState', {
-          actionType: "start",
-          detail: { ...toJS(store.detail.data), cluster },
-          namespace: store.detail.data.namespace,
-          store,
-          success: fetchData,
-        })    
+      {
+        key: 'stop',
+        icon: 'stop',
+        text: t('RESOURCES_VM_ALL_STOP'),
+        action: 'view',
+        onClick: async () => {
+          const vmList = await getActiveVmData()
+          if (vmList.length > 0) {
+            props.rootStore.triggerAction('gpuclusters.actionState', {
+              actionType: 'stop',
+              detail: { ...toJS(store.detail.data), cluster },
+              namespace: store.detail.data.namespace,
+              store,
+              success: fetchData,
+            })
+          } else {
+            Notify.warning({ content: t('RESOURCES_GPUCLUSTER_NO_VM_LIST') })
+          }
+        },
       },
-    },
-    {
-      key: 'del',
-      icon: 'trash',
-      text: t('RESOURCES_VM_ALL_DELETE'),
-      action: 'view',
-      onClick: () => {   
-        props.rootStore.triggerAction('gpuclusters.vmAllDelete', {
-          vmList: (store.detail.data).instances.map(instance => instance.vmName),
-          namespace: store.detail.data.namespace,
-          store,
-          success: fetchData,
-        })       
+      {
+        key: 'start',
+        icon: 'start',
+        text: t('RESOURCES_VM_ALL_START'),
+        action: 'view',
+        onClick: async () => {
+          const vmList = await getActiveVmData()
+          if (vmList.length > 0) {
+            props.rootStore.triggerAction('gpuclusters.actionState', {
+              actionType: 'start',
+              detail: { ...toJS(store.detail.data), cluster },
+              namespace: store.detail.data.namespace,
+              store,
+              success: fetchData,
+            })
+          } else {
+            Notify.warning({ content: t('RESOURCES_GPUCLUSTER_NO_VM_LIST') })
+          }
+        },
       },
-    },
-    {
-      key: 'edit',
-      icon: 'pen',
-      text: t('RESOURCES_VM_EDIT'),
-      action: 'view',
-      show: showEdit,
-      onClick: () =>
-        props.rootStore.triggerAction('gpuclusters.vmedit', {
-          detail: toJS(store.detail),
-          store: store,
-          namespace: store.detail.data.namespace,
-          success: fetchData,
-          ...props.match.params,
-        }),
-    },
-  ]
+      {
+        key: 'del',
+        icon: 'trash',
+        text: t('RESOURCES_VM_ALL_DELETE'),
+        action: 'view',
+        onClick: async () => {
+          const vmList = await getActiveVmData()
+          if (vmList.length > 0) {
+            props.rootStore.triggerAction('gpuclusters.vmAllDelete', {
+              vmList: store.detail.data.instances.map(
+                instance => instance.vmName
+              ),
+              detail: toJS(store.detail),
+              namespace: store.detail.data.namespace,
+              store,
+              success: fetchData,
+            })
+          } else {
+            Notify.warning({ content: t('RESOURCES_GPUCLUSTER_NO_VM_LIST') })
+          }
+        },
+      },
+      {
+        key: 'edit',
+        icon: 'pen',
+        text: t('RESOURCES_VM_EDIT'),
+        action: 'view',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('gpuclusters.vmedit', {
+            detail: toJS(store.detail),
+            store: store,
+            namespace: store.detail.data.namespace,
+            success: fetchData,
+            ...props.match.params,
+          }),
+      },
+    ]
+
+    return [...attr]
+  }
 
   const getAttrs = () => {
     const detail = toJS(store.detail)

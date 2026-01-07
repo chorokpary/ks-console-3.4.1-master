@@ -1,143 +1,140 @@
-import { get } from 'lodash';
-import React, { useState, useRef, useEffect } from 'react';
-import { observer, inject } from 'mobx-react';
+import { get } from 'lodash'
+import React, { useRef, useState } from 'react'
 
-import { Modal } from 'components/Base';
+import { Modal } from 'components/Base'
 
-import classnames from 'classnames';
-import * as common from 'utils/resources';
+import * as common from 'utils/resources'
 
-import * as tus from 'tus-js-client';
-import { Form, Input, Select, Button, Icon } from '@kube-design/components';
-import styles from './index.scss';
+import { Button, Form, Icon, Input } from '@kube-design/components'
+import * as tus from 'tus-js-client'
+import styles from './index.scss'
 
 const UploadModal = props => {
-  const job_uuid = props.detail.name;
+  const job_uuid = props.detail.name
 
-  const onOk = props.onOk;
+  const onOk = props.onOk
 
   // console.log(`job_uuid : ${job_uuid}`);
 
-  const [modelView, setModalView] = useState(true);
+  const [modelView, setModalView] = useState(true)
 
-  const [file, setFile] = useState(null);
-  const [uploader, setUploader] = useState(undefined);
-  const [fileUploadCompleteFlag, setFileUploadCompleteFlag] = useState(false);
-  const [fileUploadStartFlag, setFileUploadStartFlag] = useState(false);
-  const [fileUploadingFlag, setFileUploadingFlag] = useState(false);
-  const [fileValidError, setFilerValidError] = useState(false);
+  const [file, setFile] = useState(null)
+  const [uploader, setUploader] = useState(undefined)
+  const [fileUploadCompleteFlag, setFileUploadCompleteFlag] = useState(false)
+  const [fileUploadStartFlag, setFileUploadStartFlag] = useState(false)
+  const [fileUploadingFlag, setFileUploadingFlag] = useState(false)
+  const [fileValidError, setFilerValidError] = useState(false)
 
-  const progressText = useRef();
-  const progressbar = useRef();
-  const loadedText = useRef();
+  const progressText = useRef()
+  const progressbar = useRef()
+  const loadedText = useRef()
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   // File Upload Start ############################################
 
-  const fileInputRef = useRef(null);
-  const [fileName, setFileName] = useState();
+  const fileInputRef = useRef(null)
+  const [fileName, setFileName] = useState()
 
   const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
+    // console.log('Button clicked, fileInputRef:', fileInputRef.current)
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
+    }
+  }
 
   const onFileChange = async e => {
-    const uploadInfo = get(props.detail, ['upload-info-list', 'upload-info']);
+    const f = e.target?.files?.[0]
+    if (!f) return
 
-    let uplaod_id = '';
-    if (uploadInfo) {
-      uplaod_id = uploadInfo[0]['upload-file-info']['file-info']['ID'];
-    }
+    setFileName(f.name)
 
-    // console.log(`uplaod_id : ${!!uplaod_id}`);
+    // 이어받기용 ID가 제공되면 uploadUrl 사용
+    const uploadInfo = get(props.detail, ['upload-info-list', 'upload-info'])
+    const uploadId =
+      uploadInfo?.[0]?.['upload-file-info']?.['file-info']?.['ID'] ?? ''
+    const hasId = Boolean(uploadId)
 
-    const file = e.target.files[0];
-
-    setFileName(file.name);
-
-    const upload = new tus.Upload(file, {
-      // Endpoint is the upload creation URL from your tus server
-      // endpoint: 'https://tusd.tusdemo.net/files/',
-
-      endpoint: uplaod_id ? null : `/files/${job_uuid}`,
-      uploadUrl: uplaod_id ? `/files/${job_uuid}/${uplaod_id}` : null,
-
-      // Retry delays will enable tus-js-client to automatically retry on errors
-      retryDelays: [0, 3000, 5000, 10000, 20000],
-      // Attach additional meta data about the file for the server
+    const upload = new tus.Upload(f, {
+      endpoint: `/files/${job_uuid}`, // 새 업로드
+      uploadUrl: hasId ? `/files/${job_uuid}/${uploadId}` : null, // 이어받기
+      //retryDelays: [0, 3000, 5000, 10000, 20000],
+      retryDelays: [],
       metadata: {
-        filename: file.name,
-        filetype: file.type,
-        fileid: file.name,
+        filename: f.name,
+        filetype: f.type || '',
+        fileid: f.name,
       },
-      // Callback for errors which cannot be fixed using retries
       onError(error) {
-        // console.log(`Failed because: ${error}`);
+        // console.error('[tus] upload error:', error)
+        // console.error('endpoint:', this.endpoint)
+        // console.error('uploadUrl:', this.uploadUrl)
+
+        // 업로드 상태 리셋
+        setFileUploadingFlag(false)
+        setFileUploadStartFlag(false)
+        setFileValidError(true)
+
+        // 사용자에게 에러 알림 (선택적)
+        // alert(`업로드 실패: ${error.message || '네트워크 오류'}`);
       },
-      // Callback for reporting upload progress
       onProgress(bytesUploaded, bytesTotal) {
-        const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-        const percentageNotDecimalPoint = (
-          (bytesUploaded / bytesTotal) *
-          100
-        ).toFixed(0);
-        // console.log(bytesUploaded, bytesTotal, `${percentage}%`);
-        fnProgress(bytesTotal, bytesUploaded, percentage);
+        const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
+        fnProgress(bytesUploaded, bytesTotal, percentage)
       },
-      // Callback for once the upload is completed
       onSuccess() {
-        setFileUploadCompleteFlag(true);
-        // console.log('Download %s from %s', upload.file.name, upload.url);
-        closeModal();
-        onOk({});
+        setFileUploadCompleteFlag(true)
+        closeModal()
+        //onOk({});
       },
-
-      // 업로드 중 응답 콜백
-      onAfterResponse: (req, res) => {
-        // console.log(`upload : ${JSON.stringify(upload)}`);
-        // console.log(res)
-        // response = res.getBody();
-        // console.log("response : "+ response)
+      onAfterResponse(req, res) {
+        try {
+          if (typeof res?.getStatus === 'function') {
+            // 간단한 상태 확인 로그
+            // console.log('[tus] status:', res.getStatus());
+          }
+        } catch (e) {
+          void e // intentionally ignored
+          // console.warn('[tus] onAfterResponse log failed:', e);
+        }
       },
-    });
+    })
 
-    setFile(file);
-    setUploader(upload);
-  };
+    setUploader(upload)
+  }
 
   const startOrResumeUpload = upload => {
-    upload.findPreviousUploads().then(function(previousUploads) {
-      // console.log(`previousUploads : ${previousUploads}`);
-      // Found previous uploads so we select the first one.
-      if (previousUploads.length) {
-        upload.resumeFromPreviousUpload(previousUploads[0]);
-        setFileUploadingFlag(true);
+    if (!upload) {
+      setFileValidError(true)
+      return
+    }
+    upload.findPreviousUploads().then(previousUploads => {
+      if (previousUploads?.length) {
+        upload.resumeFromPreviousUpload(previousUploads[0])
+        setFileUploadingFlag(true)
       }
-
-      setFileUploadStartFlag(true);
-      // Start the upload
-      upload.start();
-    });
-  };
+      setFileUploadStartFlag(true)
+      upload.start()
+    })
+  }
 
   const fnAbort = async () => {
     // console.log('fnAbort~~~~~~~~~!!!!');
-    uploader.abort();
+    uploader.abort()
     // setFileUploadingFlag(false);
-  };
+  }
 
   const fnProgress = (totalLoaded, fileSize, percentage) => {
     if (!!progressText.current === true) {
-      progressText.current.textContent = `${percentage} %`;
-      progressbar.current.style.transform = `translateX(${percentage}%)`;
+      progressText.current.textContent = `${percentage} %`
+      progressbar.current.style.transform = `translateX(${percentage}%)`
       loadedText.current.textContent = common.fnFormatBytes(
         totalLoaded.toString()
-      );
+      )
     }
-  };
+  }
   // File Upload End ############################################
 
   return (
@@ -160,9 +157,8 @@ const UploadModal = props => {
                     type="file"
                     onChange={onFileChange}
                     style={{ display: 'none' }}
-                    ref={el => {
-                      fileInputRef.current = el;
-                    }}
+                    ref={fileInputRef}
+                    accept="image/*,.tar,.gz,.zip"
                   />
                   <Input
                     name="fileName"
@@ -180,8 +176,11 @@ const UploadModal = props => {
                   <Button
                     type="control"
                     onClick={() => startOrResumeUpload(uploader)}
+                    disabled={
+                      !uploader || fileUploadingFlag || fileUploadCompleteFlag
+                    }
                   >
-                    {t('RESOURCES_UPLOAD')}
+                    {fileUploadingFlag ? '업로드 중...' : t('RESOURCES_UPLOAD')}
                   </Button>
                 </div>
                 <div className={fileUploadStartFlag ? '' : styles.hide}>
@@ -239,7 +238,7 @@ const UploadModal = props => {
         </div>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default UploadModal;
+export default UploadModal

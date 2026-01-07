@@ -50,13 +50,13 @@ module.exports = function(app) {
      *   save error and request information to database if ctx.request match condition
      *   ...
      */
-    console.error(err)
+    // console.error(err)
   })
 
   // catch uncaught error
   process.on('uncaughtException', err => {
-    console.error(err)
+    // console.error(err)
     /* eslint-disable no-console */
-    console.log('NOT exit...')
+    // console.log('NOT exit...')
   })
 }

@@ -25,7 +25,7 @@ import { Panel } from 'components/Base'
 import ReplicaStatus from './Status'
 
 import styles from './index.scss'
-import axios from "axios";
+import axios from 'axios'
 
 export default class HPACard extends React.Component {
   static propTypes = {
@@ -41,10 +41,10 @@ export default class HPACard extends React.Component {
   static defaultProps = {
     module: 'deployments',
     enableScale: true,
-    onScale() { },
+    onScale() {},
   }
 
-  fnGetStatus = (idx) => {
+  fnGetStatus = idx => {
     const { module, detail, names, text, enableScale, countRange } = this.props
     let status = {}
     switch (module) {
@@ -59,7 +59,11 @@ export default class HPACard extends React.Component {
       }
       case 'statefulsets': {
         status = {
-          current: get(detail.state[idx], 'status.currentReplicas', detail.state[idx].readyNums),
+          current: get(
+            detail.state[idx],
+            'status.currentReplicas',
+            detail.state[idx].readyNums
+          ),
           desire: detail.state[idx].nums || 0,
         }
         break
@@ -73,7 +77,11 @@ export default class HPACard extends React.Component {
       }
     }
 
-    status.onScale = enableScale ? (idx > 0 ? this.handleReplicaChange : null) : null //master�� scale���� �Ұ�
+    status.onScale = enableScale
+      ? idx > 0
+        ? this.handleReplicaChange
+        : null
+      : null //master�� scale���� �Ұ�
     status.name = names[idx]
     status.text = text
 
@@ -87,13 +95,18 @@ export default class HPACard extends React.Component {
     }
   }
 
-  putScale = async (newReplicas) => {
+  putScale = async newReplicas => {
     if (newReplicas) {
-      const replicas = { "replicas": newReplicas }
+      const replicas = { replicas: newReplicas }
       // const response = await axios.put(`/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
-      const response = await request.put(`kapis/edgestack.kubesphere.io/v1alpha1/klusters/${this.props.cluster}/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`, { scale: replicas });
+      const response = await request.put(
+        `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${this.props.cluster}/replicas/${this.props.detail?.cluster?.name}/estk/edgetron/resources/capk/clusters/${this.props.detail?.cluster?.name}/scale`,
+        { scale: replicas }
+      )
       if (response.status === 200) {
-        setTimeout(async () => { await this.props.onFetchData() }, 500)
+        setTimeout(async () => {
+          await this.props.onFetchData()
+        }, 500)
       }
     }
   }
@@ -104,7 +117,11 @@ export default class HPACard extends React.Component {
     return (
       <Panel className={classnames(styles.replica, className)}>
         <div className={styles.replicaCount}>
-          {this.props.names.map((obj, idx) => (<div key={idx} style={{ marginRight: 30 }}><ReplicaStatus {...this.fnGetStatus(idx)} /></div>))}
+          {this.props.names.map((obj, idx) => (
+            <div key={idx} style={{ marginRight: 30 }}>
+              <ReplicaStatus {...this.fnGetStatus(idx)} />
+            </div>
+          ))}
         </div>
       </Panel>
     )

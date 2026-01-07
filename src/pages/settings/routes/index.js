@@ -28,6 +28,7 @@ import WeCom from '../containers/Notification/WeCom'
 import Slack from '../containers/Notification/Slack'
 import Webhook from '../containers/Notification/Webhook'
 import FeiShu from '../containers/Notification/FeiShu'
+import PasswordPolicy from '../containers/PasswordPolicy'
 
 const PATH = '/settings'
 
@@ -70,6 +71,10 @@ export default [
       {
         path: `${PATH}/webhook`,
         component: Webhook,
+      },
+      {
+        path: `${PATH}/passwordpolicy`,
+        component: PasswordPolicy,
       },
       getIndexRoute({ path: PATH, to: `${PATH}/${indexRoute}`, exact: true }),
       getIndexRoute({

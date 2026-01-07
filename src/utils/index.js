@@ -165,7 +165,9 @@ export const safeParseJSON = (json, defaultValue) => {
   let result
   try {
     result = JSON.parse(json)
-  } catch (e) {}
+  } catch (e) {
+    void e // intentionally ignored
+  }
 
   if (!result && defaultValue !== undefined) {
     return defaultValue
@@ -183,7 +185,7 @@ export const to = promise =>
   promise
     .then(data => data)
     .catch(err => {
-      console.warn(err)
+      // console.warn(err)
       return []
     })
 
@@ -457,9 +459,9 @@ export const getCustomizedWebsiteUrl = () => {
 
   const host = window.location.hostname
   const { url: origUrl, api: origApi } = globals.config.documents[lang]
-  const url = origUrl.replace("localhost", host)
-  const api = origApi.replace("localhost", host)
-  const document = { url: url, api: api}
+  const url = origUrl.replace('localhost', host)
+  const api = origApi.replace('localhost', host)
+  const document = { url: url, api: api }
   return document
 }
 
@@ -469,7 +471,7 @@ export const getDocsUrl = module => {
   const host = window.location.hostname
 
   // replace host name
-  const newPrefix = prefix.replace("localhost", host)
+  const newPrefix = prefix.replace('localhost', host)
 
   const docUrl = get(globals.config, `resourceDocs[${module}]`, '')
 
@@ -587,10 +589,7 @@ export const isMemberClusterPage = (path = location.pathname, message) => {
     '1',
     'host'
   )
-  const rules = [
-    'token used before issued',
-    'signature is invalid',
-  ]
+  const rules = ['token used before issued', 'signature is invalid']
   const lowerMessage = message.toLowerCase()
 
   let isTokenOut = true

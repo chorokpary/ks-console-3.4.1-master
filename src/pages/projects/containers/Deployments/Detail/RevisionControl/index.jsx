@@ -56,37 +56,54 @@ class RevisionControl extends React.Component {
 
   @computed
   get curRevision() {
-    const { data } = toJS(this.revisionStore.list)
-    return getCurrentRevision(this.store.detail, data, this.module)
+    return this.getCurrentRevisionValue()
+  }
+
+  getCurrentRevisionValue() {
+    const list = this.revisionStore.list
+    return getCurrentRevision(this.store.detail, list.data, this.module)
+  }
+
+  getRevisionItems(data, curRevision) {
+    if (!Array.isArray(data) || data.length === 0) {
+      return []
+    }
+
+    const sorted = sortBy(data, item => parseInt(item.revision, 10))
+    const reversed = sorted.reverse()
+
+    const result = reversed.map(item => {
+      let label = `#${item.revision} (${item.name.replace(
+        `${item.ownerName}-`,
+        ''
+      )})`
+
+      if (item.revision === curRevision) {
+        label = (
+          <span>
+            <span>{label}</span> <Tag type="primary">{t('RUNNING')}</Tag>
+          </span>
+        )
+      }
+
+      const description = t('CREATED_TIME', {
+        diff: getLocalTime(item.createTime).format('YYYY-MM-DD HH:mm:ss'),
+      })
+
+      return {
+        label,
+        description,
+        icon: 'timed-task',
+        value: item.revision,
+      }
+    })
+    return result
   }
 
   @computed
   get revisions() {
-    const { data } = toJS(this.revisionStore.list)
-    return sortBy(data, item => parseInt(item.revision, 10))
-      .reverse()
-      .map(item => {
-        let label = `#${item.revision} (${item.name.replace(
-          `${item.ownerName}-`,
-          ''
-        )})`
-        if (item.revision === this.curRevision) {
-          label = (
-            <span>
-              <span>{label}</span> <Tag type="primary">{t('RUNNING')}</Tag>
-            </span>
-          )
-        }
-        const description = t('CREATED_TIME', {
-          diff: getLocalTime(item.createTime).format('YYYY-MM-DD HH:mm:ss'),
-        })
-        return {
-          label,
-          description,
-          icon: 'timed-task',
-          value: item.revision,
-        }
-      })
+    const list = this.revisionStore.list
+    return this.getRevisionItems(list.data, this.curRevision)
   }
 
   fetchData = () => {

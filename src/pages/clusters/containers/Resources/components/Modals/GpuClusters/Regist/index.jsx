@@ -493,7 +493,7 @@ const RegistModal = props => {
         data.makeScript = getScript()
       }
 
-      console.log('생성 실행~!!!')
+      // console.log('생성 실행~!!!')
       //console.log(JSON.stringify(data))
       onOk({ ...data })
     })
@@ -1178,7 +1178,7 @@ const RegistModal = props => {
   }
 
   const getMarks = max => {
-    const count = 5
+    const count = max < 4 ? max + 1 : 5
     return range(count).reduce((marks, index) => {
       const value = (max * index) / (count - 1)
       const mark = value === 0 ? '0' : `${Math.floor(value)}`
@@ -1506,6 +1506,7 @@ const RegistModal = props => {
                           message: t('RESOURCES_INVALID_NODE_PREFIX_DESC'),
                         },
                       ]}
+                      desc={t('RESOURCES_NODE_PREFIX_DESC')}
                     >
                       <Input
                         name="node_name_prefix"
@@ -1518,7 +1519,7 @@ const RegistModal = props => {
                 </Columns>
 
                 <label className="form-item-label" htmlFor="name">
-                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_AVAILABLE_COUNT')}
+                  {t('RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT')}
                   <span className="form-item-required">*</span>
                 </label>
                 <Form.Item
@@ -1553,6 +1554,10 @@ const RegistModal = props => {
                   </label>
                 </div>
 
+                <label className="form-item-label" htmlFor="name">
+                  {t('RESOURCES_NODE')} {t('RESOURCES_SELECT')}
+                  <span className="form-item-required">*</span>
+                </label>
                 <div>
                   {vmListLoading ? (
                     <Loading className="ks-page-loading" />
@@ -1991,7 +1996,10 @@ const RegistModal = props => {
 
               {/* 세부 설정 시작========================================== */}
               <div className={`${regStep === 3 ? '' : 'hide'}`}>
-                <Form.Item label={t('RESOURCES_KEYPAIR')}>
+                <Form.Item
+                  label={t('RESOURCES_KEYPAIR')}
+                  desc={t('RESOURCES_KEYPAIR_PASSWORD_DESC')}
+                >
                   <Select
                     name="keypair"
                     placeholder={t('RESOURCES_SELECT')}
@@ -2395,41 +2403,6 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
-                    <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
-                    {physicalNetworkList
-                      .filter(x => physicalnetworkCheckItems.includes(x.name))
-                      .map((obj, index) => (
-                        <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_NAME')}</label>
-                            <div>{obj.name}</div>
-                          </div>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_FABRIC')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.fabric.toUpperCase()}</div>
-                            </div>
-                          </div>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
-                            <div className={styles.multiline}>
-                              <div>
-                                {`${
-                                  obj.ip === undefined
-                                    ? t('RESOURCES_AUTOMATIC')
-                                    : obj.ip
-                                }`}
-                              </div>
-                            </div>
-                          </div>
-                          <div className={styles.list}>
-                            <label>{t('RESOURCES_CIDR')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.cidr}</div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
 
                     <label>{t('RESOURCES_SECURITY_GROUP')}</label>
                     {securityGroupList
@@ -2460,6 +2433,42 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
+                    <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
+                    {physicalNetworkList
+                      .filter(x => physicalnetworkCheckItems.includes(x.name))
+                      .map((obj, index) => (
+                        <div className={styles.greybgbox} key={index}>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_NAME')}</label>
+                            <div>{obj.name}</div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
+                            <div className={styles.multiline}>
+                              {/* <div>{obj.fabric.toUpperCase()}</div> */}
+                              <div>{obj.type.toUpperCase()}</div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_IP_ASSIGNMENT')}</label>
+                            <div className={styles.multiline}>
+                              <div>
+                                {`${
+                                  obj.ip === undefined
+                                    ? t('RESOURCES_AUTOMATIC')
+                                    : obj.ip
+                                }`}
+                              </div>
+                            </div>
+                          </div>
+                          <div className={styles.list}>
+                            <label>{t('RESOURCES_CIDR')}</label>
+                            <div className={styles.multiline}>
+                              <div>{obj.cidr}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                   </div>
 
                   <div className={styles.box_style}>
@@ -2485,6 +2494,14 @@ const RegistModal = props => {
                         }`}</div>
                       </div>
                       <div className={styles.list}>
+                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
+                        <div>{`${
+                          networkStorage === undefined
+                            ? t('RESOURCES_AUTOMATIC')
+                            : networkStorage
+                        }`}</div>
+                      </div>
+                      <div className={styles.list}>
                         <label>{t('RESOURCES_SCRIPT')}</label>
                         {isScript && (
                           <div className={styles.multiline}>
@@ -2496,14 +2513,6 @@ const RegistModal = props => {
                             </div>
                           </div>
                         )}
-                      </div>
-                      <div className={styles.list}>
-                        <label>{t('RESOURCES_NETWORK_STORAGE')}</label>
-                        <div>{`${
-                          networkStorage === undefined
-                            ? t('RESOURCES_AUTOMATIC')
-                            : networkStorage
-                        }`}</div>
                       </div>
 
                       {/* <div className={styles.list}>

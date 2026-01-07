@@ -75,7 +75,7 @@ export default function PipelineTemplateParams({
           set(formTemplate, 'jenkinsFile', { json })
         }
       } catch (e) {
-        console.error(e)
+        // console.error(e)
         setTout(true)
       }
       setLoading(false)

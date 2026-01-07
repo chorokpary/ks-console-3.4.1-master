@@ -30,11 +30,15 @@ export default {
       const modal = Modal.open({
         onOk: data => {
           store
-            .create(data, { cluster, workspace, namespace, devops })
+            // .create(data, { cluster, workspace, namespace, devops })
+            .create(data, { workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
-              setTimeout(success && success(), 1000);
+
+              // setTimeout(() => {
+              success && success()
+              // }, 1000)
             })
         },
         title: t('RESOURCES_IMAGE_BUILD'),
@@ -59,16 +63,13 @@ export default {
       devops,
       ...props
     }) {
-      console.log("detail :"+JSON.stringify(detail))
       const modal = Modal.open({
         onOk: () => {
-          store
-            .delete({ ...detail, cluster, workspace, namespace, devops })
-            .then(() => {
-              Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-              success && success()
-            })
+          store.delete({ ...detail, workspace, namespace, devops }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+            success && success()
+          })
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
@@ -84,17 +85,18 @@ export default {
   'imagebuild.remove.batch': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      let arr = new Array
+      let arr = new Array()
       store.dataList.map(obj => {
         if (rowKeys.includes(obj.name)) {
-            arr.push(obj.imagename)
+          arr.push(obj.imagename)
         }
       })
       const names = arr.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            // .batchDelete({ rowKeys, cluster, workspace, namespace, devops })
+            .batchDelete({ rowKeys, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })

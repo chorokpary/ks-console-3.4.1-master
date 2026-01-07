@@ -34,10 +34,12 @@ export default class GpuClustersStore extends Base {
   getVmResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/vms`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/vms`
 
   getResourceUrl = (params = {}) =>
-    `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
+    `kapis/gpucluster.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params, 'dyal')}/clusters`
   getResourceListUrl = (params = {}) =>
     `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
 
@@ -103,24 +105,16 @@ export default class GpuClustersStore extends Base {
     // 상태 추가
     const updatedData = await Promise.all(
       data.map(async item => {
-        const newParams = {
-          name: item.name,
-          limit: 10000,
-        }
-
-        let resultDetail = await this.fetchVmsDetail({
-          ...newParams,
-          namespace: item.namespace,
-        })
+        const vmList = item?.instances || []
 
         let isRunningCount = 0
-        resultDetail.vmList.forEach(data => {
+        vmList.forEach(data => {
           if (data.vmPhase === 'Running') {
             isRunningCount += 1
           }
         })
 
-        const is_normal = isRunningCount === resultDetail.vmList.length
+        const is_normal = isRunningCount === vmList.length
         const state = is_normal ? 'normal' : 'abnormal'
 
         return {
@@ -183,10 +177,13 @@ export default class GpuClustersStore extends Base {
       return x < y ? -1 : x > y ? 1 : 0
     })
 
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
@@ -203,7 +200,11 @@ export default class GpuClustersStore extends Base {
 
   @action
   async createCluster(data, params = {}) {
-    const url = this.getResourceUrl(params)
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.name,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
 
@@ -228,7 +229,10 @@ export default class GpuClustersStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getVmResourceUrl(params)
+    const url = this.getVmResourceUrl({
+      ...params,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
     const resourceData = {}
@@ -373,9 +377,6 @@ export default class GpuClustersStore extends Base {
   }
 
   @action
-  async update({ name, ...params }, data) {}
-
-  @action
   async fetchDetail({ ...params }) {
     this.isLoading = true
 
@@ -420,10 +421,11 @@ export default class GpuClustersStore extends Base {
     return await this.submitting(
       Promise.all(
         params.retypeList.map(async id => {
-          const namespace = params.namespace
-          const url = `${this.getVmResourceUrl(params)}/${id}${
-            namespace === 'default' ? '' : '?project=' + namespace
-          }`
+          const namespace = params.namespace ? params.namespace : params.project
+          const url = `${this.getVmResourceUrl({
+            ...params,
+            namespace,
+          })}/${id}${namespace === 'default' ? '' : '?project=' + namespace}`
           request.delete(url)
         })
       )
@@ -432,16 +434,27 @@ export default class GpuClustersStore extends Base {
 
   @action
   async delete(params) {
+    // console.log('params in delete:', params)
     return await this.submitting(
       Promise.all(
         params?.instances && params.instances?.length > 0
           ? params.instances.map(vmdata =>
               request.delete(
-                `${this.getVmResourceUrl(params)}/${vmdata.vmName}`
+                `${this.getVmResourceUrl({
+                  ...params,
+                  namespace: params.namespace
+                    ? params.namespace
+                    : params.project,
+                })}/${vmdata.vmName}`
               )
             )
           : [],
-        request.delete(`${this.getDeleteUrl(params)}`)
+        request.delete(
+          `${this.getDeleteUrl({
+            ...params,
+            namespace: params.namespace ? params.namespace : params.project,
+          })}`
+        )
       )
     )
   }
@@ -451,8 +464,11 @@ export default class GpuClustersStore extends Base {
     return await this.submitting(
       Promise.all(
         params.vmList.map(async vmName => {
-          const namespace = params.namespace
-          const url = `${this.getVmResourceUrl(params)}/${vmName}${
+          const namespace = params.namespace ? params.namespace : params.project
+          const url = `${this.getVmResourceUrl({
+            ...params,
+            namespace,
+          })}/${vmName}${
             namespace === 'default' ? '' : '?project=' + namespace
           }`
           request.delete(url)
@@ -547,6 +563,9 @@ export default class GpuClustersStore extends Base {
                 `${this.getVmResourceUrl({
                   name,
                   ...paramData,
+                  namespace: params.namespace
+                    ? params.namespace
+                    : params.project,
                 })}/${name}/action`,
                 jsonData
               )

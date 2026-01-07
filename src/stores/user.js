@@ -26,7 +26,10 @@ import cookie from 'utils/cookie'
 import Base from './base'
 import List from './base.list'
 
-import { getAllYAMLValue } from 'utils/yaml'
+import moment from 'moment-mini'
+import { getLocalTime } from 'utils';
+
+import { getPasswordPolicy } from 'utils/passwordPattern'; 
 
 export default class UsersStore extends Base {
   records = new List()
@@ -44,7 +47,7 @@ export default class UsersStore extends Base {
 
   @action
   handlechangeShowMenu(state) {
-    this.showMenu = state;
+    this.showMenu = state
   }
 
   getPath({ cluster, workspace, namespace, devops } = {}) {
@@ -92,48 +95,37 @@ export default class UsersStore extends Base {
 
   getListUrl = this.getResourceUrl
 
-  getAuthentikResourceUrl = "/api/v3/core/users/"
-  
+  getAuthentikResourceUrl = '/api/v3/core/users/'
 
   @action
-  async create(data, params = {}) {
-
-    if(data.isMfa){
-      const res = await this.submitting(          
-        request.post(this.getListUrl(params), data)
-      )
-      if (this.afterChange) {
-        this.afterChange(res)
-      }
-      return res      
-    }else{     
-
-      const userData = {
-        username: get(data, 'metadata.name', ''),         
-        name: get(data, 'metadata.name', ''),                
-        email: get(data, 'spec.email', ''),              
-        is_active: true,
-        groups: [],
-        path: 'petasus.io',          
-        type: 'internal',           
-        attributes: {
-          role: get(data, 'metadata.annotations["iam.kubesphere.io/globalrole"]'),
-          description: get(data, 'metadata.annotations["kubesphere.io/description"]'),
-        },
-      };
-
-      const params = {
-        userData,
-        password: {password: get(data, 'spec.password', '')}
-      }
-
-      console.log("params : "+ JSON.stringify(params))
-
-      const result = await this.submitting(request.post(`/users/auth/create/mfa`, params))
-      console.log("result : "+ JSON.stringify(result))
-      return result.success; 
+  async mfaCreate(data, params = {}) {
+    const userData = {
+      username: get(data, 'metadata.name', ''),
+      name: get(data, 'metadata.name', ''),
+      email: get(data, 'spec.email', ''),
+      is_active: true,
+      groups: [],
+      path: data.isMfa ? 'petasus.io' : 'local-petasus.io',
+      type: 'internal',
+      attributes: {
+        role: get(data, 'metadata.annotations["iam.kubesphere.io/globalrole"]'),
+        description: get(
+          data,
+          'metadata.annotations["kubesphere.io/description"]'
+        ),
+      },
     }
 
+    const mfaParams = {
+      userData,
+      password: { password: get(data, 'spec.password', '') },
+    }
+
+    const result = await this.submitting(
+      request.post(`/users/auth/create/mfa`, mfaParams)
+    )
+    
+    return result.success
   }
 
   @action
@@ -146,14 +138,14 @@ export default class UsersStore extends Base {
     } else if (params.cluster) {
       module = 'clusterroles'
     }
-               
+
     const resp = await request.get(
       `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
         params
       )}/${name}/${module}`,
       {},
       {},
-      () => { }
+      () => {}
     )
 
     let rules = {}
@@ -270,7 +262,11 @@ export default class UsersStore extends Base {
     )
 
     if (data.password && name === globals.user.username) {
-      return await request.post('logout')
+      const res = await request.post('logout')
+      const url = get(res, 'data.url')
+      if (url) {
+        window.location.href = url
+      }
     }
 
     const lang = get(data, 'spec.lang')
@@ -372,6 +368,15 @@ export default class UsersStore extends Base {
   }
 
   @action
+  async getUserDetail(name) {
+    const result = await request.get(
+      `kapis/iam.kubesphere.io/v1alpha2/users/${name}`,      
+    )
+    
+    return result
+  }
+
+  @action
   async fetchLoginRecords({ name, ...params }) {
     this.records.isLoading = true
 
@@ -425,4 +430,81 @@ export default class UsersStore extends Base {
     })
     return data
   }
+
+   @action
+  async getUserPasswordExpireInfo() {
+
+    const policyData = await getPasswordPolicy()
+    const userData = await this.getUserDetail(globals.user.username)
+
+    const identifyProvider = userData?.metadata?.labels?.['iam.kubesphere.io/identify-provider']
+    const lastPasswordChangeTime = userData?.metadata?.annotations?.['iam.kubesphere.io/last-password-change-time']
+
+    const isPetasusOidcUser = identifyProvider === 'petasus-oidc'
+
+    let result = {}
+    if (isPetasusOidcUser && lastPasswordChangeTime) {
+        const noticeData = this.checkPasswordPolicy( lastPasswordChangeTime, Number(policyData.period), Number(policyData.notice) )
+                
+        if (noticeData.isExpired) {
+          result.noticeData = noticeData
+          result.showNotice = true
+        }else if(noticeData.isChangedWithinPeriod){
+          result.noticeData = noticeData.isNotice ? noticeData : {}
+          result.showNotice = noticeData.isNotice ? true : false
+        }
+    }else{
+      result.noticeData = {}
+      result.showNotice = false
+    }
+
+    return result
+  }
+
+  checkPasswordPolicy  = (lastPasswordChangeTime, period, notice) => {  
+        if (!lastPasswordChangeTime || !period || notice == null) {
+            return {
+                diffDays: 0,
+                remainDays: period,
+                isNotice: false,
+                noticeOverDays: 0,
+                isExpired: false,
+                expiredDays: 0,
+                isChangedWithinPeriod: false,
+            }
+        }
+
+        const lastChangedAt = getLocalTime(lastPasswordChangeTime)
+        const now = moment()
+
+        // 변경 후 경과 일수
+        const diffDays = now.startOf('day').diff(lastChangedAt.startOf('day'), 'days')
+
+        // period 안에 변경했는지 여부 (오늘 포함)
+        const isChangedWithinPeriod = diffDays <= period
+
+        // 만료까지 남은 일 수 (음수 방지)
+        const remainDays = Math.max(period - diffDays, 0)
+
+        // 알림 시작 기준일
+        const noticeStartDay = period - notice
+
+        // 알림 여부
+        const isNotice = diffDays >= noticeStartDay && diffDays < period
+        const noticeOverDays = isNotice ? diffDays - noticeStartDay : 0
+
+        // 만료 여부
+        const isExpired = diffDays >= period
+        const expiredDays = isExpired ? diffDays - period : 0
+
+        return {
+            diffDays,        // 변경 후 경과 일수
+            remainDays,      // 만료까지 남은 일 수 (D-day
+            isNotice,        // 알림 구간 진입 여부
+            noticeOverDays,  // 알림 기준 초과 일수
+            isExpired,       // 만료 여부
+            expiredDays,     // 만료 후 경과 일수    
+            isChangedWithinPeriod,    // period 이내 변경 여부    
+        }
+    }
 }

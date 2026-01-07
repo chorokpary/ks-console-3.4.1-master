@@ -31,7 +31,7 @@ export default class ResourceStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/capk/clusters`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/capk/clusters`
 
   getListUrl = this.getResourceUrl
 
@@ -187,7 +187,14 @@ export default class ResourceStore extends Base {
     jsonData.cluster = reqData
 
     return await this.submitting(
-      request.post(this.getListUrl(params), jsonData)
+      request.post(
+        this.getListUrl({
+          ...params,
+          name: data.name,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
     )
   }
 
@@ -261,18 +268,35 @@ export default class ResourceStore extends Base {
   @action
   async update(data) {
     return await this.submitting(
-      request.put(this.getDetailUrl({ name: data.cluster_obj.name }), data)
+      request.put(
+        this.getDetailUrl({
+          name: data.cluster_obj.name,
+          namespace: data.cluster_obj.namespace,
+        }),
+        data
+      )
     )
   }
 
   @action
   async batchDelete({ rowKeys, ...params }) {
+    const rowKeyDict = rowKeys.map(key => {
+      const [project, name] = key.split('/')
+      return { project, name }
+    })
     await this.submitting(
       Promise.all(
-        rowKeys.map(name =>
-          request.delete(`${this.getDetailUrl({ name, ...params })}`, {
-            project: params.namespace,
-          })
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDetailUrl({
+              name: rowKey.name,
+              ...params,
+              namespace: rowKey.project,
+            })}`,
+            {
+              project: rowKey.project,
+            }
+          )
         )
       )
     )
@@ -289,7 +313,11 @@ export default class ResourceStore extends Base {
       Promise.all(
         rowKeyDict.map(rowKey =>
           request.delete(
-            `${this.getDetailUrl({ name: rowKey.name, cluster })}`,
+            `${this.getDetailUrl({
+              name: rowKey.name,
+              cluster,
+              namespace: rowKey.project,
+            })}`,
             { project: rowKey.project }
           )
         )
@@ -301,9 +329,12 @@ export default class ResourceStore extends Base {
   @action
   delete(params) {
     return this.submitting(
-      request.delete(`${this.getDetailUrl(params)}`, {
-        project: params.project,
-      })
+      request.delete(
+        `${this.getDetailUrl({ ...params, namespace: params.project })}`,
+        {
+          project: params.project,
+        }
+      )
     )
   }
 

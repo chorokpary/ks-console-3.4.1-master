@@ -24,6 +24,7 @@ import ObjectMapper from 'utils/object.mapper'
 import Base from './base'
 import S2iBuilderStore from './s2i/builder'
 import WorkloadStore from './workload'
+import crypto from 'crypto'
 
 const updateS2iServiceParams = data => {
   const s2iType = get(
@@ -32,8 +33,14 @@ const updateS2iServiceParams = data => {
     ''
   )
   const serviceName = get(data.Service, 'metadata.name', '')
-  const builderName = `${serviceName}-${s2iType}-${Math.random()
+  // const builderName = `${serviceName}-${s2iType}-${Math.random()
+  //   .toString(36)
+  //   .slice(-4)}`
+  const builderName = `${serviceName}-${s2iType}-${crypto
+    .randomBytes(4)
+    .readUInt32BE(0)
     .toString(36)
+    .padStart(4, '0')
     .slice(-4)}`
   const kind = data.Deployment ? 'Deployment' : 'StatefulSet'
   const serviceData = data.Deployment || data.StatefulSet
@@ -106,14 +113,16 @@ export default class ServiceStore extends Base {
         }
       )
       endpoints = result.subsets || []
-    } catch (err) {}
+    } catch (err) {
+      void err // intentionally ignored
+    }
 
     this.endpoints.data = endpoints.map(ObjectMapper.endpoints)
     this.endpoints.isLoading = false
   }
 
   @action
-  create(data, params) {
+  createService(data, params) {
     const requests = []
 
     if (has(data, 'metadata')) {
@@ -121,6 +130,7 @@ export default class ServiceStore extends Base {
     } else {
       if (data.S2i) {
         updateS2iServiceParams(data)
+        // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
         this.S2iBuilderStore.create(data.S2i, params)
       }
 

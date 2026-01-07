@@ -1,8 +1,8 @@
-import { toJS } from 'mobx';
-import React, { useState, useRef, useEffect } from 'react';
+import { toJS } from 'mobx'
+import React, { useState, useRef, useEffect } from 'react'
 
-import { get, omit } from 'lodash';
-import { Modal } from 'components/Base';
+import { get, omit } from 'lodash'
+import { Modal } from 'components/Base'
 import {
   Form,
   Input,
@@ -12,192 +12,192 @@ import {
   Checkbox,
   Tabs,
   InputPassword,
-} from '@kube-design/components';
-import { Column, Columns } from '@kube-design/components/lib/components/Layout';
+} from '@kube-design/components'
+import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 
-import axios from 'axios';
-import styles from './index.scss';
+import axios from 'axios'
+import styles from './index.scss'
 
 const EditModal = props => {
-  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/;
+  const regexIp = /(^(\d{1,3}\.){3}(\d{1,3})$)/
 
   const detailInfo = toJS(props.store.list.data).find(
     item => get(item, 'name') == props.store.detail.name
-  );
+  )
 
-  const dataList = props.store.dataList;
+  const dataList = props.store.dataList
 
-  const form = useRef();
-  const [modelView, setModalView] = useState(true);
-  const [formData, setFormData] = useState({});
+  const form = useRef()
+  const [modelView, setModalView] = useState(true)
+  const [formData, setFormData] = useState({})
 
-  const [bmcCheck, setBmcCheck] = useState(false);
+  const [bmcCheck, setBmcCheck] = useState(false)
 
-  const [userValidError, setUserValidError] = useState(false);
-  const [userValidBmcError, setUserValidBmcError] = useState(false);
-  const [userValidSuccess, setUserValidSuccess] = useState(false);
-  const [userValidBmcSuccess, setUserValidBmcSuccess] = useState(false);
+  const [userValidError, setUserValidError] = useState(false)
+  const [userValidBmcError, setUserValidBmcError] = useState(false)
+  const [userValidSuccess, setUserValidSuccess] = useState(false)
+  const [userValidBmcSuccess, setUserValidBmcSuccess] = useState(false)
 
-  const [nodeIp, setNodeIp] = useState();
-  const [nodeInterval, setNodeInterval] = useState();
-  const [nodePort, setNodePort] = useState();
-  const [chkValidation, setChkValidation] = useState(true);
+  const [nodeIp, setNodeIp] = useState()
+  const [nodeInterval, setNodeInterval] = useState()
+  const [nodePort, setNodePort] = useState()
+  const [chkValidation, setChkValidation] = useState(true)
 
-  const [bmcUsername, setBmcUsername] = useState();
-  const [bmcPassword, setBmcPassword] = useState();
-  const [bmcIp, setBmcIp] = useState();
-  const [bmcInterval, setBmcInterval] = useState();
+  const [bmcUsername, setBmcUsername] = useState()
+  const [bmcPassword, setBmcPassword] = useState()
+  const [bmcIp, setBmcIp] = useState()
+  const [bmcInterval, setBmcInterval] = useState()
 
   useEffect(() => {
-    const bmcData = detailInfo.openBMC;
+    const bmcData = detailInfo.openBMC
     if (
       !!bmcData.address &&
       !!bmcData.scrapeInterval &&
       !!bmcData.username &&
       !!bmcData.password
     ) {
-      setBmcCheck(true);
+      setBmcCheck(true)
     }
-  }, []);
+  }, [])
   useEffect(() => {
-    setNodeIp(detailInfo.nodeExporter?.ip);
+    setNodeIp(detailInfo.nodeExporter?.ip)
     setNodeInterval(
       detailInfo.nodeExporter?.scrapeInterval
         ? detailInfo.nodeExporter.scrapeInterval.replace('s', '')
         : ''
-    );
-    setNodePort(detailInfo?.nodeExporter?.port);
+    )
+    setNodePort(detailInfo?.nodeExporter?.port)
     // setChkValidation();
-    setBmcUsername(detailInfo?.openBMC?.username);
-    setBmcPassword(detailInfo.openBMC.password);
-    setBmcIp(detailInfo?.openBMC?.address);
+    setBmcUsername(detailInfo?.openBMC?.username)
+    setBmcPassword(detailInfo.openBMC.password)
+    setBmcIp(detailInfo?.openBMC?.address)
     setBmcInterval(
       detailInfo.openBMC?.scrapeInterval
         ? detailInfo.openBMC.scrapeInterval.replace('s', '')
         : ''
-    );
-  }, []);
+    )
+  }, [])
 
   useEffect(() => {
-    const bmcData = detailInfo.openBMC;
+    const bmcData = detailInfo.openBMC
     if (
       !!bmcData.address &&
       !!bmcData.scrapeInterval &&
       !!bmcData.username &&
       !!bmcData.password
     ) {
-      setBmcCheck(true);
+      setBmcCheck(true)
     }
-  }, []);
+  }, [])
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
 
     form.current.validator(() => {
-      const { data } = form.current.props;
-      data.systemType = detailInfo.system_type;
-      data.bmcCheck = bmcCheck;
+      const { data } = form.current.props
+      data.systemType = detailInfo.system_type
+      data.bmcCheck = bmcCheck
 
       // console.log("data :" + JSON.stringify(data))
-      onOk({ ...data });
-    });
-  };
+      onOk({ ...data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   // Validation 시작 ==================================================
   const instanceIpValidator = (rule, value, callback) => {
-    const duplicate = dataList.filter(el => el.ip == value);
+    const duplicate = dataList.filter(el => el.ip == value)
 
     if (value && duplicate.length > 0) {
-      return callback({ message: t('RESOURCES_REGISTED_IP_EXISTS') });
+      return callback({ message: t('RESOURCES_REGISTED_IP_EXISTS') })
     }
 
     if (!value) {
-      return callback({ message: t('RESOURCES_IP_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_IP_EMPTY_DESC') })
     }
 
     if (!regexIp.test(value)) {
-      return callback({ message: t('INVALID_IP_DESC') });
+      return callback({ message: t('INVALID_IP_DESC') })
     }
-    setNodeIp(value);
-    callback();
-  };
+    setNodeIp(value)
+    callback()
+  }
 
   const intervalNodeValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_INTERVAL_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_INTERVAL_EMPTY_DESC') })
     }
 
     if (value < 60) {
-      return callback({ message: t('RESOURCES_ENTER_60_MORE') });
+      return callback({ message: t('RESOURCES_ENTER_60_MORE') })
     }
-    setNodeInterval(value);
-    callback();
-  };
+    setNodeInterval(value)
+    callback()
+  }
 
   const portValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_PORT_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_PORT_EMPTY_DESC') })
     }
 
     if (!(value >= 1 && value <= 65535)) {
-      return callback({ message: t('RESOURCES_ENTER_1_MORE_AS_65535') });
+      return callback({ message: t('RESOURCES_ENTER_1_MORE_AS_65535') })
     }
-    setNodePort(value);
-    callback();
-  };
+    setNodePort(value)
+    callback()
+  }
 
   const bmcIpValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_IP_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_IP_EMPTY_DESC') })
     }
 
     if (!regexIp.test(value)) {
-      return callback({ message: t('INVALID_IP_DESC') });
+      return callback({ message: t('INVALID_IP_DESC') })
     }
 
-    setBmcIp(value);
-    callback();
-  };
+    setBmcIp(value)
+    callback()
+  }
 
   const intervalValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_INTERVAL_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_INTERVAL_EMPTY_DESC') })
     }
 
     if (value < 60) {
-      return callback({ message: t('RESOURCES_ENTER_60_MORE') });
+      return callback({ message: t('RESOURCES_ENTER_60_MORE') })
     }
-    setBmcInterval(value);
-    callback();
-  };
+    setBmcInterval(value)
+    callback()
+  }
 
   const bmcIdValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_ID_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_ID_EMPTY_DESC') })
     }
 
-    setBmcUsername(value);
-    callback();
-  };
+    setBmcUsername(value)
+    callback()
+  }
 
   const bmcPasswordValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_PASSWORD_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_PASSWORD_EMPTY_DESC') })
     }
 
-    setBmcPassword(value);
-    callback();
-  };
+    setBmcPassword(value)
+    callback()
+  }
 
   const onClickValChk = () => {
-    const params = {};
-    params.ip = nodeIp;
-    params.port = Number(nodePort);
-    params.timeout = Number(nodeInterval);
+    const params = {}
+    params.ip = nodeIp
+    params.port = Number(nodePort)
+    params.timeout = Number(nodeInterval)
 
     axios
       .post(
@@ -206,30 +206,30 @@ const EditModal = props => {
       )
       .then(res => {
         if (bmcCheck) {
-          setChkValidation(true);
+          setChkValidation(true)
         } else {
-          setChkValidation(false); // 저장버튼 활성화
+          setChkValidation(false) // 저장버튼 활성화
         }
 
         // 유효성 체크 validation 문구
-        setUserValidError(false);
-        setUserValidSuccess(true);
+        setUserValidError(false)
+        setUserValidSuccess(true)
       })
       .catch(error => {
-        console.error('Regist error :  ', error);
-        setChkValidation(true); // 저장버튼 비활성화
+        // console.error('Regist error :  ', error);
+        setChkValidation(true) // 저장버튼 비활성화
         // 유효성 체크 validation 문구
-        setUserValidError(true);
-        setUserValidSuccess(false);
-      });
-  };
+        setUserValidError(true)
+        setUserValidSuccess(false)
+      })
+  }
 
   const onClickBmcValChk = () => {
-    const params = {};
-    params.username = bmcUsername;
-    params.password = bmcPassword;
-    params.address = bmcIp;
-    params.timeout = Number(bmcInterval);
+    const params = {}
+    params.username = bmcUsername
+    params.password = bmcPassword
+    params.address = bmcIp
+    params.timeout = Number(bmcInterval)
 
     axios
       .post(
@@ -238,21 +238,21 @@ const EditModal = props => {
       )
       .then(res => {
         if (!userValidError) {
-          setChkValidation(false);
+          setChkValidation(false)
         } else {
-          setChkValidation(true);
+          setChkValidation(true)
         }
-        setUserValidBmcError(false);
-        setUserValidBmcSuccess(true);
+        setUserValidBmcError(false)
+        setUserValidBmcSuccess(true)
       })
       .catch(error => {
-        console.error('Regist error :  ', error);
+        // console.error('Regist error :  ', error);
 
-        setChkValidation(true);
-        setUserValidBmcError(true);
-        setUserValidBmcSuccess(false);
-      });
-  };
+        setChkValidation(true)
+        setUserValidBmcError(true)
+        setUserValidBmcSuccess(false)
+      })
+  }
   // Validation 끝 ==================================================
 
   return (
@@ -406,7 +406,7 @@ const EditModal = props => {
             <Checkbox
               name="bmc"
               onClick={() => {
-                setBmcCheck(!bmcCheck);
+                setBmcCheck(!bmcCheck)
               }}
               checked={bmcCheck}
               disabled
@@ -546,7 +546,7 @@ const EditModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default EditModal;
+export default EditModal

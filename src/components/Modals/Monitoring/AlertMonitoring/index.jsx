@@ -14,8 +14,8 @@ export default class AlertMonitor extends React.Component {
   state = {
     metrics: [],
     currentMetric: [],
-    step: '30s',
-    times: 60,
+    step: '720s',
+    times: 10,
     isLoading: true,
     autoFetch: false,
   }
@@ -90,6 +90,9 @@ export default class AlertMonitor extends React.Component {
   }
 
   get chartTitle() {
+    if (this.props.stateType === 'builtin') {
+      return 'DEFAULT_RULES'
+    }
     if (this.ruleType === 'Custom') {
       return 'CUSTOM_RULE'
     }
@@ -252,7 +255,7 @@ export default class AlertMonitor extends React.Component {
       <div className={styles.opts}>
         <div className={styles.time}>
           <TimeSelector
-            step={step}
+            // step={step}
             times={times}
             onChange={this.handleChange}
           />
@@ -307,7 +310,7 @@ export default class AlertMonitor extends React.Component {
           {metrics.length < 1 ? (
             <div className={styles.metricEmpty}>{t('NO_MONITOR_METRIC')}</div>
           ) : (
-            <Chart {...options} />
+            <Chart {...options} width={'90%'} />
           )}
         </Loading>
         <div className={styles.current}>

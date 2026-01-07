@@ -29,12 +29,12 @@ export default class GpuNodeStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/gpunodes`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/gpunodes`
 
   getGpuNodeUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/gpu/node`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/gpu/node`
 
   getListUrl = this.getResourceUrl
 

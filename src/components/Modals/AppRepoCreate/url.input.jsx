@@ -110,7 +110,9 @@ export default class UrlInput extends React.Component {
           ...credential,
           ...JSON.parse(formData.credential),
         }
-      } catch (e) {}
+      } catch (e) {
+        void e // intentionally ignored
+      }
     }
     return credential
   }

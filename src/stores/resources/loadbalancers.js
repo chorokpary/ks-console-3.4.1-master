@@ -23,248 +23,337 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class LoadBalancerStore extends Base {
+  records = new List()
 
-    records = new List()
+  networkDataList = []
+  floatingIpsList = []
 
-    networkDataList = [];
-    floatingIpsList = [];
+  module = 'lbs'
 
-    module = 'lbs'
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/lbs`
+  getListUrl = this.getResourceUrl
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+  getDeleteUrl = (params = {}) =>
+    `${this.getListUrl(params)}/${params.name}/${params.project}`
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lbs`
-    getListUrl = this.getResourceUrl
-    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
-    getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
-
-    @action
-    async create(data, params = {}) {
-
-        let res = await this.submitting(request.post(this.getListUrl(params), data))
-        if (res.message === "OK") {
-            const jsonData = {};
-            const promises = data.lb.lb_rule.map(async (obj) => {
-                const ruleData = {};
-                ruleData.lb_name = res.name;
-                ruleData.project = res.project;
-                ruleData.protocol = obj.protocol.toLowerCase();
-                if (obj.portRangeMax.indexOf("-") != -1) {
-                    ruleData.port_range_min = obj.portRangeMax.split("-")[0];
-                    ruleData.port_range_max = obj.portRangeMax.split("-")[1];
-                } else {
-                    ruleData.port_range_min = obj.portRangeMax;
-                    ruleData.port_range_max = obj.portRangeMax;
-                }
-
-                if (obj.protocol === 'ICMP') {
-                    delete ruleData.port_range_min;
-                    delete ruleData.port_range_max;
-                }
-
-                jsonData.lb_rule = ruleData;
-
-                await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
-            })
-            await Promise.all(promises);
-
+  @action
+  async create(data, params = {}) {
+    let res = await this.submitting(
+      request.post(
+        this.getListUrl({
+          ...params,
+          name: data.lb.name,
+          namespace: params.namespace ? params.namespace : data.lb.project,
+        }),
+        data
+      )
+    )
+    if (res.message === 'OK') {
+      const jsonData = {}
+      const promises = data.lb.lb_rule.map(async obj => {
+        const ruleData = {}
+        ruleData.lb_name = res.name
+        ruleData.project = res.project
+        ruleData.protocol = obj.protocol.toLowerCase()
+        if (obj.portRangeMax.indexOf('-') != -1) {
+          ruleData.port_range_min = obj.portRangeMax.split('-')[0]
+          ruleData.port_range_max = obj.portRangeMax.split('-')[1]
+        } else {
+          ruleData.port_range_min = obj.portRangeMax
+          ruleData.port_range_max = obj.portRangeMax
         }
 
-        return res
-    }
-
-
-    @action
-    async fetchDetail(params) {
-        this.isLoading = true
-        const project = params.project ? params.project : params.namespace
-        const result = await request.get(`${this.getDetailUrl(params)}`, {
-            project,
-        })
-        const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
-
-        await this.fetchYaml(params);
-        await this.fetchFloatingList(params);
-
-        this.detail = detail
-        this.isLoading = false
-        return detail
-    }
-
-    @action
-    async fetchDetailLbs(params) {
-        this.isLoading = true
-        const project = params.project ? params.project : params.namespace
-        const result = await request.get(`${this.getDetailUrl(params)}`, {
-            project,
-        })
-        const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
-
-        this.detail = detail
-        this.isLoading = false
-        return detail
-    }
-
-    @action
-    async fetchYaml(params) {
-        this.isLoading = true
-        const project = params.project ? params.project : params.namespace
-        const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
-            project,
-        })
-        const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
-
-        this.yaml = yamlData.manifest
-        this.isLoading = false
-        return yamlData
-    }
-
-
-    @action
-    async update(params, data) {
-        let res = await this.submitting(request.put(this.getDetailUrl({ ...params, name: params.name }), data))
-        if (res.message === "OK") {
-            const jsonData = {};
-            if (data.lb.setAll) {
-                // 기존 rule 전체 삭제
-                await this.deleteLbRules({ ...params }, data.lb.originRule, data.lb.project)
-                const [port_range_min, port_range_max] = data.lb.lb_rule[0].portRangeMax.split("-")
-                jsonData.lb_rule = {
-                    port_range_min,
-                    port_range_max,
-                    lb_name: data.lb.name,
-                    project: data.lb.project,
-                    protocol: 'all'
-                }
-                // all 추가
-                await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
-            } else {
-                let delOriginRule = data.lb.originRule
-                const promises = data.lb.lb_rule.map(async (obj) => {
-
-                    if (!obj.originRuleId) {
-                        const ruleData = {};
-                        ruleData.lb_name = params.name;
-                        ruleData.project = data.lb.project;
-                        ruleData.protocol = obj.protocol.toLowerCase();
-                        if (obj.portRangeMax.indexOf("-") != -1) {
-                            const [port_range_min, port_range_max] = obj.portRangeMax.split("-")
-                            ruleData.port_range_min = port_range_min
-                            ruleData.port_range_max = port_range_max
-                        } else {
-                            ruleData.port_range_min = obj.portRangeMax;
-                            ruleData.port_range_max = obj.portRangeMax;
-                        }
-
-                        jsonData.lb_rule = ruleData;
-
-                        await this.submitting(request.post(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules`, jsonData));
-                    } else {
-                        // 기존 rule 중 삭제건
-                        let idx = delOriginRule.indexOf(obj.originRuleId)
-                        if (idx > -1) delOriginRule.splice(idx, 1)
-                    }
-                })
-                await Promise.all(promises);
-
-                if (delOriginRule.length > 0) {
-                    // 기존 rule 중 삭제건 처리
-                    await this.deleteLbRules({ ...params }, delOriginRule, data.lb.project)
-                }
-            }
+        if (obj.protocol === 'ICMP') {
+          delete ruleData.port_range_min
+          delete ruleData.port_range_max
         }
 
-        return res
-    }
-
-    @action
-    async deleteLbRules({ ...params }, rules, project) {
-        const promises = rules.map(async (id) => {
-            await this.submitting(request.delete(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/lb_rules/${id}/${project}`));
-        })
-        await Promise.all(promises);
-    }
-
-
-    @action
-    async batchDelete({ rowKeys, ...params }) {
-        const rowKeyDict = rowKeys.map(key => {
-            if (key.includes('/')) {
-                const [project, name] = key.split('/')
-                return { project, name }
-            } else {
-                const project = params.namespace
-                const name = key
-                return { project, name }
-            }
-        })
+        jsonData.lb_rule = ruleData
 
         await this.submitting(
-            Promise.all(
-                rowKeyDict.map(rowKey =>
-                    request.delete(
-                        `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
-                    )
-                )
-            )
+          request.post(
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+              ...params,
+              namespace: res.project,
+            })}${this.getOditLogUrl({
+              ...params,
+              name: res.name,
+              namespace: res.project,
+            })}/edgetron/resources/kubevirt/lb_rules`,
+            jsonData
+          )
         )
-        this.list.selectedRowKeys = []
+      })
+      await Promise.all(promises)
     }
 
-    @action
-    delete(user) {
-        if (user.name === globals.user.username) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-            return
+    return res
+  }
+
+  @action
+  async fetchDetail(params) {
+    this.isLoading = true
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
+    const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
+
+    await this.fetchYaml(params)
+    await this.fetchFloatingList(params)
+
+    this.detail = detail
+    this.isLoading = false
+    return detail
+  }
+
+  @action
+  async fetchDetailLbs(params) {
+    this.isLoading = true
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
+    const detail = { ...params, ...this.mapper(result), kind: 'LoadBalancers' }
+
+    this.detail = detail
+    this.isLoading = false
+    return detail
+  }
+
+  @action
+  async fetchYaml(params) {
+    this.isLoading = true
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+      project,
+    })
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
+
+    this.yaml = yamlData.manifest
+    this.isLoading = false
+    return yamlData
+  }
+
+  @action
+  async update(params, data) {
+    let res = await this.submitting(
+      request.put(
+        this.getDetailUrl({
+          ...params,
+          name: params.name,
+          namespace: params.namespace ? params.namespace : data.lb.project,
+        }),
+        data
+      )
+    )
+    if (res.message === 'OK') {
+      const jsonData = {}
+      if (data.lb.setAll) {
+        // 기존 rule 전체 삭제
+        await this.deleteLbRules(
+          { ...params },
+          data.lb.originRule,
+          data.lb.project
+        )
+        const [
+          port_range_min,
+          port_range_max,
+        ] = data.lb.lb_rule[0].portRangeMax.split('-')
+        jsonData.lb_rule = {
+          port_range_min,
+          port_range_max,
+          lb_name: data.lb.name,
+          project: data.lb.project,
+          protocol: 'all',
         }
-
-        return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
-    }
-
-    @action
-    async fetchFloatingList(params) {
-        this.isLoading = true
-        const result = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/floating_ips`
+        // all 추가
+        await this.submitting(
+          request.post(
+            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+              params
+            )}${this.getOditLogUrl(
+              params
+            )}/edgetron/resources/kubevirt/lb_rules`,
+            jsonData
+          )
         )
+      } else {
+        let delOriginRule = data.lb.originRule
+        const promises = data.lb.lb_rule.map(async obj => {
+          if (!obj.originRuleId) {
+            const ruleData = {}
+            ruleData.lb_name = params.name
+            ruleData.project = data.lb.project
+            ruleData.protocol = obj.protocol.toLowerCase()
+            if (obj.portRangeMax.indexOf('-') != -1) {
+              const [port_range_min, port_range_max] = obj.portRangeMax.split(
+                '-'
+              )
+              ruleData.port_range_min = port_range_min
+              ruleData.port_range_max = port_range_max
+            } else {
+              ruleData.port_range_min = obj.portRangeMax
+              ruleData.port_range_max = obj.portRangeMax
+            }
 
-        let dataList = result?.floating_ips || [];
-        this.floatingIpsList = dataList
-        this.isLoading = false
+            jsonData.lb_rule = ruleData
 
-        return dataList
+            await this.submitting(
+              request.post(
+                `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+                  params
+                )}${this.getOditLogUrl(
+                  params
+                )}/edgetron/resources/kubevirt/lb_rules`,
+                jsonData
+              )
+            )
+          } else {
+            // 기존 rule 중 삭제건
+            let idx = delOriginRule.indexOf(obj.originRuleId)
+            if (idx > -1) delOriginRule.splice(idx, 1)
+          }
+        })
+        await Promise.all(promises)
+
+        if (delOriginRule.length > 0) {
+          // 기존 rule 중 삭제건 처리
+          await this.deleteLbRules(
+            { ...params },
+            delOriginRule,
+            data.lb.project
+          )
+        }
+      }
     }
 
-    @action
-    async fetchNetworkList(params) {
-        this.isLoading = true
+    return res
+  }
 
-        const result = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
+  @action
+  async deleteLbRules({ ...params }, rules, project) {
+    const promises = rules.map(async id => {
+      await this.submitting(
+        request.delete(
+          `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
+            ...params,
+            namespace: project,
+          })}${this.getOditLogUrl({
+            ...params,
+            name: id,
+            namespace: project,
+          })}/edgetron/resources/kubevirt/lb_rules/${id}/${project}`
         )
-        this.networkDataList = result.networks;
+      )
+    })
+    await Promise.all(promises)
+  }
 
-        this.isLoading = false
+  @action
+  async batchDelete({ rowKeys, ...params }) {
+    const rowKeyDict = rowKeys.map(key => {
+      if (key.includes('/')) {
+        const [project, name] = key.split('/')
+        return { project, name }
+      } else {
+        const project = params.namespace
+        const name = key
+        return { project, name }
+      }
+    })
 
-        return this.networkDataList
-    }
-
-    @action
-    async fetchVmList(params) {
-        this.isLoading = true
-
-        const result = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/vms`
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDeleteUrl({
+              name: rowKey.name,
+              project: rowKey.project,
+              ...params,
+              namespace: params.namespace ? params.namespace : rowKey.project,
+            })}`
+          )
         )
-        const response = { ...params, ...this.mapper(result), kind: 'vms' }
+      )
+    )
+    this.list.selectedRowKeys = []
+  }
 
-        this.isLoading = false
-        return response;
+  @action
+  delete(user) {
+    if (user.name === globals.user.username) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      return
     }
 
-    @action
-    async routerList(params) {
-        const result = await request.get(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/routers`
-        )
-        return result
-    }
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
+  }
+
+  @action
+  async fetchFloatingList(params) {
+    this.isLoading = true
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/floating_ips`
+    )
+
+    let dataList = result?.floating_ips || []
+    this.floatingIpsList = dataList
+    this.isLoading = false
+
+    return dataList
+  }
+
+  @action
+  async fetchNetworkList(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/networks`
+    )
+    this.networkDataList = result.networks
+
+    this.isLoading = false
+
+    return this.networkDataList
+  }
+
+  @action
+  async fetchVmList(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/vms`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'vms' }
+
+    this.isLoading = false
+    return response
+  }
+
+  @action
+  async routerList(params) {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/routers`
+    )
+    return result
+  }
 }

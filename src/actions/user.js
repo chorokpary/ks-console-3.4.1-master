@@ -40,7 +40,7 @@ export default {
             'true'
           )
 
-          await store.create(data)
+          await store.mfaCreate(data)
 
           Modal.close(modal)
           Notify.success({ content: t('CREATE_SUCCESSFUL') })

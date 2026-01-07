@@ -34,6 +34,7 @@ import {
 import { Modal } from 'components/Base'
 
 import styles from './index.scss'
+import crypto from 'crypto'
 
 const objToGroovy = obj => {
   const str = Object.keys(obj)
@@ -113,7 +114,13 @@ export default class KubernetesDeploy extends React.Component {
   }
 
   handleAddDockerCredential = () => {
-    this.dockerCredentials.push({ key: `${Math.random()}` })
+    // this.dockerCredentials.push({ key: `${Math.random()}` })
+    const key = crypto
+      .randomBytes(4) // 32bit
+      .readUInt32BE(0)
+      .toString(36)
+
+    this.dockerCredentials.push({ key })
   }
 
   initData = () => {

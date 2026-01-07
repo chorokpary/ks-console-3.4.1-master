@@ -41,5 +41,7 @@ export const setLocalStorageItem = (key, value, maxAge = 86400) => {
         value,
       })
     )
-  } catch (e) {}
+  } catch (e) {
+    void e // intentionally ignored
+  }
 }

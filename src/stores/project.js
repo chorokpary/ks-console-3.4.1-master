@@ -234,29 +234,30 @@ export default class ProjectStore extends Base {
     this.isSubmitting = true
     const response = await this.handleProjectResource(params, 1, false)
 
-    if(response.message == "success"){
-        const res = await this.submitting(request.delete(this.getDetailUrl(params)))
+    if (response.message == 'success') {
+      const res = await this.submitting(
+        request.delete(this.getDetailUrl(params))
+      )
 
-        if (this.afterDelete) {
-          this.afterDelete(res, params)
-        }
-        this.isSubmitting = false
-        return res    
-    }   
+      if (this.afterDelete) {
+        this.afterDelete(res, params)
+      }
+      this.isSubmitting = false
+      return res
+    }
   }
 
   handleProjectResource = async (params, deleteStep, deleteFlag) => {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
+      const resource_lbs = 'lbs'
+      const resource_vms = 'vms'
+      const resource_volumes = 'volumes'
+      const resource_keypairs = 'keypairs'
+      const resource_floating_ips = 'floating_ips'
+      const resource_routers = 'routers'
+      const resource_networks = 'networks'
+      const resource_security_groups = 'security_groups'
 
-      const resource_lbs = "lbs";
-      const resource_vms = "vms";
-      const resource_volumes = "volumes";
-      const resource_keypairs = "keypairs";
-      const resource_floating_ips = "floating_ips";
-      const resource_routers = "routers";
-      const resource_networks = "networks";
-      const resource_security_groups = "security_groups";
-  
       const resources = [
         { name: resource_lbs, step: 1 },
         { name: resource_vms, step: 2 },
@@ -266,72 +267,109 @@ export default class ProjectStore extends Base {
         { name: resource_routers, step: 6 },
         { name: resource_networks, step: 7 },
         { name: resource_security_groups, step: 8 },
-      ];
-  
+      ]
+
       const data = {
         [resource_lbs]: await this.getProjectResourceData(params, resource_lbs),
         [resource_vms]: await this.getProjectResourceData(params, resource_vms),
-        [resource_volumes]: await this.getProjectResourceData(params, resource_volumes),
-        [resource_keypairs]: await this.getProjectResourceData(params, resource_keypairs),
-        [resource_floating_ips]: await this.getProjectResourceData(params, resource_floating_ips),
-        [resource_routers]: await this.getProjectResourceData(params, resource_routers),
-        [resource_networks]: await this.getProjectResourceData(params, resource_networks),
-        [resource_security_groups]: await this.getProjectResourceData(params, resource_security_groups),
-      };
-  
-      const processResource = async (step) => {
-        const resource = resources.find((r) => r.step === step);
-  
+        [resource_volumes]: await this.getProjectResourceData(
+          params,
+          resource_volumes
+        ),
+        [resource_keypairs]: await this.getProjectResourceData(
+          params,
+          resource_keypairs
+        ),
+        [resource_floating_ips]: await this.getProjectResourceData(
+          params,
+          resource_floating_ips
+        ),
+        [resource_routers]: await this.getProjectResourceData(
+          params,
+          resource_routers
+        ),
+        [resource_networks]: await this.getProjectResourceData(
+          params,
+          resource_networks
+        ),
+        [resource_security_groups]: await this.getProjectResourceData(
+          params,
+          resource_security_groups
+        ),
+      }
+
+      const processResource = async step => {
+        const resource = resources.find(r => r.step === step)
+
         if (!resource) {
-          console.log("##전체 삭제 처리 완료!!");
-          resolve({ message: "success" });
-          return;
+          // console.log('##전체 삭제 처리 완료!!')
+          resolve({ message: 'success' })
+          return
         }
-  
-        const currentData = data[resource.name];
+
+        const currentData = data[resource.name]
         if (currentData.length > 0) {
-          console.log(`${resource.name} 삭제 안했으면 삭제 처리~`);
+          // console.log(`${resource.name} 삭제 안했으면 삭제 처리~`)
           if (!deleteFlag) {
             await Promise.all(
-              currentData.map((obj) => this.delProjectResource(params, resource.name, obj.id))
-            );
+              currentData.map(obj =>
+                this.delProjectResource(params, resource.name, obj.id)
+              )
+            )
           }
-  
-          console.log(`${resource.name} 삭제 루프 끝났으면 다음 단계.....`);
-          setTimeout(() => processResource(step + 1), 1000);
 
+          // console.log(`${resource.name} 삭제 루프 끝났으면 다음 단계.....`)
+          setTimeout(() => processResource(step + 1), 1000)
         } else {
-          console.log(`${resource.name} 삭제 완료!!`);
-          setTimeout(() => processResource(step + 1), 1000);
+          // console.log(`${resource.name} 삭제 완료!!`)
+          setTimeout(() => processResource(step + 1), 1000)
         }
-      };
-  
-      await processResource(deleteStep);
-    });
-  };
+      }
+
+      await processResource(deleteStep)
+    })
+  }
 
   getPathResource({ cluster, name } = {}) {
     let path = ''
-    if (cluster) {path += `/klusters/${cluster}`}
-    if (name) { path += `/namespaces/${name}`}
+    if (cluster) {
+      path += `/klusters/${cluster}`
+    }
+    if (name) {
+      path += `/namespaces/${name}`
+    }
     return path
   }
 
-  getProjectResourceData = async (params, resourceName) => {
-    const result = await request.get(`kapis/edgestack.kubesphere.io/v1alpha1${this.getPathResource(params)}/edgetron/resources/kubevirt/${resourceName}`)
-    const response = { ...params, ...this.mapper(result), kind: resourceName }
-    const dataList = get(response._originData, resourceName, []);
+  getOditLogUrl(params, urlType = 'estk') {
+    return `/${this.module}/${
+      params.name ? `${params.name}` : 'resources'
+    }/${urlType}`
+  }
 
-    const projectName = params.name;
+  getProjectResourceData = async (params, resourceName) => {
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPathResource(
+        params
+      )}/edgetron/resources/kubevirt/${resourceName}`
+    )
+    const response = { ...params, ...this.mapper(result), kind: resourceName }
+    const dataList = get(response._originData, resourceName, [])
+
+    const projectName = params.name
     const projectData = dataList.filter(item => item.project == projectName)
-    return projectData;
+    return projectData
   }
 
   delProjectResource = async (params, resourceName, id) => {
-    const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPathResource(params)}/edgetron/resources/kubevirt/${resourceName}/${id}`
+    const url = `kapis/edgestack.kubesphere.io/v1alpha1${this.getPathResource(
+      params
+    )}${this.getOditLogUrl({
+      ...params,
+      name: id,
+    })}/edgetron/resources/kubevirt/${resourceName}/${id}`
     const result = request.delete(url)
   }
-
 
   afterChange = (d, { cluster }) => {
     eventBus.emit(eventKeys.PROJECT_CHANGE, { ...this.mapper(d), cluster })

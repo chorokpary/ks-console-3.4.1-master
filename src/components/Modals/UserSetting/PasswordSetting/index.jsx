@@ -21,6 +21,7 @@ import PropTypes from 'prop-types'
 import { Alert, Form } from '@kube-design/components'
 import { InputPassword } from 'components/Inputs'
 import { PATTERN_PASSWORD } from 'utils/constants'
+import { getPasswordRegex, getPasswordErrorMessage } from 'utils/passwordPattern';
 
 import styles from './index.scss'
 
@@ -35,7 +36,15 @@ export default class PasswordSetting extends React.Component {
     this.state = {
       password: '',
       formData: this.getInitialData(),
+      passwordPattern: null,
+      passwordErrorMessage: '',
     }
+  }
+
+  async componentDidMount() {
+    const regex = await getPasswordRegex()
+    const errorMessage = await getPasswordErrorMessage()
+    this.setState({ passwordPattern: regex, passwordErrorMessage: errorMessage })
   }
 
   get name() {
@@ -71,12 +80,35 @@ export default class PasswordSetting extends React.Component {
     callback()
   }
 
+  passwordPolicyValidator = (rule, value, callback) => {
+    const { passwordPattern, passwordErrorMessage } = this.state
+
+    if (!value) {
+      return callback()
+    }
+
+    // 아직 정책이 로딩 안 된 경우
+    if (!passwordPattern) {
+      return callback()
+    }
+
+    if (!passwordPattern.test(value)) {
+      return callback({
+        message: t(passwordErrorMessage),
+        field: rule.field,
+      })
+    }
+
+    callback()
+  }
+
   handleFormChange = (name, value) => {
     this.context.registerUpdate(this.name, { name, value })
   }
 
   render() {
     const { formRef } = this.props
+
     return (
       <div className={styles.wrapper}>
         <div className="h4">{t('PASSWORD_SETTINGS')}</div>
@@ -108,17 +140,14 @@ export default class PasswordSetting extends React.Component {
           <Alert
             className={styles.alert}
             type="warning"
-            message={t('PASSWORD_DESC')}
+            message={t(this.state.passwordErrorMessage)}
           />
           <Form.Item
             className={styles.password}
             label={t('NEW_PASSWORD')}
             rules={[
               { required: true, message: t('PASSWORD_EMPTY_DESC') },
-              {
-                pattern: PATTERN_PASSWORD,
-                message: t('PASSWORD_DESC'),
-              },
+              { validator: this.passwordPolicyValidator },
             ]}
           >
             <InputPassword

@@ -12,18 +12,18 @@ const Gpu = ({
   vmList,
   ...props
 }) => {
-  const backdropRef = useRef(null)
+  // const backdropRef = useRef(null)
 
-  // 바깥 클릭 감지
-  useEffect(() => {
-    const handleClickOutside = e => {
-      if (backdropRef.current && backdropRef.current.contains(e.target)) {
-        setPopOpen(false)
-      }
-    }
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [])
+  // // 바깥 클릭 감지
+  // useEffect(() => {
+  //   const handleClickOutside = e => {
+  //     if (backdropRef.current && backdropRef.current.contains(e.target)) {
+  //       setPopOpen(false)
+  //     }
+  //   }
+  //   document.addEventListener('click', handleClickOutside)
+  //   return () => document.removeEventListener('click', handleClickOutside)
+  // }, [])
 
   useEffect(() => {
     //gpu_tile .name 길어서 ellipsis 처리 될 때 tooltip 표현 (27자 이상일 때만)
@@ -88,11 +88,15 @@ const Gpu = ({
             </div>
           ))}
       </div>
-      <div className={`gpu_backdrop ${popOpen && 'active'}`} ref={backdropRef}>
+      <div
+        className={`gpu_backdrop ${popOpen && 'active'}`}
+        ref={props.backdropRef}
+      >
         <div
           className={`gpu_popover ${getAreaColor(
             selectGpu?.data?.util
           )} ${popOpen && 'active'}`}
+          ref={props.popoverRef}
         >
           <div className="data_gpu">
             <div className="title">

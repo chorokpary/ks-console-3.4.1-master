@@ -1122,6 +1122,8 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: 'Image build & push completed.',
   RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC:
     'Please enter keypair or password script information.',
+  RESOURCES_KEYPAIR_PASSWORD_DESC:
+    'One of keypair or password information in the script is required.',
   RESOURCES_FILE_WIRTE_EMPTY_DESC: 'Please enter file write information.',
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC:
     'Please enter package installation information.',
@@ -1214,7 +1216,7 @@ module.exports = {
     'Number of Virtual Machines Available for Creation',
   RESOURCES_GPU_CLUSTER_VM_CREATE_COUNT_VALID:
     'Please enter a value greater than or equal to 1 for the number of virtual machines to create.',
-
+  RESOURCES_GPU_CLUSTER_VM_NAME: 'Virtual Machine Name',
   RESOURCES_VM_SETTINGS: 'Virtual Machine Settings',
   RESOURCES_NO_VM: 'No Virtual Machines Found.',
   RESOURCES_CREATE_REQUEST_SUCCESSFUL: 'Creation request has been made.',
@@ -1230,6 +1232,8 @@ module.exports = {
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
   RESOURCES_NODE_PREFIX: 'Node Name prefix',
   RESOURCES_NODE_PREFIX_EMPTY_DESC: 'Please enter a Node name prefix.',
+  RESOURCES_NODE_PREFIX_DESC:
+    'Please refer to the node name in the Cluster Settings > GPU Nodes menu.',
   RESOURCES_INVALID_NODE_PREFIX_DESC:
     'Invalid name. Name can only contain lowercase letters, numbers, and hyphens (-), maximum length is 63 characters.',
   RESOURCES_GPUCLUSTER_CRITICAL: 'Critical',
@@ -1269,4 +1273,40 @@ module.exports = {
   RESOURCES_SORT_LATEST: 'Latest',
   RESOURCES_SORT_OLDEST: 'Oldest',
   RESOURCES_GPU_STATUS_MAP: 'GPU Status Map',
+  RESOURCES_GPUCLUSTER_NO_VM_LIST:
+    'No virtual machines found in the GPU cluster.',
+
+  RESOURCES_PASSWORD_POLICY: "Password Policy",
+  RESOURCES_PASSWORD_POLICY_DESC: "Define password entry policies.",
+  RESOURCES_PASSWORD_PERIOD: "Password Period",
+  RESOURCES_PASSWORD_PERIOD_DESC: "Defines the password change notification period.",
+  RESOURCES_PASSWORD_PERIOD_SETTING: "Period Setting",
+  RESOURCES_PASSWORD_PERIOD_SETTING_DESC: "Checks if the user's password has been changed within the last set number of days.",  
+  RESOURCES_PASSWORD_PERIOD_SETTING_MAXIMUM_AGE: "Maximum age (day)",
+  RESOURCES_PASSWORD_PERIOD_SETTING_MAXIMUM_AGE_TIP: "Please enter a Maximum age.",
+  RESOURCES_PASSWORD_PERIOD_SETTING_NOTI_DAY: "Notice (Day)",
+  RESOURCES_PASSWORD_PERIOD_SETTING_NOTI_DAY_TIP: "Please enter a Notice day.",
+  RESOURCES_PASSWORD_POLICY_MANAGEMENT: "Password Policy Management",
+  RESOURCES_PASSWORD_POLICY_DESC: "Manage user password policies and replacement period.",
+  RESOURCES_PASSWORD_POLICY_SETTING: "Policy Setting",
+  RESOURCES_PASSWORD_POLICY_SETTING_MIN_LENGTH: "Minimum length",
+  RESOURCES_PASSWORD_POLICY_SETTING_MAX_LENGTH: "Maximum length",
+  RESOURCES_PASSWORD_POLICY_SETTING_ERROR_MESSAGE: "Error Message",
+  RESOURCES_PASSWORD_POLICY_SETTING_ERROR_MESSAGE_TIP: "Please enter an error message.",
+  RESOURCES_PASSWORD_POLICY_SETTING_UPPERCASE_MIN_COUNT: "Minimum number of uppercase letters",
+  RESOURCES_PASSWORD_POLICY_SETTING_LOWERCASE_MIN_COUNT: "Minimum number of lowercase letters",
+  RESOURCES_PASSWORD_POLICY_SETTING_NUMBER_MIN_COUNT: "Minimum number of numbers",
+  RESOURCES_PASSWORD_POLICY_SETTING_SPECIAL_CHARACTER_MIN_COUNT: "Minimum number of special characters",
+  RESOURCES_PASSWORD_POLICY_SETTING_SYMBOL_CHARACTER_SET: "Symbol Character Set",
+  RESOURCES_PASSWORD_POLICY_SETTING_SYMBOL_CHARACTER_SET_TIP: "Please enter a symbol character set.",
+  RESOURCE_PASSWORD_LETTER: 'Contain at least {uppercaseCount} uppercase letter and {lowercaseCount} lowercase letter.',
+  RESOURCE_PASSWORD_NUMBER: 'Contain at least {minNum} number.',
+  RESOURCE_PASSWORD_LENGTH: 'Contain at least {minLength} characters.',
+  RESOURCE_NOTICE_INFORMATION: 'Notice Information.',
+  RESOURCE_NOTICE_PASSWORD_CHANGE: 'Password change notification',
+  RESOURCE_NOTICE_PASSWORD_EXPIRE: "Your password has expired.",
+  RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_1 : "Your password will expire in {remainday} days.",
+  RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_2 : "For security reasons, you should change your password periodically.",
+  RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3 : "Please change your password now to ensure smooth service use.",
+
 }

@@ -337,7 +337,7 @@ const ResourceImageModal = props => {
           setStorageClassDataList([])
         }
       } catch (error) {
-        console.error('Failed to fetch storage classes:', error)
+        // console.error('Failed to fetch storage classes:', error)
         setStorageClassDataList([])
       }
     }

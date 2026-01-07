@@ -34,7 +34,7 @@ require('@babel/polyfill')
 // ===============================
 // 추가 함수 expire 만료 검사 start
 // ===============================
-const getCookieValue = (name) => {
+const getCookieValue = name => {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
   if (match) return match[2]
   return null
@@ -59,7 +59,8 @@ const checkExpiration = async () => {
       }
     }
   } catch (error) {
-    console.error('Error:', error)
+    // console.error('Error:', error)
+    void error // intentionally ignored
   }
 }
 
@@ -85,7 +86,6 @@ window.onunhandledrejection = async function(e) {
             window.location.href = url
           }
         }, 0)
-
       } else {
         Notify.error({ title: e.reason, content: t(e.message), duration: 6000 })
       }

@@ -16,29 +16,31 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { action } from 'mobx';
-import { Notify } from '@kube-design/components';
+import { action } from 'mobx'
+import { Notify } from '@kube-design/components'
 
-import Base from '../basemm3';
-import List from '../base.list';
+import Base from '../basemm3'
+import List from '../base.list'
 
 export default class LicenseStore extends Base {
-  records = new List();
+  records = new List()
 
-  module = 'licenses';
+  module = 'licenses'
 
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/licenses`;
+    )}${this.getOditLogUrl(params)}/edgetron/licenses`
 
-  getListUrl = this.getResourceUrl;
+  getListUrl = this.getResourceUrl
 
-  getDefaultUrl = (params = {}) => `${this.getListUrl(params)}`;
-  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`;
-  getFingerprintUrl = (params = {}) => `${this.getListUrl(params)}/fingerprint/show`;
+  getDefaultUrl = (params = {}) => `${this.getListUrl(params)}`
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+  getFingerprintUrl = (params = {}) =>
+    `${this.getListUrl(params)}/fingerprint/show`
   getDefaultValidationUrl = `kapis/edgestack.kubesphere.io/v1alpha1/edgetron/licenses/default_license/validate`
 
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   @action
   async fetchList({
     cluster,
@@ -49,108 +51,112 @@ export default class LicenseStore extends Base {
     silent,
     ...params
   } = {}) {
-    await super.fetchList(params);
-    await this.fetchFingerprint(params);
+    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+    await this._fetchList(params)
+    await this.fetchFingerprint(params)
+  }
+
+  async _fetchList(params) {
+    await super.fetchList(params)
   }
 
   @action
   async create(data, params = {}) {
-
     const getResourceUrlTmp = (params = {}) =>
       `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
         params
-      )}/edgetron/licenses`;
+      )}${this.getOditLogUrl({ ...params, name: data.name })}/edgetron/licenses`
 
-    const url = getResourceUrlTmp(params);
+    const url = getResourceUrlTmp(params)
 
-    const jsonData = {};
-    const licenseData = {};
+    const jsonData = {}
+    const licenseData = {}
 
-    licenseData.name = data.name;
-    licenseData.payload = data.payload;
-    licenseData.inuse = data.inuse;
-    licenseData.description = data.description;
+    licenseData.name = data.name
+    licenseData.payload = data.payload
+    licenseData.inuse = data.inuse
+    licenseData.description = data.description
 
-    jsonData.license = licenseData;
+    jsonData.license = licenseData
 
-    const res = await this.submitting(request.post(url, jsonData));
-    return res;
+    const res = await this.submitting(request.post(url, jsonData))
+    return res
   }
 
   @action
   async update({ name, ...params }, data) {
-    const jsonData = {};
-    const licenseData = {};
+    const jsonData = {}
+    const licenseData = {}
 
-    licenseData.name = data.name;
-    licenseData.description = data?.description;
+    licenseData.name = data.name
+    licenseData.description = data?.description
 
-    jsonData.license = licenseData;
+    jsonData.license = licenseData
 
     await this.submitting(
       request.put(this.getDetailUrl({ name, ...params }), jsonData)
-    );
+    )
   }
 
   @action
   async setdefault({ name, ...params }) {
-    const jsonData = {};
-    const licenseData = {};
+    const jsonData = {}
+    const licenseData = {}
 
-    licenseData.name = name;
-    jsonData.license = licenseData;
+    licenseData.name = name
+    jsonData.license = licenseData
 
     await this.submitting(
       request.put(this.getDefaultUrl({ name, ...params }), jsonData)
-    );
+    )
   }
 
   @action
   async fetchDetail(params) {
-    this.isLoading = true;
+    this.isLoading = true
 
     const result = await request.get(
       `${this.getResourceUrl(params)}/${params.name}`
-    );
-    const detail = { ...params, ...this.mapper(result), kind: 'Licenses' };
+    )
+    const detail = { ...params, ...this.mapper(result), kind: 'Licenses' }
 
-    this.detail = detail;
-    this.isLoading = false;
-    return detail;
+    this.detail = detail
+    this.isLoading = false
+    return detail
   }
 
   @action
   async defaultValidation() {
-    this.isLoading = true;
+    this.isLoading = true
 
-    const result = await request.get(
-      `${this.getDefaultValidationUrl}`
-    );
-    const validation = { ...this.mapper(result), kind: 'Validation' };
+    const result = await request.get(`${this.getDefaultValidationUrl}`)
+    const validation = { ...this.mapper(result), kind: 'Validation' }
 
-    this.validation = validation;
-    this.isLoading = false;
-    return validation;
+    this.validation = validation
+    this.isLoading = false
+    return validation
   }
 
   @action
   async fetchFingerprint(params) {
-    this.isLoading = true;
+    this.isLoading = true
 
-    const result = await request.get(
-      `${this.getFingerprintUrl(params)}`
-    );
-    const fingerprint = { ...params, ...this.mapper(result), kind: 'Fingerprint' };
+    const result = await request.get(`${this.getFingerprintUrl(params)}`)
+    const fingerprint = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'Fingerprint',
+    }
 
-    this.fingerprint = fingerprint;
-    this.isLoading = false;
-    return fingerprint;
+    this.fingerprint = fingerprint
+    this.isLoading = false
+    return fingerprint
   }
 
   @action
   async batchDelete({ rowKeys, ...params }) {
     if (rowKeys.includes(globals.user.username)) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
       await this.submitting(
         Promise.all(
@@ -158,18 +164,18 @@ export default class LicenseStore extends Base {
             request.delete(`${this.getDetailUrl({ name, ...params })}`)
           )
         )
-      );
+      )
     }
-    this.list.selectedRowKeys = [];
+    this.list.selectedRowKeys = []
   }
 
   @action
   delete(user) {
     if (user.name === globals.user.username) {
-      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'));
-      return;
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      return
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`));
+    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 }

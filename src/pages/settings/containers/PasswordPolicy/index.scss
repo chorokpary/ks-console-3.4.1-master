@@ -1,0 +1,95 @@
+@use "scss/variables" as *;
+@use "scss/mixins" as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  a {
+    color: $blue;
+    font-weight: 600;
+  }
+}
+
+.content {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  margin: 12px -12px 0 -12px;
+  background-color: $card-bg-color;
+}
+
+.passwordPanel {
+  border: 1px solid #dcdfe6;  // 밝은 회색 테두리
+  border-radius: 6px;           // 둥근 모서리
+}
+
+.tabsContainer {
+  height: 50px;
+  padding: 5px 10px 15px 0px;       
+
+  display: flex;
+  align-items: center;        // 세로 가운데 정렬
+}
+
+.buttonContainer {
+  height: 50px;
+  padding-top: 10px;          
+  padding-right: 10px;        
+  padding-left: 10px;         
+
+  display: flex;
+  justify-content: flex-end;  // 오른쪽 정렬
+  align-items: center;        // 세로 가운데 정렬
+  gap: 10px;                  // 버튼 간 간격(선택)
+}
+
+
+/* button */
+button {
+	cursor: pointer;
+}
+*.btn {
+	border-radius: 16px;
+	min-width: 90px;
+	height: 32px;
+	line-height: 20px;
+	font-size: 12px;
+	font-weight: 700;
+	padding: 5px 23px;
+  &.btn-short {
+    flex: 0 0 auto !important;
+    min-width: inherit;
+    width: auto;
+    padding: 5px 20px;
+  }
+
+  &.btn-default {
+    flex: 0 0 auto !important;
+    border: 1px solid #ccd3db;
+    background: #eff4f9;
+    color: #36435c;
+    box-shadow: none;
+    &:hover {
+      background-color: #e3e9ef;
+      border-color: #c1c9d1;
+    }
+  }
+  &.btn-control {
+    flex: 0 0 auto !important;
+    background: #3744b9;
+    color: #fff;
+    box-shadow: 0 4px 8px 0 rgba(35, 45, 65, 0.28);
+    &:hover {
+      box-shadow: none;
+    }
+  }
+  &.btn-cancel {
+    flex: 0 0 auto !important;
+    background: #ca2621;
+    color: #fff;
+  }
+}
+
+

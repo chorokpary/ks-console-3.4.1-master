@@ -47,7 +47,9 @@ class LocalePlugin {
               content
             )
           }
-        } catch (error) {}
+        } catch (error) {
+          void error
+        }
 
         compilation.updateAsset(asset.name, new RawSource(content))
       })
@@ -80,7 +82,7 @@ function only(lang) {
 
     Object.keys(fileObj).forEach(key => {
       if (allKeyArr.indexOf(key) > -1) {
-        console.log(lang, '语言环境下重复UI词条为:', key)
+        // console.log(lang, '语言环境下重复UI词条为:', key)
       } else {
         allKeyArr.push(key)
       }
@@ -97,7 +99,8 @@ const isExistFilesInEN = () => {
       const isExist = enFiles.indexOf(file)
 
       if (isExist < 0) {
-        console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
+        // console.log(chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`)
+        chalk`{red.bold.italic [${lang}]} {yellowBright 文件夹中未与 en 同步的文件为:} {yellowBright.bold.underline ${file}}`
       }
     })
   })

@@ -53,7 +53,7 @@ export default class WebSocketStore {
         onmessage: onMsg,
         onerror: e => {
           setTimeout(onErr, 1000)
-          console.error(e)
+          // console.error(e)
         },
       }
     )
@@ -80,7 +80,12 @@ export default class WebSocketStore {
 
   close() {
     if (this.wsClient) {
-      this.wsClient.close(true)
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+      // this.wsClient.close(true)
+      this._close(true)
     }
+  }
+  _close() {
+    this.wsClient.close(true)
   }
 }

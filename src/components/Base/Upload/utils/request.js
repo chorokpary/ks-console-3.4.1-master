@@ -54,11 +54,13 @@ option {
 }
 */
 
+// sparrow-disable-next-line INFINITE_RECURSIVE_CALL
 export default function upload(option) {
   /* eslint-disable-next-line no-underscore-dangle */
   const xhr = new window.XMLHttpRequest()
-
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
   if (option.onProgress && xhr.upload) {
+    // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
     xhr.upload.onprogress = function progress(e) {
       if (e.total > 0) {
         e.percent = (e.loaded / e.total) * 100
@@ -110,9 +112,15 @@ export default function upload(option) {
 
   xhr.send(formData)
 
+  function _abort() {
+    xhr.abort()
+  }
+
   return {
     abort() {
-      xhr.abort()
+      // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+      _abort()
+      // xhr.abort()
     },
   }
 }

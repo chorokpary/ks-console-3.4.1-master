@@ -94,6 +94,9 @@ export default class BaseStore {
     return result
   }
 
+  getOditLogUrl = (params, urlType = 'estk') =>
+    `/${this.module}/${params.name ? `${params.name}` : 'resources'}/${urlType}`
+
   @action
   setModule(module) {
     this.module = module
@@ -142,11 +145,7 @@ export default class BaseStore {
     const project = namespace !== undefined ? namespace : undefined
 
     // namespace(project) 있는 경우
-    const projectExceptionArray = [
-      'images',
-      'flavors',
-      'gpunodes',
-    ]
+    const projectExceptionArray = ['images', 'flavors', 'gpunodes']
     if (project) {
       projectExceptionArray.includes(this.module)
         ? ''

@@ -23,38 +23,44 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class SriovStore extends Base {
-
   records = new List()
 
   module = 'sriovs'
 
-  getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_networks`
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/sriov_networks`
   getListUrl = this.getResourceUrl
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params);
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.resource_name,
+      namespace: params.namesapce ? params.namespace : data.project,
+    })
 
-    if (data.type == "flat") {
+    if (data.type == 'flat') {
       delete data.segment_id
     }
 
-    const jsonData = {};
-    const networkData = {};
+    const jsonData = {}
+    const networkData = {}
 
-    networkData.resource_name = data.resource_name;
-    networkData.description = data.description;
-    networkData.type = data.type;
-    networkData.cidr = data.cidr;
-    networkData.gateway_ip = data.gateway_ip;
-    networkData.ip_pool = data.ip_pool;
-    networkData.dns = data.dns;
-    networkData.project = data.project;
-    networkData.networks = data.networks;
-    networkData.host_routes = data.host_routes;
-    networkData.segment_id = data.segment_id;
+    networkData.resource_name = data.resource_name
+    networkData.description = data.description
+    networkData.type = data.type
+    networkData.cidr = data.cidr
+    networkData.gateway_ip = data.gateway_ip
+    networkData.ip_pool = data.ip_pool
+    networkData.dns = data.dns
+    networkData.project = data.project
+    networkData.networks = data.networks
+    networkData.host_routes = data.host_routes
+    networkData.segment_id = data.segment_id
 
-    jsonData.network = networkData;
+    jsonData.network = networkData
 
     // console.log("jsonData : "+ JSON.stringify(jsonData))
     const res = await this.submitting(request.post(url, jsonData))
@@ -63,30 +69,35 @@ export default class SriovStore extends Base {
 
   @action
   async update({ name, ...params }, data) {
+    const jsonData = {}
+    const networkData = {}
 
-    const jsonData = {};
-    const networkData = {};
+    networkData.name = data.resource_name
+    networkData.description = data.description
+    networkData.type = data.type
+    networkData.cidr = data.cidr
+    networkData.gateway_ip = data.gateway_ip
+    networkData.ip_pool = data.ip_pool
+    networkData.dns = data.dns
+    networkData.networks = data.networks
+    networkData.host_routes = data.host_routes
+    networkData.segment_id = data.segment_id
 
-    networkData.name = data.resource_name;
-    networkData.description = data.description;
-    networkData.type = data.type;
-    networkData.cidr = data.cidr;
-    networkData.gateway_ip = data.gateway_ip;
-    networkData.ip_pool = data.ip_pool;
-    networkData.dns = data.dns;
-    networkData.networks = data.networks;
-    networkData.host_routes = data.host_routes;
-    networkData.segment_id = data.segment_id;
-
-    jsonData.network = networkData;
+    jsonData.network = networkData
 
     // console.log("jsonData : "+ JSON.stringify(jsonData))
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(
+        this.getDetailUrl({
+          name,
+          ...params,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
     )
   }
-
 
   @action
   async fetchDetail(params) {
@@ -97,8 +108,8 @@ export default class SriovStore extends Base {
     )
     const detail = { ...params, ...this.mapper(result), kind: 'Sriov' }
 
-    // Yaml 파일 관련 
-    await this.fetchYaml(params);
+    // Yaml 파일 관련
+    await this.fetchYaml(params)
 
     this.detail = detail
     this.isLoading = false
@@ -124,11 +135,27 @@ export default class SriovStore extends Base {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
+      const rowKeyDict = rowKeys.map(key => {
+        if (key.includes('/')) {
+          const [project, name] = key.split('/')
+          return { project, name }
+        } else {
+          const project = params.namespace
+          const name = key
+          return { project, name }
+        }
+      })
+
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
+          rowKeyDict.map(rowKey =>
             request.delete(
-              `${this.getDetailUrl({ name: username, ...params })}`
+              `${this.getDetailUrl({
+                name: rowKey.name,
+                namespace: rowKey.project,
+                project: rowKey.project,
+                ...params,
+              })}`
             )
           )
         )
@@ -144,7 +171,14 @@ export default class SriovStore extends Base {
       return
     }
 
-    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
+    return this.submitting(
+      request.delete(
+        `${this.getDetailUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
   }
 
   @action
@@ -152,13 +186,19 @@ export default class SriovStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_resources`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/sriov_resources`
     )
     // console.log("result : "+ JSON.stringify(result))
-    const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'sriov_resources',
+    }
 
     this.isLoading = false
-    return response;
+    return response
   }
 
   @action
@@ -166,26 +206,35 @@ export default class SriovStore extends Base {
     this.isLoading = true
 
     const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/sriov_resources`
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/sriov_resources`
     )
     // console.log("bond : "+ JSON.stringify(result))
-    const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'sriov_resources',
+    }
 
     this.isLoading = false
-    return response;
+    return response
   }
 
   @action
   async fetchSriovVfs({ resourceName, ...params }) {
     this.isLoading = true
 
-    const url = `${this.getResourceUrl(params)}/${resourceName}/number_of_vfs`;
+    const url = `${this.getResourceUrl(params)}/${resourceName}/number_of_vfs`
     const result = await request.get(url)
 
-    const response = { ...params, ...this.mapper(result), kind: 'sriov_resources' }
+    const response = {
+      ...params,
+      ...this.mapper(result),
+      kind: 'sriov_resources',
+    }
 
     this.isLoading = false
-    return response;
+    return response
   }
-
 }

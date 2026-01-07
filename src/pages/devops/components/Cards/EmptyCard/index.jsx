@@ -39,12 +39,7 @@ export default class EmptyCard extends React.Component {
           <img src="/assets/empty-card.svg" alt="" />
         </div>
         <div>
-          <p
-            className={styles.desc}
-            dangerouslySetInnerHTML={{
-              __html: desc,
-            }}
-          />
+          <p className={styles.desc}>{desc}</p>
           {this.props.children}
         </div>
       </div>

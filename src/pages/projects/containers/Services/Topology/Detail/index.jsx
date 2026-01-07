@@ -51,7 +51,12 @@ export default class ServiceDetail extends Component {
     }
   }
 
-  fetchDetail(id) {
+  fetchDetail(params = {}) {
+    return this._fetchDetail(params)
+  }
+
+  // sparrow-disable-next-line INFINITE_RECURSIVE_CALL
+  _fetchDetail(id) {
     const { store, match } = this.props
     const { cluster, namespace } = match.params
     if (id) {

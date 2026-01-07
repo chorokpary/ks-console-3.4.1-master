@@ -128,6 +128,10 @@ export default class Placement extends Component {
   }
 
   async fetchClusters(params = {}) {
+    return this._fetchClusters(params)
+  }
+
+  async _fetchClusters(params = {}) {
     const { workspace } = this.state.formData
     if (workspace) {
       await this.workspaceStore.fetchClusters({

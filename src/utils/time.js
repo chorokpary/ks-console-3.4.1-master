@@ -50,7 +50,7 @@ export function translateTimeAlias(timeAlias) {
     const [, count, unit] = timeAlias.match(/^(\d+)([a-zA-Z])$/)
     return t(timeAlias2CompleteTimeMap[unit], { count })
   } catch (e) {
-    console.error(e)
+    // console.error(e)
     return 'invalid timeAlias format'
   }
 }

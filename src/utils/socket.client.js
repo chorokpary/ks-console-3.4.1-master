@@ -91,7 +91,9 @@ export default class SocketClient {
       if (typeof data === 'string') {
         try {
           data = JSON.parse(data)
-        } catch (e) {}
+        } catch (e) {
+          void e // intentionally ignored
+        }
       }
 
       onmessage && onmessage(data)
@@ -102,7 +104,7 @@ export default class SocketClient {
     }
 
     this.client.onerror = ev => {
-      console.error('socket error: ', ev)
+      // console.error('socket error: ', ev)
       onerror && onerror(ev)
     }
   }

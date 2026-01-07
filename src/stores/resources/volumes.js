@@ -31,7 +31,7 @@ export default class VolumeStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}/edgetron/resources/kubevirt/volumes`
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/volumes`
 
   getListUrl = this.getResourceUrl
 
@@ -131,7 +131,11 @@ export default class VolumeStore extends Base {
 
   @action
   async create(data, params = {}) {
-    const url = this.getResourceUrl(params)
+    const url = this.getResourceUrl({
+      ...params,
+      name: data.name,
+      namespace: params.namespace ? params.namespace : data.project,
+    })
 
     const jsonData = {}
     const volumeData = {}
@@ -166,13 +170,16 @@ export default class VolumeStore extends Base {
     const volumeData = {}
 
     volumeData.id = name
-    volumeData.project = params.project ? params.project : params.namespace
+    volumeData.project = params.namespace ? params.namespace : data.namespace
     volumeData.description = data?.description
 
     jsonData.volume = volumeData
 
     await this.submitting(
-      request.put(this.getDetailUrl({ name, ...params }), jsonData)
+      request.put(
+        this.getDetailUrl({ name, ...params, namespace: volumeData.project }),
+        jsonData
+      )
     )
   }
 
@@ -220,12 +227,30 @@ export default class VolumeStore extends Base {
 
   @action
   async batchDelete({ rowKeyNames, ...params }) {
+    const rowKeyDict = rowKeys.map(key => {
+      if (key.includes('/')) {
+        const [project, name] = key.split('/')
+        return { project, name }
+      } else {
+        const project = params.namespace
+        const name = key
+        return { project, name }
+      }
+    })
+
     await this.submitting(
       Promise.all(
-        rowKeyNames.map(name =>
-          request.delete(`${this.getDetailUrl({ name, ...params })}`, {
-            project: params.namespace,
-          })
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDetailUrl({
+              name: rowKey.name,
+              ...params,
+              namespace: params.namespace ? params.namespace : rowKey.project,
+            })}`,
+            {
+              project: rowKey.project,
+            }
+          )
         )
       )
     )
@@ -242,7 +267,11 @@ export default class VolumeStore extends Base {
       Promise.all(
         rowKeyDict.map(rowKey =>
           request.delete(
-            `${this.getDetailUrl({ name: rowKey.name, ...params })}`,
+            `${this.getDetailUrl({
+              name: rowKey.name,
+              ...params,
+              namespace: rowKey.project,
+            })}`,
             { project: rowKey.project }
           )
         )
@@ -256,7 +285,13 @@ export default class VolumeStore extends Base {
   delete(params) {
     const project = params.project ? params.project : params.namespace
     return this.submitting(
-      request.delete(`${this.getDetailUrl(params)}`, { project })
+      request.delete(
+        `${this.getDetailUrl({
+          ...params,
+          namespace: project,
+        })}`,
+        { project }
+      )
     )
   }
 
@@ -281,7 +316,11 @@ export default class VolumeStore extends Base {
 
     await this.submitting(
       request.put(
-        `${this.getDetailUrl({ ...params, name: data.name })}/action`,
+        `${this.getDetailUrl({
+          ...params,
+          name: data.name,
+          namespace: actionData.project,
+        })}/action`,
         jsonData
       )
     )

@@ -16,30 +16,40 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { Link } from 'react-router-dom'
 import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
 import { isAppsPage, getCustomizedWebsiteUrl } from 'utils'
 import LicenseStore from 'stores/resources/licenses'
+import { get } from 'lodash'
+import { Notify } from '@kube-design/components'
 
 import LoginInfo from '../LoginInfo'
 
 import styles from './index.scss'
 
+import PasswordNoticeModal  from 'components/Modals/PasswordNotice'
+import UserStore from 'stores/user'
+
 class Header extends React.Component {
   constructor(props) {
-    super(props);
-    this.licenseStore = new LicenseStore();
+    super(props)
+    this.licenseStore = new LicenseStore()
     this.state = {
       licenseStatus: null,
       isLoading: true,
-    };
+      showNotice: null,
+      noticeData: null,
+    }
+
+    this.userStore = new UserStore()
   }
 
   componentDidMount() {
-    this.fetchValidation();
+    this.fetchValidation()
+    this.getUserPasswordExpire()
   }
 
   static propTypes = {
@@ -54,11 +64,11 @@ class Header extends React.Component {
 
   async fetchValidation() {
     try {
-      const result = await this.licenseStore.defaultValidation();
-      this.setState({ licenseStatus: result, isLoading: false });
+      const result = await this.licenseStore.defaultValidation()
+      this.setState({ licenseStatus: result, isLoading: false })
     } catch (error) {
-      console.error('License validation result fetching failed:', error);
-      this.setState({ isLoading: false });
+      // console.error('License validation result fetching failed:', error);
+      this.setState({ isLoading: false })
     }
   }
 
@@ -84,26 +94,76 @@ class Header extends React.Component {
     )
   }
 
+  // 비밀번호 변경 알림 팝업 함수 start ###################################
+  getUserPasswordExpire = async () => {         
+    const result = await this.userStore.getUserPasswordExpireInfo()
+    this.setState({ noticeData: result.noticeData, showNotice: result.showNotice })
+  }
+
+  logout = async () => {
+    const res = await request.post('logout')
+    const url = get(res, 'data.url')
+    if (url) {
+      window.location.href = url
+    }
+  }
+
+  onNoticeModalClose = () => {
+      this.setState({ showNotice: false })
+  }
+
+  handlePassword = async (data) => {
+      const { currentPassword, password } = data
+
+      if (currentPassword && password) {
+          await this.userStore.modifyPassword({ name: globals.user.username },{ currentPassword, password })
+          Notify.success({ content: t('UPDATE_SUCCESSFUL') })
+          setTimeout(() => {
+              this.logout()
+          }, 1000)
+      } 
+  }
+  // 비밀번호 변경 알림 팝업 함수 end ###################################
+
   render() {
     const { className, innerRef, location } = this.props
+
+    const { showNotice, noticeData } = this.state
+
+    // 비밀번호 정책에 걸린 경우 → Header 대신 모달만 노출
+    if (showNotice === true) {
+      return (
+        <PasswordNoticeModal
+          visible
+          noticeData={noticeData}
+          onCancel={noticeData?.isExpired ? this.logout : this.onNoticeModalClose}
+          onOk={this.handlePassword}
+        />
+      )
+    }
+
     const logo = globals.config.logo || '/assets/logo.svg'
-    const { licenseStatus } = this.state;
+    const { licenseStatus } = this.state
 
     return (
       <div>
-        {licenseStatus && licenseStatus.validate_result === false && 
+        {licenseStatus &&
+          licenseStatus.validate_result === false &&
           this.state.isLoading === false && (
-          <div className="header-license">
-            {t(`RESOURCES_MMS_ERROR_DESC_${licenseStatus.validate_code}`)}
-          </div>
-        )}
+            <div className="header-license">
+              {t(`RESOURCES_MMS_ERROR_DESC_${licenseStatus.validate_code}`)}
+            </div>
+          )}
         <div
           ref={innerRef}
           className={classnames(
             styles.header,
             {
               [styles.inAppsPage]: isAppsPage(),
-              [styles.hasNotification]: licenseStatus && licenseStatus.validate_result === false && this.state.isLoading === false,
+              [styles.hasNotification]:
+                licenseStatus &&
+                licenseStatus.validate_result === false &&
+                this.state.isLoading === false,
             },
             className
           )}

@@ -1,80 +1,78 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { isEmpty, omit, get, find, some } from 'lodash';
+import React, { useRef, useEffect, useState } from 'react'
+import { isEmpty, omit, get, find, some } from 'lodash'
 
-import TopologyStore from 'stores/resources/topology';
+import TopologyStore from 'stores/resources/topology'
 
 import {
   TransformWrapper,
   TransformComponent,
   ReactZoomPanPinchRef,
-} from 'react-zoom-pan-pinch';
+} from 'react-zoom-pan-pinch'
 
 const TopologyItem = props => {
-  const store = new TopologyStore();
-  const cluster = props.cluster;
+  const store = new TopologyStore()
+  const cluster = props.cluster
 
-  const [vmList, setVmList] = useState([]);
-  const [networkList, setNetworkList] = useState([]);
-  const [sriovList, setSriovList] = useState([]);
-  const [routerList, setRouterList] = useState([]);
-  const [floatingList, setFloatingList] = useState([]);
-  const [loadbalancerList, setLoadBalancerList] = useState([]);
+  const [vmList, setVmList] = useState([])
+  const [networkList, setNetworkList] = useState([])
+  const [sriovList, setSriovList] = useState([])
+  const [routerList, setRouterList] = useState([])
+  const [floatingList, setFloatingList] = useState([])
+  const [loadbalancerList, setLoadBalancerList] = useState([])
 
-  const [internalList, setInternalList] = useState([]);
-  const [externalList, setExternalList] = useState([]);
+  const [internalList, setInternalList] = useState([])
+  const [externalList, setExternalList] = useState([])
 
-  const [networkUnionList, setNetworkUnionList] = useState([]);
-  const [networkElementsList, setNetworkElementsList] = useState([]);
+  const [networkUnionList, setNetworkUnionList] = useState([])
+  const [networkElementsList, setNetworkElementsList] = useState([])
 
   const closeModal = () => {
-    props.closeModal();
-  };
+    props.closeModal()
+  }
 
   useEffect(() => {
     let wrapHeight = document.querySelector('.network_element_wrap')
-      .offsetHeight;
-    wrapHeight += 100;
-    document.querySelector(
-      '.topology_network'
-    ).style.height = `${wrapHeight}px`;
-  });
+      .offsetHeight
+    wrapHeight += 100
+    document.querySelector('.topology_network').style.height = `${wrapHeight}px`
+  })
 
   useEffect(() => {
     const getData = async () => {
-      await store.fetchData();
+      await store.fetchData()
 
-      setVmList(store.vmList);
-      setNetworkList(store.networkList);
-      setSriovList(store.sriovList);
-      setRouterList(store.routerList);
-      setFloatingList(store.floatingList);
-      setLoadBalancerList(store.loadbalancerList);
+      setVmList(store.vmList)
+      setNetworkList(store.networkList)
+      setSriovList(store.sriovList)
+      setRouterList(store.routerList)
+      setFloatingList(store.floatingList)
+      setLoadBalancerList(store.loadbalancerList)
 
       const internalNetworkList = store.networkList?.filter(
         row => row.external == false
-      );
+      )
       const externalNetworkList = store.networkList?.filter(
         row => row.external == true
-      );
+      )
 
-      setInternalList(internalNetworkList);
-      setExternalList(externalNetworkList);
-    };
-    getData();
-  }, []);
+      setInternalList(internalNetworkList)
+      setExternalList(externalNetworkList)
+    }
+    getData()
+  }, [])
 
   useEffect(() => {
-    const unionArray = [...networkList, ...sriovList];
+    const unionArray = [...networkList, ...sriovList]
 
     unionArray.map((obj, index) => {
-      const networkCheck = get(obj, 'resource_name', '');
-      const networkType = networkCheck == '' ? 'N' : 'S';
-      obj.num = index + 1;
-      obj.network_type = networkType;
-    });
+      const networkCheck = get(obj, 'resource_name', '')
+      const networkType = networkCheck == '' ? 'N' : 'S'
+      obj.num = index + 1
+      obj.network_type = networkType
+    })
     // console.log("unionArray : "+ JSON.stringify(unionArray))
-    setNetworkUnionList(unionArray);
-  }, [networkList, sriovList]);
+    setNetworkUnionList(unionArray)
+  }, [networkList, sriovList])
 
   useEffect(() => {
     const getNetworkElementsData = async () => {
@@ -85,25 +83,25 @@ const TopologyItem = props => {
             obj.network_type == 'N'
               ? _.find(item.networks, { name: obj.name })
               : _.find(item.networks, { name: obj.name })
-          );
-          obj.elementVmList = elementVmList;
+          )
+          obj.elementVmList = elementVmList
 
           const elementRouterList = obj.external
             ? routerList.filter(item => item.external?.name == obj.name)
-            : routerList.filter(item => some(item.internal, { name: obj.name }));
-          obj.elementRouterList = elementRouterList;
+            : routerList.filter(item => some(item.internal, { name: obj.name }))
+          obj.elementRouterList = elementRouterList
 
           const elementLoadBalancerList = loadbalancerList.filter(
             item => item.network?.name == obj.name
-          );
-          obj.elementLoadBalancerList = elementLoadBalancerList;
+          )
+          obj.elementLoadBalancerList = elementLoadBalancerList
         })
-      );
-      setNetworkElementsList(networkUnionList);
-    };
+      )
+      setNetworkElementsList(networkUnionList)
+    }
 
-    getNetworkElementsData();
-  }, [networkUnionList, vmList, routerList, loadbalancerList]);
+    getNetworkElementsData()
+  }, [networkUnionList, vmList, routerList, loadbalancerList])
 
   const getState = state => {
     if (
@@ -114,19 +112,19 @@ const TopologyItem = props => {
       state === 'Terminating' ||
       state === 'Migrating'
     ) {
-      return 'unknown';
+      return 'unknown'
     }
     if (state === 'Running') {
-      return 'on';
+      return 'on'
     }
     if (state === 'Stopped' || state === 'Paused') {
-      return 'off';
+      return 'off'
     }
     if (state === 'Unknown') {
-      return 'error';
+      return 'error'
     }
-    return 'error';
-  };
+    return 'error'
+  }
 
   const renderLeftMenu = () => {
     return (
@@ -179,28 +177,28 @@ const TopologyItem = props => {
           <div className="text-wrapper">{loadbalancerList.length}</div>
         </li>
       </ul>
-    );
-  };
+    )
+  }
 
   const renderNetworkBarList = () => {
     const networkBaritems = networkUnionList.map(obj => {
-      const num = obj.num;
-      const barNum = num < 10 ? `0${num}` : num;
-      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
+      const num = obj.num
+      const barNum = num < 10 ? `0${num}` : num
+      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
 
-      const cidr = get(obj, 'cidr', '-');
-      const networkCheck = get(obj, 'resource_name', '');
-      const networkType = networkCheck == '' ? 'N' : 'S';
+      const cidr = get(obj, 'cidr', '-')
+      const networkCheck = get(obj, 'resource_name', '')
+      const networkType = networkCheck == '' ? 'N' : 'S'
 
-      const ternalCheck = get(obj, 'external', false);
+      const ternalCheck = get(obj, 'external', false)
       const ternalType =
-        networkType == 'S' ? '' : ternalCheck ? 'External' : 'Internal';
+        networkType == 'S' ? '' : ternalCheck ? 'External' : 'Internal'
       const networkIcon =
         networkType == 'S'
           ? 'sriov'
           : ternalCheck
           ? 'externalnetwork'
-          : 'network';
+          : 'network'
 
       return (
         <li className="network_bar">
@@ -216,36 +214,36 @@ const TopologyItem = props => {
             <span>{obj.name}</span>
           </div>
         </li>
-      );
-    });
+      )
+    })
 
     if (networkBaritems.length < 5) {
-      const addElement = <li className="network_bar"></li>;
-      const loopNum = 6 - networkBaritems.length;
+      const addElement = <li className="network_bar"></li>
+      const loopNum = 6 - networkBaritems.length
       for (let i = 0; i < loopNum; i++) {
-        networkBaritems.push(addElement);
+        networkBaritems.push(addElement)
       }
     }
 
-    return networkBaritems;
-  };
+    return networkBaritems
+  }
 
   const vmDuplicationElements = () => {
-    const vmArray = [];
-    const duplicationArray = [];
+    const vmArray = []
+    const duplicationArray = []
 
     Promise.all(
       networkElementsList.map(obj => {
-        const num = obj.num;
-        const barNum = num < 10 ? `0${num}` : num;
-        const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
-        const networkType = obj.network_type;
+        const num = obj.num
+        const barNum = num < 10 ? `0${num}` : num
+        const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
+        const networkType = obj.network_type
 
         obj.elementVmList.length > 0 &&
           obj.elementVmList.map(vm => {
             const vmNetworkIp = vm.networks
               .filter(network => network.name == obj.name)
-              .map(item => item.ip);
+              .map(item => item.ip)
 
             if (vmArray.includes(vm.name)) {
               const duplicationJson = {
@@ -255,31 +253,31 @@ const TopologyItem = props => {
                 color_num: colorNum,
                 ip: vmNetworkIp,
                 network_type: networkType,
-              };
-              duplicationArray.push(duplicationJson);
+              }
+              duplicationArray.push(duplicationJson)
             } else {
-              vmArray.push(vm.name);
+              vmArray.push(vm.name)
             }
-          });
+          })
       })
-    );
+    )
 
-    return duplicationArray;
-  };
+    return duplicationArray
+  }
 
   const routerDuplicationElements = () => {
-    const routerArray = [];
-    const duplicationArray = [];
+    const routerArray = []
+    const duplicationArray = []
 
     Promise.all(
       networkElementsList.map(obj => {
-        const num = obj.num;
-        const barNum = num < 10 ? `0${num}` : num;
-        const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
+        const num = obj.num
+        const barNum = num < 10 ? `0${num}` : num
+        const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
 
         obj.elementRouterList.length > 0 &&
           obj.elementRouterList.map(router => {
-            const vrouterIp = router.vrouter_ip;
+            const vrouterIp = router.vrouter_ip
 
             if (routerArray.includes(router.name)) {
               const duplicationJson = {
@@ -288,31 +286,31 @@ const TopologyItem = props => {
                 bar_num: barNum,
                 color_num: colorNum,
                 ip: vrouterIp,
-              };
-              duplicationArray.push(duplicationJson);
+              }
+              duplicationArray.push(duplicationJson)
             } else {
-              routerArray.push(router.name);
+              routerArray.push(router.name)
             }
-          });
+          })
       })
-    );
+    )
 
-    return duplicationArray;
-  };
+    return duplicationArray
+  }
 
   const loadbalancerDuplicationElements = () => {
-    const loadbalancerArray = [];
-    const duplicationArray = [];
+    const loadbalancerArray = []
+    const duplicationArray = []
 
     Promise.all(
       networkElementsList.map(obj => {
-        const num = obj.num;
-        const barNum = num < 10 ? `0${num}` : num;
-        const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
+        const num = obj.num
+        const barNum = num < 10 ? `0${num}` : num
+        const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
 
         obj.elementLoadBalancerList.length > 0 &&
           obj.elementLoadBalancerList.map(loadbalancer => {
-            const virtual_ip = loadbalancer.virtual_ip;
+            const virtual_ip = loadbalancer.virtual_ip
 
             if (loadbalancerArray.includes(loadbalancer.name)) {
               const duplicationJson = {
@@ -321,56 +319,59 @@ const TopologyItem = props => {
                 bar_num: barNum,
                 color_num: colorNum,
                 ip: virtual_ip,
-              };
-              duplicationArray.push(duplicationJson);
+              }
+              duplicationArray.push(duplicationJson)
             } else {
-              loadbalancerArray.push(loadbalancer.name);
+              loadbalancerArray.push(loadbalancer.name)
             }
-          });
+          })
       })
-    );
+    )
 
-    return duplicationArray;
-  };
+    return duplicationArray
+  }
 
   const renderVmElements = () => {
-    const duplicationVmList = vmDuplicationElements();
+    const duplicationVmList = vmDuplicationElements()
 
-    const vmArray = [];
-    const duplicationVmArray = [];
+    const vmArray = []
+    const duplicationVmArray = []
 
     const networkElementitems = networkElementsList.map(obj => {
-      const num = obj.num;
-      const barNum = num < 10 ? `0${num}` : num;
-      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
+      const num = obj.num
+      const barNum = num < 10 ? `0${num}` : num
+      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
       return (
         // VM 연결
         obj.elementVmList.length > 0 &&
         obj.elementVmList.map(vm => {
-
           const vmNetworkIp = vm.networks
-            .filter(network => obj.network_type == "S" ? network.name == obj.name : network.name == obj.name)
-            .map(item => item.ip);
+            .filter(network =>
+              obj.network_type == 'S'
+                ? network.name == obj.name
+                : network.name == obj.name
+            )
+            .map(item => item.ip)
 
           const vmNetworkName = vm.networks
             .filter(network => network.name == obj.name)
-            .map(item => item.name);
+            .map(item => item.name)
 
           const sriovCheck = sriovList
             .map(item => item.name)
-            .includes(vmNetworkName.toString());
+            .includes(vmNetworkName.toString())
 
-          const bondingLeft = !sriovCheck ? '' : 'bonding';
+          const bondingLeft = !sriovCheck ? '' : 'bonding'
 
           const rightElementsArray = duplicationVmList.filter(
             item => item.vm_name == vm.name
-          );
+          )
 
           if (!vmArray.includes(vm.name)) {
-            vmArray.push(vm.name);
+            vmArray.push(vm.name)
             const floatingData = floatingList.filter(
               floating => floating.instance_name == vm.name
-            );
+            )
 
             return (
               <div className={`network_element leftBar`}>
@@ -407,9 +408,9 @@ const TopologyItem = props => {
                 <div className="element right">
                   {rightElementsArray.map(obj => {
                     const rightWidth =
-                      370 * (Number(obj.num) - Number(num) - 1) + 100;
+                      370 * (Number(obj.num) - Number(num) - 1) + 100
                     const bondingRight =
-                      obj.network_type == 'N' ? '' : 'bonding_r';
+                      obj.network_type == 'N' ? '' : 'bonding_r'
                     return (
                       <div
                         className={`line rightWidth ${bondingRight} color_${obj.color_num}`}
@@ -420,43 +421,43 @@ const TopologyItem = props => {
                       >
                         <span>{obj.ip[0]}</span>
                       </div>
-                    );
+                    )
                   })}
                 </div>
               </div>
-            );
+            )
           }
-          duplicationVmArray.push(vm.name);
+          duplicationVmArray.push(vm.name)
         })
-      );
-    });
+      )
+    })
 
-    return networkElementitems;
-  };
+    return networkElementitems
+  }
 
   const renderRouterElements = () => {
-    const duplicationRouterList = routerDuplicationElements();
+    const duplicationRouterList = routerDuplicationElements()
     // console.log("duplicationRouterList : "+ JSON.stringify(duplicationRouterList))
 
-    const roterArray = [];
-    const duplicationRoterArray = [];
+    const roterArray = []
+    const duplicationRoterArray = []
 
     const networkElementitems = networkElementsList.map(obj => {
-      const num = obj.num;
-      const barNum = num < 10 ? `0${num}` : num;
-      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
+      const num = obj.num
+      const barNum = num < 10 ? `0${num}` : num
+      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
 
       return (
         // Router 연결
         obj.elementRouterList.length > 0 &&
         obj.elementRouterList.map(router => {
-          const vrouterIp = router.vrouter_ip;
+          const vrouterIp = router.vrouter_ip
           const rightElementsArray = duplicationRouterList.filter(
             item => item.router_name == router.name
-          );
+          )
 
           if (!roterArray.includes(router.name)) {
-            roterArray.push(router.name);
+            roterArray.push(router.name)
 
             return (
               <div className={`network_element leftBar`}>
@@ -487,7 +488,7 @@ const TopologyItem = props => {
                 <div className="element right">
                   {rightElementsArray.map(obj => {
                     const rightWidth =
-                      370 * (Number(obj.num) - Number(num) - 1) + 100;
+                      370 * (Number(obj.num) - Number(num) - 1) + 100
                     return (
                       <div
                         className={`line rightWidth color_${obj.color_num}`}
@@ -498,42 +499,42 @@ const TopologyItem = props => {
                       >
                         <span>{obj.ip}</span>
                       </div>
-                    );
+                    )
                   })}
                 </div>
               </div>
-            );
+            )
           }
-          duplicationRoterArray.push(router.name);
+          duplicationRoterArray.push(router.name)
         })
-      );
-    });
+      )
+    })
 
-    return networkElementitems;
-  };
+    return networkElementitems
+  }
 
   const renderLoadbalancerElements = () => {
-    const duplicationLoadbalancerList = loadbalancerDuplicationElements();
+    const duplicationLoadbalancerList = loadbalancerDuplicationElements()
 
-    const loadbalancerArray = [];
-    const duplicationLoadbalancerArray = [];
+    const loadbalancerArray = []
+    const duplicationLoadbalancerArray = []
 
     const networkElementitems = networkElementsList.map(obj => {
-      const num = obj.num;
-      const barNum = num < 10 ? `0${num}` : num;
-      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`;
+      const num = obj.num
+      const barNum = num < 10 ? `0${num}` : num
+      const colorNum = num % 10 < 1 ? '10' : `0${num % 10}`
 
       return (
         // Router 연결
         obj.elementLoadBalancerList.length > 0 &&
         obj.elementLoadBalancerList.map(load => {
-          const virtualIp = load.virtual_ip;
+          const virtualIp = load.virtual_ip
           const rightElementsArray = duplicationLoadbalancerList.filter(
             item => item.loadbalancer_name == load.name
-          );
+          )
 
           if (!loadbalancerArray.includes(load.name)) {
-            loadbalancerArray.push(load.name);
+            loadbalancerArray.push(load.name)
 
             return (
               <div className={`network_element leftBar`}>
@@ -564,7 +565,7 @@ const TopologyItem = props => {
                 <div className="element right">
                   {rightElementsArray.map(obj => {
                     const rightWidth =
-                      370 * (Number(obj.num) - Number(num) - 1) + 100;
+                      370 * (Number(obj.num) - Number(num) - 1) + 100
                     return (
                       <div
                         className={`line rightWidth color_${obj.color_num}`}
@@ -575,19 +576,19 @@ const TopologyItem = props => {
                       >
                         <span>{obj.ip}</span>
                       </div>
-                    );
+                    )
                   })}
                 </div>
               </div>
-            );
+            )
           }
-          duplicationLoadbalancerArray.push(load.name);
+          duplicationLoadbalancerArray.push(load.name)
         })
-      );
-    });
+      )
+    })
 
-    return networkElementitems;
-  };
+    return networkElementitems
+  }
 
   const Controls = ({ zoomIn, zoomOut, resetTransform }) => (
     <>
@@ -612,7 +613,7 @@ const TopologyItem = props => {
         <div id="result"></div>
       </div>
     </>
-  );
+  )
 
   return (
     <div className="content_box_wrap pop">
@@ -629,9 +630,9 @@ const TopologyItem = props => {
               <React.Fragment>
                 <Controls {...utils} />
                 <TransformComponent
-                  onTransformChange={transform =>
-                    console.log('Transform changed:', transform)
-                  }
+                // onTransformChange={transform =>
+                //   console.log('Transform changed:', transform)
+                // }
                 >
                   <div id="box_zoom" className="topology_network_wrap">
                     {/* 네트워크 List 시작 */}
@@ -658,7 +659,7 @@ const TopologyItem = props => {
       {/* left menu */}
       {renderLeftMenu()}
     </div>
-  );
-};
+  )
+}
 
-export default TopologyItem;
+export default TopologyItem

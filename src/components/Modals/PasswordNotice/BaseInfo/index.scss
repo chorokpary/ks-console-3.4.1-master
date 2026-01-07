@@ -1,0 +1,45 @@
+.wrapper {
+  :global {
+    .h4 {
+      text-shadow: 0 4px 8px rgba(36, 46, 66, 0.1);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+  }
+}
+
+.upload {
+  width: 320px;
+  padding-top: 10px;
+  flex-direction: column;
+
+  :global {
+    .column {
+      text-align: center;
+
+      .upload-preview {
+        vertical-align: text-bottom;
+      }
+    }
+
+    .upload > div {
+      height: 64px;
+      padding: 12px;
+    }
+  }
+}
+
+.passwordNotice {
+  font-size: 15px;
+  padding: 10px;
+  line-height: 1.6;      // 줄 간격
+  white-space: pre-line; // 줄바꿈/띄어쓰기 유지
+
+  .highlight {
+    font-weight: bold;
+    color: #1e6fff; // 파란색
+  }
+}
+
+

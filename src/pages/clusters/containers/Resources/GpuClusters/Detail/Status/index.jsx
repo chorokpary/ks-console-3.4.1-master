@@ -29,20 +29,28 @@ const Status = props => {
   const [detailFlavor, setDetailFlavor] = useState(null)
   const [detailNetwork, setDetailNetwork] = useState([])
 
-  const [vmList, setVmList] = useState('');
+  const [vmNameList, setVmNameList] = useState('')
+  const [vmList, setVmList] = useState([])
 
   // 초기 데이터 처리
   useEffect(() => {
     if (!store.detail) return
-    fnGetVmDetail();  
+    fnGetVmDetail()
   }, [])
+
+  useEffect(() => {
+    const getVm = vmList.map(item => item.vmName).join('|') || ''
+    if (vmList.length > 0 && getVm !== vmNameList) {
+      fnGetVmDetail()
+      // window.location.reload()
+    }
+  }, [vmList])
 
   const fnGetFlavor = async vmDetail => {
     setDetailFlavor(vmDetail.vm?.flavor)
   }
-  
+
   const fnGetNetwork = async vmDetail => {
- 
     setDetailNetwork([])
 
     const networkData = await vmStore.fetchVmListNetwork({ project: cluster })
@@ -60,7 +68,7 @@ const Status = props => {
           networkDetail.cidr = network.cidr
           networkDetail.gateway_ip = network.gateway_ip
           networkDetail.endpoint = 'networks'
-          networkDetail.unique = 'project_name'         
+          networkDetail.unique = 'project_name'
           setDetailNetwork(value => [...value, networkDetail])
         }
       })
@@ -70,12 +78,12 @@ const Status = props => {
 
   const fnGetVmDetail = async () => {
     try {
-      const vmData = store.detail.data?.instances || []
+      const vmData = vmList || store.detail.data?.instances || []
       const sortedList = [...vmData].sort((a, b) => {
         return a.vmName < b.vmName ? 1 : a.vmName > b.vmName ? -1 : 0
       })
 
-      const vmJoinData =  vmData.map(item => item.vmName).join('|') || ''
+      const vmJoinData = vmData.map(item => item.vmName).join('|') || ''
       const vmName = sortedList[0]?.vmName
 
       if (!!vmName) {
@@ -86,12 +94,12 @@ const Status = props => {
         })
 
         fnGetFlavor(vmDetail)
-        fnGetNetwork(vmDetail)        
+        fnGetNetwork(vmDetail)
       }
-        setVmList(vmJoinData)
-
+      setVmNameList(vmJoinData)
     } catch (error) {
-      console.log('VM 상세 정보 조회 중 오류 발생:', error)
+      // console.log('VM 상세 정보 조회 중 오류 발생:', error)
+      void error // intentionally ignored
     } finally {
       setLoading(false)
     }
@@ -105,18 +113,21 @@ const Status = props => {
   const handleEmpty = () => {
     setDetailFlavor(null)
     setDetailNetwork([])
+    setVmList([])
+    store.detail.data.instances = undefined
   }
 
   return (
     <>
       <div>
-        {vmList && 
+        {vmList.length > 0 && (
           <DetailGpuResource
+            key={vmNameList}
             {...props.match.params}
             namespace={store.detail.data?.namespace}
-            vmList={vmList}
+            vmList={vmNameList}
           />
-        }
+        )}
 
         {/* Flavor */}
         {!!detailFlavor && (
@@ -254,6 +265,7 @@ const Status = props => {
           id={props.match.params.id}
           namespace={store.detail.data?.namespace}
           handleEmpty={handleEmpty}
+          setVmList={setVmList}
         />
       </div>
     </>

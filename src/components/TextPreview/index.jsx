@@ -19,7 +19,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Select, Icon } from '@kube-design/components'
-import { saveAs } from 'file-saver'
+import { saveAs as saveAsFilleSaver } from 'file-saver'
 import yaml from 'js-yaml/dist/js-yaml'
 
 import { CodeEditor } from 'components/Base'
@@ -103,7 +103,7 @@ export default class TextPreview extends React.Component {
     const blob = new Blob([text], {
       type: 'text/plain;charset=utf-8',
     })
-    saveAs(blob, fileName)
+    saveAsFilleSaver(blob, fileName)
   }
 
   renderFileSelect() {

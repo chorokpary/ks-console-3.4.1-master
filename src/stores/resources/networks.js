@@ -23,135 +23,179 @@ import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class NetworkStore extends Base {
+  records = new List()
 
-    records = new List()
+  module = 'networks'
 
-    module = 'networks'
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/networks`
+  getListUrl = this.getResourceUrl
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+  getDeleteUrl = (params = {}) =>
+    `${this.getListUrl(params)}/${params.name}/${params.project}`
 
-    getResourceUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/networks`
-    getListUrl = this.getResourceUrl
-    getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
-    getDeleteUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}/${params.project}`
+  getPhysnetUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/physnets`
 
-    getPhysnetUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/physnets`
+  getNodeUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/kubevirt/nodes`
 
-    getNodeUrl = (params = {}) => `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(params)}/edgetron/resources/kubevirt/nodes`
-
-    @action
-    async create(data, params = {}) {
-        if (data.network.type == "FLAT") {
-            delete data.network.segment_id
-        } else {
-            delete data.network.physnet_name
-        }
-
-        let res
-        if (params.workspace) {
-            res = await this.submitting(
-                request.post(this.getResourceUrl(params), data)
-            )
-        } else {
-            res = await this.submitting(request.post(this.getListUrl(params), data))
-        }
-        // this.afterChange(res, params)
-        return res
+  @action
+  async create(data, params = {}) {
+    if (data.network.type == 'FLAT') {
+      delete data.network.segment_id
+    } else {
+      delete data.network.physnet_name
     }
 
-    @action
-    async update(params, data) {
-        const jsonData = {};
-        jsonData.network = data;
-
-        await this.submitting(
-            request.put(this.getDetailUrl(params), jsonData)
+    let res
+    if (params.workspace) {
+      res = await this.submitting(
+        request.post(
+          this.getResourceUrl({
+            ...params,
+            name: data.network.name,
+            namespace: params.namespace
+              ? params.namespace
+              : data.network.project,
+          }),
+          data
         )
-    }
-
-    @action
-    async fetchPhysnets(params) {
-        this.isLoading = true
-
-        const result = await request.get(
-            `${this.getPhysnetUrl(params)}`
+      )
+    } else {
+      res = await this.submitting(
+        request.post(
+          this.getListUrl({
+            ...params,
+            name: data.network.name,
+            namespace: params.namespace
+              ? params.namespace
+              : data.network.project,
+          }),
+          data
         )
-        const physnets = { ...params, ...this.mapper(result), kind: 'Physnets' }
-        this.physnets = physnets
-        this.isLoading = false
-        return physnets
+      )
     }
+    // this.afterChange(res, params)
+    return res
+  }
 
-    @action
-    async fetchDetail(params) {
-        this.isLoading = true
-        const project = params.project ? params.project : params.namespace
-        const result = await request.get(`${this.getDetailUrl(params)}`, {
-            project,
-        })
-        const detail = { ...params, ...this.mapper(result), kind: 'Networks' }
+  @action
+  async update(params, data) {
+    const jsonData = {}
+    jsonData.network = data
 
-        // Yaml 파일 관련 
-        await this.fetchYaml(params);
+    await this.submitting(
+      request.put(
+        this.getDetailUrl({
+          ...params,
+          namespace: params.namespace ? params.namespace : data.project,
+        }),
+        jsonData
+      )
+    )
+  }
 
-        this.detail = detail
-        this.isLoading = false
-        return detail
-    }
+  @action
+  async fetchPhysnets(params) {
+    this.isLoading = true
 
-    @action
-    async fetchYaml(params) {
-        this.isLoading = true
-        const project = params.project ? params.project : params.namespace
-        const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
-            project,
-        })
-        const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
+    const result = await request.get(`${this.getPhysnetUrl(params)}`)
+    const physnets = { ...params, ...this.mapper(result), kind: 'Physnets' }
+    this.physnets = physnets
+    this.isLoading = false
+    return physnets
+  }
 
-        this.yaml = yamlData.manifest
-        this.isLoading = false
-        return yamlData
-    }
+  @action
+  async fetchDetail(params) {
+    this.isLoading = true
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
+    const detail = { ...params, ...this.mapper(result), kind: 'Networks' }
 
-    @action
-    async fetchNodes(params) {
-        this.isLoading = true;
-        const result = await request.get(`${this.getNodeUrl(params)}`);
-        this.isLoading = false;
-        return result
-    }
+    // Yaml 파일 관련
+    await this.fetchYaml(params)
 
-    @action
-    async batchDelete({ rowKeys, ...params }) {
-        const rowKeyDict = rowKeys.map(key => {
-            if (key.includes('/')) {
-                const [project, name] = key.split('/')
-                return { project, name }
-            } else {
-                const project = params.namespace
-                const name = key
-                return { project, name }
-            }
-        })
+    this.detail = detail
+    this.isLoading = false
+    return detail
+  }
 
-        await this.submitting(
-            Promise.all(
-                rowKeyDict.map(rowKey =>
-                    request.delete(
-                        `${this.getDeleteUrl({ name: rowKey.name, project: rowKey.project, ...params })}`
-                    )
-                )
-            )
+  @action
+  async fetchYaml(params) {
+    this.isLoading = true
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+      project,
+    })
+    const yamlData = { ...params, ...this.mapper(result), kind: 'Networks' }
+
+    this.yaml = yamlData.manifest
+    this.isLoading = false
+    return yamlData
+  }
+
+  @action
+  async fetchNodes(params) {
+    this.isLoading = true
+    const result = await request.get(`${this.getNodeUrl(params)}`)
+    this.isLoading = false
+    return result
+  }
+
+  @action
+  async batchDelete({ rowKeys, ...params }) {
+    const rowKeyDict = rowKeys.map(key => {
+      if (key.includes('/')) {
+        const [project, name] = key.split('/')
+        return { project, name }
+      } else {
+        const project = params.namespace
+        const name = key
+        return { project, name }
+      }
+    })
+
+    await this.submitting(
+      Promise.all(
+        rowKeyDict.map(rowKey =>
+          request.delete(
+            `${this.getDeleteUrl({
+              name: rowKey.name,
+              namespace: rowKey.project,
+              project: rowKey.project,
+              ...params,
+            })}`
+          )
         )
-        this.list.selectedRowKeys = []
+      )
+    )
+    this.list.selectedRowKeys = []
+  }
+
+  @action
+  delete(user) {
+    if (user.name === globals.user.username) {
+      Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
+      return
     }
 
-    @action
-    delete(user) {
-        if (user.name === globals.user.username) {
-            Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
-            return
-        }
-
-        return this.submitting(request.delete(`${this.getDeleteUrl(user)}`))
-    }
-
+    return this.submitting(
+      request.delete(
+        `${this.getDeleteUrl({
+          ...user,
+          namespace: user.namespace ? user.namespace : user.project,
+        })}`
+      )
+    )
+  }
 }

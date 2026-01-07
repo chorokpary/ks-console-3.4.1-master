@@ -125,23 +125,22 @@ export const convertTreeToEntities = (
 export const conductExpandParent = (keyList, keyEntities) => {
   const expandedKeys = {}
 
-  function conductUp(key) {
-    if (expandedKeys[key]) return
+  const expandUp = startKey => {
+    let currentKey = startKey
 
-    const entity = keyEntities[key]
-    if (!entity) return
+    while (currentKey) {
+      if (expandedKeys[currentKey]) break
 
-    expandedKeys[key] = true
+      const entity = keyEntities[currentKey]
+      if (!entity) break
 
-    const { parent } = entity
-
-    if (parent) {
-      conductUp(parent.key)
+      expandedKeys[currentKey] = true
+      currentKey = entity.parent?.key
     }
   }
 
   ;(keyList || []).forEach(key => {
-    conductUp(key)
+    expandUp(key)
   })
 
   return Object.keys(expandedKeys)

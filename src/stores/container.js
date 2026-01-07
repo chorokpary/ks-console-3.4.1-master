@@ -269,4 +269,9 @@ export default class ContainerStore {
   updateTagList = data => {
     this.tagList.update(data)
   }
+
+  @action
+  resetTagList = () => {
+    this.tagList.reset()
+  }
 }

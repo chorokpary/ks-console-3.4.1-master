@@ -22,13 +22,12 @@ import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
-import axios from "axios";
+import axios from 'axios'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
 
 export default class BareMetalStore extends Base {
-
   records = new List()
 
   module = 'baremetal'
@@ -49,9 +48,12 @@ export default class BareMetalStore extends Base {
   // getResourceUrlBareMetal = (params = {}) => `cmp-apiserver/node/v1alpha2/baremetals`
   // getResourceUrlReset = (params = {}) => `cmp-apiserver/redfish/v1alpha2/reset`
 
-  getResourceUrlCluster = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/clusters`
-  getResourceUrlBareMetal = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/baremetals`
-  getResourceUrlReset = (params = {}) => `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/redfish/reset`
+  getResourceUrlCluster = (params = {}) =>
+    `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/clusters`
+  getResourceUrlBareMetal = (params = {}) =>
+    `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/baremetals`
+  getResourceUrlReset = (params = {}) =>
+    `kapis/cmp.kubesphere.io/v1alpha1/baremetal-monitor/v1alpha1/redfish/reset`
 
   @action
   async fetchList({
@@ -79,80 +81,84 @@ export default class BareMetalStore extends Base {
 
     params.limit = params.limit || 10
 
-
     const resultBareMatalData = await request.get(
       this.getResourceUrlBareMetal()
     )
 
-    const resultClusterData = await request.get(
-      this.getResourceUrlCluster()
-    )
+    const resultClusterData = await request.get(this.getResourceUrlCluster())
 
     const resultCluster = get(resultClusterData, 'clusters', [])
     const resultBareMatal = get(resultBareMatalData, 'baremetals', [])
 
-    await resultCluster.map(item => (
-      item.system_type = "C"
-    ))
+    await resultCluster.map(item => (item.system_type = 'C'))
 
-    await resultBareMatal.map(item => (
-      item.system_type = "B"
-    ))
+    await resultBareMatal.map(item => (item.system_type = 'B'))
 
     const result = [...resultCluster, ...resultBareMatal]
-    const data = result;
+    const data = result
 
     // 초기 정렬 처리
     data.sort((a, b) => {
-      return a.name < b.name ? 1 : a.name > b.name ? -1 : 0;
-    });
+      return a.name < b.name ? 1 : a.name > b.name ? -1 : 0
+    })
 
-    // 초기 데이터 처리 
-    this.dataList = data;
+    // 초기 데이터 처리
+    this.dataList = data
 
-    // 검색 관련 처리 
-    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending'];
-    const searchArray = Object.keys(params).map((key) => {
-      let value = params[key];
-      let searchData = {
-        "searchKeywordType": key,
-        "searchKeywordText": value
-      }
-      return searchData
-    }).filter((row) => exceptionArray.includes(row.searchKeywordType) === false)
+    // 검색 관련 처리
+    const exceptionArray = ['page', 'limit', 'sortBy', 'ascending']
+    const searchArray = Object.keys(params)
+      .map(key => {
+        let value = params[key]
+        let searchData = {
+          searchKeywordType: key,
+          searchKeywordText: value,
+        }
+        return searchData
+      })
+      .filter(row => exceptionArray.includes(row.searchKeywordType) === false)
 
     if (searchArray.length > 0) {
-      searchArray.map((search) => {
-        let resultList = this.dataList.filter((row) => {
+      searchArray.map(search => {
+        let resultList = this.dataList.filter(row => {
           if (search.searchKeywordType === 'project') {
-            return row[search.searchKeywordType]?.toLowerCase() === search.searchKeywordText.toLowerCase();
+            return (
+              row[search.searchKeywordType]?.toLowerCase() ===
+              search.searchKeywordText.toLowerCase()
+            )
           }
-          return row[search.searchKeywordType]?.toLowerCase().includes(search.searchKeywordText.toLowerCase());
-        });
-        this.dataList = resultList;
+          return row[search.searchKeywordType]
+            ?.toLowerCase()
+            .includes(search.searchKeywordText.toLowerCase())
+        })
+        this.dataList = resultList
       })
     }
 
     //정렬 처리
-    const sortType = !!params.ascending ? "asc" : "desc";
+    const sortType = !!params.ascending ? 'asc' : 'desc'
     this.dataList.sort((a, b) => {
-      var x = a[params.sortBy];
-      var y = b[params.sortBy];
-      if (sortType == "desc") {
-        return x > y ? -1 : x < y ? 1 : 0;
-      } else if (sortType == "asc") {
-        return x < y ? -1 : x > y ? 1 : 0;
+      var x = a[params.sortBy]
+      var y = b[params.sortBy]
+      if (sortType == 'desc') {
+        return x > y ? -1 : x < y ? 1 : 0
+      } else if (sortType == 'asc') {
+        return x < y ? -1 : x > y ? 1 : 0
       }
-    });
+    })
 
-    // mm3 데이터 page 별 Slice 처리 
-    const perPage = Number(params.limit) || 10;
-    const currentPage = Number(params.page) || 1;
-    const mm3SliceData = this.dataList.slice((currentPage - 1) * perPage, (currentPage) * perPage);
+    // mm3 데이터 page 별 Slice 처리
+    const perPage = Number(params.limit) || 10
+    const currentPage = Number(params.page) || 1
+    const mm3SliceData = this.dataList.slice(
+      (currentPage - 1) * perPage,
+      currentPage * perPage
+    )
 
     this.list.update({
       data: more ? [...this.list.data, ...mm3SliceData] : mm3SliceData,
-      total: result.totalItems || result.total_count || this.dataList.length || 0,
+      total:
+        result.totalItems || result.total_count || this.dataList.length || 0,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
@@ -165,25 +171,27 @@ export default class BareMetalStore extends Base {
 
   @action
   async create(data, params = {}) {
+    const url =
+      data.systemType == 'C'
+        ? this.getResourceUrlCluster(params)
+        : this.getResourceUrlBareMetal(params)
 
-    const url = data.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
+    const jsonData = {}
+    const nodeData = {}
+    const bmcData = {}
 
-    const jsonData = {};
-    const nodeData = {};
-    const bmcData = {};
+    nodeData.ip = data.nodeIp
+    nodeData.scrapeInterval = !!data.nodeInterval ? data.nodeInterval + 's' : ''
+    nodeData.port = Number(data.nodePort)
 
-    nodeData.ip = data.nodeIp;
-    nodeData.scrapeInterval = !!data.nodeInterval ? data.nodeInterval + "s" : "";
-    nodeData.port = Number(data.nodePort);
+    bmcData.address = data.bmcCheck ? data.bmcIp : ''
+    bmcData.scrapeInterval = data.bmcCheck ? data.bmcInterval + 's' : ''
+    bmcData.username = data.bmcCheck ? data.bmcId : ''
+    bmcData.password = data.bmcCheck ? data.bmcPassword : ''
 
-    bmcData.address = data.bmcCheck ? data.bmcIp : '';
-    bmcData.scrapeInterval = data.bmcCheck ? data.bmcInterval + "s" : '';
-    bmcData.username = data.bmcCheck ? data.bmcId : ''; 
-    bmcData.password = data.bmcCheck ? data.bmcPassword : '';
-
-    jsonData.name = data.systemType == "C" ? data.cluserName : data.name;
-    data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
-    jsonData.openBMC = bmcData;
+    jsonData.name = data.systemType == 'C' ? data.cluserName : data.name
+    data.systemType == 'C' ? '' : (jsonData.nodeExporter = nodeData)
+    jsonData.openBMC = bmcData
 
     const res = await this.submitting(request.post(url, jsonData))
     return res
@@ -191,36 +199,40 @@ export default class BareMetalStore extends Base {
 
   @action
   async update({ name, ...params }, data) {
+    const url =
+      data.systemType == 'C'
+        ? this.getResourceUrlCluster(params)
+        : this.getResourceUrlBareMetal(params)
 
-    const url = data.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
+    const jsonData = {}
+    const nodeData = {}
+    const bmcData = {}
 
-    const jsonData = {};
-    const nodeData = {};
-    const bmcData = {};
+    nodeData.ip = data.nodeIp
+    nodeData.scrapeInterval = data.nodeInterval + 's'
+    nodeData.port = Number(data.nodePort)
 
-    nodeData.ip = data.nodeIp;
-    nodeData.scrapeInterval = data.nodeInterval + "s";
-    nodeData.port = Number(data.nodePort);
+    bmcData.address = data.bmcCheck ? data.bmcIp : ''
+    bmcData.scrapeInterval = data.bmcCheck ? data.bmcInterval + 's' : ''
+    bmcData.username = data.bmcCheck ? data.bmcId : ''
+    bmcData.password = data.bmcCheck ? data.bmcPassword : ''
 
-    bmcData.address = data.bmcCheck ? data.bmcIp : '';
-    bmcData.scrapeInterval = data.bmcCheck ? data.bmcInterval + "s" : '';
-    bmcData.username = data.bmcCheck ? data.bmcId : ''; 
-    bmcData.password = data.bmcCheck ? data.bmcPassword : '';
-    
-    jsonData.name = data.name;
-    data.systemType == "C" ? "" : jsonData.nodeExporter = nodeData;
-    jsonData.openBMC = bmcData;
+    jsonData.name = data.name
+    data.systemType == 'C' ? '' : (jsonData.nodeExporter = nodeData)
+    jsonData.openBMC = bmcData
 
     const res = await this.submitting(request.put(url, jsonData))
     return res
   }
 
-
   @action
   async fetchDetail(params) {
     this.isLoading = true
 
-    const url = params.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
+    const url =
+      params.systemType == 'C'
+        ? this.getResourceUrlCluster(params)
+        : this.getResourceUrlBareMetal(params)
 
     const result = await request.get(url)
     const detail = { ...params, ...this.mapper(result), kind: 'Baremetal' }
@@ -235,16 +247,14 @@ export default class BareMetalStore extends Base {
     if (rowKeys.includes(globals.user.username)) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
     } else {
-
-      const url = params.systemType == "C" ? this.getResourceUrlCluster(params) : this.getResourceUrlBareMetal(params);
+      const url =
+        params.systemType == 'C'
+          ? this.getResourceUrlCluster(params)
+          : this.getResourceUrlBareMetal(params)
 
       await this.submitting(
         Promise.all(
-          rowKeys.map(username =>
-            request.delete(
-              `${url}/${username})}`
-            )
-          )
+          rowKeys.map(username => request.delete(`${url}/${username})}`))
         )
       )
     }
@@ -258,28 +268,30 @@ export default class BareMetalStore extends Base {
       return
     }
 
-    const systemType = !!user.systemType ? user.systemType : user.system_type;
-    const url = systemType == "C" ? this.getResourceUrlCluster(user) : this.getResourceUrlBareMetal(user);
+    const systemType = !!user.systemType ? user.systemType : user.system_type
+    const url =
+      systemType == 'C'
+        ? this.getResourceUrlCluster(user)
+        : this.getResourceUrlBareMetal(user)
 
     return this.submitting(request.delete(`${url}/${user.name}`))
   }
 
   @action
   async actionState(data) {
+    const url = this.getResourceUrlReset()
 
-    const url = this.getResourceUrlReset();
+    const jsonData = {}
+    ;(jsonData.address = 'https://' + data.address),
+      (jsonData.id = data.id),
+      (jsonData.password = data.password),
+      (jsonData.resetType = data.resetType),
+      (jsonData.systemId = data.systemId)
 
-    const jsonData = {};
-    jsonData.address = "https://" + data.address,
-      jsonData.id = data.id,
-      jsonData.password = data.password,
-      jsonData.resetType = data.resetType,
-      jsonData.systemId = data.systemId
-
-    console.log("jsonData : " + JSON.stringify(jsonData))
+    // console.log("jsonData : " + JSON.stringify(jsonData))
 
     const res = await request.post(url, jsonData)
-    console.log("res : " + JSON.stringify(res))
+    // console.log("res : " + JSON.stringify(res))
     return res
   }
 }

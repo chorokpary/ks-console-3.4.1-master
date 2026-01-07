@@ -27,6 +27,8 @@ export default class AiAddonStore extends Base {
   getResourceUrl = (params = {}) =>
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
+    )}${this.getOditLogUrl(
+      params
     )}/edgetron/resources/kubevirt/metadata/pre_installs`
 
   getListUrl = this.getResourceUrl

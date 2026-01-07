@@ -18,7 +18,8 @@ const ImageBuildDetail = props => {
   }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params)
+    // store.fetchDetail(props.match.params)
+    store.fetchDetail({ ...props.match.params, cluster: '' })
   }
 
   const { cluster } = props.match.params
@@ -141,7 +142,7 @@ const ImageBuildDetail = props => {
   const sideProps = {
     icon: 'image',
     module: store.module,
-    name: get(store.detail.tags, 'image-name'),
+    name: get(store.detail.tags, 'image-name') || '',
     operations: getOperations(),
     attrs: getAttrs(),
     breadcrumbs: [
