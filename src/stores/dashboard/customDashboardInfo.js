@@ -20,37 +20,37 @@ export default class CustomDashboardInfo {
   }
   gpuUsage = {
     x: 9,
-    y: 0,
+    y: 4,
     w: 3,
     h: 4,
   }
   kaas = {
-    x: 12,
+    x: 9,
     y: 0,
     w: 3,
     h: 4,
   }
   gpuMap = {
     x: 0,
-    y: 4,
+    y: 8,
     w: 6,
     h: 12,
   }
   gpuUsageStatus = {
     x: 6,
-    y: 4,
+    y: 8,
     w: 6,
     h: 8,
   }
   gpuUsageTop5 = {
     x: 6,
-    y: 12,
+    y: 16,
     w: 6,
     h: 4,
   }
   alarmVertical = {
     x: 12,
-    y: 4,
+    y: 0,
     w: 3,
     h: 12,
   }
@@ -60,4 +60,22 @@ export default class CustomDashboardInfo {
   //   w: 12,
   //   h: 4,
   // }
+  cpuUsage = {
+    x: 0,
+    y: 4,
+    w: 3,
+    h: 4,
+  }
+  memoryUsage = {
+    x: 3,
+    y: 4,
+    w: 3,
+    h: 4,
+  }
+  diskUsage = {
+    x: 6,
+    y: 4,
+    w: 3,
+    h: 4,
+  }
 }

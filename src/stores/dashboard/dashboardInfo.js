@@ -187,4 +187,22 @@ export default class DashboardInfo {
     w: 12,
     h: 4,
   }
+  cpuUsage = {
+    x: 0,
+    y: 4,
+    w: 3,
+    h: 4,
+  }
+  memoryUsage = {
+    x: 3,
+    y: 4,
+    w: 3,
+    h: 4,
+  }
+  diskUsage = {
+    x: 6,
+    y: 4,
+    w: 3,
+    h: 4,
+  }
 }
