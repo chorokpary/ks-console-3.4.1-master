@@ -22,7 +22,6 @@ const isEmpty = require('lodash/isEmpty')
 const isArray = require('lodash/isArray')
 const jwtDecode = require('jwt-decode')
 const yaml = require('js-yaml/dist/js-yaml')
-const request = require('../libs/request.base')
 
 const {
   send_gateway_request,
@@ -239,7 +238,7 @@ const getUserDetail = async (token, clusterRole, isMulticluster) => {
 
     user.globalRules = roles
   } catch (error) {
-    void error // intentionally ignored
+    error // intentionally ignored
   }
 
   return user
@@ -306,7 +305,7 @@ const getKSConfig = async token => {
     }
   } catch (error) {
     // console.error(error)
-    void error // intentionally ignored
+    error // intentionally ignored
   }
 
   return resp
@@ -330,7 +329,7 @@ const getK8sRuntime = async ctx => {
     }
   } catch (error) {
     // console.error(error)
-    void error // intentionally ignored
+    error // intentionally ignored
   }
 
   return resp
@@ -358,7 +357,7 @@ const getClusterRole = async ctx => {
     }
   } catch (error) {
     // console.error(error)
-    void error // intentionally ignored
+    error // intentionally ignored
   }
 
   return role
@@ -388,7 +387,7 @@ const getSupportGpuList = async ctx => {
       gpuKinds = [...defaultGpu, ...otherGpus]
     }
   } catch (error) {
-    void error // intentionally ignored
+    error // intentionally ignored
   }
 
   return gpuKinds
@@ -429,7 +428,7 @@ const getOAuthInfo = async () => {
       url: `/kapis/config.kubesphere.io/v1alpha2/configs/oauth`,
     })
   } catch (error) {
-    void error // intentionally ignored
+    error // intentionally ignored
     // console.error(error)
   }
 
@@ -507,7 +506,7 @@ const createUser = (params, token) => {
 const createUserMfa = async (params, token) => {
   const configmap = await send_gateway_request({
     method: 'GET',
-    url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
+    url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
     token,
   })
 
