@@ -73,6 +73,11 @@ const PasswordPolicy = () => {
       const minSpecial = Number(data.special ?? 0);
       const specialSet = data.symbol ?? '';
 
+      if(data.period === undefined){
+        data.period = defaultValues.period
+        data.notice = defaultValues.notice
+      }
+
       const rules = [];
       let ruleText = '';
 
@@ -84,7 +89,7 @@ const PasswordPolicy = () => {
 
       const lengthText = `길이는 ${minLength}자에서 ${maxLength}자 사이여야 합니다.`;
       const errorText = ruleText + lengthText;
-
+      console.log("data : "+ JSON.stringify(data))
       data.errorMessage = errorText;      
       const result = await passwordPolicyStore.update(data)
 
@@ -240,18 +245,6 @@ const PasswordPolicy = () => {
                     <div style={{ padding: '5px 0 12px' }}></div>
                   </Column>
                   <Column>
-                    {/* <Form.Item
-                        label={t('RESOURCES_PASSWORD_POLICY_SETTING_ERROR_MESSAGE')}
-                        rules={[{ required: true, message: t('RESOURCES_PASSWORD_POLICY_SETTING_ERROR_MESSAGE_TIP') }]}
-                      >
-                        <Input 
-                          name="errorMessage" 
-                          maxLength={200} 
-                          style={{ maxWidth: 'none' }} 
-                          defaultValue={values?.errorMessage}
-                          onChange={(val) => handleChange('errorMessage', val)}
-                          />
-                    </Form.Item> */}
                   </Column>
                 </Columns>
                 </>
@@ -298,7 +291,7 @@ const PasswordPolicy = () => {
               onClick={() => restore()}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
-              {t('원래대로')}
+              {t('RESOURCES_PASSWORD_ORIGINALLY')}
             </Button>
             <Button
               onClick={() => {

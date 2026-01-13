@@ -1308,5 +1308,6 @@ module.exports = {
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_1 : "Your password will expire in {remainday} days.",
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_2 : "For security reasons, you should change your password periodically.",
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3 : "Please change your password now to ensure smooth service use.",
+  RESOURCES_PASSWORD_ORIGINALLY: "Originally",
 
 }

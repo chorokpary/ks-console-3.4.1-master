@@ -1290,5 +1290,6 @@ module.exports = {
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_1 : "비밀번호 만료일이 {remainday}일 남았습니다.",
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_2 : "보안을 위해 비밀번호를 주기적으로 변경해야 합니다",
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3 : "원활한 서비스 이용을 위해 지금 바로 비밀번호를 변경해 주세요.",
+  RESOURCES_PASSWORD_ORIGINALLY: "원래대로",
 
 }
