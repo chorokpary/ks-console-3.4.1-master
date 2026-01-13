@@ -1327,4 +1327,5 @@ module.exports = {
   RESOURCES_CPU_AVAILABLE: 'CPU Availability (Cores)',
   RESOURCES_MEMORY_AVAILABLE: 'Memory Availability (Gi)',
   RESOURCES_DISK_AVAILABLE: 'Disk Availability (GB)',
+  RESOURCES_SYSTEM_POD_PL: 'System Pod',
 }

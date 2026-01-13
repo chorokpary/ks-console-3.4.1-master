@@ -108,6 +108,9 @@ const panelInfo = {
   diskUsage: function(val = { w: 3, h: 4 }) {
     return diskUsagePanel(val)
   },
+  systemPod: function(val = { w: 3, h: 4 }) {
+    return systemPodPanel(val)
+  },
 }
 
 export const makePanels = (key, val) => {
@@ -1496,19 +1499,19 @@ export const podPanel = ({ x, y, w, h }) => {
                 <div class="cont2">
                   <div class="status_wrap">
                     <div class="value">2</div>
-                    <p class="status waiting"><span>Waiting</span></p>
+                    <p class="status waiting"><span>대기 중</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">8</div>
-                    <p class="status running"><span>Running</span></p>
+                    <p class="status running"><span>실행 중</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status completed"><span>Completed</span></p>
+                    <p class="status completed"><span>완료 됨</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status error"><span>Error</span></p>
+                    <p class="status error"><span>오류</span></p>
                   </div>
                 </div>
               </div>
@@ -4474,6 +4477,51 @@ export const diskUsagePanel = ({ x, y, w, h }) => {
                     </div>
                   </div>
                 </div>`
+
+  return panel
+}
+
+export const systemPodPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x=${x} gs-y=${y} gs-w=${w} gs-h=${h} id="systemPodPanel">
+      <div class="grid-stack-item-content">
+        <div class="grid_item">
+          <div class="grid_title">
+            <label>${t('RESOURCES_SYSTEM_POD_PL')}</label>
+            <i class="ico-btn-trash"></i>
+          </div>
+          <div class="grid_info style_status">
+            <div class="box type_status">
+              <div class="cont_group">
+                <div class="cont1">
+                  <div class="number_wrap">
+                    <i class="ico-type-pod"></i>
+                    <p><span class="em">8</span> / 12</p>
+                  </div>
+                </div>
+                <div class="cont2">
+                  <div class="status_wrap">
+                    <div class="value">2</div>
+                    <p class="status waiting"><span>대기 중</span></p>
+                  </div>
+                  <div class="status_wrap">
+                    <div class="value">8</div>
+                    <p class="status running"><span>실행 중</span></p>
+                  </div>
+                  <div class="status_wrap">
+                    <div class="value">1</div>
+                    <p class="status completed"><span>완료 됨</span></p>
+                  </div>
+                  <div class="status_wrap">
+                    <div class="value">1</div>
+                    <p class="status error"><span>오류</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`
 
   return panel
 }

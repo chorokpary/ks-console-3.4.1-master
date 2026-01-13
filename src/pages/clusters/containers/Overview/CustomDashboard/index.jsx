@@ -33,6 +33,7 @@ import GpuCluster from './GpuCluster'
 import CpuUsage from './CpuUsage'
 import MemoryUsage from './MemoryUsage'
 import DiskUsage from './DiskUsage'
+import SystemPod from './SystemPod'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 import CustomDashboardInfo from 'stores/dashboard/customDashboardInfo'
@@ -326,6 +327,7 @@ const widgetMap = {
   cpuUsage: props => <CpuUsage {...props} />,
   memoryUsage: props => <MemoryUsage {...props} />,
   diskUsage: props => <DiskUsage {...props} />,
+  systemPod: props => <SystemPod {...props} />,
 }
 
 // Grid Item

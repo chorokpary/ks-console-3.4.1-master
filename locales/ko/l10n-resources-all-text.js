@@ -1305,4 +1305,5 @@ module.exports = {
   RESOURCES_CPU_AVAILABLE: 'CPU 가용률 (Cores)',
   RESOURCES_MEMORY_AVAILABLE: '메모리 가용률 (Gi)',
   RESOURCES_DISK_AVAILABLE: '디스크 가용률 (GB)',
+  RESOURCES_SYSTEM_POD_PL: '시스템 파드',
 }

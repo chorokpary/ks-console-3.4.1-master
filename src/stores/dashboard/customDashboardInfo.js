@@ -78,4 +78,10 @@ export default class CustomDashboardInfo {
     w: 3,
     h: 4,
   }
+  systemPod = {
+    x: 12,
+    y: 0,
+    w: 3,
+    h: 4,
+  }
 }
