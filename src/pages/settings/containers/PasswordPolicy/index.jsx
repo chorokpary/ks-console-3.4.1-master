@@ -258,6 +258,7 @@ const PasswordPolicy = () => {
                         rules={[{ required: true, message: t('RESOURCES_PASSWORD_PERIOD_SETTING_MAXIMUM_AGE_TIP') }]}
                       >
                         <Input 
+                          type="number"
                           name="period" 
                           maxLength={63} 
                           style={{ maxWidth: 'none' }} 
@@ -273,6 +274,7 @@ const PasswordPolicy = () => {
                         rules={[{ required: true, message: t('RESOURCES_PASSWORD_PERIOD_SETTING_NOTI_DAY_TIP') }]}
                       >
                         <Input 
+                          type="number"
                           name="notice" 
                           maxLength={63} 
                           style={{ maxWidth: 'none' }} 
