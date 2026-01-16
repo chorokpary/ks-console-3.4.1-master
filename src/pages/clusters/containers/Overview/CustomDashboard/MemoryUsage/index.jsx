@@ -95,7 +95,7 @@ const MemoryUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </div>
                   </div>
                 </div>
-                <div className="cont_unit">
+                <div className="cont2">
                   <div className="status_wrap">
                     <div className="value">{memoryUsage}</div>
                     <p className="status used_gpu">
@@ -113,12 +113,6 @@ const MemoryUsage = ({ widgetKey, monitorStore, ...props }) => {
                     <p className="status total">
                       <span>{t('RESOURCES_ALL')}</span>
                     </p>
-                  </div>
-                  <div className="status_wrap additional_info">
-                    <div className="title">VM 할당 가능 최대 메모리</div>
-                    <div className="value">
-                      {memoryNonUsage} <span className="unit">Gi</span>
-                    </div>
                   </div>
                 </div>
               </div>

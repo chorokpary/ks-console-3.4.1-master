@@ -90,7 +90,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </div>
                   </div>
                 </div>
-                <div className="cont_unit">
+                <div className="cont2">
                   <div className="status_wrap">
                     <div className="value">{cpuUsage}</div>
                     <p className="status used_gpu">
@@ -108,12 +108,6 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                     <p className="status total">
                       <span>{t('RESOURCES_ALL')}</span>
                     </p>
-                  </div>
-                  <div className="status_wrap additional_info">
-                    <div className="title">VM 할당 가능 최대 CPU</div>
-                    <div className="value">
-                      {cpuNonUsage} <span className="unit">Cores</span>
-                    </div>
                   </div>
                 </div>
               </div>
