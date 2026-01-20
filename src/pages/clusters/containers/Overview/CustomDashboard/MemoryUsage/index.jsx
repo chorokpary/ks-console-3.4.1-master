@@ -100,7 +100,7 @@ const MemoryUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </div>
                   </div>
                 </div>
-                <div className="cont2">
+                <div className="cont_unit" style={{ justifyContent: 'center' }}>
                   <div className="status_wrap">
                     <div className="value">{memoryUsage}</div>
                     <p className="status used_gpu">

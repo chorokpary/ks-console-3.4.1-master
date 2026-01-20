@@ -98,7 +98,7 @@ const DiskUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </div>
                   </div>
                 </div>
-                <div className="cont2">
+                <div className="cont_unit" style={{ justifyContent: 'center' }}>
                   <div className="status_wrap">
                     <div className="value">{diskUsage}</div>
                     <p className="status used_gpu">
@@ -106,7 +106,7 @@ const DiskUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </p>
                   </div>
                   <div className="status_wrap">
-                    <div className="value">{diskUsageAll - diskUsage}</div>
+                    <div className="value">{diskNonUsage}</div>
                     <p className="status waiting">
                       <span>{t('RESOURCES_UNUSED')}</span>
                     </p>

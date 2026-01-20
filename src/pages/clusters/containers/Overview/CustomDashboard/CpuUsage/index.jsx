@@ -93,7 +93,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </div>
                   </div>
                 </div>
-                <div className="cont2">
+                <div className="cont_unit" style={{ justifyContent: 'center' }}>
                   <div className="status_wrap">
                     <div className="value">{cpuUsage}</div>
                     <p className="status used_gpu">
