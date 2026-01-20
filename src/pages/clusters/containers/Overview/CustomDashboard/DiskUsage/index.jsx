@@ -88,7 +88,10 @@ const DiskUsage = ({ widgetKey, monitorStore, ...props }) => {
                         showRate={true}
                         renderCustomCenter={() => (
                           <div style={{ fontSize: '20px' }}>
-                            {((diskUsage / diskUsageAll) * 100).toFixed(1)}%
+                            {diskUsageAll
+                              ? ((diskUsage / diskUsageAll) * 100).toFixed(1)
+                              : 0}
+                            %
                           </div>
                         )}
                       />

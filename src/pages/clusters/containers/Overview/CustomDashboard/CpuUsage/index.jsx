@@ -83,7 +83,10 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                         showRate={true}
                         renderCustomCenter={() => (
                           <div style={{ fontSize: '20px' }}>
-                            {((cpuUsage / cpuUsageAll) * 100).toFixed(1)}%
+                            {cpuUsageAll
+                              ? ((cpuUsage / cpuUsageAll) * 100).toFixed(1)
+                              : 0}
+                            %
                           </div>
                         )}
                       />

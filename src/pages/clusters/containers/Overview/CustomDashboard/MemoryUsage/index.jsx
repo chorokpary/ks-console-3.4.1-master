@@ -88,7 +88,12 @@ const MemoryUsage = ({ widgetKey, monitorStore, ...props }) => {
                         showRate={true}
                         renderCustomCenter={() => (
                           <div style={{ fontSize: '20px' }}>
-                            {((memoryUsage / memoryUsageAll) * 100).toFixed(1)}%
+                            {memoryUsageAll
+                              ? ((memoryUsage / memoryUsageAll) * 100).toFixed(
+                                  1
+                                )
+                              : 0}
+                            %
                           </div>
                         )}
                       />
