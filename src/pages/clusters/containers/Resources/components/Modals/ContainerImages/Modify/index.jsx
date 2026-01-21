@@ -88,7 +88,7 @@ const ResourceImageModal = props => {
       setDistroType('windows')
       setDistroTypeList(distroTypeData.filter(obj => obj.name === 'windows'))
     } else {
-      setDistroType('ubuntu-2004')
+      setDistroType('ubuntu-2404')
       setDistroTypeList(distroTypeData.filter(obj => obj.name !== 'windows'))
     }
   }
