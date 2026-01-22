@@ -387,6 +387,7 @@ module.exports = {
   RESOURCES_MAIN: 'Main',
   RESOURCES_MEMBER_IP: 'Member IP',
   RESOURCES_MONITORING: 'Monitoring',
+  RESOURCES_PRESETS: 'Presets',
   RESOURCES_NO_MONITORING_DATA: 'No monitoring data available.',
   RESOURCES_GPU_MONITORING: 'GPU Monitoring',
   RESOURCES_GPU_MONITORING_DESC: 'GPU monitoring can manage status and usage.',

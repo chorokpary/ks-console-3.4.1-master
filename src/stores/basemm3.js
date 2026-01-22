@@ -183,6 +183,7 @@ export default class BaseStore {
       'resourcesvolumes',
       'gpunodes',
       'pre_installs',
+      'addons',
       'network_storages',
     ]
     const apiName = mm3Array.includes(this.module) ? this.module : ''
