@@ -52,7 +52,7 @@ const RegistNodePoolModal = props => {
   const [nodepoolReplicas, setNodepoolReplicas] = useState(1)
 
   const [osType] = useState('linux')
-  const [osDistro, setOsDistro] = useState('ubuntu-2004')
+  const [osDistro, setOsDistro] = useState('ubuntu-2404')
 
   const [isAutoScale, setIsAutoScale] = useState(false)
   const [autoScale, setAutoScale] = useState([1, 3])
