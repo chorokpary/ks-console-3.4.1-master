@@ -121,7 +121,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
                   <div className="status_wrap">
                     <div className="value">{data.waiting || 0}</div>
                     <p className="status waiting">
-                      <span>{t('RESOURCES_PROGRESSING')}</span>
+                      <span>{t('RESOURCES_CREATING')}</span>
                     </p>
                   </div>
                   <div className="status_wrap">

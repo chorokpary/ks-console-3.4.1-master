@@ -54,6 +54,7 @@ export default {
           if (!data) {
             return
           }
+          console.log('data', data)
 
           store
             .create(data, {

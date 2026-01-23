@@ -96,6 +96,21 @@ const panelInfo = {
   alarmHorizontal: function(val = { w: 12, h: 4 }) {
     return alarmHorizontalPanel(val)
   },
+  alarmHorizontal: function(val = { w: 12, h: 4 }) {
+    return alarmHorizontalPanel(val)
+  },
+  cpuUsage: function(val = { w: 3, h: 4 }) {
+    return cpuUsagePanel(val)
+  },
+  memoryUsage: function(val = { w: 3, h: 4 }) {
+    return memoryUsagePanel(val)
+  },
+  diskUsage: function(val = { w: 3, h: 4 }) {
+    return diskUsagePanel(val)
+  },
+  systemPod: function(val = { w: 3, h: 4 }) {
+    return systemPodPanel(val)
+  },
 }
 
 export const makePanels = (key, val) => {
@@ -306,12 +321,6 @@ export const gpuUsagePanel = ({ x, y, w, h }) => {
                                     <div class="value">37</div>
                                     <p class="status waiting">
                                       <span>미사용</span>
-                                    </p>
-                                  </div>
-                                  <div class="status_wrap">
-                                    <div class="value">80</div>
-                                    <p class="status total">
-                                      <span>전체</span>
                                     </p>
                                   </div>
                                 </div>
@@ -1490,19 +1499,19 @@ export const podPanel = ({ x, y, w, h }) => {
                 <div class="cont2">
                   <div class="status_wrap">
                     <div class="value">2</div>
-                    <p class="status waiting"><span>Waiting</span></p>
+                    <p class="status waiting"><span>대기 중</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">8</div>
-                    <p class="status running"><span>Running</span></p>
+                    <p class="status running"><span>실행 중</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status completed"><span>Completed</span></p>
+                    <p class="status completed"><span>완료 됨</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status error"><span>Error</span></p>
+                    <p class="status error"><span>오류</span></p>
                   </div>
                 </div>
               </div>
@@ -4300,6 +4309,213 @@ export const powerUsageTop5Panel = ({ x, y, w, h }) => {
                     </div>
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`
+
+  return panel
+}
+
+export const cpuUsagePanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="cpuUsagePanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>CPU 가용률 (Cores)</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group">
+                                <div class="cont1">
+                                  <img
+                                    src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
+                                  />
+                                </div>
+                                <div class="cont_unit">
+                                  <div class="status_wrap">
+                                    <div class="value">43</div>
+                                    <p class="status used_gpu">
+                                      <span>사용중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">37</div>
+                                    <p class="status waiting">
+                                      <span>미사용</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">80</div>
+                                    <p class="status total">
+                                      <span>전체</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap additional_info">
+                                    <div class="title">VM 할당 가능 최대 CPU</div>
+                                    <div class="value">8 <span class="unit">Cores</span></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const memoryUsagePanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="memoryUsagePanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>메모리 가용률 (Gi)</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group">
+                                <div class="cont1">
+                                  <img
+                                    src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
+                                  />
+                                </div>
+                                <div class="cont_unit">
+                                  <div class="status_wrap">
+                                    <div class="value">180</div>
+                                    <p class="status used_gpu">
+                                      <span>사용중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">76</div>
+                                    <p class="status waiting">
+                                      <span>미사용</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">256</div>
+                                    <p class="status total">
+                                      <span>전체</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap additional_info">
+                                    <div class="title">VM 할당 가능 최대 메모리</div>
+                                    <div class="value">8 <span class="unit">Gi</span></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const diskUsagePanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x="${x}" gs-y="${y}" gs-w="${w}" gs-h="${h}" id="diskUsagePanel">
+                  <div class="grid-stack-item-content">
+                    <div class="grid_item">
+                      <div class="grid_title">
+                        <label>디스크 가용률 (GB)</label>
+                        <i class="ico-btn-trash"></i>
+                      </div>
+                      <div class="spin-nested-loading">
+                        <div class="spin-container">
+                          <div class="grid_info style_status">
+                            <div class="box type_status">
+                              <div class="cont_group">
+                                <div class="cont1">
+                                  <img
+                                    src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
+                                  />
+                                </div>
+                                <div class="cont_unit">
+                                  <div class="status_wrap">
+                                    <div class="value">1,200</div>
+                                    <p class="status used_gpu">
+                                      <span>사용중</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">800</div>
+                                    <p class="status waiting">
+                                      <span>미사용</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap">
+                                    <div class="value">2,000</div>
+                                    <p class="status total">
+                                      <span>전체</span>
+                                    </p>
+                                  </div>
+                                  <div class="status_wrap additional_info">
+                                    <div class="title">VM 할당 가능 최대 디스크</div>
+                                    <div class="value">100 <span class="unit">GB</span></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`
+
+  return panel
+}
+
+export const systemPodPanel = ({ x, y, w, h }) => {
+  const panel = `<div class="grid-stack-item" gs-x=${x} gs-y=${y} gs-w=${w} gs-h=${h} id="systemPodPanel">
+      <div class="grid-stack-item-content">
+        <div class="grid_item">
+          <div class="grid_title">
+            <label>${t('RESOURCES_SYSTEM_POD_PL')}</label>
+            <i class="ico-btn-trash"></i>
+          </div>
+          <div class="grid_info style_status">
+            <div class="box type_status">
+              <div class="cont_group">
+                <div class="cont1">
+                  <div class="number_wrap">
+                    <i class="ico-type-pod"></i>
+                    <p><span class="em">8</span> / 12</p>
+                  </div>
+                </div>
+                <div class="cont2">
+                  <div class="status_wrap">
+                    <div class="value">2</div>
+                    <p class="status waiting"><span>대기 중</span></p>
+                  </div>
+                  <div class="status_wrap">
+                    <div class="value">8</div>
+                    <p class="status running"><span>실행 중</span></p>
+                  </div>
+                  <div class="status_wrap">
+                    <div class="value">1</div>
+                    <p class="status completed"><span>완료 됨</span></p>
+                  </div>
+                  <div class="status_wrap">
+                    <div class="value">1</div>
+                    <p class="status error"><span>오류</span></p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -6,10 +6,10 @@ import queryString from 'query-string'
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 import CustomDashboardInfo from 'stores/dashboard/customDashboardInfo'
 import { Notify } from '@kube-design/components'
+import { makePanels } from 'stores/dashboard/panels'
 
 import './edit.css'
 
-import { makePanels } from 'stores/dashboard/panels'
 const CustomDashboardEdit = props => {
   const { cluster } = props.match.params
   const { routing } = props.rootStore
@@ -606,6 +606,102 @@ const CustomDashboardEdit = props => {
                   </div>
                 </div>
               </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="cpuUsagePanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.cpuUsage}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'cpuUsage')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('CPU 가용률')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_41">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="memoryUsagePanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.memoryUsage}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'memoryUsage')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('메모리 가용률')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_42">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="diskUsagePanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.diskUsage}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'diskUsage')}
+                  ></span>
+                </label>
+                <label className="section-title">{t('디스크 가용률')}</label>
+                <button className="icon_preview open-popover-button ">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_43">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <button className="accordion-btn" onClick={e => handleAccordion(e)}>
@@ -665,6 +761,44 @@ const CustomDashboardEdit = props => {
                   ></span>
                 </label>
                 <label className="section-title">{t('POD_PL')}</label>
+                <button className="open-popover-button icon_preview">
+                  <i className="ico-etc-preview"></i>
+                </button>
+
+                <div className="popover-container">
+                  <div className="popover-content">
+                    {/* 팝오버 내용  */}
+                    <h5>{t('RESOURCES_PREVIEW')}</h5>
+                    <div className="preview_cont">
+                      <div className="view img_02">
+                        {t('RESOURCES_PREVIEW')}
+                      </div>
+                    </div>
+                    <button className="close-popover-button">
+                      <i className="ico-close"></i>
+                    </button>
+                  </div>
+                  {/* <div className="footer">
+                    <button className="btn btn-primary">추가</button>
+                  </div> */}
+                </div>
+              </div>
+              <div className="section-content">
+                <label className="switch type_text">
+                  <input
+                    type="checkbox"
+                    id="systemPodPanel-toggle"
+                    className="toggle"
+                    defaultChecked={activeDashboard.systemPod}
+                  />
+                  <span
+                    className="slider"
+                    onClick={e => toggleHandler(e, 'systemPod')}
+                  ></span>
+                </label>
+                <label className="section-title">
+                  {t('RESOURCES_SYSTEM_POD_PL')}
+                </label>
                 <button className="open-popover-button icon_preview">
                   <i className="ico-etc-preview"></i>
                 </button>

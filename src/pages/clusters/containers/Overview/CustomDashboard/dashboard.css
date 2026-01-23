@@ -1048,6 +1048,24 @@ body {
   background: url('/assets/resources/images/dummy/dash_box_40.svg') center top
     no-repeat;
 }
+.dashboard .popover-container .popover-content .preview_cont .view.img_41 {
+  width: 312px;
+  height: 204px;
+  background: url('/assets/resources/images/dummy/dash_box_41.svg') center top
+    no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_42 {
+  width: 312px;
+  height: 204px;
+  background: url('/assets/resources/images/dummy/dash_box_42.svg') center top
+    no-repeat;
+}
+.dashboard .popover-container .popover-content .preview_cont .view.img_43 {
+  width: 312px;
+  height: 204px;
+  background: url('/assets/resources/images/dummy/dash_box_43.svg') center top
+    no-repeat;
+}
 .dashboard .popover-container #popoverButton:hover + .popover-container {
   display: block;
 }

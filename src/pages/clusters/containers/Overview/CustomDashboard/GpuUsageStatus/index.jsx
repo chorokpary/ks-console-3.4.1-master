@@ -104,83 +104,91 @@ const GpuUsageStatus = ({ widgetKey, monitorStore, ...props }) => {
   const getData = async () => {
     setLoading(true)
 
-    var currentTime = Math.floor(Date.now() / 1000)
-    const times = 7
-    const step = Math.floor(xidTimeRange / times)
-    const paramsData = {
-      start: currentTime - xidTimeRange,
-      end: currentTime,
-      step: `${step}s`, // 초 단위 step
-      times: times,
+    try {
+      var currentTime = Math.floor(Date.now() / 1000)
+      const times = 7
+      const step = Math.floor(xidTimeRange / times)
+      const paramsData = {
+        start: currentTime - xidTimeRange,
+        end: currentTime,
+        step: `${step}s`, // 초 단위 step
+        times: times,
+      }
+
+      const gpuAvgUsageData = await customStore.fetchMetric({
+        expr: `avg(DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter"})/ 100`,
+        ...paramsData,
+      })
+      setGpuAvgUsage(gpuAvgUsageData)
+      const gpuAvgUsageLastData = last(gpuAvgUsageData?.[0].values)[1] * 100
+      setGpuAvgUsageLast(getSuitableValue(gpuAvgUsageLastData, 'utilisation'))
+
+      const gpuAvgMemoryUsageData = await customStore.fetchMetric({
+        expr: `avg(DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter"}) * ${getCustomValue(
+          'memory',
+          'Mi'
+        )}`,
+        ...paramsData,
+      })
+      setGpuAvgMemUsage(gpuAvgMemoryUsageData)
+      const gpuAvgMemoryUsageLastData = last(
+        gpuAvgMemoryUsageData?.[0].values
+      )[1]
+      setGpuAvgMemUsageLast(
+        getSuitableValue(gpuAvgMemoryUsageLastData, 'memory')
+      )
+
+      const tempData = await customStore.fetchMetric({
+        expr: `avg(DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter"})`,
+        ...paramsData,
+      })
+      setTempData(tempData)
+      const gpuTempLastData = last(tempData?.[0].values)[1]
+      setGpuTempLast(getSuitableValue(gpuTempLastData, 'temperature'))
+
+      const gpuPowerDataExpr = `avg(DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter"})`
+      const gpuPowerData = await customStore.fetchMetric({
+        expr: gpuPowerDataExpr,
+        ...paramsData,
+      })
+      setGpuPowerData(gpuPowerData)
+      const gpuPowerLastData = last(gpuPowerData?.[0].values)[1]
+      setGpuPowerLast(getSuitableValue(gpuPowerLastData, 'power'))
+
+      const gpuNvlinkDataExpr = `sum(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter"}) * ${getCustomValue(
+        'bandwidthBytes',
+        'MBps'
+      )}`
+      const gpuNvlinkData = await customStore.fetchMetric({
+        expr: gpuNvlinkDataExpr,
+        ...paramsData,
+      })
+      setNvlinkData(gpuNvlinkData)
+      const nvlinkLastData = last(gpuNvlinkData?.[0].values)[1]
+      setNvlinkLast(getSuitableValue(nvlinkLastData, 'bandwidthBytes'))
+
+      const inboundLinuxDataExpr = `sum(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter"}[5m]) * 8)`
+      const gpuInboundData = await customStore.fetchMetric({
+        expr: inboundLinuxDataExpr,
+        ...paramsData,
+      })
+      setInboundData(gpuInboundData)
+      const inboundLastData = last(gpuInboundData?.[0].values)[1]
+      setInboundLast(getSuitableValue(inboundLastData, 'bandwidth'))
+
+      const outboundLinuxDataExpr = `sum(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter"}[5m]) * 8)`
+      const gpuOutboundData = await customStore.fetchMetric({
+        expr: outboundLinuxDataExpr,
+        ...paramsData,
+      })
+      setOutboundData(gpuOutboundData)
+      const outboundLastData = last(gpuOutboundData?.[0].values)[1]
+      setOutboundLast(getSuitableValue(outboundLastData, 'bandwidth'))
+    } catch (error) {
+      void error
+    } finally {
+      setLoading(false)
     }
-
-    const gpuAvgUsageData = await customStore.fetchMetric({
-      expr: `avg(DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter"})/ 100`,
-      ...paramsData,
-    })
-    setGpuAvgUsage(gpuAvgUsageData)
-    const gpuAvgUsageLastData = last(gpuAvgUsageData?.[0].values)[1] * 100
-    setGpuAvgUsageLast(getSuitableValue(gpuAvgUsageLastData, 'utilisation'))
-
-    const gpuAvgMemoryUsageData = await customStore.fetchMetric({
-      expr: `avg(DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter"}) * ${getCustomValue(
-        'memory',
-        'Mi'
-      )}`,
-      ...paramsData,
-    })
-    setGpuAvgMemUsage(gpuAvgMemoryUsageData)
-    const gpuAvgMemoryUsageLastData = last(gpuAvgMemoryUsageData?.[0].values)[1]
-    setGpuAvgMemUsageLast(getSuitableValue(gpuAvgMemoryUsageLastData, 'memory'))
-
-    const tempData = await customStore.fetchMetric({
-      expr: `avg(DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter"})`,
-      ...paramsData,
-    })
-    setTempData(tempData)
-    const gpuTempLastData = last(tempData?.[0].values)[1]
-    setGpuTempLast(getSuitableValue(gpuTempLastData, 'temperature'))
-
-    const gpuPowerDataExpr = `avg(DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter"})`
-    const gpuPowerData = await customStore.fetchMetric({
-      expr: gpuPowerDataExpr,
-      ...paramsData,
-    })
-    setGpuPowerData(gpuPowerData)
-    const gpuPowerLastData = last(gpuPowerData?.[0].values)[1]
-    setGpuPowerLast(getSuitableValue(gpuPowerLastData, 'power'))
-
-    const gpuNvlinkDataExpr = `sum(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter"}) * ${getCustomValue(
-      'bandwidthBytes',
-      'MBps'
-    )}`
-    const gpuNvlinkData = await customStore.fetchMetric({
-      expr: gpuNvlinkDataExpr,
-      ...paramsData,
-    })
-    setNvlinkData(gpuNvlinkData)
-    const nvlinkLastData = last(gpuNvlinkData?.[0].values)[1]
-    setNvlinkLast(getSuitableValue(nvlinkLastData, 'bandwidthBytes'))
-
-    const inboundLinuxDataExpr = `sum(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter"}[5m]) * 8)`
-    const gpuInboundData = await customStore.fetchMetric({
-      expr: inboundLinuxDataExpr,
-      ...paramsData,
-    })
-    setInboundData(gpuInboundData)
-    const inboundLastData = last(gpuInboundData?.[0].values)[1]
-    setInboundLast(getSuitableValue(inboundLastData, 'bandwidth'))
-
-    const outboundLinuxDataExpr = `sum(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter"}[5m]) * 8)`
-    const gpuOutboundData = await customStore.fetchMetric({
-      expr: outboundLinuxDataExpr,
-      ...paramsData,
-    })
-    setOutboundData(gpuOutboundData)
-    const outboundLastData = last(gpuOutboundData?.[0].values)[1]
-    setOutboundLast(getSuitableValue(outboundLastData, 'bandwidth'))
-
-    setLoading(false)
   }
 
   useEffect(() => {

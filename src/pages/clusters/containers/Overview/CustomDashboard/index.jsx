@@ -30,6 +30,10 @@ import ResourceChange from './ResourceChange'
 import ClusterStatus from './ClusterStatus'
 import Bmc from './Bmc'
 import GpuCluster from './GpuCluster'
+import CpuUsage from './CpuUsage'
+import MemoryUsage from './MemoryUsage'
+import DiskUsage from './DiskUsage'
+import SystemPod from './SystemPod'
 
 import DashboardInfo from 'stores/dashboard/dashboardInfo'
 import CustomDashboardInfo from 'stores/dashboard/customDashboardInfo'
@@ -236,7 +240,11 @@ const CustomDashboard = props => {
                     checked={user.showMenu}
                     onChange={() => user.handlechangeShowMenu(!user.showMenu)}
                   />
-                  <span>{user.showMenu ? t('RESOURCES_FOLD_LEFT_MENU') : t('RESOURCES_FOLD_LEFT_MENU')}</span>
+                  <span>
+                    {user.showMenu
+                      ? t('RESOURCES_FOLD_LEFT_MENU')
+                      : t('RESOURCES_FOLD_LEFT_MENU')}
+                  </span>
                 </div>
               </div>
               {/* // Top area */}
@@ -316,6 +324,10 @@ const widgetMap = {
   carbonTree: props => <Bmc {...props} />,
   carbonCost: props => <Bmc {...props} />,
   cpuPower: props => <Bmc {...props} />,
+  cpuUsage: props => <CpuUsage {...props} />,
+  memoryUsage: props => <MemoryUsage {...props} />,
+  diskUsage: props => <DiskUsage {...props} />,
+  systemPod: props => <SystemPod {...props} />,
 }
 
 // Grid Item

@@ -54,9 +54,13 @@ const GpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                         startAngle={90}
                         endAngle={-270}
                         isTooltip={false}
+                        showRate={true}
                         renderCustomCenter={() => (
                           <div style={{ fontSize: '20px' }}>
-                            {((runningCount / totalCount) * 100).toFixed(1)}%
+                            {totalCount
+                              ? ((runningCount / totalCount) * 100).toFixed(1)
+                              : 0}
+                            %
                           </div>
                         )}
                       />
