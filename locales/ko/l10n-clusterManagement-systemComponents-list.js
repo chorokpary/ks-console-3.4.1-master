@@ -58,6 +58,11 @@ module.exports = {
   ALERTMANAGER_MAIN_DESC: 'Alertmanager 웹 UI 서비스입니다.',
   NOTIFICATION_MANAGER_SVC_DESC: '이메일, WeChat 메시지 및 Slack 메시지와 같은 메시지 프로그램에 알림을 보내기 위한 인터페이스를 제공합니다.',
   NOTIFICATION_MANAGER_CONTROLLER_METRICS_DESC: 'Notification Manager 컨트롤러에 내부 모니터링 데이터를 제공합니다.',
+  NOTIFICATION_MANAGER_WEBHOOK_DESC: '발생한 알람을 수신하여 이메일, 메신저(Slack, Teams 등)와 같은 다양한 채널로 전달하기 위한 알람 매니저의 웹훅 엔드포인트입니다.',
+  MONITOR_GRAFANA_DESC: 'Prometheus, Thanos 등에서 수집된 데이터를 시각화하여 대시보드 형태로 제공하는 분석 및 모니터링 플랫폼입니다.',
+  METRICBEAT_METRICS_DESC: 'Metricbeat 수집기 자체의 상태와 성능 지표(Metrics)를 노출하여 수집 프로세스가 정상인지 모니터링하는 서비스입니다.',
+  THANOS_RULER_KUBESPHERE_DESC: 'Petasus 내에서 데이터 지표를 기반으로 알람 및 기록 규칙(Recording Rules)을 실행하고 관리하는 Thanos Ruler 인스턴스입니다.',
+  THANOS_RULER_OPERATED_DESC: 'Thanos Ruler 파드들 간의 내부 통신 및 상태 확인을 위한 서비스로, 쿼리 결과를 바탕으로 알람 규칙(Alerting Rules)을 평가합니다.',
   // Logging
   LOGGING: '로깅',
   ELASTICSEARCH_LOGGING_DATA_DESC: '데이터 저장, 백업 및 검색과 같은 ElasticSearch 서비스를 제공합니다.',
@@ -86,6 +91,8 @@ module.exports = {
   CAPI_KUBEADM_CONTROL_PLANE_WEBHOOK_SERVICE_DESC: '핵심 Kubernetes 컴포넌트들로 구성된 Kubernetes 제어 평면을 인스턴스화합니다.',
   CERT_MANAGER_DESC: 'Kubernetes 클러스터에서 인증서 및 인증서 발급자를 리소스 유형으로 추가하고 해당 인증서의 획득, 갱신 및 사용 프로세스 간소화해줍니다.',
   CERT_MANAGER_WEBHOOK_DESC: 'Cert-manager에서 사용되는 webhook입니다.',
+  CAAPH_WEBHOOK_SERVICE_DESC: 'CAAPH 리소스가 생성되거나 수정될 때 데이터의 유효성을 검증(Validation)하거나 자동으로 값을 보정(Mutation)하는 Admission Webhook 서비스입니다.',
+  CAAPH_CONTROLLER_MANAGER_METRICS_SERVICE_DESC: 'Cluster API Add-on Provider for Helm (CAAPH) 컨트롤러 매니저의 상태 및 성능 지표(Metrics)를 노출하는 서비스입니다.',
   // Network
   NETWORK: '네트워크',
   CLUSTER_NETWORK_ADDONS_OPERATOR_PROMETHEUS_METRICS_DESC: '가상 머신 및 컨테이너에 대한 네트워크 연결을 제공하기 위한 CNI 플러그인 집합입니다.',
@@ -114,4 +121,5 @@ module.exports = {
   REGISTRY_HARBOR_EXPORTER_DESC: 'Harbor 서비스 건강 상태를 Prometheus에 Export 합니다.',
   REGISTRY_HARBOR_TRIVY_DESC: 'Harbor trivy는 레지스트리를 위한 포괄적이고 다용도적인 보안 스캐너입니다.',
   REGISTRY_HARBOR_JOBSERVICE_DESC: '이 구성 요소는 이미지 복제에 사용되며 자체 서비스를 구현하는데 사용 될 수도 있습니다.',
+  HABOR_GATEWAY_NGINX_DESC: 'Harbor 레지스트리의 통합 진입점 역할을 하며, 외부 요청을 코어 서비스, UI, 레지스트리 등 내부 구성 요소로 안전하게 전달하는 Nginx 기반의 게이트웨이 서비스입니다.',
 };

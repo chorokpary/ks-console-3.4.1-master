@@ -37,7 +37,6 @@ module.exports = {
   AUTHENTIK_GATEWAYCONTROLLER_DESC: 'A controller that manages the lifecycle of Authentik Outposts and gateways.',
   GATEWAY_NGINX_PETASUS_CORE_DESC: 'A core Nginx-based gateway customized for accessing the Petasus AI Cloud console.',
   REDFISH_EXPORTER_DESC: 'A tool that collects server hardware status information and converts it into a format readable by Prometheus.',
-
   // Kubernetes
   COREDNS_DESC: 'Provides the service discovery function for the Kubernetes cluster.',
   METRICS_SERVER_DESC: 'Kubernetes monitoring component that collects metrics from kubelet of each node.',
@@ -60,6 +59,11 @@ module.exports = {
   ALERTMANAGER_MAIN_DESC: 'Alertmanager Web UI service.',
   NOTIFICATION_MANAGER_SVC_DESC: 'Provides interfaces for sending notifications such as emails, WeChat messages, and Slack messages.',
   NOTIFICATION_MANAGER_CONTROLLER_METRICS_DESC: 'Provides internal monitoring data for Notification Manager Controller.',
+  NOTIFICATION_MANAGER_WEBHOOK_DESC: 'A webhook endpoint for the notification manager, designed to receive alerts and route them to various configured channels such as email or messengers (Slack, Teams, etc.).',
+  MONITOR_GRAFANA_DESC: 'An analytics and monitoring platform that visualizes data collected from Prometheus, Thanos, etc., and provides it in the form of dashboards.',
+  METRICBEAT_METRICS_DESC: 'A service that exposes the status and performance metrics of the Metricbeat shipper itself to monitor the health of the collection process.',
+  THANOS_RULER_KUBESPHERE_DESC: 'A Thanos Ruler instance that executes and manages alerting and recording rules based on data metrics within the Petasus environment.',
+  THANOS_RULER_OPERATED_DESC: 'A service for internal communication and health checks between Thanos Ruler pods, responsible for evaluating alerting rules based on query results.',
   // Logging
   LOGGING: 'Logging',
   ELASTICSEARCH_LOGGING_DATA_DESC: 'Provides Elasticsearch services such as data storage, backup, and searching.',
@@ -88,6 +92,8 @@ module.exports = {
   CAPI_KUBEADM_CONTROL_PLANE_WEBHOOK_SERVICE_DESC: 'Instantiates a Kubernetes control plane consisting of core Kubernetes services.',
   CERT_MANAGER_DESC: 'Adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates.',
   CERT_MANAGER_WEBHOOK_DESC: 'A webhook for cert-manager.',
+  CAAPH_WEBHOOK_SERVICE_DESC: 'An admission webhook service that validates or mutates CAAPH resources during creation and modification to ensure data integrity and compliance.',
+  CAAPH_CONTROLLER_MANAGER_METRICS_SERVICE_DESC: 'A service that exposes status and performance metrics from the CAAPH (Cluster API Add-on Provider for Helm) controller manager.',
   // Network
   NETWORK: 'Network',
   CLUSTER_NETWORK_ADDONS_OPERATOR_PROMETHEUS_METRICS_DESC: 'A set of CNI plugins for providing network connectivity for virtual machines and containers.',
@@ -116,4 +122,5 @@ module.exports = {
   REGISTRY_HARBOR_EXPORTER_DESC: 'This component exports harbor service health to Prometheus.',
   REGISTRY_HARBOR_TRIVY_DESC: 'Harbor trivy is a comprehensive and versatile security scanner for registry.',
   REGISTRY_HARBOR_JOBSERVICE_DESC: 'This component is used for image replication, and also lets you implement your own services.',
+  HABOR_GATEWAY_NGINX_DESC: 'An Nginx-based gateway service that acts as the unified entry point for the Harbor registry, securely routing external requests to internal components such as the Core service, UI, and Registry.',
 }
