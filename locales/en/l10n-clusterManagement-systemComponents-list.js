@@ -29,6 +29,15 @@ module.exports = {
   REDIS_DESC: 'Open-source, in-memory data structure store, which is used as a database, cache, and message broker.',
   TOWER_DESC: 'Tool used for network connection between clusters over proxy.',
   KS_CONTROLLER_MANAGER_DESC: 'Implements service logic. This component creates permissions when a workspace is created and generates Istio configuration for service strategies.',
+  AUTHENTIK_REDIS_DESC: 'The main Redis node that manages Authentik session information, cache, and asynchronous tasks (Celery).',
+  AUTHENTIK_REDIS_HL_DESC: 'A headless service used for internal communication and health checks between Authentik Redis PODs.',
+  AUTHENTIK_SERVER_DESC: 'The core engine of Authentik. It handles the web interface, API server, and overall authentication logic.',
+  AUTHENTIK_POSTGRESQL_DESC: 'The main database where all Authentik configurations, user account information, and tokens are permanently stored.',
+  AUTHENTIK_POSTGRESQL_HL_DESC: 'The headless (HL) service for Authentik PostgreSQL. It is primarily used in Kubernetes environments when direct access to individual pods is required for database clustering',
+  AUTHENTIK_GATEWAYCONTROLLER_DESC: 'A controller that manages the lifecycle of Authentik Outposts and gateways.',
+  GATEWAY_NGINX_PETASUS_CORE_DESC: 'A core Nginx-based gateway customized for accessing the Petasus AI Cloud console.',
+  REDFISH_EXPORTER_DESC: 'A tool that collects server hardware status information and converts it into a format readable by Prometheus.',
+
   // Kubernetes
   COREDNS_DESC: 'Provides the service discovery function for the Kubernetes cluster.',
   METRICS_SERVER_DESC: 'Kubernetes monitoring component that collects metrics from kubelet of each node.',

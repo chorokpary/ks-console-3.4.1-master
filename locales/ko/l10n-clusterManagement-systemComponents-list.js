@@ -28,6 +28,14 @@ module.exports = {
   REDIS_DESC: '데이터베이스, 캐시 및 메시지 브로커로 사용되는 오픈 소스, 메모리 내 데이터 구조 저장소입니다.',
   TOWER_DESC: '프록시를 통한 클러스터 간의 네트워크 연결에 사용되는 도구입니다.',
   KS_CONTROLLER_MANAGER_DESC: '서비스 로직을 구현합니다. 이 구성 요소는 워크스페이스가 생성될 때 사용 권한을 생성하고 서비스 전략에 대한 Istio 구성을 생성합니다.',
+  AUTHENTIK_REDIS_DESC: 'Authentik의 세션 정보, 캐시, 비동기 작업(Celery)을 관리하는 Redis의 메인 노드입니다.',
+  AUTHENTIK_REDIS_HL_DESC: 'Authentik의 Redis 파드들 간의 내부 통신이나 상태 확인을 위해 사용하는 헤드리스 서비스입니다.',
+  AUTHENTIK_SERVER_DESC: 'Authentik의 핵심 엔진입니다. 웹 인터페이스, API 서버, 그리고 전반적인 인증 로직을 처리합니다.',
+  AUTHENTIK_POSTGRESQL_DESC: 'Authentik의 모든 설정, 사용자 계정 정보, 토큰 등이 영구적으로 저장되는 메인 데이터베이스입니다.',
+  AUTHENTIK_POSTGRESQL_HL_DESC: 'Authentik의 PostgreSQL의 Headless(HL) 서비스입니다. 주로 쿠버네티스 환경에서 데이터베이스 클러스터링을 위해 개별 파드(Pod)에 직접 접근해야 할 때 사용됩니다.',
+  AUTHENTIK_GATEWAYCONTROLLER_DESC: 'Authentik 아웃포스트(Outpost)나 게이트웨이의 생명주기를 관리하는 컨트롤러입니다.',
+  GATEWAY_NGINX_PETASUS_CORE_DESC: 'Petasus AI Cloud 콘솔 접속에 맞춤화된 Nginx 기반의 핵심 게이트웨이 입니다.',
+  REDFISH_EXPORTER_DESC: '서버 하드웨어의 상태 정보를 수집하여 Prometheus가 읽을 수 있는 형태로 변환해주는 도구입니다.',
   // Kubernetes
   COREDNS_DESC: 'Kubernetes 클러스터에 대한 서비스 검색 기능을 제공합니다.',
   METRICS_SERVER_DESC: '각 노드의 kubelet에서 메트릭을 수집하는 Kubernetes 모니터링 구성 요소입니다.',
@@ -48,7 +56,7 @@ module.exports = {
   PROMETHEUS_OPERATOR_DESC: 'Prometeus 인스턴스를 관리합니다.',
   ALERTMANAGER_OPERATED_DESC: 'Alertmanager와 Prometheus를 통합하는 데 사용되는 Alertmanager 서비스입니다.',
   ALERTMANAGER_MAIN_DESC: 'Alertmanager 웹 UI 서비스입니다.',
-  NOTIFICATION_MANAGER_SVC_DESC: '이메일, WeChat 메시지 및 Slack 메시지와 같은 메시지 프로그램에 알림을 보내기 위한 인터페이스를 제공합니다.',
+  NOTIFICATION_MANAGER_SVC_DESC: '이메일, WeChat 메시지 및 Slack 메시지와 같은 메시지 프로그램에 알림을 보내기 위한 인터페이스를 제공합니다.',
   NOTIFICATION_MANAGER_CONTROLLER_METRICS_DESC: 'Notification Manager 컨트롤러에 내부 모니터링 데이터를 제공합니다.',
   // Logging
   LOGGING: '로깅',
