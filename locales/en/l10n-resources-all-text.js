@@ -56,12 +56,11 @@ module.exports = {
   RESOURCES_SELECT_FLAVOR_QUOTA_TIP:
     "If projects' CPU or Memory quota is set, please select flavor with cpu-pinned option enabled.",
   RESOURCES_FLAVOR_DESC: 'You can manage the status and usage of Flavor.',
-  RESOURCES_SELECT_FLOATING_IP_TIP: 'Please select a floating IP.',
   RESOURCES_GPU_USE_CHECK: 'Use check GPU',
   RESOURCES_GPU_CHECK: 'GPU Device',
   RESOURCES_NET_CHECK: 'Network Device',
   RESOURCES_EXT_CHECK: 'External Provider',
-  RESOURCES_HOST_DEVICE: 'Host Devices',
+  RESOURCES_HOST_DEVICES: 'Host Devices',
   RESOURCES_HOST_DEVICE_ALLOCATABLE: 'Number of Host devices',
   RESOURCES_IP_POOL_EMPTY_DESC: 'Please enter IP POOL.',
   RESOURCES_IP_POOL_INFORMATION: 'IP POOL Information',
@@ -86,7 +85,6 @@ module.exports = {
   RESOURCES_GPU_CONFIG_STATE_PENDING: 'Pending',
   RESOURCES_GPU_CONFIG_STATE_FINALIZING: 'Finalizing',
   RESOURCES_GPU_COUNT: 'Number of GPUs',
-  RESOURCES_GPU_WORKLOAD_TYPE: 'Workload',
   RESOURCES_GPU_WORKLOAD_CONFIG: 'Workload Configs',
   RESOURCES_GPU_WORKLOAD_CONTAINER: 'Container Allocation',
   RESOURCES_GPU_WORKLOAD_CONTAINER_DESC:
@@ -103,7 +101,6 @@ module.exports = {
     'Please select a user workload to allocate GPU resources to.',
   RESOURCES_GPU_VGPU_CONFIG: 'vGPU Config',
   RESOURCES_GPU_VGPU_CONFIG_STATE: 'vGPU Configs status',
-  RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND: 'vGPU Configs not found',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU Index',
@@ -135,7 +132,7 @@ module.exports = {
   RESOURCES_GPU_VGPU_NUMBER: 'Max Number',
   RESOURCES_GPU_VGPU_CUDA: 'CUDA',
   RESOURCES_GPU_VGPU_MULTIVGPU: 'Multi vGPU',
-  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND:
+  RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND:
     'No available vGPU configurations found.',
 
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU Deployment Status',
@@ -232,7 +229,6 @@ module.exports = {
     'Manage the status and usage of dedicated network.',
   RESOURCES_FABRIC: 'Network Fabric',
   RESOURCES_SELECT_FABRIC_TIP: 'Please select a Network Fabric.',
-  RESOURCES_INTERFACE: 'Interface',
   RESOURCES_INTERFACE_INDEX: 'Interface Index',
   RESOURCES_SELECT_INTERFACE_INDEX_TIP: 'Please select an Interface Index.',
   RESOURCES_BOND_NETWORK: 'Bond Network',
@@ -407,7 +403,6 @@ module.exports = {
   RESOURCES_ALLOCATED_ALL_RESOURCES: 'All resources have been allocated.',
   RESOURCES_FIP_NO_NETWORK: 'No network resources to create a floating IP.',
   RESOURCES_PREVIEW: 'Preview',
-  RESOURCES_NOT_USE: 'Not Used',
   RESOURCES_NOT_SET: 'Not Set',
   RESOURCES_NOT_SUPPORT: 'Not Supported',
   RESOURCES_BINDING: 'Binding',
@@ -454,7 +449,6 @@ module.exports = {
   RESOURCES_IMAGE_CLONESCHEDULED: 'CloneScheduled',
   RESOURCES_IMAGE_UPLOADSCHEDULED: 'UploadScheduled',
   RESOURCES_IMAGE_IMPORTINPROGRESS: 'ImportInProgress',
-  RESOURCES_IMAGE_NONE: 'None',
   RESOURCES_IMAGE_CLONEINPROGRESS: 'CloneInProgress',
   RESOURCES_IMAGE_UPLOADINPROGRESS: 'UploadInProgress',
   RESOURCES_IMAGE_CSICLONEINPROGRESS: 'CSICloneInProgress',
@@ -557,9 +551,6 @@ module.exports = {
   RESOURCES_SCRIPT: 'Script',
   RESOURCES_VM_CUSTOM_SETTINGS: 'Custom Settings',
   RESOURCES_STORAGE_CLASS: 'Storage Class',
-  RESOURCES_DEFAULT: 'Default',
-  RESOURCES_IMAGE_CLASS: 'Follow Image',
-  RESOURCES_MANUAL_SELECTION: 'Manual Selection',
   RESOURCES_SECURE_BOOT: 'SecureBoot',
   RESOURCES_ENABLE_SECURE_BOOT: 'Activate SecureBoot',
   RESOURCES_SYSTEM_MONITORING: 'System Monitoring',
@@ -835,7 +826,6 @@ module.exports = {
   RESOURCES_SG_PORT_RANGE_DESC:
     'Port range should be a number or a range from 0 to 65535.',
   RESOURCES_PRIVATE: 'Private',
-  RESOURCES_PROTOCOL: 'Protocol',
   RESOURCES_PROJECT: 'Project',
   RESOURCES_FLOATING_IP: 'Floating IP',
   RESOURCES_DELETE_FLOATING_IP: 'Delete Floating IP',
@@ -867,7 +857,6 @@ module.exports = {
   RESOURCES_HOST_DEVICE_DESC: 'Manage the status and usage of host devices.',
   RESOURCES_HOST_ROUTE: 'Host Route',
   RESOURCES_RESOURCE_USAGE: 'Resource Usage',
-  RESOURCES_GPU_CLUSTER: 'GPU Cluster',
   RESOURCES_CPU_USAGE: 'CPU Usage',
   RESOURCES_MEMORY_USAGE: 'Memory Usage',
   RESOURCES_MEMORY_PERCENT: 'Memorge Percentage',
@@ -897,7 +886,6 @@ module.exports = {
   RESOURCES_END_TIME: 'End Time',
   RESOURCES_MESSAGE: 'Message',
   RESOURCES_NO_DATA_RESTORE_LOG: 'No restore history available.',
-  RESOURCES_COMPLETE: 'Complete',
   RESOURCES_NOT_COMPLETE: 'Incomplete',
   RESOURCES_NOT_TERMINATE_VM_CONFIRM_TIP:
     'The virtual machine has not been terminated. Please check and proceed again.',
@@ -1202,8 +1190,6 @@ module.exports = {
   RESOURCES_DELETE_GPU_CLUSTER_VM_TIP:
     'Virtual machine name <strong>{resource}</strong> to confirm your understanding of the risks involved in this operation.',
   RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'Please enter a GPU cluster.',
-  RESOURCES_GPU_CLUSTER_DESC:
-    'You can manage the status and usage of the GPU cluster.',
   RESOURCES_CREATE_GPU_CLUSTER: 'Create GPU Cluster',
   RESOURCES_EDIT_GPU_CLUSTER: 'Edit GPU Cluster',
   RESOURCES_GPU_CLUSTER_DESC:
@@ -1278,7 +1264,6 @@ module.exports = {
     'No virtual machines found in the GPU cluster.',
 
   RESOURCES_PASSWORD_POLICY: 'Password Policy',
-  RESOURCES_PASSWORD_POLICY_DESC: 'Define password entry policies.',
   RESOURCES_PASSWORD_PERIOD: 'Password Period',
   RESOURCES_PASSWORD_PERIOD_DESC:
     'Defines the password change notification period.',
