@@ -1302,9 +1302,13 @@ module.exports = {
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3:
     '원활한 서비스 이용을 위해 지금 바로 비밀번호를 변경해 주세요.',
   RESOURCES_PASSWORD_ORIGINALLY: '원래대로',
+  NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD: '변경 알림(일)이 Maximum age(일)보다 큽니다.',
 
   RESOURCES_CPU_AVAILABLE: 'CPU 가용률 (Cores)',
   RESOURCES_MEMORY_AVAILABLE: '메모리 가용률 (Gi)',
   RESOURCES_DISK_AVAILABLE: '디스크 가용률 (GB)',
   RESOURCES_SYSTEM_POD_PL: '시스템 파드',
+
+
+
 }

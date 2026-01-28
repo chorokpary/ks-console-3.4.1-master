@@ -62,6 +62,7 @@ const PasswordPolicy = () => {
   }
 
   const handleOk = async () => {
+    
     form.current.validator(async () => {
       const { data } = form.current.props;  
 
@@ -76,6 +77,10 @@ const PasswordPolicy = () => {
       if(data.period === undefined){
         data.period = defaultValues.period
         data.notice = defaultValues.notice
+
+        if(Number(value) > Number(period)){
+          return false
+        }
       }
 
       const rules = [];
@@ -89,7 +94,7 @@ const PasswordPolicy = () => {
 
       const lengthText = `길이는 ${minLength}자에서 ${maxLength}자 사이여야 합니다.`;
       const errorText = ruleText + lengthText;
-      console.log("data : "+ JSON.stringify(data))
+      
       data.errorMessage = errorText;      
       const result = await passwordPolicyStore.update(data)
 
@@ -255,7 +260,20 @@ const PasswordPolicy = () => {
                     <Column>
                       <Form.Item
                         label={t('RESOURCES_PASSWORD_PERIOD_SETTING_MAXIMUM_AGE')}
-                        rules={[{ required: true, message: t('RESOURCES_PASSWORD_PERIOD_SETTING_MAXIMUM_AGE_TIP') }]}
+                        rules={[
+                          { 
+                            required: true, 
+                            message: t('RESOURCES_PASSWORD_PERIOD_SETTING_MAXIMUM_AGE_TIP') 
+                          },
+                          {
+                            validator: (_, value) => {
+                              if (Number(value) <= 0) {
+                                return Promise.reject('1 이상만 입력 가능합니다.')
+                              }
+                              return Promise.resolve()
+                            },
+                          },
+                        ]}
                       >
                         <Input 
                           type="number"
@@ -263,18 +281,48 @@ const PasswordPolicy = () => {
                           maxLength={63} 
                           style={{ maxWidth: 'none' }} 
                           defaultValue={values?.period || 10}
-                          onChange={(val) => handleChange('period', val)}  
+                          onChange={(val) => {
+                            handleChange('period', val)
+                            form.current?.validate('notice')
+                          }}
                         />
                       </Form.Item>
                       <div style={{ padding: '5px 0 12px' }}>{t('RESOURCES_PASSWORD_PERIOD_SETTING_DESC')}</div>
                     </Column>
                     <Column>      
                       <Form.Item
+                        key={`notice-${values.period}`}
                         label={t('RESOURCES_PASSWORD_PERIOD_SETTING_NOTI_DAY')}
-                        rules={[{ required: true, message: t('RESOURCES_PASSWORD_PERIOD_SETTING_NOTI_DAY_TIP') }]}
+                        rules={[
+                          { 
+                            required: true, 
+                            message: t('RESOURCES_PASSWORD_PERIOD_SETTING_NOTI_DAY_TIP') 
+                          },
+                          {
+                            validator: (_, value) => {                              
+                              const formRef = form.current
+                              const period = formRef.props.data.period
+
+                              if (value == null || period == null) return Promise.resolve()
+
+                              if (Number(value) > Number(period)) {
+                                return Promise.reject(t('NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD'))
+                              }
+
+                              const errors = formRef?.state?.errors
+                              if (errors?.length) {
+                                formRef.setState({
+                                  errors: errors.filter(e => e.field !== 'notice')
+                                })
+                              }
+                              return Promise.resolve()                                                        
+                            },
+                          },
+                          ]}
                       >
                         <Input 
                           type="number"
+                          min={1}
                           name="notice" 
                           maxLength={63} 
                           style={{ maxWidth: 'none' }} 
