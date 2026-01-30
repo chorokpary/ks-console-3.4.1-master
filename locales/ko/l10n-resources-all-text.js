@@ -98,7 +98,6 @@ module.exports = {
     'GPU 자원을 할당할 사용자 워크로드를 선택해주세요.',
   RESOURCES_GPU_VGPU_CONFIG: 'vGPU 설정',
   RESOURCES_GPU_VGPU_CONFIG_STATE: 'vGPU 설정 상태',
-  RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND: 'vGPU 설정을 찾을 수 없음',
   RESOURCES_GPU_MIG: 'MIG',
   RESOURCES_GPU_MPS: 'MPS',
   RESOURCES_GPU_INDEX: 'GPU 인덱스',
@@ -128,7 +127,7 @@ module.exports = {
   RESOURCES_GPU_VGPU_NUMBER: '최대 개수',
   RESOURCES_GPU_VGPU_CUDA: 'CUDA',
   RESOURCES_GPU_VGPU_MULTIVGPU: '멀티 vGPU',
-  RESOURCES_GPU_MIG_CONFIGS_NOT_FOUND: '가용한 vGPU 설정을 찾을 수 없습니다.',
+  RESOURCES_GPU_VGPU_CONFIGS_NOT_FOUND: '가용한 vGPU 설정을 찾을 수 없습니다.',
 
   RESOURCES_GPU_DEPLOY_STATUS: 'GPU 구성요소 배포 현황',
   RESOURCES_GPU_CONTAINER_DEPLOYMENT_STATUS:
@@ -226,7 +225,6 @@ module.exports = {
     '전용 네트워크의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_FABRIC: '네트워크 패브릭',
   RESOURCES_SELECT_FABRIC_TIP: '네트워크 패브릭을 선택해 주세요.',
-  RESOURCES_INTERFACE: '인터페이스',
   RESOURCES_INTERFACE_INDEX: '인터페이스 인덱스',
   RESOURCES_SELECT_INTERFACE_INDEX_TIP: '인터페이스 인덱스를 선택해 주세요.',
   RESOURCES_BOND_NETWORK: '본드 네트워크',
@@ -382,6 +380,7 @@ module.exports = {
   RESOURCES_MAIN: '메인',
   RESOURCES_MEMBER_IP: '멤버 IP',
   RESOURCES_MONITORING: '모니터링',
+  RESOURCES_PRESETS: '프리셋',
   RESOURCES_NO_MONITORING_DATA: '모니터링 데이터가 없습니다.',
   RESOURCES_GPU_MONITORING: 'GPU 모니터링',
   RESOURCES_GPU_MONITORING_DESC:
@@ -446,7 +445,6 @@ module.exports = {
   RESOURCES_IMAGE_UPLOADSCHEDULED: '예약 된 업로드',
   RESOURCES_IMAGE_UPLOADREADY: '업로드 준비 됨',
   RESOURCES_IMAGE_IMPORTINPROGRESS: '가져오기 진행 중',
-  RESOURCES_IMAGE_NONE: '없음',
   RESOURCES_IMAGE_CLONEFROMSNAPSHOTSOURCEINPROGRESS:
     '스냅샷 소스로부터 클론 진행 중',
   RESOURCES_IMAGE_SNAPSHOTFORSMARTCLONEINPROGRESS: '클론을 위한 스냅샷 진행 중',
@@ -825,7 +823,6 @@ module.exports = {
   RESOURCES_SG_PORT_RANGE_DESC:
     '포트 범위는 숫자이거나 0~65535 숫자 범위이어야 합니다.',
   RESOURCES_PRIVATE: '프라이빗',
-  RESOURCES_PROTOCOL: '프로토콜',
   RESOURCES_PROJECT: '프로젝트',
   RESOURCES_FLOATING_IP: '플로팅 IP',
   RESOURCES_DELETE_FLOATING_IP: '플로팅 IP 삭제',
@@ -858,7 +855,6 @@ module.exports = {
     '호스트 디바이스의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_HOST_ROUTE: '호스트 라우트',
   RESOURCES_RESOURCE_USAGE: '리소스 사용량',
-  RESOURCES_GPU_CLUSTER: 'GPU 클러스터',
   RESOURCES_CPU_USAGE: 'CPU 사용량',
   RESOURCES_MEMORY_USAGE: '메모리 사용량',
   RESOURCES_MEMORY_PERCENT: '메모리 사용률',
@@ -1037,7 +1033,6 @@ module.exports = {
   RESOURCES_PORT_EMPTY_DESC: 'Port를 입력해 주세요.',
   RESOURCES_ENTER_60_MORE: '60 이상 입력해 주세요.',
   RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
-  RESOURCES_ENTER_1_MORE_AS_65535: '1이상 65535로 입력해 주세요.',
   RESOURCES_LAST_NUMBER_GREATER: '시작 숫자보다 큰 숫자를 입력해 주세요.',
   RESOURCES_DNS: 'DNS',
   RESOURCES_DNS_VALID: 'DNS 정보를 정확히 입력해주세요.',
@@ -1187,8 +1182,6 @@ module.exports = {
   RESOURCES_DELETE_GPU_CLUSTER_VM_TIP:
     '가상머신 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
   RESOURCES_GPU_CLUSTER_EMPTY_DESC: 'GPU 클러스터를 입력해 주세요.',
-  RESOURCES_GPU_CLUSTER_DESC:
-    'GPU 클러스터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_CREATE_GPU_CLUSTER: 'GPU 클러스터 생성',
   RESOURCES_EDIT_GPU_CLUSTER: 'GPU 클러스터 수정',
   RESOURCES_GPU_CLUSTER_DESC:
@@ -1259,7 +1252,6 @@ module.exports = {
   RESOURCES_GPUCLUSTER_NO_VM_LIST: 'GPU 클러스터에 가상머신이 없습니다.',
 
   RESOURCES_PASSWORD_POLICY: '비밀번호 정책',
-  RESOURCES_PASSWORD_POLICY_DESC: '비밀번호 입력 정책을 정의합니다.',
   RESOURCES_PASSWORD_PERIOD: '비밀번호 주기',
   RESOURCES_PASSWORD_PERIOD_DESC: '비밀번호 변경 안내 주기를 정의합니다.',
   RESOURCES_PASSWORD_PERIOD_SETTING: '주기 설정',

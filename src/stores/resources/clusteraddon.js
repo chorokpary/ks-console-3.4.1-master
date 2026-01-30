@@ -16,39 +16,18 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getIndexRoute } from 'utils/router.config'
+import Base from '../basemm3' // mm3 관련 추가 파일
+import List from '../base.list'
 
-import Node from './Node'
-import Monitoring from './Monitoring'
-import Status from './Status'
-import Presets from './Presets'
+export default class ClusterAddonStore extends Base {
+  records = new List()
 
-const PATH = '/clusters/:cluster/projects/:namespace/containerResource/:name'
+  module = 'addons'
 
-export default [
-  {
-    path: `${PATH}/node`,
-    title: t('RESOURCES_NODE'),
-    component: Node,
-    exact: true,
-  },
-  {
-    path: `${PATH}/status`,
-    title: t('RESOURCES_STATE'),
-    component: Status,
-    exact: true,
-  },
-  {
-    path: `${PATH}/monitoring`,
-    title: t('RESOURCES_MONITORING'),
-    component: Monitoring,
-    exact: true,
-  },
-  {
-    path: `${PATH}/presets`,
-    title: t('RESOURCES_PRESETS'),
-    component: Presets,
-    exact: true,
-  },
-  getIndexRoute({ path: PATH, to: `${PATH}/node`, exact: true }),
-]
+  getResourceUrl = (params = {}) =>
+    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}/edgetron/resources/capk/metadata/addons`
+
+  getListUrl = this.getResourceUrl
+}
