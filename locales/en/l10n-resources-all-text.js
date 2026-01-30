@@ -1310,9 +1310,12 @@ module.exports = {
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3:
     'Please change your password now to ensure smooth service use.',
   RESOURCES_PASSWORD_ORIGINALLY: 'Originally',
+  NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD: 'Change notification (days) is greater than Maximum age (days).',
 
   RESOURCES_CPU_AVAILABLE: 'CPU Availability (Cores)',
   RESOURCES_MEMORY_AVAILABLE: 'Memory Availability (Gi)',
   RESOURCES_DISK_AVAILABLE: 'Disk Availability (GB)',
   RESOURCES_SYSTEM_POD_PL: 'System Pods',
+
+
 }
