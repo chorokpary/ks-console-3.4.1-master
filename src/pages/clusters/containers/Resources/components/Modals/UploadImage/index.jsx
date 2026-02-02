@@ -158,7 +158,7 @@ const UploadModal = props => {
                     onChange={onFileChange}
                     style={{ display: 'none' }}
                     ref={fileInputRef}
-                    accept="image/*,.tar,.gz,.zip"
+                    accept=".iso,.qcow2,.raw,.img,.vmdk,.vdi,.vhd,.vhdx,.vpc,.hdd"
                   />
                   <Input
                     name="fileName"
