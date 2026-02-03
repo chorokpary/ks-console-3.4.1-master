@@ -78,8 +78,8 @@ const Vm = ({
         {dataList
           .filter(item => {
             if (filter === 'all') return true
-            if (filter === 'minor') return item.state === 'abnormal'
-            if (filter === 'unknown') return item.state === 'unknown'
+            if (filter === 'minor') return item?.state === 'abnormal'
+            if (filter === 'unknown') return item?.state === 'unknown'
             return true
           })
           .sort((a, b) => {
@@ -111,8 +111,8 @@ const Vm = ({
                   <span className="name_text">{item.group}</span>
                 </div>
                 <div className="percent">{item.value}%</div>
-                {(item.state === 'abnormal' || item.state === 'unknown') && (
-                  <div className={`badge_alert ${item.state}`}></div>
+                {(item?.state === 'abnormal' || item?.state === 'unknown') && (
+                  <div className={`badge_alert ${item?.state}`}></div>
                 )}
               </div>
             )
@@ -182,8 +182,8 @@ const Vm = ({
                 .map((item, index) => (
                   <div
                     className={`gpu_pop_box ${getAreaColor(item?.value?.[1])} ${
-                      gpuXidData?.[item.metric.pod]?.[item.metric.gpu].state ===
-                      'minor'
+                      gpuXidData?.[item.metric.pod]?.[item.metric.gpu]
+                        ?.state === 'minor'
                         ? 'gpu_alert'
                         : ''
                     }`}
@@ -193,7 +193,7 @@ const Vm = ({
                     <div className="percent">
                       {Number(item?.value?.[1]) || 0}%
                     </div>
-                    {gpuXidData?.[item.metric.pod]?.[item.metric.gpu].state ===
+                    {gpuXidData?.[item.metric.pod]?.[item.metric.gpu]?.state ===
                       'minor' && <div className="badge_alert"></div>}
                   </div>
                 ))}

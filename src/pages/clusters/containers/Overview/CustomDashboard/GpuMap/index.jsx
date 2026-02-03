@@ -205,7 +205,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         value: metricUtil ? Number(Number(metricUtil.value[1]).toFixed(0)) : 0,
         valueMem: metricMem ? Number(Number(metricMem.value[1]).toFixed(0)) : 0,
         state: metricUtil
-          ? c.state === 'Running'
+          ? c?.state === 'Running'
             ? 'normal'
             : 'abnormal'
           : 'unknown',
@@ -227,7 +227,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         clusterName,
         vmList: item.vm_list,
         namespace: item.namespace,
-        state: item.state,
+        state: item?.state,
       })
     })
     setClusterArr(clusterArr)
@@ -239,7 +239,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     const getData = async () => {
       var currentTime = Math.floor(Date.now() / 1000)
       const paramsData = {
-        start: currentTime,
+        start: currentTime - range,
         end: currentTime,
       }
 
@@ -286,7 +286,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
           group: c.clusterName,
           value: metricUtil ? Number(metricUtil.value[1]).toFixed(0) : 0,
           valueMem: metricMem ? Number(metricMem.value[1]).toFixed(0) : 0,
-          state: metricUtil ? c.state : 'unknown',
+          state: metricUtil ? c?.state : 'unknown',
           vmList: c.vmList,
           namespace: c.namespace,
         }
@@ -417,7 +417,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
           gpuDataList.push({
             group: vmName,
             gpu: gpuIndex,
-            state: gpuItem.state,
+            state: gpuItem?.state,
             util: gpuItem.util,
             mem: gpuItem.mem,
           })
@@ -468,7 +468,8 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     if (type === 'vm' && vmList.length > 0) {
       getVmAvgData()
     } else if (type === 'node' && clusterArr.length > 0) {
-      getGpuNodeList(clusterArr, false)
+      // getGpuNodeList(clusterArr, false)
+      getLandingData()
     } else if (type === 'gpu' && vmList.length > 0) {
       getGpuListData()
     }
@@ -592,7 +593,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               />
               <span>
                 <span className="gpu_badge_number minor">
-                  {dataList.filter(item => item.state === 'abnormal').length}
+                  {dataList.filter(item => item?.state === 'abnormal').length}
                 </span>
                 <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
               </span>
@@ -607,7 +608,7 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
               />
               <span>
                 <span className="gpu_badge_number unknown">
-                  {dataList.filter(item => item.state === 'unknown').length}
+                  {dataList.filter(item => item?.state === 'unknown').length}
                 </span>
                 <span>{t('RESOURCES_GPUCLUSTER_UNKNOWN')}</span>
               </span>

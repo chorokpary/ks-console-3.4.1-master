@@ -32,10 +32,13 @@ import styles from './index.scss'
 import { ProjectSelect } from 'components/Inputs'
 import SecretStore from 'stores/secret'
 import ContainerForm from '../ContainerForm'
+import { Checkbox } from '@kube-design/components/lib/components/Checkbox'
 
 const defaultImageSize = '15GB'
 
 const defaultRegistryUrl = 'https://quay.io?namespace=edgestack'
+const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
+const emptyImageText = t('RESOURCES_NOT_FOUND_IMIAGE')
 
 const realTimeOptions = [
   { label: t('RESOURCES_NOT_USE'), value: false },
@@ -53,6 +56,10 @@ const osTypeOptions = [
   { label: 'Linux', value: 'linux', icon: 'ico-linux' },
   { label: 'Windows', value: 'windows', icon: 'ico-windows' },
   //   { label: 'etc', value: '', icon: 'ico-plus' },
+]
+const publicTypeOptions = [
+  { label: t('RESOURCES_PUBLIC'), value: 'public' },
+  { label: t('RESOURCES_PRIVATE'), value: 'private' },
 ]
 
 const ResourceImageModal = ({
@@ -88,7 +95,7 @@ const ResourceImageModal = ({
   const [distroType, setDistroType] = useState('ubuntu')
   const [distroTypeList, setDistroTypeList] = useState([])
   const [linuxDistroTypeList, setLinuxDistroTypeList] = useState([])
-  // const [edgeDistroTypeList, setEdgeDistroTypeList] = useState([])
+  const [edgeDistroTypeList, setEdgeDistroTypeList] = useState([])
   const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
   const [preInstallAppType, setPreInstallAppType] = useState('None')
@@ -99,24 +106,52 @@ const ResourceImageModal = ({
   const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [projectName, setProjectName] = useState('default')
+  const [projectOriginName, setProjectOriginName] = useState('edgestack')
   const [imageRegistries, setImageRegistries] = useState([])
   const [imageTag, setImageTag] = useState({})
 
   const [secret, setSecret] = useState({})
   const [secretValueNull, setSecretValueNull] = useState(false)
 
+  const [publicType, setPublicType] = useState('public')
+  const [registryUrl, setRegistryUrl] = useState(
+    publicType === 'private' ? '' : defaultRegistryUrl
+  )
+
+  const [registryUrlActive, setRegistryUrlActive] = useState(false)
+
+  const [cosign, setCosign] = useState(false)
+  const [registryChecked, setRegistryChecked] = useState(false)
+  const [registryUrlInValid, setRegistryUrlInValid] = useState(false)
+  const [registryCheckInValid, setRegistryCheckInValid] = useState(false)
+  const [registryUserInvalid, setRegistryUserInvalid] = useState(false)
+  const [dockerUrl, setDockerUrl] = useState('quay.io')
+
+  const [imageList, setImageList] = useState([])
+  const [imageListData, setImageListData] = useState([])
+  const [imageText, setImageText] = useState(defaultImageText)
+  const [sourceEmpty, setSourceEmpty] = useState(false)
+  const [imageName, setImageName] = useState('')
+  const [popActive, setPopActive] = useState(false)
+  const [tagListData, setTagListData] = useState([])
+  const [tagList, setTagList] = useState([])
+  const [tag, setTag] = useState('')
+  const [registryAuth, setRegistryAuth] = useState('')
+
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList()
       setDistroTypeData(dist)
-      // setEdgeDistroTypeList(
-      //   dist.filter(
-      //     obj =>
-      //       obj.name !== 'windows' &&
-      //       obj.name !== 'fedora' &&
-      //       obj.name !== 'rhel'
-      //   )
-      // )
+      setEdgeDistroTypeList(
+        dist.filter(
+          obj =>
+            obj.name !== 'windows' &&
+            obj.name !== 'fedora' &&
+            obj.name !== 'rhel'
+        )
+      )
       setLinuxDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
       setDistroTypeList(
         dist.filter(
@@ -176,37 +211,37 @@ const ResourceImageModal = ({
       }
     }
 
-    // const getVmImageList = async () => {
-    //   const originUrl = new URL(registryUrl)
-    //   const urlParams = originUrl.searchParams
-    //   const namespace = urlParams.get('namespace')
+    const getVmImageList = async () => {
+      const originUrl = new URL(registryUrl)
+      const urlParams = originUrl.searchParams
+      const namespace = urlParams.get('namespace')
 
-    //   let allRepositories = []
-    //   let nextPage = `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&popularity=true&repo_kind=image&`
+      let allRepositories = []
+      let nextPage = `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&popularity=true&repo_kind=image&`
 
-    //   try {
-    //     while (nextPage) {
-    //       const response = await axios.get(nextPage, {
-    //         headers: {
-    //           'X-Requested-With': 'XMLHttpRequest',
-    //         },
-    //       })
-    //       allRepositories = [...allRepositories, ...response.data.repositories]
-    //       nextPage = response.data.next_page
-    //         ? `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image&next_page=${response.data.next_page}`
-    //         : null
-    //     }
-    //     setImageListData(allRepositories)
-    //   } catch {
-    //     setImageListData([])
-    //   }
-    // }
+      try {
+        while (nextPage) {
+          const response = await axios.get(nextPage, {
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+          })
+          allRepositories = [...allRepositories, ...response.data.repositories]
+          nextPage = response.data.next_page
+            ? `${originUrl.origin}/api/v1/repository?public=true&namespace=${namespace}&last_modified=true&popularity=true&repo_kind=image&next_page=${response.data.next_page}`
+            : null
+        }
+        setImageListData(allRepositories)
+      } catch {
+        setImageListData([])
+      }
+    }
 
     getDistroTypeList()
     getAcceleratorTypeList()
     getPreInstallAppList()
     getStorageClassList()
-    // getVmImageList()
+    getVmImageList()
   }, [])
 
   useEffect(() => {
@@ -266,35 +301,55 @@ const ResourceImageModal = ({
     form.current.validator(async () => {
       const { data } = form.current.props
 
+      data.cosign = cosign
+
       if (sizeEmpty) {
         return
       }
+
       data.size = imageSize.slice(0, imageSize.length - 2)
       data.distro_type = distroType
-      // data.source = `docker://${dockerUrl}/${projectNameOrigin}/${imageName}:${tag}`
       data.storage_class = storageClass
+      data.distro_type = distroType
 
-      data.username = ''
-      data.password = ''
-      data.source = `docker://${imageTag.image}`
+      if (cosign) {
+        data.username = ''
+        data.password = ''
+        data.source = `docker://${imageTag.image}`
 
-      if (!secretValueNull) {
-        const secretsData = await imageRegistryStore.fetchDetail({
-          cluster: cluster,
-          namespace: projectName,
-          name: secret.value,
-        })
+        if (!secretValueNull) {
+          const secretsData = await imageRegistryStore.fetchDetail({
+            cluster: cluster,
+            namespace: projectName,
+            name: secret.value,
+          })
 
-        const secrets =
-          secretsData?.data?.['.dockerconfigjson']?.auths?.[secret.url] || {}
-        data.username = secrets.username
-        data.password = secrets.password
-        data.registrysecrets = secret.value
+          const secrets =
+            secretsData?.data?.['.dockerconfigjson']?.auths?.[secret.url] || {}
+          data.username = secrets.username
+          data.password = secrets.password
+          data.registrysecrets = secret.value
+        }
+      } else if (!cosign) {
+        if (
+          publicType === 'private' &&
+          (registryUrlInValid ||
+            registryCheckInValid ||
+            registryUserInvalid ||
+            !registryChecked)
+        ) {
+          return
+        }
+        data.source = `docker://${dockerUrl}/${projectOriginName}/${imageName}:${tag}`
+
+        data.username = userName
+        data.password = userPassword
       }
 
       if (distroType === 'rocky') {
         data.boot_type = 'uefi'
       }
+
       // console.log('data : ', data)
 
       onOk({ image: data })
@@ -326,31 +381,38 @@ const ResourceImageModal = ({
     } else if (value === 'linux') {
       distro = 'ubuntu'
       setDistroType('ubuntu')
-      // if (registryUrl === defaultRegistryUrl) {
-      //   setDistroTypeList(edgeDistroTypeList)
-      // } else {
-      setDistroTypeList(linuxDistroTypeList)
-      // }
+      if (registryUrl === defaultRegistryUrl) {
+        setDistroTypeList(edgeDistroTypeList)
+      } else {
+        setDistroTypeList(linuxDistroTypeList)
+      }
     } else {
       setDistroType('')
       setDistroTypeList([])
+    }
+    if (registryUrl === defaultRegistryUrl) {
+      getPublicImageList(distro)
     }
   }
 
   const handleDistroType = value => {
     setDistroType(value)
+    getPublicImageList(value)
   }
 
   const handleArchType = value => {
     setArchType(value)
+    getMatchingTag(tagListData, value, acceleratorType, preInstallAppType)
   }
 
   const handleAcceleratorType = value => {
     setAcceleratorType(value)
+    getMatchingTag(tagListData, archType, value, preInstallAppType)
   }
 
   const handlePreInstallAppType = value => {
     setPreInstallAppType(value)
+    getMatchingTag(tagListData, archType, acceleratorType, value)
   }
 
   const getImageRegistries = async () => {
@@ -369,15 +431,383 @@ const ResourceImageModal = ({
 
   const stepMoveCheck = step => {
     const { data } = form.current.props
-    if (step === 1) {
-      if (data.name === undefined || !PATTERN_USER_NAME.test(data.name)) {
+
+    if (!cosign) {
+      setRegistryCheckInValid(!registryChecked)
+      if (
+        data.name === undefined ||
+        !PATTERN_USER_NAME.test(data.name) ||
+        (publicType === 'private' &&
+          (registryUrlInValid || registryUserInvalid || !registryChecked))
+      ) {
+        handleOk()
+      } else {
+        setSourceEmpty(false)
+        setImageList([])
+        setTagList([])
+        setPopActive(false)
+        setImageName('')
+        setRegStep(2)
+        // setSubmitButtonFlag(false)
+      }
+    } else {
+      if (
+        data.name === undefined ||
+        !PATTERN_USER_NAME.test(data.name) ||
+        projectName === '' ||
+        projectName === undefined
+      ) {
         handleOk()
       } else {
         setRegStep(2)
       }
     }
-    if (step === 2) {
-      setRegStep(3)
+  }
+
+  const handleRegistryUrlActive = () => {
+    if (registryUrlActive) {
+      setDockerUrl('quay.io')
+      setRegistryUrl(defaultRegistryUrl)
+      setRegistryUrlActive(false)
+    } else {
+      setRegistryUrlActive(true)
+    }
+    resetRegistryValidity()
+  }
+
+  const resetRegistryValidity = () => {
+    setRegistryUrlInValid(false)
+    setRegistryUserInvalid(false)
+    setRegistryCheckInValid(false)
+    setRegistryChecked(false)
+  }
+
+  const handleRegistryType = value => {
+    setPublicType(value)
+    resetRegistryValidity()
+
+    if (value === 'public') {
+      document.querySelector('#chk-1').checked = false
+      setRegistryUrlActive(false)
+      setRegistryUrl(defaultRegistryUrl)
+      setDockerUrl('quay.io')
+    } else {
+      setRegistryUrlActive(true)
+      setRegistryUrl('')
+      setUserName('')
+      setUserPassword('')
+      document.querySelector('#chk-1').checked = true
+    }
+  }
+
+  const handleRegistryUrl = value => {
+    resetRegistryValidity()
+    let originUrl = URL
+    try {
+      originUrl = new URL(value)
+    } catch {
+      setRegistryUrlInValid(true)
+      setRegistryChecked(false)
+      setRegistryUserInvalid(false)
+      return
+    }
+    setDockerUrl(originUrl.host)
+    setRegistryUrl(value)
+  }
+
+  const checkUserValid = async () => {
+    setRegistryChecked(true)
+    setRegistryCheckInValid(false)
+    if (registryUrl === '') {
+      setRegistryUrlInValid(true)
+      return
+    }
+    if (userName === '' || userPassword === '') {
+      setRegistryUserInvalid(true)
+      return
+    }
+
+    const userAuth = Base64.encode(`${userName}:${userPassword}`)
+
+    const originUrl = new URL(registryUrl)
+    const urlParams = originUrl.searchParams
+    const project = urlParams.get('projects')
+    fetchWithTimeout(userAuth, originUrl, 1000)
+      .then(() => {
+        setRegistryUrlInValid(false)
+        setRegistryUserInvalid(false)
+
+        setRegistryAuth(userAuth)
+        setRegistryUrl(registryUrl)
+        setUserName(userName)
+        setUserPassword(userPassword)
+        request
+          .post(`customharbor/private`, {
+            auth: userAuth,
+            projectName: project,
+            originUrl: originUrl.origin,
+            page: 1,
+          })
+          .then(() => {
+            Notify.success({ content: t('RESOURCES_SUCCESS_VALID_DESC') })
+            setRegistryUrlInValid(false)
+          })
+          .catch(() => {
+            setRegistryUrlInValid(true)
+          })
+      })
+      .catch(() => {
+        setRegistryUrlInValid(false)
+        setRegistryUserInvalid(true)
+      })
+  }
+
+  function fetchWithTimeout(userAuth, originUrl, timeout = 5000) {
+    return Promise.race([
+      request.post(`customharbor/users`, {
+        auth: userAuth,
+        originUrl: originUrl.origin,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), timeout)
+      ),
+    ])
+  }
+
+  const handleRegistryUserName = value => {
+    resetRegistryValidity()
+    if (value === '') {
+      setRegistryUserInvalid(true)
+      return
+    }
+    setUserName(value)
+  }
+
+  const handleRegistryUserPassword = value => {
+    resetRegistryValidity()
+    if (value === '') {
+      setRegistryUserInvalid(true)
+      return
+    }
+    setUserPassword(value)
+  }
+
+  const searchImageList = e => {
+    if (e.key === 'Enter') {
+      const name = e.target.value
+      const list = imageList.filter(item => item.name.includes(name))
+      setImageList(list)
+    }
+  }
+
+  const handleImageTag = (image, project) => {
+    setPopActive(false)
+    setLoading(true)
+    setImageName(image)
+    image = encodeURIComponent(image)
+    if (publicType === 'public') {
+      getPublicImageTag(image)
+    } else {
+      getPrivateImageTag(image, project)
+    }
+  }
+
+  const getPublicImageList = distro => {
+    let containerDisk = '-container-disk'
+    if (distro === 'rocky') {
+      containerDisk = '-uefi-container-disk'
+    }
+    if (distro === 'windows') {
+      distro = 'win'
+      containerDisk = '-container-image'
+    }
+    if (distro === 'almalinux') {
+      distro = 'alma'
+    }
+    const targetImageList = imageListData
+      .filter(
+        item =>
+          item.name.includes(`${distro}-`) && item.name.includes(containerDisk)
+      )
+      .sort((a, b) => b.name.localeCompare(a.name))
+
+    setImageList(targetImageList)
+    // setPopActive(true)
+    setImageText(defaultImageText)
+    setTagListData([])
+    setTagList([])
+    setTag('')
+    setImageName('')
+  }
+
+  // public image tag
+  const getPublicImageTag = async image => {
+    setImageName(image)
+    image = encodeURIComponent(image)
+    const originUrl = new URL(registryUrl)
+    const urlParams = originUrl.searchParams
+    const namespace = urlParams.get('namespace')
+    const response = await axios.get(
+      `${originUrl.origin}/api/v1/repository/${namespace}/${image}`,
+      {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      }
+    )
+    setLoading(false)
+    const tags = Object.values(response.data.tags).filter(
+      obj => obj.size !== null && obj.size !== 0
+    )
+    setTagListData(tags)
+    setSourceEmpty(false)
+    getMatchingTag(tags, archType, acceleratorType, preInstallAppType)
+  }
+
+  const getPrivateImageTag = async (image, project) => {
+    const originUrl = registryUrl ? new URL(registryUrl) : ''
+    const response = await request.post(`customharbor/tags`, {
+      auth: registryAuth,
+      repositoryName: image,
+      projectName: project,
+      originUrl: originUrl.origin,
+    })
+    setLoading(false)
+
+    // eslint-disable-next-line no-shadow
+    const tagList = response?.[0]?.tags
+
+    setProjectOriginName(project)
+    setTagList(tagList)
+    setTag(tagList?.[0]?.name)
+    setSourceEmpty(false)
+  }
+
+  const getMatchingTag = (tags, arch, accel, preInstallApp) => {
+    const filteredTag = tags.filter(item => {
+      if (accel === 'None' && preInstallApp === 'None') {
+        return item.name === arch
+      }
+      if (accel === 'None' && preInstallApp !== 'None') {
+        return item.name === `${preInstallApp.toLowerCase()}_${arch}`
+      }
+      if (accel !== 'None' && preInstallApp === 'None') {
+        return (
+          item.name.includes(accel.toLowerCase()) && item.name.includes(arch)
+        )
+      }
+      return (
+        item.name.includes(accel.toLowerCase()) &&
+        item.name.includes(preInstallApp.toLowerCase()) &&
+        item.name.includes(arch)
+      )
+    })
+    if (filteredTag.length > 0) {
+      setTag(filteredTag?.[0].name)
+      setSourceEmpty(false)
+    } else {
+      setTag('')
+    }
+    setTagList(filteredTag)
+  }
+
+  // image list
+  const handleImagePop = async () => {
+    if (publicType === 'public') {
+      setPopActive(true)
+      getPublicImageList(distroType)
+    } else if (publicType === 'private') {
+      getHarborImages()
+    }
+  }
+
+  const getHarborImages = () => {
+    if (registryUrlActive) {
+      if (registryUrlInValid) {
+        setRegistryUserInvalid(true)
+      } else {
+        setRegistryUserInvalid(false)
+        getPriavteHarborRepositories()
+      }
+    } else {
+      setRegistryUserInvalid(false)
+      getPublicHarborRepositories()
+    }
+  }
+
+  // harbor list
+  const getPriavteHarborRepositories = async () => {
+    try {
+      let allData = []
+      let page = 1
+      let hasMoreData = true
+
+      while (hasMoreData) {
+        try {
+          const originUrl = new URL(registryUrl)
+          const urlParams = originUrl.searchParams
+          const project = urlParams.get('projects')
+
+          const fetchedData = await request.post(`customharbor/private`, {
+            auth: registryAuth,
+            projectName: project,
+            originUrl: originUrl.origin,
+            page,
+          })
+          allData = [...allData, ...fetchedData]
+
+          // 다음 페이지가 있는지 확인
+          hasMoreData = fetchedData.length === 100
+          page++
+        } catch (error) {
+          hasMoreData = false
+        }
+      }
+
+      const list = allData.map(obj => {
+        // eslint-disable-next-line no-shadow
+        const [projectName, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
+        obj.project_name = projectName
+        obj.popularity = obj.pull_count
+        return obj
+      })
+      setImageListData(list)
+      setImageList(list)
+      setPopActive(true)
+      setImageText(defaultImageText)
+    } catch {
+      setImageList([])
+      setTagList([])
+      setPopActive(false)
+      setImageText(emptyImageText)
+      setTag('')
+    }
+  }
+
+  // harbor list
+  const getPublicHarborRepositories = async () => {
+    try {
+      const originUrl = registryUrl ? new URL(registryUrl) : ''
+      const response = await request.post(`customharbor/public`, {
+        originUrl,
+      })
+      const list = response.map(obj => {
+        const [project, ...name] = obj.name.split('/')
+        obj.name = name.join('/')
+        obj.project_name = project
+        obj.popularity = obj.pull_count
+        return obj
+      })
+      setImageList(list)
+      setPopActive(true)
+      setImageText(defaultImageText)
+    } catch {
+      setImageList([])
+      setTagList([])
+      setPopActive(false)
+      setImageText(emptyImageText)
+      setTag('')
     }
   }
 
@@ -422,37 +852,14 @@ const ResourceImageModal = ({
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(2)
-              }}
-              className={classnames(styles['btn'], styles['btn-control'])}
-            >
-              {t('RESOURCES_NEXT')}
-            </Button>
-          </>
-        )}
-        {regStep === 3 && (
-          <>
-            <Button
-              onClick={() => closeModal()}
-              className={classnames(styles['btn'], styles['btn-default'])}
-            >
-              {t('RESOURCES_CANCEL')}
-            </Button>
-            <Button
-              onClick={() => {
-                setRegStep(regStep - 1)
-              }}
-              className={classnames(styles['btn'], styles['btn-default'])}
-            >
-              {t('RESOURCES_PREVIOUS')}
-            </Button>
-            <Button
-              onClick={() => {
                 handleOk()
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
-              loading={store.isSubmitting}
-              disabled={Object.keys(imageTag).length === 0}
+              // loading={store.isSubmitting}
+              disabled={
+                (cosign && Object.keys(imageTag).length === 0) ||
+                (!cosign && tag === '')
+              }
             >
               {t('RESOURCES_CREATE')}
             </Button>
@@ -542,82 +949,225 @@ const ResourceImageModal = ({
                 </div>
               </div>
             </div>
-            <div
-              className={classnames(
-                styles.process_item,
-                `${regStep === 3 ? styles.current : ''}`
-              )}
-            >
-              <div className={styles.status}>
-                <div
-                  className={`${
-                    regStep === 3
-                      ? styles.current
-                      : regStep > 3
-                      ? styles.done
-                      : styles.todo
-                  }`}
-                ></div>
-              </div>
-              <span className={styles.detail}></span>
-              <div className={styles.title}>
-                <div className={styles.step_name}>{t('컨테이너 설정')}</div>
-                <div className={styles.situation}>
-                  {regStep === 3
-                    ? t('RESOURCES_CURRENT')
-                    : t('RESOURCES_NOT_SET')}
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className={styles.cont_boxwrap}>
             <div className={`${regStep === 1 ? '' : 'hide'}`}>
-              <Form.Item>
-                <Columns>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_NAME')}
-                      rules={[
-                        { required: true, message: t('NAME_EMPTY_DESC') },
-                        {
-                          pattern: PATTERN_USER_NAME,
-                          message: t('RESOURCES_INVALID_NAME_DESC'),
-                        },
-                      ]}
-                      desc={t('NAME_DESC')}
-                    >
-                      <Input
-                        name="name"
-                        maxLength={63}
-                        style={{ maxWidth: 'none' }}
-                      />
-                    </Form.Item>
-                  </Column>
-
-                  <Column>
-                    <Form.Item
-                      label={t('PROJECT')}
-                      desc={t('SELECT_PROJECT_DESC')}
-                      rules={[
-                        {
-                          required: true,
-                          message: t('PROJECT_NOT_SELECT_DESC'),
-                        },
-                      ]}
-                    >
-                      <ProjectSelect
-                        name="project"
-                        defaultValue={projectName}
-                        cluster={cluster}
-                        onChange={e => {
-                          setProjectName(e)
-                        }}
-                      />
-                    </Form.Item>
-                  </Column>
-                </Columns>
+              <Form.Item
+                label={t('RESOURCES_NAME')}
+                rules={[
+                  { required: true, message: t('NAME_EMPTY_DESC') },
+                  {
+                    pattern: PATTERN_USER_NAME,
+                    message: t('RESOURCES_INVALID_NAME_DESC'),
+                  },
+                ]}
+                desc={t('NAME_DESC')}
+              >
+                <Input name="name" maxLength={63} />
               </Form.Item>
+
+              <Form.Item
+                label={t('RESOURCES_SOURCE')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <div>
+                  <div style={{ position: 'absolute', right: 0, top: -25 }}>
+                    <Checkbox
+                      name="cosign"
+                      defaultChecked={cosign}
+                      onChange={value => setCosign(value)}
+                    >
+                      <div style={{ fontWeight: 'bold' }}>무결성 체크 여부</div>
+                    </Checkbox>
+                  </div>
+                  <div>
+                    <hr />
+                  </div>
+                </div>
+              </Form.Item>
+              {!cosign && (
+                <>
+                  <Form.Item>
+                    <RadioGroup
+                      name="is_public"
+                      wrapClassName="radio"
+                      defaultValue={publicType}
+                      onChange={value => handleRegistryType(value)}
+                    >
+                      {publicTypeOptions.map(option => (
+                        <RadioButton key={option.value} value={option.value}>
+                          {option.label}
+                        </RadioButton>
+                      ))}
+                    </RadioGroup>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <div className={styles.content_box_wrap}>
+                      <div className={styles.content_box}>
+                        <div
+                          className={`${styles.cont_box_wrap} ${
+                            publicType === 'private' &&
+                            (registryUrlInValid ||
+                              registryCheckInValid ||
+                              registryUserInvalid)
+                              ? styles.formErrorStyle
+                              : ''
+                          }`}
+                        >
+                          <div className={styles.cont_box_section}>
+                            <h6 className={styles.label}>
+                              <div className={styles.form_check}>
+                                <input
+                                  type="checkbox"
+                                  name="chk-1"
+                                  id="chk-1"
+                                />
+                                <label
+                                  htmlFor="chk-1"
+                                  onClick={() => handleRegistryUrlActive()}
+                                ></label>
+                              </div>
+                              <div className={styles.title}>
+                                <p>Registry URL</p>
+                                <span>
+                                  {t('RESOURCES_IMAGE_REGIST_URL_SETTINGS')}
+                                </span>
+                              </div>
+                            </h6>
+                            {registryUrlActive && (
+                              <>
+                                <div className={styles.regi_group_area}>
+                                  <div className={styles.formarea}>
+                                    <div
+                                      className={classnames(
+                                        styles.custom_input,
+                                        styles.w_1
+                                      )}
+                                    >
+                                      <label>Registry URL</label>
+                                      <input
+                                        type="text"
+                                        name="regUrl"
+                                        placeholder={
+                                          publicType === 'private'
+                                            ? 'https://{url}?projects={project_name}'
+                                            : ''
+                                        }
+                                        defaultValue={registryUrl}
+                                        onChange={e =>
+                                          handleRegistryUrl(e.target.value)
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                {publicType === 'private' && (
+                                  <div className={styles.regi_group_area}>
+                                    <div className={styles.formarea}>
+                                      <div className={styles.custom_input}>
+                                        <label>
+                                          {t('RESOURCES_USER_NAME')}
+                                        </label>
+                                        <input
+                                          type="text"
+                                          name="username"
+                                          defaultValue={userName}
+                                          onChange={e =>
+                                            handleRegistryUserName(
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                      <div className={styles.custom_input}>
+                                        <label>{t('RESOURCES_PASSWORD')}</label>
+                                        <input
+                                          type="password"
+                                          name="password"
+                                          defaultValue={userPassword}
+                                          onChange={e =>
+                                            handleRegistryUserPassword(
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                      <button
+                                        type="button"
+                                        className={classnames(
+                                          styles.btn,
+                                          styles.btn_control
+                                        )}
+                                        onClick={() => checkUserValid()}
+                                      >
+                                        {t('RESOURCES_VALID')}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                                {publicType === 'private' &&
+                                  registryCheckInValid && (
+                                    <div
+                                      className="form-item-error"
+                                      style={{ color: '#ca2621' }}
+                                    >
+                                      {t('RESOURCES_VALID_TIP')}
+                                    </div>
+                                  )}
+                                {publicType === 'private' &&
+                                  registryUserInvalid && (
+                                    <div
+                                      className="form-item-error"
+                                      style={{ color: '#ca2621' }}
+                                    >
+                                      {t('RESOURCES_HARBOR_USER_INVALID_TIP')}
+                                    </div>
+                                  )}
+                                {registryUrlInValid && (
+                                  <div
+                                    className="form-item-error"
+                                    style={{ color: '#ca2621' }}
+                                  >
+                                    {t('RESOURCES_HARBOR_URL_INVALID_TIP')}
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Form.Item>
+                </>
+              )}
+              {cosign && (
+                <Form.Item
+                  label={t('PROJECT')}
+                  desc={t('SELECT_PROJECT_DESC')}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('PROJECT_NOT_SELECT_DESC'),
+                    },
+                  ]}
+                >
+                  <ProjectSelect
+                    name="project"
+                    defaultValue={projectName}
+                    cluster={cluster}
+                    onChange={e => {
+                      setProjectName(e)
+                    }}
+                  />
+                </Form.Item>
+              )}
+
               <Form.Item label={t('RESOURCES_SIZE')}>
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
@@ -676,6 +1226,7 @@ const ResourceImageModal = ({
                 />
               </Form.Item>
             </div>
+
             <div className={`${regStep === 2 ? '' : 'hide'}`}>
               <Form.Item label={t('RESOURCES_IMAGE_TEMPLATE')}>
                 <Form.Group>
@@ -849,24 +1400,165 @@ const ResourceImageModal = ({
                       </Column>
                     </Columns>
                   </Form.Item>
+                  {cosign && (
+                    <Form.Item
+                      label={t('APP_CATE_IMAGE_REGISTRY')}
+                      desc={t('CONTAINER_SETTINGS_DESC')}
+                    >
+                      <ContainerForm
+                        key={imageRegistries}
+                        type={'Add'}
+                        namespace={projectName}
+                        imageRegistries={imageRegistries}
+                        cluster={cluster}
+                        onImageTag={setImageTag}
+                        onSecretChange={setSecret}
+                        onSecretValueNull={setSecretValueNull}
+                      />
+                    </Form.Item>
+                  )}
+                  {!cosign && (
+                    <Form.Item>
+                      <div className={styles.content_box_wrap}>
+                        <div className={styles.content_box}>
+                          {/* <label>소스</label> */}
+                          <Loading spinning={loading}>
+                            <div
+                              className={`${styles.cont_box_wrap} ${
+                                sourceEmpty ? styles.formErrorStyle : ''
+                              }`}
+                            >
+                              <div className={styles.cont_box_section}>
+                                <div
+                                  className={`${styles.select_inner_content} select_inner_content`}
+                                >
+                                  <div
+                                    className={classnames(
+                                      styles.select_list_box,
+                                      styles.inner_image
+                                    )}
+                                  >
+                                    <div
+                                      className={classnames(
+                                        styles.selected_item,
+                                        styles.image
+                                      )}
+                                      onClick={() => handleImagePop()}
+                                    >
+                                      <p className={styles.inner_image}>
+                                        <span>Docker</span>
+                                      </p>
+                                      <div className={styles.placeholder}>
+                                        {imageName}
+                                      </div>
+                                    </div>
+                                    {popActive && imageList.length > 0 && (
+                                      <div
+                                        className={styles.select_list_image}
+                                        style={{ display: 'block' }}
+                                      >
+                                        {/* <div className={styles.sel_search}>
+                                          <i
+                                            className={styles.ico_search_small}
+                                          ></i>
+                                          <div
+                                            className={styles.input_search_pop}
+                                          >
+                                            <input
+                                              type="text"
+                                              placeholder={t(
+                                                'RESOURCES_SEARCH'
+                                              )}
+                                              onKeyDown={searchImageList}
+                                              style={{ border: 0 }}
+                                            />
+                                          </div>
+                                        </div> */}
+                                        <ul className={styles.sel_img}>
+                                          {imageList.map((obj, idx) => (
+                                            <li
+                                              onClick={() =>
+                                                handleImageTag(
+                                                  obj.name,
+                                                  obj.project_name
+                                                )
+                                              }
+                                              key={idx}
+                                            >
+                                              {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
+                                              <i
+                                                style={{
+                                                  background: `url('/assets/resources/images/icons/ico-os-${
+                                                    obj.name.split('-')[0]
+                                                  }.svg') center no-repeat`,
+                                                  width: '30px',
+                                                  height: '30px',
+                                                  marginRight: '5px',
+                                                }}
+                                              ></i>
+                                              <p className={styles.name}>
+                                                <strong>{obj.name}</strong>
+                                                <span>{obj.description}</span>
+                                              </p>
+                                              <div className={styles.rank}>
+                                                <i
+                                                  className={
+                                                    styles.ico_type_star
+                                                  }
+                                                ></i>
+                                                <span>{obj.popularity}</span>
+                                              </div>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className={styles.section_box}>
+                                  <Loading spinning={loading}>
+                                    {tagList.length > 0 ? (
+                                      <div className={styles.radio_list}>
+                                        {tagList.map((obj, idx) => (
+                                          <div
+                                            className={styles.form_radio}
+                                            key={idx}
+                                            onClick={() => setTag(obj.name)}
+                                          >
+                                            <input
+                                              type="radio"
+                                              name="rdo-tag"
+                                              value="Y"
+                                              id={`rdo-tag-n${idx}`}
+                                              defaultChecked={idx === 0}
+                                            />
+                                            <label htmlFor={`rdo-tag-n${idx}`}>
+                                              <i
+                                                className={styles.ico_etc_tag}
+                                              ></i>
+                                              <span>{obj.name}</span>
+                                            </label>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <div className={styles.empty}>
+                                        <i
+                                          className={styles.ico_type_container2}
+                                        ></i>
+                                        <span>{imageText}</span>
+                                      </div>
+                                    )}
+                                  </Loading>
+                                </div>
+                              </div>
+                            </div>
+                          </Loading>
+                        </div>
+                      </div>
+                    </Form.Item>
+                  )}
                 </Form.Group>
-              </Form.Item>
-            </div>
-            <div className={`${regStep === 3 ? '' : 'hide'}`}>
-              <Form.Item
-                label={t('CONTAINER_SETTINGS')}
-                desc={t('CONTAINER_SETTINGS_DESC')}
-              >
-                <ContainerForm
-                  key={imageRegistries}
-                  type={'Add'}
-                  namespace={projectName}
-                  imageRegistries={imageRegistries}
-                  cluster={cluster}
-                  onImageTag={setImageTag}
-                  onSecretChange={setSecret}
-                  onSecretValueNull={setSecretValueNull}
-                />
               </Form.Item>
             </div>
           </div>

@@ -43,16 +43,26 @@ export default class ImageStore extends Base {
 
   @action
   async create(data, params = {}) {
-    let res = await this.submitting(
-      request.post(
-        this.getPostUrl({
-          ...params,
-          registrysecrets: data.image.registrysecrets,
-          namespace: params.namespace ? params.namespace : data.image.project,
-        }),
-        data
+    let res
+    if (data.image.cosign) {
+      res = await this.submitting(
+        request.post(
+          this.getPostUrl({
+            ...params,
+            registrysecrets: data.image.registrysecrets,
+            namespace: params.namespace ? params.namespace : data.image.project,
+          }),
+          data
+        )
       )
-    )
+    } else {
+      res = await this.submitting(
+        request.post(
+          this.getListUrl({ ...params, name: data.image.name }),
+          data
+        )
+      )
+    }
 
     // this.afterChange(res, params)
     return res
