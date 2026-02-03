@@ -567,7 +567,7 @@ const GpuCluster = ({ widgetKey, monitorStore, activeDashboard, ...props }) => {
                     initialPositionY={10}
                     minScale={0.5}
                     maxScale={1.5}
-                    onTransformed={ctx => setScale(ctx.state.scale)}
+                    onTransformed={ctx => setScale(ctx?.state?.scale)}
                   >
                     {({ setTransform }) => (
                       <>
@@ -853,7 +853,8 @@ const GpuBoxValues = ({
     <section className="gpu_card_gpu_list">
       {index.map(el => (
         <div
-          className={`gpu_box ${gpuXidData?.[vmName]?.[el].state || 'unknown'}`}
+          className={`gpu_box ${gpuXidData?.[vmName]?.[el]?.state ||
+            'unknown'}`}
           key={el}
         >
           <div className="gpu_box_index">{el + 1}</div>
@@ -879,12 +880,12 @@ const GpuBoxValues = ({
                 </div>
               </div>
             </div>
-            {gpuXidData?.[vmName]?.[el].state === 'minor' && (
+            {gpuXidData?.[vmName]?.[el]?.state === 'minor' && (
               <div className="gpu_card_error">
                 <div
-                  className={`severity_badge ${gpuXidData?.[vmName]?.[el].state}`}
+                  className={`severity_badge ${gpuXidData?.[vmName]?.[el]?.state}`}
                 >
-                  {ERROR_MSG[gpuXidData?.[vmName]?.[el].state]}
+                  {ERROR_MSG[gpuXidData?.[vmName]?.[el]?.state]}
                 </div>
                 <span>{gpuXidData && gpuXidData?.[vmName]?.[el].errMsg}</span>
                 <span className="error_code">

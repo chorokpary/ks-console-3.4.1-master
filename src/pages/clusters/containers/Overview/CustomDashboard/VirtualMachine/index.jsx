@@ -26,7 +26,7 @@ const VirtualMachine = ({ widgetKey, monitorStore, ...props }) => {
       let gpuRunningCount = 0
 
       list.map(item => {
-        const state = getState(item.state)
+        const state = getState(item?.state)
         const isGpu = item.gpus.length > 0
 
         // 기본 카운트

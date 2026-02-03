@@ -43,8 +43,8 @@ const Gpu = ({
         {dataList
           .filter(item => {
             if (filter === 'all') return true
-            if (filter === 'minor') return item.state === 'abnormal'
-            if (filter === 'unknown') return item.state === 'unknown'
+            if (filter === 'minor') return item?.state === 'abnormal'
+            if (filter === 'unknown') return item?.state === 'unknown'
             return true
           })
           .sort((a, b) => {
@@ -64,7 +64,7 @@ const Gpu = ({
           .map((gpuItem, index) => (
             <div
               className={`gpu_tile ${getAreaColor(gpuItem?.util)} ${
-                gpuItem.state === 'minor' ? 'gpu_alert' : ''
+                gpuItem?.state === 'minor' ? 'gpu_alert' : ''
               }`}
               key={`${gpuItem.group}-${gpuItem.gpu}-${index}`}
               onClick={() => {
@@ -82,8 +82,8 @@ const Gpu = ({
                 </span>
               </div>
               <div className="percent">{gpuItem.util}%</div>
-              {(gpuItem.state === 'minor' || gpuItem.state === 'unknown') && (
-                <div className={`badge_alert ${gpuItem.state}`}></div>
+              {(gpuItem?.state === 'minor' || gpuItem?.state === 'unknown') && (
+                <div className={`badge_alert ${gpuItem?.state}`}></div>
               )}
             </div>
           ))}
