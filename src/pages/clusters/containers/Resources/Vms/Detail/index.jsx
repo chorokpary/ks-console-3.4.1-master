@@ -84,11 +84,25 @@ const VmDetail = props => {
     },
     {
       key: 'vnc',
-      icon: 'vpn',
+      icon: 'terminal',
       text: t('RESOURCES_ACCESS_VNC'),
       action: 'view',
       onClick: () => {
         fnOpenVncPopup()
+      },
+    },
+    {
+      key: 'interface',
+      icon: 'port',
+      text: t('RESOURCES_VM_INTERFACE_EDIT'),
+      action: 'view',
+      onClick: () => {
+        props.rootStore.triggerAction('vm.edit.interface', {
+          type: 'VM_DETAIL',
+          detail: toJS(store.detail),
+          store,
+          success: fetchData,
+        })
       },
     },
     {
@@ -172,7 +186,7 @@ const VmDetail = props => {
     },
     {
       key: 'viewLog',
-      icon: 'eye',
+      icon: 'log',
       text: t('RESOURCES_CONSOLE_LOG'),
       action: 'view',
       disabled: get(store.detail.vm, 'state') === 'Stopped',

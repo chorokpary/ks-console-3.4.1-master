@@ -526,6 +526,7 @@ module.exports = {
   RESOURCES_SELECT: 'Select',
   RESOURCES_NOT_SELECTED: 'Not Selected',
   RESOURCES_AUTOMATIC: 'Automatic',
+  RESOURCES_NO_IP_CHANGE: 'No IP Change',
   RESOURCES_DELETE_SELECT_FLOATING_IP_DESC:
     'Do you want to delete the selected floating IP?',
   RESOURCES_DELETE_MULTIPLE_SELECT_FLOATING_IP_DESC:
@@ -1064,6 +1065,7 @@ module.exports = {
   RESOURCES_DELETE_TEMPLATE: 'Delete Template',
   RESOURCES_EXCUTION_DESC: 'Do you want to execute?',
   RESOURCES_EXCUTION_SUCCESSFULLY: 'Executed successfully.',
+  RESOURCES_VM_INTERFACE_EDIT: 'Edit Interface',
   RESOURCES_VM_SECURITYGROUP_EDIT: 'Edit Security Group',
   RESOURCES_VM_FLAVOR_EDIT: 'Edit Flavor',
   RESOURCES_VM_EDIT: 'Edit VM',

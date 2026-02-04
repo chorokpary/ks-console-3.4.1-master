@@ -22,6 +22,7 @@ import { Modal } from 'components/Base'
 
 import RegistModal from 'clusters/containers/Resources/components/Modals/Vms/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/Vms/Modify'
+import ModifyInterfaceModal from 'clusters/containers/Resources/components/Modals/Vms/ModifyInterface'
 import ModifySecurityGroupModal from 'clusters/containers/Resources/components/Modals/Vms/ModifySecurityGroup'
 import ModifyFlavorModal from 'clusters/containers/Resources/components/Modals/Vms/ModifyFlavor'
 
@@ -87,6 +88,23 @@ export default {
         modal: ModifyModal,
         store,
         module,
+        ...props,
+      })
+    },
+  },
+  'vm.edit.interface': {
+    on({ store, detail, success, ...props }) {
+      const modal = Modal.open({
+        onOk: data => {
+          store.updateInterface({ ...detail }, data).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
+            success && success()
+          })
+        },
+        title: t('RESOURCES_VM_INTERFACE_EDIT'),
+        modal: ModifyInterfaceModal,
+        store,
         ...props,
       })
     },

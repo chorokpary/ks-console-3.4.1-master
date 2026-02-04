@@ -258,6 +258,28 @@ export default class VmStore extends Base {
   }
 
   @action
+  async updateInterface({ ...detail }, data) {
+    const interfaces = data.interfaces
+    const project = detail.project ? detail.project : detail.namespace
+    const jsonDataInterface = {}
+    const vmDataInterface= {}
+
+    vmDataInterface.project = project
+    vmDataInterface.interfaces = interfaces
+
+    jsonDataInterface.vm = vmDataInterface
+
+    await this.submitting(
+      request.put(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          detail
+        )}/edgetron/resources/kubevirt/vms/${detail.name}/interfaces`,
+        jsonDataInterface
+      )
+    )
+  }
+
+  @action
   async updateSecurity({ ...detail }, data) {
     const scurityGroups = data.scurityGroups
     const project = detail.project ? detail.project : detail.namespace
