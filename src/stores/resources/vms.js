@@ -273,7 +273,10 @@ export default class VmStore extends Base {
       request.put(
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
-        )}/edgetron/resources/kubevirt/vms/${detail.name}/interfaces`,
+        )}${this.getOditLogUrl({
+          ...detail,
+          name: detail.name,
+        })}/edgetron/resources/kubevirt/vms/${detail.name}/interfaces`,
         jsonDataInterface
       )
     )
@@ -297,7 +300,7 @@ export default class VmStore extends Base {
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
         )}${this.getOditLogUrl({
-          ...params,
+          ...detail,
           name: detail.name,
         })}/edgetron/resources/kubevirt/vms/${detail.name}/security_groups`,
         jsonDataSecurity
@@ -321,7 +324,7 @@ export default class VmStore extends Base {
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
         )}${this.getOditLogUrl({
-          ...params,
+          ...detail,
           name: detail.name,
         })}/edgetron/resources/kubevirt/vms/${detail.name}/flavor`,
         jsonData
