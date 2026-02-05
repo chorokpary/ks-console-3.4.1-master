@@ -66,7 +66,7 @@ const Presets = props => {
           : 'default',
         labels: detail.labels,
       }
-      await clusterResourceStore.update({ cluster_obj: data })
+      await clusterResourceStore.updateLabels({ cluster_obj: data })
     } catch (error) {
       console.error('Failed to install addon:', error)
     }

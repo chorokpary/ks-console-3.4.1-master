@@ -41,6 +41,7 @@ const RegistModal = props => {
   const [imageOptionList, setImageOptionList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
+  const [securityGroupDataList, setSecurityGroupDataList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [networkList, setNetworkList] = useState([])
@@ -68,6 +69,7 @@ const RegistModal = props => {
   const [csis, setCsis] = useState([])
   const [features, setFeatures] = useState([])
   const [elbs, setElbs] = useState([])
+  const [securityGroups, setSecurityGroups] = useState([])
   const [secureBoot, setSecureBoot] = useState(false)
 
   const [networkFlag, setNetworkFlag] = useState(1)
@@ -103,6 +105,9 @@ const RegistModal = props => {
       const listStoregeClass = await vmStore.fetchVmListStoregeClass({
         ...props,
       })
+      const listSecurityGroup = await vmStore.fetchVmListSecurityGroupSummray({
+        ...props,
+      })
 
       setFlavorDataList(listFlavor.flavors)
       setImageDataList(listImage._originData.images)
@@ -111,6 +116,7 @@ const RegistModal = props => {
       setSriovNetworkDataList(listSriovNetwork.sriovs)
       setSriovNetworkList(listSriovNetwork.sriovs)
       setStorageClassDataList(listStoregeClass.user_sces)
+      setSecurityGroupDataList(listSecurityGroup)
     }
 
     getVmCreateData()
@@ -123,6 +129,10 @@ const RegistModal = props => {
       obj => obj.project === project
     )
     setSriovNetworkList(sriovNetworks)
+    const sgs = securityGroupDataList
+      .filter(obj => obj.project === project)
+      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    setSecurityGroups(sgs)
   }
 
   useEffect(() => {
@@ -340,6 +350,9 @@ const RegistModal = props => {
       data.secure_boot = secureBoot
       data.node_selectors = nodeSelector
       data.storage_class = storageClass
+      data.security_groups = securityGroupCheckItems.map(
+        item => `${projectName}/${item}`
+      )
       onOk({ ...data })
     })
   }
@@ -565,16 +578,45 @@ const RegistModal = props => {
   const [networkCheckItem, setNetworkCheckItem] = useState('')
   const [sriovCheckItem, setSriovCheckItem] = useState('')
   const [elbCheckItem, setElbCheckItem] = useState('')
+  const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([])
+
   const setVariables = {
     network: setNetworkCheckItem,
     sriov: setSriovCheckItem,
     elb: setElbCheckItem,
+    security: setSecurityGroupCheckItems,
+  }
+  const dataListVariables = {
+    security: securityGroups,
+  }
+  const stateVariables = {
+    security: securityGroupCheckItems,
   }
 
   const handleSingleCheck = (name, type) => {
     setVariables[type](name)
-    if (type !== 'elb') {
+    if (type !== 'elb' && type !== 'security') {
       setNetworkName(name)
+    }
+  }
+
+  const handleSGCheck = (checked, name) => {
+    if (checked) {
+      setVariables['security'](prev => [...prev, name])
+    } else {
+      setVariables['security'](
+        stateVariables['security'].filter(el => el !== name)
+      )
+    }
+  }
+
+  const handleAllCheck = (checked, type) => {
+    if (checked) {
+      const nameArray = []
+      dataListVariables[type].forEach(el => nameArray.push(el.name))
+      setVariables[type](nameArray)
+    } else {
+      setVariables[type]([])
     }
   }
 
@@ -806,6 +848,7 @@ const RegistModal = props => {
                             setNetworkCheckItem('')
                             setSriovCheckItem('')
                             setElbCheckItem('')
+                            setSecurityGroupCheckItems([])
                           }}
                         />
                       </Form.Item>
@@ -1174,6 +1217,110 @@ const RegistModal = props => {
                   </Form.Group>
                 </Form.Item>
 
+                <Form.Item label={t('RESOURCES_SECURITY_GROUP')}>
+                  <div className={styles.wrapper}>
+                    {stateVariables['security'].length > 0 && (
+                      <div
+                        className={classnames(
+                          styles.table_title,
+                          styles.table_title_bg
+                        )}
+                      >
+                        <Button
+                          className={styles.table_title_button}
+                          onClick={() => handleAllCheck(false, 'security')}
+                        >
+                          {t('RESOURCES_ALL_DESELECT')}
+                        </Button>
+                        {stateVariables['security'].length}
+                        {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
+                      </div>
+                    )}
+                    <div className={styles.table}>
+                      <table>
+                        <colgroup>
+                          <col width="5%" />
+                          <col width="30%" />
+                          <col width="30%" />
+                          <col width="20%" />
+                          <col width="20%" />
+                        </colgroup>
+                        <thead>
+                          <tr>
+                            <th>
+                              <Checkbox
+                                name="select-all-security"
+                                onChange={checked =>
+                                  handleAllCheck(checked, 'security')
+                                }
+                                checked={
+                                  !!(
+                                    dataListVariables['security'].length > 0 &&
+                                    stateVariables['security'].length ===
+                                      dataListVariables['security'].length
+                                  )
+                                }
+                              />
+                            </th>
+                            <th>
+                              <strong>
+                                {t('RESOURCES_SECURITY_GROUP_NAME')}
+                              </strong>
+                            </th>
+                            <th>
+                              <strong>{t('RESOURCES_DESCRIPTION')}</strong>
+                            </th>
+                            <th>
+                              <strong>
+                                {t('RESOURCES_INBOUND_RULE_COUNT')}
+                              </strong>
+                            </th>
+                            <th>
+                              <strong>
+                                {t('RESOURCES_OUTBOUND_RULE_COUNT')}
+                              </strong>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {!securityGroups?.length && (
+                            <tr>
+                              <td colSpan="5" className="no-data">
+                                <p>
+                                  {t(
+                                    'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
+                                  )}
+                                </p>
+                              </td>
+                            </tr>
+                          )}
+                          {securityGroups?.map(data => (
+                            <tr key={data.name}>
+                              <td>
+                                <Checkbox
+                                  name={`select-${data.name}`}
+                                  checked={
+                                    !!stateVariables['security'].includes(
+                                      data.name
+                                    )
+                                  }
+                                  onChange={checked =>
+                                    handleSGCheck(checked, data.name)
+                                  }
+                                />
+                              </td>
+                              <td>{data.name}</td>
+                              <td>{data.description}</td>
+                              <td>{data.ingress}</td>
+                              <td>{data.egress}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </Form.Item>
+
                 <Form.Group
                   label={t('ELB (External Load Balancer)')}
                   onChange={() => {
@@ -1540,6 +1687,12 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
+                    <label>{t('RESOURCES_SECURITY_GROUP')}</label>
+                    <div className={styles.greybgbox}>
+                      {securityGroupCheckItems.length === 0
+                        ? t('RESOURCES_NOT_SELECTED')
+                        : securityGroupCheckItems.join(', ')}
+                    </div>
                     <label
                       className={`${
                         networkList.filter(x => elbCheckItem === x.name)

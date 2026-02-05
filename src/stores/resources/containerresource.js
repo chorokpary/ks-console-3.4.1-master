@@ -184,6 +184,7 @@ export default class ResourceStore extends Base {
     reqData.secure_boot = data.secure_boot
     reqData.node_selectors = data.node_selectors
     reqData.storage_class = data.storage_class
+    reqData.security_groups = data.security_groups
     jsonData.cluster = reqData
 
     return await this.submitting(
@@ -273,6 +274,19 @@ export default class ResourceStore extends Base {
           name: data.cluster_obj.name,
           namespace: data.cluster_obj.namespace,
         }),
+        data
+      )
+    )
+  }
+
+  @action
+  async updateLabels(data) {
+    return await this.submitting(
+      request.put(
+        `${this.getDetailUrl({
+          name: data.cluster_obj.name,
+          namespace: data.cluster_obj.namespace,
+        })}/labels`,
         data
       )
     )
