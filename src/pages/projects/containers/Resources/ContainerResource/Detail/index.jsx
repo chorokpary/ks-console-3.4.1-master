@@ -169,6 +169,18 @@ const ResourceDetail = props => {
         value: detail.network.name,
       },
       {
+        name: t('RESOURCES_SECURITY_GROUP'),
+        value:
+          detail.security_groups.length > 0
+            ? detail.security_groups &&
+              detail.security_groups.map(security => (
+                <p key={security}>
+                  {security.substring(security.indexOf('/') + 1)}
+                </p>
+              ))
+            : '-',
+      },
+      {
         name: t('RESOURCES_DESCRIPTION'),
         value: detail.description ? detail.description : '-',
       },
