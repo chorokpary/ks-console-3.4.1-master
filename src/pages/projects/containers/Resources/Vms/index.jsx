@@ -28,7 +28,7 @@ import withList, { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 
 import * as common from 'utils/resources'
-import { getLocalTime, showNameAndAlias } from 'utils'
+import { getLocalTime } from 'utils'
 
 import VmStore from 'stores/resources/vms'
 import styles from './index.scss'
@@ -142,7 +142,7 @@ export default class Vms extends React.Component {
           text: t('RESOURCES_DELETE'),
           action: 'delete',
           onClick: () =>
-            trigger('vm.remove.clusterbatch', {
+            trigger('vm.remove.batch', {
               success: getData,
               ...this.props.match.params,
             }),
@@ -271,7 +271,9 @@ export default class Vms extends React.Component {
           const icon = `ico-os-${record.image_object?.distro_type}`
           return image ? (
             <Tooltip content={image} placement="right">
-              <Link to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}>
+              <Link
+                to={`/${workspace}/clusters/${cluster}/projects/${namespace}/images/${image}`}
+              >
                 <i
                   style={{
                     backgroundImage: `url('/assets/resources/images/icons/${icon}.svg')`,
@@ -306,9 +308,11 @@ export default class Vms extends React.Component {
         search: true,
         width: 'auto',
         render: (flavor, record) => {
-          const flavor_spec = "CPU: " + record.flavor_object.vcpus + " Cores, Memory: " +
-            common.fnSetBytes(record.flavor_object.ram) + " GiB, Disk: " +
-            record.flavor_object.root_disk + " GiB"
+          const flavor_spec = `CPU: ${
+            record.flavor_object.vcpus
+          } Cores, Memory: ${common.fnSetBytes(
+            record.flavor_object.ram
+          )} GiB, Disk: ${record.flavor_object.root_disk} GiB`
           return (
             <div className={styles.text_no_wrap}>
               <Tooltip content={flavor_spec} placement="top">
@@ -328,61 +332,68 @@ export default class Vms extends React.Component {
         width: 'auto',
         render: (networks, record) => {
           let networkIpList
-          let networkFipList
 
           // we first process regular network IPs
           if (networks) {
             networkIpList = networks.map(el => {
               if (el.name === 'k8s-pod-network') return <p></p>
-              let icon = ""
-              let tooltip = ""
+              let icon
+              let tooltip
               switch (el.type) {
                 case 'virtio':
-                  icon = "🆅";
-                  tooltip = t('RESOURCES_VPC_NETWORK') + ": ";
-                  break;
+                  icon = '🆅'
+                  tooltip = `${t('RESOURCES_VPC_NETWORK')}: `
+                  break
                 case 'sriov':
-                  icon = "🆂";
-                  tooltip = t('RESOURCES_SR_IOV_NETWORK') + ": ";
-                  break;
+                  icon = '🆂'
+                  tooltip = `${t('RESOURCES_SR_IOV_NETWORK')}: `
+                  break
                 case 'bond':
-                  icon = "🅱";
-                  tooltip = t('RESOURCES_BOND_NETWORK') + ": ";
-                  break;
+                  icon = '🅱'
+                  tooltip = `${t('RESOURCES_BOND_NETWORK')}: `
+                  break
                 case 'dedicated':
-                  icon = "🅳";
-                  tooltip = t('RESOURCES_DEDICATED_NETWORK') + ": ";
-                  break;
+                  icon = '🅳'
+                  tooltip = `${t('RESOURCES_DEDICATED_NETWORK')}: `
+                  break
                 default:
-                  icon = "🆄";
-                  tooltip = t('RESOURCES_UNKNOWN_NETWORK') + ": ";
+                  icon = '🆄'
+                  tooltip = `${t('RESOURCES_UNKNOWN_NETWORK')}: `
               }
 
               const fullname = tooltip + el.name
-              return <Tooltip content={fullname} placement="right">
-                <p key={el.name}>{icon} {el.ip}</p></Tooltip>
+              return (
+                <Tooltip content={fullname} placement="right">
+                  <p key={el.name}>
+                    {icon} {el.ip}
+                  </p>
+                </Tooltip>
+              )
             })
-
           }
 
           // we now process floating IP
           const floatingList = this.props.store.floatingIpList
-          networkFipList =
+          const networkFipList =
             floatingList &&
             floatingList
               ?.filter(row => row.instance_id === record.name)
-              .map(el => <Tooltip content="Floating IP" placement="right"><p key={el.id}>🅵 {el.floating_ip}</p></Tooltip>)
+              .map(el => (
+                <Tooltip content="Floating IP" placement="right">
+                  <p key={el.id}>🅵 {el.floating_ip}</p>
+                </Tooltip>
+              ))
 
           // merge them
-          const items = [...networkIpList, ...networkFipList];
+          const items = [...networkIpList, ...networkFipList]
 
           // if nothing to show
           if (items.length === 0) {
-            return <p>-</p>;
+            return <p>-</p>
           }
 
           // render all of them
-          return <>{items}</>;
+          return <>{items}</>
         },
       },
       {
@@ -395,9 +406,7 @@ export default class Vms extends React.Component {
           return node === 'N/A' ? (
             node
           ) : (
-            <div className={styles.text_no_wrap}>
-              {node}
-            </div>
+            <div className={styles.text_no_wrap}>{node}</div>
           )
         },
       },
@@ -413,13 +422,13 @@ export default class Vms extends React.Component {
             securityGroupText =
               security_group_objects.length > 1
                 ? `${security_group_objects[0].name} ${t(
-                  'RESOURCES_BESIDES'
-                )} ${security_group_objects.length - 1} ${t(
-                  'RESOURCES_COUNT'
-                )}`
+                    'RESOURCES_BESIDES'
+                  )} ${security_group_objects.length - 1} ${t(
+                    'RESOURCES_COUNT'
+                  )}`
                 : security_group_objects.length === 1
-                  ? security_group_objects[0].name
-                  : '-'
+                ? security_group_objects[0].name
+                : '-'
           } else {
             securityGroupText = ''
           }
@@ -448,7 +457,10 @@ export default class Vms extends React.Component {
             '_',
           ])
 
-          if ((vmsRole?.includes('manage') || _Role?.includes('manage')) && stateArray.includes(state)) {
+          if (
+            (vmsRole?.includes('manage') || _Role?.includes('manage')) &&
+            stateArray.includes(state)
+          ) {
             return (
               <div>
                 <Dropdown
@@ -460,9 +472,7 @@ export default class Vms extends React.Component {
                     <i
                       className={styles[`ico-status-${state.toLowerCase()}`]}
                     />
-                    <p>
-                      {t(`RESOURCES_${state.toUpperCase()}`)}
-                    </p>
+                    <p>{t(`RESOURCES_${state.toUpperCase()}`)}</p>
                   </div>
                 </Dropdown>
               </div>

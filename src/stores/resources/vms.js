@@ -262,7 +262,7 @@ export default class VmStore extends Base {
     const interfaces = data.interfaces
     const project = detail.project ? detail.project : detail.namespace
     const jsonDataInterface = {}
-    const vmDataInterface= {}
+    const vmDataInterface = {}
 
     vmDataInterface.project = project
     vmDataInterface.interfaces = interfaces
@@ -485,11 +485,12 @@ export default class VmStore extends Base {
     return response.metering
   }
 
+  // batch deletion for project's KaaS list page
   @action
-  async batchDelete({ rowKeyNames, ...params }) {
+  async batchDelete({ rowKeys, ...params }) {
     await this.submitting(
       Promise.all(
-        rowKeyNames.map(name =>
+        rowKeys.map(name =>
           request.delete(
             `${this.getResourceUrl({ name, ...params })}/${name}`,
             {
@@ -502,6 +503,7 @@ export default class VmStore extends Base {
     this.list.selectedRowKeys = []
   }
 
+  // batch deletion  for admin KaaS list page (Do Not use for project page!!!!!)
   @action
   async clusterBatchDelete({ rowKeys, ...params }) {
     const rowKeyDict = rowKeys.map(key => {

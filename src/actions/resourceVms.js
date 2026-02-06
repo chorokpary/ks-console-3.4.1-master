@@ -181,15 +181,11 @@ export default {
   'vm.remove.batch': {
     on({ store, cluster, workspace, namespace, success, ...props }) {
       const rowKeys = toJS(store.list.selectedRowKeys)
-      const rowKeyNames = rowKeys.map(key => {
-        const name = key.split('/')[1]
-        return [name]
-      })
-      const names = rowKeyNames.join(', ')
+      const names = rowKeys.join(', ')
       const modal = Modal.open({
         onOk: () => {
           store
-            .batchDelete({ rowKeyNames, cluster, workspace, namespace })
+            .batchDelete({ rowKeys, cluster, workspace, namespace })
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
