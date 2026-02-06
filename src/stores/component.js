@@ -68,7 +68,7 @@ export default class ComponentStore {
 
     const data = {
       kubernetes: get(components, 'kube-system', []),
-      kubesphere: get(components, 'petasus-system', []),
+      petasus: get(components, 'petasus-system', []),
       kubevirt: get(components, 'virt-system', []),
       capi: get(components, 'capi-system', []),
       harbor: get(components, 'registry-system', []),
