@@ -23,40 +23,43 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
   const getData = async () => {
     setLoading(true)
 
-    const vmList = await vmStore.vmList({ limit: -1, ...props })
-    let promsql_pod_vm_list = ''
-    let vm_list_length = 0
-    vmList.map(obj => {
-      promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
-      vm_list_length++
-    })
+    try {
+      const vmList = await vmStore.vmList({ limit: -1, ...props })
+      let promsql_pod_vm_list = ''
+      let vm_list_length = 0
+      vmList.map(obj => {
+        promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
+        vm_list_length++
+      })
 
-    var currentTime = Math.floor(Date.now() / 1000)
-    const cpuUsageData = await customStore.fetchMetric({
-      expr: `sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const usage = last(cpuUsageData?.[0].values)[1]
-    setCpuUsage(Math.floor(usage))
+      var currentTime = Math.floor(Date.now() / 1000)
+      const cpuUsageData = await customStore.fetchMetric({
+        expr: `sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const usage = last(cpuUsageData?.[0].values)[1]
+      setCpuUsage(Math.floor(usage))
 
-    const vmNonUsageData = await customStore.fetchMetric({
-      expr: `count(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m])) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const nonUsage = last(vmNonUsageData?.[0].values)[1]
-    setCpuNonUsage(Math.floor(nonUsage))
+      const vmNonUsageData = await customStore.fetchMetric({
+        expr: `count(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m])) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const nonUsage = last(vmNonUsageData?.[0].values)[1]
+      setCpuNonUsage(Math.floor(nonUsage))
 
-    const vmUsageDataAll = await customStore.fetchMetric({
-      expr: `count(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m]))`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const usageAll = last(vmUsageDataAll?.[0].values)[1]
-    setCpuUsageAll(Math.floor(usageAll))
-
-    setLoading(false)
+      const vmUsageDataAll = await customStore.fetchMetric({
+        expr: `count(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m]))`,
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const usageAll = last(vmUsageDataAll?.[0].values)[1]
+      setCpuUsageAll(Math.floor(usageAll))
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

@@ -23,45 +23,48 @@ const MemoryUsage = ({ widgetKey, monitorStore, ...props }) => {
   const getData = async () => {
     setLoading(true)
 
-    const vmList = await vmStore.vmList({ limit: -1, ...props })
-    let promsql_pod_vm_list = ''
-    let vm_list_length = 0
-    vmList.map(obj => {
-      promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
-      vm_list_length++
-    })
+    try {
+      const vmList = await vmStore.vmList({ limit: -1, ...props })
+      let promsql_pod_vm_list = ''
+      let vm_list_length = 0
+      vmList.map(obj => {
+        promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
+        vm_list_length++
+      })
 
-    var currentTime = Math.floor(Date.now() / 1000)
-    const memoryUsageData = await customStore.fetchMetric({
-      expr: `sum(node_memory_MemTotal_bytes{namespace="default",service="launcher-node-exporter",pod!~"${promsql_pod_vm_list}"} 
+      var currentTime = Math.floor(Date.now() / 1000)
+      const memoryUsageData = await customStore.fetchMetric({
+        expr: `sum(node_memory_MemTotal_bytes{namespace="default",service="launcher-node-exporter",pod!~"${promsql_pod_vm_list}"} 
       - node_memory_MemAvailable_bytes{namespace="default",service="launcher-node-exporter",pod!~"${promsql_pod_vm_list}"}) 
       / ${getCustomValue('memory', 'Gi')}`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const usage = last(memoryUsageData?.[0].values)[1]
-    setMemoryUsage(Math.floor(usage))
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const usage = last(memoryUsageData?.[0].values)[1]
+      setMemoryUsage(Math.floor(usage))
 
-    const memoryNonUsageData = await customStore.fetchMetric({
-      expr: `sum(node_memory_MemAvailable_bytes{namespace="default",service="launcher-node-exporter",pod!~"${promsql_pod_vm_list}"}) 
+      const memoryNonUsageData = await customStore.fetchMetric({
+        expr: `sum(node_memory_MemAvailable_bytes{namespace="default",service="launcher-node-exporter",pod!~"${promsql_pod_vm_list}"}) 
       / ${getCustomValue('memory', 'Gi')}`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const nonUsage = last(memoryNonUsageData?.[0].values)[1]
-    setMemoryNonUsage(Math.floor(nonUsage))
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const nonUsage = last(memoryNonUsageData?.[0].values)[1]
+      setMemoryNonUsage(Math.floor(nonUsage))
 
-    const memoryUsageDataAll = await customStore.fetchMetric({
-      expr: `(sum(node_memory_MemTotal_bytes{namespace="default",service="launcher-node-exporter"}) 
+      const memoryUsageDataAll = await customStore.fetchMetric({
+        expr: `(sum(node_memory_MemTotal_bytes{namespace="default",service="launcher-node-exporter"}) 
       - sum(node_memory_MemTotal_bytes{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"})) 
       / ${getCustomValue('memory', 'Gi')}`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const usageAll = last(memoryUsageDataAll?.[0].values)[1]
-    setMemoryUsageAll(Math.floor(usageAll))
-
-    setLoading(false)
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const usageAll = last(memoryUsageDataAll?.[0].values)[1]
+      setMemoryUsageAll(Math.floor(usageAll))
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

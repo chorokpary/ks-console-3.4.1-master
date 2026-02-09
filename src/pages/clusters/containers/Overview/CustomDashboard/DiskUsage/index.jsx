@@ -23,45 +23,48 @@ const DiskUsage = ({ widgetKey, monitorStore, ...props }) => {
   const getData = async () => {
     setLoading(true)
 
-    const vmList = await vmStore.vmList({ limit: -1, ...props })
-    let promsql_pod_vm_list = ''
-    let vm_list_length = 0
-    vmList.map(obj => {
-      promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
-      vm_list_length++
-    })
+    try {
+      const vmList = await vmStore.vmList({ limit: -1, ...props })
+      let promsql_pod_vm_list = ''
+      let vm_list_length = 0
+      vmList.map(obj => {
+        promsql_pod_vm_list = promsql_pod_vm_list + obj.name + '|'
+        vm_list_length++
+      })
 
-    var currentTime = Math.floor(Date.now() / 1000)
-    const diskUsageData = await customStore.fetchMetric({
-      expr: `sum(node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat",pod!~"${promsql_pod_vm_list}"} 
+      var currentTime = Math.floor(Date.now() / 1000)
+      const diskUsageData = await customStore.fetchMetric({
+        expr: `sum(node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat",pod!~"${promsql_pod_vm_list}"} 
       - node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat",pod!~"${promsql_pod_vm_list}"})
         / ${getCustomValue('disk', 'GB')}`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const usage = last(diskUsageData?.[0].values)[1]
-    setDiskUsage(Math.floor(usage))
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const usage = last(diskUsageData?.[0].values)[1]
+      setDiskUsage(Math.floor(usage))
 
-    const diskNonUsageData = await customStore.fetchMetric({
-      expr: `sum(node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat",pod!~"${promsql_pod_vm_list}"})
+      const diskNonUsageData = await customStore.fetchMetric({
+        expr: `sum(node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat",pod!~"${promsql_pod_vm_list}"})
         / ${getCustomValue('disk', 'GB')}`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const nonUsage = last(diskNonUsageData?.[0].values)[1]
-    setDiskNonUsage(Math.floor(nonUsage))
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const nonUsage = last(diskNonUsageData?.[0].values)[1]
+      setDiskNonUsage(Math.floor(nonUsage))
 
-    const diskUsageDataAll = await customStore.fetchMetric({
-      expr: `(sum(node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat"})
+      const diskUsageDataAll = await customStore.fetchMetric({
+        expr: `(sum(node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat"})
       - sum(node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat",pod=~"${promsql_pod_vm_list}"}))
         / ${getCustomValue('disk', 'GB')}`,
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    })
-    const usageAll = last(diskUsageDataAll?.[0].values)[1]
-    setDiskUsageAll(Math.floor(usageAll))
-
-    setLoading(false)
+        start: currentTime - 1000,
+        end: currentTime - 1000,
+      })
+      const usageAll = last(diskUsageDataAll?.[0].values)[1]
+      setDiskUsageAll(Math.floor(usageAll))
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
