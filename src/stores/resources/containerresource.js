@@ -184,6 +184,7 @@ export default class ResourceStore extends Base {
     reqData.secure_boot = data.secure_boot
     reqData.node_selectors = data.node_selectors
     reqData.storage_class = data.storage_class
+    reqData.security_groups = data.security_groups
     jsonData.cluster = reqData
 
     return await this.submitting(
@@ -279,30 +280,34 @@ export default class ResourceStore extends Base {
   }
 
   @action
+  async updateLabels(data) {
+    return await this.submitting(
+      request.put(
+        `${this.getDetailUrl({
+          name: data.cluster_obj.name,
+          namespace: data.cluster_obj.namespace,
+        })}/labels`,
+        data
+      )
+    )
+  }
+
+  // batch deletion for project's VM list page
+  @action
   async batchDelete({ rowKeys, ...params }) {
-    const rowKeyDict = rowKeys.map(key => {
-      const [project, name] = key.split('/')
-      return { project, name }
-    })
     await this.submitting(
       Promise.all(
-        rowKeyDict.map(rowKey =>
-          request.delete(
-            `${this.getDetailUrl({
-              name: rowKey.name,
-              ...params,
-              namespace: rowKey.project,
-            })}`,
-            {
-              project: rowKey.project,
-            }
-          )
+        rowKeys.map(name =>
+          request.delete(`${this.getDetailUrl({ name, ...params })}`, {
+            project: params.namespace,
+          })
         )
       )
     )
     this.list.selectedRowKeys = []
   }
 
+  // batch deletion  for admin VM list page (Do Not use for project page!!!!!)
   @action
   async clusterBatchDelete({ rowKeys, cluster }) {
     const rowKeyDict = rowKeys.map(key => {

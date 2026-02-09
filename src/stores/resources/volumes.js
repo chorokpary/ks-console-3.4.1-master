@@ -225,38 +225,22 @@ export default class VolumeStore extends Base {
     return yamlData
   }
 
+  // batch deletion for project's Volume list page
   @action
   async batchDelete({ rowKeyNames, ...params }) {
-    const rowKeyDict = rowKeys.map(key => {
-      if (key.includes('/')) {
-        const [project, name] = key.split('/')
-        return { project, name }
-      } else {
-        const project = params.namespace
-        const name = key
-        return { project, name }
-      }
-    })
-
     await this.submitting(
       Promise.all(
-        rowKeyDict.map(rowKey =>
-          request.delete(
-            `${this.getDetailUrl({
-              name: rowKey.name,
-              ...params,
-              namespace: params.namespace ? params.namespace : rowKey.project,
-            })}`,
-            {
-              project: rowKey.project,
-            }
-          )
+        rowKeyNames.map(name =>
+          request.delete(`${this.getDetailUrl({ name, ...params })}`, {
+            project: params.namespace,
+          })
         )
       )
     )
     this.list.selectedRowKeys = []
   }
 
+  // batch deletion  for admin Volume list page (Do Not use for project page!!!!!)
   @action
   async clusterBatchDelete({ rowKeys, ...params }) {
     const rowKeyDict = rowKeys.map(key => {

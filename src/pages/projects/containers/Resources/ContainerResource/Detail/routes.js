@@ -21,6 +21,7 @@ import { getIndexRoute } from 'utils/router.config'
 import Node from './Node'
 import Monitoring from './Monitoring'
 import Status from './Status'
+import Presets from './Presets'
 
 const PATH =
   '/:workspace/clusters/:cluster/projects/:namespace/containerResource/:name'
@@ -42,6 +43,12 @@ export default [
     path: `${PATH}/monitoring`,
     title: t('RESOURCES_MONITORING'),
     component: Monitoring,
+    exact: true,
+  },
+  {
+    path: `${PATH}/presets`,
+    title: t('RESOURCES_PRESETS'),
+    component: Presets,
     exact: true,
   },
   getIndexRoute({ path: PATH, to: `${PATH}/node`, exact: true }),

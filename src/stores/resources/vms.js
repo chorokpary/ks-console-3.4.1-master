@@ -258,6 +258,31 @@ export default class VmStore extends Base {
   }
 
   @action
+  async updateInterface({ ...detail }, data) {
+    const interfaces = data.interfaces
+    const project = detail.project ? detail.project : detail.namespace
+    const jsonDataInterface = {}
+    const vmDataInterface = {}
+
+    vmDataInterface.project = project
+    vmDataInterface.interfaces = interfaces
+
+    jsonDataInterface.vm = vmDataInterface
+
+    await this.submitting(
+      request.put(
+        `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+          detail
+        )}${this.getOditLogUrl({
+          ...detail,
+          name: detail.name,
+        })}/edgetron/resources/kubevirt/vms/${detail.name}/interfaces`,
+        jsonDataInterface
+      )
+    )
+  }
+
+  @action
   async updateSecurity({ ...detail }, data) {
     const scurityGroups = data.scurityGroups
     const project = detail.project ? detail.project : detail.namespace
@@ -275,7 +300,7 @@ export default class VmStore extends Base {
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
         )}${this.getOditLogUrl({
-          ...params,
+          ...detail,
           name: detail.name,
         })}/edgetron/resources/kubevirt/vms/${detail.name}/security_groups`,
         jsonDataSecurity
@@ -299,7 +324,7 @@ export default class VmStore extends Base {
         `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
           detail
         )}${this.getOditLogUrl({
-          ...params,
+          ...detail,
           name: detail.name,
         })}/edgetron/resources/kubevirt/vms/${detail.name}/flavor`,
         jsonData
@@ -460,11 +485,12 @@ export default class VmStore extends Base {
     return response.metering
   }
 
+  // batch deletion for project's KaaS list page
   @action
-  async batchDelete({ rowKeyNames, ...params }) {
+  async batchDelete({ rowKeys, ...params }) {
     await this.submitting(
       Promise.all(
-        rowKeyNames.map(name =>
+        rowKeys.map(name =>
           request.delete(
             `${this.getResourceUrl({ name, ...params })}/${name}`,
             {
@@ -477,6 +503,7 @@ export default class VmStore extends Base {
     this.list.selectedRowKeys = []
   }
 
+  // batch deletion  for admin KaaS list page (Do Not use for project page!!!!!)
   @action
   async clusterBatchDelete({ rowKeys, ...params }) {
     const rowKeyDict = rowKeys.map(key => {

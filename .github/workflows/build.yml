@@ -10,34 +10,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Download Black Duck Detect JAR
-        run: |
-          wget https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/detect/10.0.0/detect-10.0.0.jar -O /home/runner/detect-10.0.0.jar
-
-      - name: Download and Configure Black Duck Scan Script
-        run: |
-          # Download scanning script
-          wget -O scanning_linux.sh https://opensource.sktelecom.com/blackduck/scanning_linux.sh --no-check-certificate
-          chmod +x scanning_linux.sh
-
-      - name: Configure Black Duck Scan Script
-        run: |
-          # Replace variables in scanning_linux.sh using sed
-          sed -i 's|export PROJECT_NAME=.*|export PROJECT_NAME="petasus_ks_console_infra"|' scanning_linux.sh
-          sed -i 's|export VERSION_NAME=.*|export VERSION_NAME="${{ github.ref_name }}"|' scanning_linux.sh
-          sed -i 's|export SOURCE_PATH=.*|export SOURCE_PATH="${{ github.workspace }}"|' scanning_linux.sh
-          sed -i 's|export SYNOPSYS_DETECT=.*|export SYNOPSYS_DETECT="/home/runner/detect-10.0.0.jar"|' scanning_linux.sh
-
-      - name: Run Black Duck Scan
-        run: |
-          ./scanning_linux.sh
-
       - name: Setup QEMU
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
