@@ -95,6 +95,7 @@ import ClusterFault from '../containers/Resources/ClusterFault'
 import ClusterInspection from '../containers/Resources/ClusterInspection'
 
 import GpuClusters from '../containers/Resources/GpuClusters'
+import ExternalLoadBalancers from '../containers/Resources/ExternalLoadBalancers'
 
 const PATH = '/clusters/:cluster'
 
@@ -437,6 +438,11 @@ export default [
           {
             path: `${PATH}/gpuclusters`,
             component: GpuClusters,
+            exact: true,
+          },
+          {
+            path: `${PATH}/externalLoadBalancers`,
+            component: ExternalLoadBalancers,
             exact: true,
           },
 

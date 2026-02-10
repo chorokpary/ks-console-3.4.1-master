@@ -35,7 +35,7 @@ server:
     harborUrl: http://registry-harbor-portal.harbor.svc.cluster.local:80
     imagebuildlUrl: http://cmp-imageuploader.cmp.svc.cluster.local:8080
     authentikUrl: http://192.168.15.157:30081
-
+    xlbUrl: http://192.168.0.49:31080
 
     # url: http://172.30.0.11:30107
     # wsUrl: ws://172.30.0.11:30107
@@ -229,6 +229,12 @@ client:
             - {
                 name: loadBalancers,
                 title: RESOURCES_LOAD_BALANCER,
+                skipAuth: true,
+                showInDisable: true,
+              }
+            - {
+                name: externalLoadBalancers,
+                title: RESOURCES_EXTERNAL_LB,
                 skipAuth: true,
                 showInDisable: true,
               }

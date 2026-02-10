@@ -1303,6 +1303,31 @@ module.exports = {
   RESOURCES_DISK_AVAILABLE: '디스크 가용률 (GB)',
   RESOURCES_SYSTEM_POD_PL: '시스템 파드',
 
-
-
+  RESOURCES_EXTERNAL_LB: 'External LB',
+  RESOURCES_EXTERNAL_LOAD_BALANCER_DESC:'External LB의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_CREATE_EXTERNAL_LOAD_BALANCER: 'External LB 생성',
+  RESOURCES_EDIT_EXTERNAL_LOAD_BALANCER: 'External LB 수정',
+  RESOURCES_DELETE_EXTERNAL_LOAD_BALANCER_TIP: 'External LB 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_LISTENER: '리스너',
+  RESOURCES_LISTENER_SETTINGS: '리스너 설정',
+  RESOURCES_POOL: '풀',
+  RESOURCES_POOL_SETTINGS: '풀 설정',
+  RESOURCES_ALREADY_SELECTED_PROTOCOL: '이미 선택한 프로토콜 입니다.',
+  RESOURCES_DUPLICATE_PROTOCOL_TIP: '중복된 프로토콜이 있습니다.',
+  RESOURCES_DUPLICATE_LISTENER_TIP: '중복된 정보로 설정된 리스너가 있습니다.',
+  RESOURCES_LISTENER_EMPTY_DESC: '리스너 정보를 입력해주세요.',
+  RESOURCES_MONITOR: '모니터',
+  RESOURCES_INTERVAL: '인터벌',
+  RESOURCES_TIME_OUT: '타임아웃',
+  RESOURCES_MEMBER: '멤버',
+  RESOURCES_SELECT_LB_METHOD_TIP: 'LB Method 을 선택해 주세요.',
+  RESOURCES_IP_VALID: 'IP 정보를 정확히 입력해주세요.',
+  RESOURCES_MEMBER_EMPTY_DESC: '멤버 정보를 입력해주세요.',
+  RESOURCES_EXTERNAL_LB_NAME: 'External LB 이름',
+  RESOURCES_EXTERNAL_DRIVER: '드라이버',
+  RESOURCES_WEIGHT_RANGE_DESC: 'WEIGHT 범위는 1~100 숫자 범위이어야 합니다.',
+  RESOURCES_ALREADY_USED_IP: '이미 사용된 IP 입니다.',
+  RESOURCES_INTERVAL_LESSS_THAN_TIMEOUT_DESC: 'Interval 값은 Timeout 보다 항상 작아야 합니다.',
+  RESOURCES_MONITOR_VALID: '모니터 정보를 입력해주세요.',
+  
 }
