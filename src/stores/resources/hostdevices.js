@@ -286,16 +286,4 @@ export default class HostDeviceStore extends Base {
 
     return response
   }
-
-  @action
-  async fetchListPetasusResources(params) {
-    const result = await request.get(
-      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-        params
-      )}/edgetron/resources/kubevirt/petasus_resources`
-    )
-    const response = { ...params, ...this.mapper(result), kind: 'petasusResources' }
-
-    return response
-  }
 }
