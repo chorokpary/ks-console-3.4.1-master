@@ -37,8 +37,11 @@ const RegistModal = props => {
   useEffect(() => {
     const getNetResourceData = async () => {
       const listHostdevice = await hostdeviceStore.fetchList()
-      const filtered_names = listHostdevice.filter(device => device.is_net).map(device => device.name)
-      setNetResource(filtered_names)
+      const filteredNames = listHostdevice.filter(device => device.is_net).map(device => device.name)
+      const listPetasusresource = await hostdeviceStore.fetchListPetasusResources()
+      const petasusResourceNames = listPetasusresource.resources
+      const combinedUniqueNames = [...new Set([...filteredNames, ...petasusResourceNames])];
+      setNetResource(combinedUniqueNames)
     };
 
     getNetResourceData();
