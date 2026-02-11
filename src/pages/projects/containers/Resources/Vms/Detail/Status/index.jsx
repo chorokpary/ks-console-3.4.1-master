@@ -484,7 +484,7 @@ const Status = props => {
                   <div className={styles.title}>
                     <div>
                       {`${
-                        obj.gateway_ip === undefined || obj.gateway_ip === ''
+                        obj.gateway_ip === undefined || obj.gateway_ip === '' || obj.gateway_ip === null
                           ? '-'
                           : obj.gateway_ip
                       }`}
