@@ -42,7 +42,7 @@ export default class NetworkStorageStore extends Base {
   async create(data, params = {}) {
     let res
     res = await this.submitting(
-      request.post(this.getResourceUrl({ ...params, name: storage.name }), data)
+      request.post(this.getResourceUrl({ ...params, name: data.storage.name }), data)
     )
     return res
   }
