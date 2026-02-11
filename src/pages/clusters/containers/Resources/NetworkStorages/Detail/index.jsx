@@ -118,6 +118,10 @@ const NetworkStorageDetail = props => {
         value: detail.network_storage.segment_id,
       },
       {
+        name: t('RESOURCES_INTERFACE'),
+        value: detail.network_storage.interface,
+      },
+      {
         name: t('RESOURCES_MAX_CONNECTION'),
         value: detail.network_storage.max_connection,
       },
