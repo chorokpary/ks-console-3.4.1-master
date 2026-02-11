@@ -180,13 +180,13 @@ module.exports = {
     'A tool designed for system administrators to make working with vGPU devices easier.',
 
   RESOURCES_KAAS_NETWORK_TRAFFIC: 'KaaS network traffic',
-  RESOURCES_KAAS_RESOURCE: 'Kaas resource',
-  RESOURCES_KAAS_RESOURCE_USAGE: 'KaaS Resource Usage',
-  RESOURCES_CREATE_KAAS_RESOURCE: 'Create KaaS Resource',
-  RESOURCES_EDIT_KAAS_RESOURCE: 'Edit KaaS Resource',
+  RESOURCES_KAAS_RESOURCE: 'KaaS',
+  RESOURCES_KAAS_RESOURCE_USAGE: 'KaaS Usage',
+  RESOURCES_CREATE_KAAS_RESOURCE: 'Create KaaS',
+  RESOURCES_EDIT_KAAS_RESOURCE: 'Edit KaaS',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
-    'Enter the KaaS resource name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
-  RESOURCES_KAAS_DESC: 'Manage the status and usage of KaaS resources.',
+    'Enter the KaaS name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
+  RESOURCES_KAAS_DESC: 'Manage the status and usage of Kubernetes-as-a-Service (KaaS).',
   RESOURCES_KAAS_IMAGE: 'KaaS Image',
   RESOURCES_CREATE_KAAS_IMAGE: 'Create KaaS Image',
   RESOURCES_EDIT_KAAS_IMAGE: 'Edit KaaS Image',
@@ -709,7 +709,7 @@ module.exports = {
     'Computing Component Current Situation',
   RESOURCES_COMPUTING_TEMPLATE_CURRENT_SITUATION:
     'Computing Template Current Situation',
-  RESOURCES_COMPUTING_KAAS_RESOURCE: 'Computing/KaaS Resource',
+  RESOURCES_COMPUTING_KAAS_RESOURCE: 'Computing/KaaS',
   RESOURCES_COMPUTING_KAAS_RESOURCE_MONITORING_DESC:
     'View Computing/KaaS Resource Monitoring data.',
   RESOURCES_CORE_COUNT: 'Core Count',
