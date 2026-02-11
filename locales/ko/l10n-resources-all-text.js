@@ -538,6 +538,7 @@ module.exports = {
   RESOURCES_SEGMENT_ID_EMPTY_DESC: '세그먼트 ID를 입력해주세요',
   RESOURCES_SEGMENT_ID_VALID: '0~16777215 범위에서 입력해주세요.',
   RESOURCES_SEGMENT_ID_VALID_VLAN: '2~4094 범위에서 입력해주세요.',
+  RESOURCES_INVALID_SEGMENT_ID_DESC: '잘못 된 세그먼트 ID입니다. 2~4094 범위에서 입력해주세요.',
   RESOURCES_DETAIL_SETTINGS: '세부 설정',
   RESOURCES_PINE_TREE: '소나무',
   RESOURCES_SOURCE: '소스',
