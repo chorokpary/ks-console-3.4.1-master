@@ -3,7 +3,8 @@ import { Modal, TypeSelect, List, Panel } from 'components/Base';
 import { ProjectSelect } from 'components/Inputs';
 import {
   PATTERN_USER_NAME,
-  PATTERN_FILE_PATH
+  PATTERN_FILE_PATH,
+  PATTERN_SEGMENT_ID
 } from 'utils/constants';
 import { Form, Input, Select, Button, Tooltip, TextArea } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
@@ -34,6 +35,11 @@ const RegistModal = props => {
   const transportOptions = [
     { label: 'TCP', value: 'tcp' },
     { label: 'RDMA', value: 'rdma' },
+  ]
+
+  const fabricOptions = [
+    { label: 'INFINIBAND', value: 'infiniband' },
+    { label: 'ETHERNET', value: 'ethernet' },
   ]
 
   const maxConnectionOptions = [
@@ -166,6 +172,35 @@ const RegistModal = props => {
                       />
                     </Form.Item>
                   </Column>
+                </Columns>
+              </Form.Item>
+            </Form.Group>
+          </Form.Item>
+
+          <Form.Item label={t('RESOURCES_NETWORK')}>
+            <Form.Group>
+              <Form.Item>
+                <Columns>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_FABRIC')}
+                      rules={[
+                        {
+                          required: true,
+                          message: t('RESOURCES_SELECT_FABRIC_TIP'),
+                        },
+                      ]}
+                    >
+                      <Select
+                        name="fabric"
+                        placeholder={t('RESOURCES_SELECT')}
+                        options={fabricOptions}
+                        onChange={e => {
+                          configProtocol(e)
+                        }}
+                      />
+                    </Form.Item>
+                  </Column>
                   <Column>
                     <Form.Item
                       label={t('RESOURCES_TRANSPORT')}
@@ -183,10 +218,28 @@ const RegistModal = props => {
                       />
                     </Form.Item>
                   </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_SEGMENT_ID')}
+                      rules={[
+                        {
+                          required: true,
+
+                        },
+                        {
+                          pattern: PATTERN_SEGMENT_ID,
+                          message: t('RESOURCES_INVALID_SEGMENT_ID_DESC'),
+                        },
+                      ]}
+                    >
+                      <Input name="segment_id" />
+                    </Form.Item>
+                  </Column>
                 </Columns>
               </Form.Item>
             </Form.Group>
           </Form.Item>
+
           <Form.Item label={t('RESOURCES_NETWORK_STORAGE_MOUNT')}>
             <Form.Group>
               <Form.Item>
