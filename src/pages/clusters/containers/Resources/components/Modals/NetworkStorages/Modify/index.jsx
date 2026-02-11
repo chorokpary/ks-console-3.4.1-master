@@ -57,15 +57,6 @@ const ModifyModal = props => {
     { label: '6', value: '6' },
   ]
 
-  const interfaceOptions = [
-    { label: '0', value: '0' },
-    { label: '1', value: '1' },
-    { label: '2', value: '2' },
-    { label: '3', value: '3' },
-    { label: '4', value: '4' },
-    { label: '5', value: '5' },
-  ]
-
   const configProtocol = protocol => {
     if (protocol === "lustre" || protocol === "gpfs") {
       setDisableFilesystem(true)
@@ -256,24 +247,6 @@ const ModifyModal = props => {
                     >
                       <Input name="segment_id"
                         defaultValue={props.store.detail.network_storage.segment_id} />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_INTERFACE')}
-                      rules={[
-                        {
-                          required: true,
-                          message: t('RESOURCES_INTERFACE_TIP'),
-                        },
-                      ]}
-                    >
-                      <Select
-                        name="interface"
-                        placeholder={t('RESOURCES_SELECT')}
-                        defaultValue={props.store.detail.network_storage.interface}
-                        options={interfaceOptions}
-                      />
                     </Form.Item>
                   </Column>
                 </Columns>
