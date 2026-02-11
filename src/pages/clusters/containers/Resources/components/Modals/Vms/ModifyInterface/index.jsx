@@ -40,7 +40,10 @@ const ModifyInterfaceModal = (props) => {
   useEffect(() => {
     const getVmCreateData = async () => {
       const listAvailableIps = await vmStore.fetchAllAvailableIps({ ...props })
-      setNetworkList(props.store.networksList);
+      const filteredList = props.store.networksList.filter(listItem =>
+        props.store.detail.vm.networks.some(vmItem => vmItem.name === listItem.name)
+      )
+      setNetworkList(filteredList)
       setAvailableIpList(listAvailableIps.all_ips)
     };
 
@@ -62,7 +65,7 @@ const ModifyInterfaceModal = (props) => {
   const setVariables = {
     network: setNetworkCheckItems,
   }
-  
+
   const availableIpOptions = (netId, project) => {
     const networkIps = availableIpList.find(
       obj => obj.network === netId && obj.project === project
@@ -95,7 +98,7 @@ const ModifyInterfaceModal = (props) => {
     })
     setNetworkList(updatedNetworkList)
   }
-  
+
   const handleSingleCheck = (checked, name, type) => {
     if (checked) {
       setVariables[type](prev => [...prev, name]);

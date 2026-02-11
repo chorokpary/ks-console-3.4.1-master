@@ -163,6 +163,12 @@ export default class SriovNetworks extends React.Component {
         render: type => <p>{type.toUpperCase()}</p>,
       },
       {
+        title: t('RESOURCES_MTU'),
+        dataIndex: 'mtu',
+        isHideable: true,
+        width: 'auto',
+      },
+      {
         title: t('CIDR'),
         dataIndex: 'cidr',
         isHideable: true,
