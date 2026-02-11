@@ -634,6 +634,7 @@ module.exports = {
   RESOURCES_INBOUND_RULE_COUNT: 'Inbound Rule Count',
   RESOURCES_CERTIFICATE_EXPIRATION_PERIOD: 'Certificate Expiration Period',
   RESOURCES_INTERFACE: 'Interface',
+  RESOURCES_INTERFACE_TIP: 'The interface index number of the storage fabric.',
   RESOURCES_DELETE_MULTIPLE: 'Bulk Delete',
   RESOURCES_PAUSED: 'Paused',
   RESOURCES_PAUSED_JOONGI: 'Paused',

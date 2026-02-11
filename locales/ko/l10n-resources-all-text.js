@@ -634,6 +634,7 @@ module.exports = {
   RESOURCES_INBOUND_RULE_COUNT: '인바운드 규칙수',
   RESOURCES_CERTIFICATE_EXPIRATION_PERIOD: '인증서 유효기간',
   RESOURCES_INTERFACE: '인터페이스',
+  RESOURCES_INTERFACE_TIP: '스토리지 패브릭과 연결 된 인터페이스 번호 입니다.',
   RESOURCES_DELETE_MULTIPLE: '일괄 삭제',
   RESOURCES_PAUSED: '일시 정지',
   RESOURCES_PAUSED_JOONGI: '일시중지',

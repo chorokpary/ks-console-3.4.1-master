@@ -151,6 +151,17 @@ export default class NetworkStorages extends React.Component {
         ),
       },
       {
+        title: t('RESOURCES_FABRIC'),
+        dataIndex: 'fabric',
+        isHideable: true,
+        width: 'auto',
+        render: transport => (
+          <p className="tall">
+            <span>{transport.toUpperCase()}</span>
+          </p>
+        ),
+      },
+      {
         title: t('RESOURCES_MOUNT_POINT'),
         dataIndex: 'mount_point',
         isHideable: true,
