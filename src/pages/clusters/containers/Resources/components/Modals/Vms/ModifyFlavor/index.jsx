@@ -43,7 +43,7 @@ const ModifyFlavorModal = props => {
         .map(item => item.size)[0]
         .replace('Gi', '')
 
-      if (flavorSize < imageSize) {
+      if (Number(flavorSize) < Number(imageSize)) {
         setFlavorSizeCheck(false)
         return false
       }
