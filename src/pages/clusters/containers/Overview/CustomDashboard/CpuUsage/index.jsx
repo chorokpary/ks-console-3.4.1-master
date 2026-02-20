@@ -34,7 +34,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
 
       var currentTime = Math.floor(Date.now() / 1000)
       const cpuUsageData = await customStore.fetchMetric({
-        expr: `sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
+        expr: `sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
         start: currentTime - 1000,
         end: currentTime - 1000,
       })
@@ -42,7 +42,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
       setCpuUsage(Math.floor(usage))
 
       const vmNonUsageData = await customStore.fetchMetric({
-        expr: `count(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m])) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
+        expr: `count(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m])) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
         start: currentTime - 1000,
         end: currentTime - 1000,
       })
@@ -50,7 +50,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
       setCpuNonUsage(Math.floor(nonUsage))
 
       const vmUsageDataAll = await customStore.fetchMetric({
-        expr: `count(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m]))`,
+        expr: `count(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m]))`,
         start: currentTime - 1000,
         end: currentTime - 1000,
       })
