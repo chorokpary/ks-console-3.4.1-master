@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const Panel = ({ cluster, lb }) => {
-    const history = useHistory();
 
     return (
         <>
-            <div className="box type_status" onClick={() => history.push(`/clusters/${cluster}/loadBalancers`)} style={{ cursor: 'pointer' }}>
-                <h5><i className="ico-type24-loadbalancer"></i>{t('RESOURCES_LOAD_BALANCER')}</h5>
+            <div className="box type_status">
+                <h5><i className="ico-type24-loadbalancer"></i><Link to={`/clusters/${cluster}/loadBalancers`}>{t('RESOURCES_LOAD_BALANCER')}</Link></h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">
