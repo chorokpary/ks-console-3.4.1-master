@@ -3,6 +3,7 @@ import { Loading, Select } from '@kube-design/components'
 import NodeStore from 'stores/rank/node'
 import { get } from 'lodash'
 import VmStore from 'stores/resources/vms'
+import ResourceStore from 'stores/resources/containerresource'
 import PodStore from 'stores/dashboard/rank/pod'
 import CustomStore from 'stores/monitoring/custom/monitor'
 import { getSuitableValue } from 'utils/monitoring'
@@ -81,11 +82,13 @@ const UsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
   const podStore = new PodStore({ ...storeParams })
   const customStore = new CustomStore()
   const vmStore = new VmStore()
+  const kaasStore = new ResourceStore()
 
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(false)
 
   const [vmList, setVmList] = useState()
+  const [kaasVmList, setKaaSVmList] = useState()
   const [sortOption, setSortOption] = useState(sortOptionNode)
   const [sortMetric, setSortMetric] = useState(sortOption[0].value)
   const [unitType, setUnitType] = useState({ unit: 'cpu', value: 'CPU 사용량' })
@@ -122,18 +125,25 @@ const UsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
 
   useEffect(() => {
     let cleanupTrigger = true
-    // vm list
-    const getVmList = async () => {
+    const getDataList = async () => {
+
+      // VM list
       const vmList = await vmStore.vmList({ limit: -1, ...props })
       let vmNames = ''
       vmList.map(obj => (vmNames = vmNames + obj.name + '|'))
 
+      // KaaS VM list
+      const kaasVmList = await kaasStore.fetchMachinesAll({ limit: -1, ...props })
+      let kaasVmNames = ''
+      kaasVmList.map(obj => (kaasVmNames = kaasVmNames + obj.name + '|'))
+
       if (cleanupTrigger) {
         setVmList(vmNames)
+        setKaaSVmList(kaasVmNames)
         getNodeData()
       }
     }
-    getVmList()
+    getDataList()
 
     return () => {
       cleanupTrigger = false
@@ -141,8 +151,9 @@ const UsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
   }, [])
 
   const getCpuData = async type => {
-    let filtered = `pod=~"${vmList}"`
-    if (type != 'vm') filtered = `pod!="${vmList}"`
+    let filtered = ""
+    if (type == 'vm') filtered = `pod=~"${vmList}"`
+    if (type == 'kaas') filtered = `pod=~"${kaasVmList}"`
 
     var currentTime = Math.floor(Date.now() / 1000)
     const cpuData = await customStore.fetchMetric({
@@ -155,8 +166,9 @@ const UsageTop5 = ({ widgetKey, monitorStore, ...props }) => {
   }
 
   const getMemoryData = async type => {
-    let filtered = `pod=~"${vmList}"`
-    if (type != 'vm') filtered = `pod!="${vmList}"`
+    let filtered = ""
+    if (type == 'vm') filtered = `pod=~"${vmList}"`
+    if (type == 'kaas') filtered = `pod=~"${kaasVmList}"`
 
     var currentTime = Math.floor(Date.now() / 1000)
     const memoryData = await customStore.fetchMetric({

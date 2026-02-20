@@ -81,14 +81,14 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
       })
 
       // kaas list
-      const kaasList = await resourceStore.fetchList({ limit: 1000, ...props })
-      let promsql_pod_kaas_list = ''
-      let kaas_list_length = 0
-      kaasList.map(obj => {
-        const kaasName = get(obj, 'name')
-        promsql_pod_kaas_list +=
-          promsql_pod_kaas_list != '' ? '|' + kaasName + '.*' : kaasName + '.*'
-        kaas_list_length++
+      const kaasVmList = await resourceStore.fetchMachinesAll({ limit: 1000, ...props })
+      let promsql_pod_kaas_vm_list = ''
+      let kaas_vm_list_length = 0
+      kaasVmList.map(obj => {
+        const kaasVmName = get(obj, 'name')
+        promsql_pod_kaas_vm_list +=
+          promsql_pod_kaas_vm_list != '' ? '|' + kaasVmName + '.*' : kaasVmName + '.*'
+        kaas_vm_list_length++
       })
 
       // vm cpu data
@@ -96,7 +96,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
       const times = 100
       var currentTime = Math.floor(Date.now() / 1000)
       const vmCpuData = await customStore.fetchMetric({
-        expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_vm_list}"}[${step}])) * ${times})) / 100 / ${vm_list_length}`,
+        expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle",pod=~"${promsql_pod_vm_list}"}[${step}])) * ${times})) / 100 / ${vm_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
@@ -117,7 +117,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
 
       // kaas cpu data
       const kaasCpuData = await customStore.fetchMetric({
-        expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="default",service="launcher-node-exporter",mode="idle",pod!~"${promsql_pod_kaas_list}"}[${step}])) * ${times})) / 100 / ${kaas_list_length}`,
+        expr: `sum(100 - (avg by (pod) (irate(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle",pod!~"${promsql_pod_kaas_vm_list}"}[${step}])) * ${times})) / 100 / ${kaas_vm_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
@@ -125,7 +125,7 @@ const ResourcesUsage = ({ widgetKey, monitorStore, ...props }) => {
 
       // kaas memory data
       const kaasMemoryData = await customStore.fetchMetric({
-        expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_list}"})/ ${kaas_list_length}`,
+        expr: `sum(node_memory_MemTotal_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_vm_list}"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_vm_list}"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod!~"${promsql_pod_kaas_vm_list}"})/ ${kaas_vm_list_length}`,
         start: currentTime - 30000,
         end: currentTime,
         cluster: props.cluster,
