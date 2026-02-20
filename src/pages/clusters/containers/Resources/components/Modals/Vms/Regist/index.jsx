@@ -384,14 +384,30 @@ const RegistModal = props => {
       size = selectedRootDisk?.capacity.replace(regex, '') || 0
     }
 
-    return flavorDataList.map(obj => ({
-      label: t(obj.name),
-      description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
+    return flavorDataList.map(obj => {
+      const gpuDesc =
+        obj.gpus && obj.gpus.length > 0
+          ? ` / ${obj.gpus
+              .map(g => `${g.name.split('/')[1]}: ${g.quantity}`)
+              .join(', ')}`
+          : ''
+
+      const deviceDesc =
+        obj.devices && obj.devices.length > 0
+          ? `\n ${obj.devices.map(d => `${d.name}: ${d.quantity}`).join(', ')}`
+          : ''
+
+      const desc = `CPU ${obj.vcpus} Cores / Mem ${common.fnSetBytes(
         obj.ram
-      )} GiB / Disk ${obj.root_disk} GiB`,
-      value: t(obj.name),
-      disabled: Number(obj.root_disk) < Number(size),
-    }))
+      )}GiB / Disk ${obj.root_disk}GiB${gpuDesc}${deviceDesc}`
+
+      return {
+        label: t(obj.name),
+        description: desc,
+        value: t(obj.name),
+        disabled: Number(obj.root_disk) < Number(size),
+      }
+    })
   }
 
   const bootvolumeOptions = () => {
