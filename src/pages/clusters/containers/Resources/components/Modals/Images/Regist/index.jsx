@@ -982,7 +982,7 @@ const ResourceImageModal = ({
                       defaultChecked={cosign}
                       onChange={value => setCosign(value)}
                     >
-                      <div style={{ fontWeight: 'bold' }}>무결성 체크 여부</div>
+                      <div style={{ fontWeight: 'bold' }}>{t('RESOURCES_CHECK_IMAGE_INTEGRITY')}</div>
                     </Checkbox>
                   </div>
                   <div>
