@@ -4001,8 +4001,8 @@ html {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   gap: 12px;
   padding: 12px;
   background: #f9fbfd;
@@ -4018,12 +4018,12 @@ html {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   gap: 12px;
   background: #fff;
   border: 1px solid #ccd3db;
@@ -4035,11 +4035,11 @@ html {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 .gpu_mig_box .gpu_mig_header .gpu_mig_gpu_title {
   font-size: 14px;
@@ -4057,8 +4057,8 @@ html {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   gap: 8px;
   border-radius: 14px;
 }
@@ -4086,31 +4086,31 @@ html {
   display: flex;
   gap: 4px;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   padding: 0;
   margin: 0;
 }
 .gpu_mig_box .mig_bar_chart .profile {
   -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   height: 32px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   border-radius: 4px;
 }
 .gpu_mig_box .mig_bar_chart .profile > .profile {
   -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4127,50 +4127,50 @@ html {
 }
 .gpu_mig_box .mig_bar_chart .profile.p_1g {
   -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   background: #55bc8a;
 }
 .gpu_mig_box .mig_bar_chart .profile.p_2g {
   -webkit-box-flex: 2;
-      -ms-flex: 2;
-          flex: 2;
+  -ms-flex: 2;
+  flex: 2;
   background: #4465dc;
 }
 .gpu_mig_box .mig_bar_chart .profile.p_3g {
   -webkit-box-flex: 3;
-      -ms-flex: 3;
-          flex: 3;
+  -ms-flex: 3;
+  flex: 3;
   background: #eb8464;
 }
 .gpu_mig_box .mig_bar_chart .profile.p_4g {
   -webkit-box-flex: 4;
-      -ms-flex: 4;
-          flex: 4;
+  -ms-flex: 4;
+  flex: 4;
   background: #8155ff;
 }
 .gpu_mig_box .mig_bar_chart .profile.p_7g {
   -webkit-box-flex: 7;
-      -ms-flex: 7;
-          flex: 7;
+  -ms-flex: 7;
+  flex: 7;
   background: #3385b0;
 }
 .gpu_mig_box .mig_bar_chart .profile.disabled {
   -webkit-box-flex: 7;
-      -ms-flex: 7;
-          flex: 7;
+  -ms-flex: 7;
+  flex: 7;
   background: #c1c9d1;
 }
 .gpu_mig_box .mig_bar_chart .profile.empty {
   -webkit-box-flex: 7;
-      -ms-flex: 7;
-          flex: 7;
+  -ms-flex: 7;
+  flex: 7;
   background: #c1c9d1;
   border: 1px dashed #ccd3db;
   background-color: #f9fbfd;
 }
 .gpu_mig_box .mig_bar_chart .profile.empty::after {
-  content: "+";
+  content: '+';
   font-size: 18px;
   font-weight: bold;
   position: absolute;
@@ -4188,9 +4188,10 @@ html {
 }
 .slice_popup .gpu_mig_box ul:hover {
   -webkit-transform: scale(1.01);
-          transform: scale(1.01);
-  -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(1.01);
+  -webkit-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
   -webkit-transition: -webkit-box-shadow 0.3s ease;
   transition: -webkit-box-shadow 0.3s ease;
   transition: box-shadow 0.3s ease;
@@ -4211,22 +4212,22 @@ html {
 }
 .gpu_mig_monitoring .data-box-card {
   -ms-flex-item-align: stretch;
-      align-self: stretch;
+  align-self: stretch;
   padding: 12px;
-  border-right: 1px solid var(--border-border-border, #E4E4E7);
+  border-right: 1px solid var(--border-border-border, #e4e4e7);
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
   -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   min-width: 0;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   gap: 12px;
 }
 .gpu_mig_monitoring .data-box-card .data-box-icon {
@@ -4240,26 +4241,32 @@ html {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: start;
-      -ms-flex-align: start;
-          align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
   gap: 8px;
+  min-width: 0;
 }
 .gpu_mig_monitoring .data-box-card .data-box-info .data-box-label {
   font-size: 11px;
   font-weight: 700;
-  color: #36435C;
+  color: #36435c;
   margin: 0;
   line-height: 1;
 }
 .gpu_mig_monitoring .data-box-card .data-box-info .data-box-value {
   font-size: 20px;
   font-weight: 600;
-  color: #181D28;
+  color: #181d28;
   line-height: 1;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
