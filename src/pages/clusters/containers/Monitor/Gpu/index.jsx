@@ -29,7 +29,7 @@ const MIG_INSTANCE_COUNT_TAB = {
   value: '-',
 }
 
-const sortByNameAsc = (arr) => {
+const sortByNameAsc = arr => {
   return arr.sort((a, b) => {
     const nameA = (a.name || '').toUpperCase()
     const nameB = (b.name || '').toUpperCase()
@@ -46,7 +46,7 @@ const sortByNameAsc = (arr) => {
   })
 }
 
-const getGpuType = (selected) => {
+const getGpuType = selected => {
   if (!selected) {
     return '-'
   }
@@ -60,7 +60,7 @@ const getGpuType = (selected) => {
   }
 }
 
-const getGpuCount = (selected) => {
+const getGpuCount = selected => {
   if (!selected) {
     return '-'
   }
@@ -112,7 +112,9 @@ const MonitorStatusTab = ({ icon, name, value }) => {
       </div>
       <div className="data-box-info">
         <p className="data-box-label">{name}</p>
-        <span className="data-box-value">{value}</span>
+        <span className="data-box-value" title={value}>
+          {value}
+        </span>
       </div>
     </div>
   )
@@ -126,7 +128,9 @@ const index = props => {
   const gpuVmStore = new VmStore()
   const cluster = props.match.params.cluster
 
-  const [monitoringType, setMonitoringType] = useState(props.location.pathname.split('/').pop())
+  const [monitoringType, setMonitoringType] = useState(
+    props.location.pathname.split('/').pop()
+  )
 
   const [gpuNodesData, setGpuNodesData] = useState([])
   const [gpuVmsData, setGpuVmsData] = useState([])
@@ -155,9 +159,13 @@ const index = props => {
   }
 
   const getVmGpuUtilData = async (tabName, paramsData) => {
-    let gpuUtilDataExpr = `avg by (gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"}) / 100`
+    let gpuUtilDataExpr = `avg by (gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"}) / 100`
     if (tabName === VMS) {
-      gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"} / 100`
+      gpuUtilDataExpr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", ${
+        selected?.name ? `pod="${selected.name}",` : ''
+      } namespace="${selected.project}"} / 100`
     }
 
     const vmGpuUtilData = await customStore.fetchMetric({
@@ -170,10 +178,14 @@ const index = props => {
   }
 
   const getVmGpuRamData = async (tabName, paramsData) => {
-    let gpuRamDataExpr = `avg by (gpu)(DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"}) * 1000000`
+    let gpuRamDataExpr = `avg by (gpu)(DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"}) * 1000000`
 
     if (tabName === VMS) {
-      gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"} * 1000000`
+      gpuRamDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", ${
+        selected?.name ? `pod="${selected.name}",` : ''
+      } namespace="${selected.project}"} * 1000000`
     }
     const vmGpuRamData = await customStore.fetchMetric({
       expr: gpuRamDataExpr,
@@ -185,10 +197,14 @@ const index = props => {
   }
 
   const getVmGpuPowerData = async (tabName, paramsData) => {
-    let gpuPowerDataExpr = `avg by (gpu)(DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"})`
+    let gpuPowerDataExpr = `avg by (gpu)(DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"})`
 
     if (tabName === VMS) {
-      gpuPowerDataExpr = `DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"}`
+      gpuPowerDataExpr = `DCGM_FI_DEV_POWER_USAGE{job="launcher-dcgm-exporter", ${
+        selected?.name ? `pod="${selected.name}",` : ''
+      } namespace="${selected.project}"}`
     }
 
     const vmGpuPowerData = await customStore.fetchMetric({
@@ -201,10 +217,14 @@ const index = props => {
   }
 
   const getVmGpuTempData = async (tabName, paramsData) => {
-    let gpuTempDataExpr = gpuTempDataExpr = `avg by (gpu)(DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"})`
+    let gpuTempDataExpr = (gpuTempDataExpr = `avg by (gpu)(DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"})`)
 
     if (tabName === VMS) {
-      gpuTempDataExpr = `DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"}`
+      gpuTempDataExpr = `DCGM_FI_DEV_GPU_TEMP{job="launcher-dcgm-exporter", ${
+        selected?.name ? `pod="${selected.name}",` : ''
+      } namespace="${selected.project}"}`
     }
     const vmGpuTempData = await customStore.fetchMetric({
       expr: gpuTempDataExpr,
@@ -216,13 +236,16 @@ const index = props => {
   }
 
   const getVmGpuNvlinkData = async (tabName, paramsData) => {
-    
-    let gpuNvlinkDataExpr = gpuNvlinkDataExpr = `sum by (gpu)(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"}) 
-    * ${getCustomValue('bandwidthBytes', 'MBps')}`
+    let gpuNvlinkDataExpr = (gpuNvlinkDataExpr = `sum by (gpu)(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"}) 
+    * ${getCustomValue('bandwidthBytes', 'MBps')}`)
 
     if (tabName === VMS) {
       gpuNvlinkDataExpr = `(DCGM_FI_DEV_NVLINK_BANDWIDTH_TOTAL{job="launcher-dcgm-exporter", 
-      ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"}) * ${getCustomValue('bandwidthBytes', 'MBps')}`
+      ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${
+        selected.project
+      }"}) * ${getCustomValue('bandwidthBytes', 'MBps')}`
     }
 
     const gpuNvlinkData = await customStore.fetchMetric({
@@ -235,10 +258,14 @@ const index = props => {
   }
 
   const getVmGpuInboundData = async (tabName, paramsData) => {
-    let inboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"}[2m]) * 8)`    
+    let inboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"}[2m]) * 8)`
 
     if (tabName === VMS) {
-      inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"}[2m]) * 8`
+      inboundLinuxDataExpr = `rate(node_infiniband_port_data_received_bytes_total{job="launcher-node-exporter", ${
+        selected?.name ? `pod="${selected.name}",` : ''
+      } namespace="${selected.project}"}[2m]) * 8`
     }
 
     const gpuInboundData = await customStore.fetchMetric({
@@ -251,10 +278,14 @@ const index = props => {
   }
 
   const getVmGpuOutboundData = async (tabName, paramsData) => {
-    let outboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", ${selected?.name ? `pod=~"${selected.name}",` : ''} namespace="${cluster}"}[2m]) * 8)`
+    let outboundLinuxDataExpr = `sum by (device)(rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", ${
+      selected?.name ? `pod=~"${selected.name}",` : ''
+    } namespace="${cluster}"}[2m]) * 8)`
 
     if (tabName === VMS) {
-      outboundLinuxDataExpr = `rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", ${selected?.name ? `pod="${selected.name}",` : ''} namespace="${selected.project}"}[2m]) * 8`
+      outboundLinuxDataExpr = `rate(node_infiniband_port_data_transmitted_bytes_total{job="launcher-node-exporter", ${
+        selected?.name ? `pod="${selected.name}",` : ''
+      } namespace="${selected.project}"}[2m]) * 8`
     }
 
     const gpuOutboundData = await customStore.fetchMetric({
@@ -267,12 +298,15 @@ const index = props => {
   }
 
   const getNodeInVms = async () => {
-
     if (!selected || monitoringType !== NODES) {
       return
     }
 
-    return await gpuVmStore.fetchVmsDetail({ match: 'node', cluster, name: selected?.node })
+    return await gpuVmStore.fetchVmsDetail({
+      match: 'node',
+      cluster,
+      name: selected?.node,
+    })
   }
 
   const getNodeMappingNames = (nodeStores, vmStores) => {
@@ -320,7 +354,9 @@ const index = props => {
     if (monitoringType === NODES) {
       const nodeMappingNames = getNodeMappingNames(nodeStores, vmStores)
 
-      setGpuNodesData(nodeMappingNames.filter(node => node.node?.includes(name)) ?? [])
+      setGpuNodesData(
+        nodeMappingNames.filter(node => node.node?.includes(name)) ?? []
+      )
       setIsSearchLoading(false)
       return
     }
