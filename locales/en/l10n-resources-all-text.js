@@ -914,6 +914,7 @@ module.exports = {
   RESOURCES_OS_INFORMATION: 'OS Information',
   RESOURCES_FILE_NAME: 'File Name',
   RESOURCES_IMAGE_FILE_UPLOAD: 'Image File Upload',
+  RESOURCES_CHECK_IMAGE_INTEGRITY: 'Check Image Integrity',
   RESOURCES_FLAVOR: 'Flavor',
   RESOURCES_COMPUTING_DISK_USAGE: 'Computing Disk Usage',
   RESOURCES_KAAS_DISK_USAGE: 'KaaS Disk Usage',
