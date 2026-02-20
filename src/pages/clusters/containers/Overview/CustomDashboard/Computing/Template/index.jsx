@@ -8,6 +8,7 @@ import FlavorPanel from './FlavorPanel'
 import KaasPanel from './KaasPanel'
 
 const ComputingTemplate = ({
+  cluster,
   loading,
   vmList,
   imageList,
@@ -122,12 +123,12 @@ const ComputingTemplate = ({
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status box_nth">
-            <ImagePanel image={image} />
-            <KaasPanel kaas={kaas} />
-            <FlavorPanel flavor={flavor} />
-            <KeypairPanel keypair={keypair} />
-            <HostDevicePanel hd={hd} />
-            <MediatedDevicePanel md={md} />
+            <ImagePanel cluster={cluster} image={image} />
+            <KaasPanel cluster={cluster} kaas={kaas} />
+            <FlavorPanel cluster={cluster} flavor={flavor} />
+            <KeypairPanel cluster={cluster} keypair={keypair} />
+            <HostDevicePanel cluster={cluster} hd={hd} />
+            <MediatedDevicePanel cluster={cluster} md={md} />
           </div>
         </Loading>
       </div>

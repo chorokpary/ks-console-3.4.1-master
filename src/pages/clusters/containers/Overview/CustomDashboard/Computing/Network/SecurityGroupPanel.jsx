@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-const Panel = ({ sg }) => {
+const Panel = ({ cluster, sg }) => {
 
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-security"></i>{t('RESOURCES_SECURITY_GROUP')}</h5>
+                <h5><i className="ico-type24-security"></i><Link to={`/clusters/${cluster}/securityGroups`}>{t('RESOURCES_SECURITY_GROUP')}</Link></h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">
