@@ -316,6 +316,8 @@ module.exports = {
   RESOURCES_LIST_NETWORK: 'Network List',
   RESOURCES_CREATE_NETWORK: 'Create Network',
   RESOURCES_NETWORK_SETTINGS: 'Network Settings',
+  RESOURCES_VPC_NETWORK_SETTINGS: 'VPC Network Settings',
+  RESOURCES_FAST_NETWORK_SETTINGS: 'Fast Network Settings',
   RESOURCES_EDIT_NETWORK: 'Edit Network',
   RESOURCES_NETWORK_TYPE_YOO: 'Network Type',
   RESOURCES_NETWORK_NAME: 'Network Name',
