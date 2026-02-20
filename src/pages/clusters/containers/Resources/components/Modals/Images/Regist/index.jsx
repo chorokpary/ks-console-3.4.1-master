@@ -855,10 +855,11 @@ const ResourceImageModal = ({
                 handleOk()
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
-              // loading={store.isSubmitting}
+              loading={store.isSubmitting}
               disabled={
                 (cosign && Object.keys(imageTag).length === 0) ||
-                (!cosign && tag === '')
+                (!cosign && tag === '') ||
+                store.isSubmitting
               }
             >
               {t('RESOURCES_CREATE')}
