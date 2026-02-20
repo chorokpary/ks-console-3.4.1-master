@@ -34,7 +34,7 @@ import SecretStore from 'stores/secret'
 import ContainerForm from '../ContainerForm'
 import { Checkbox } from '@kube-design/components/lib/components/Checkbox'
 
-const defaultImageSize = '15GB'
+const defaultImageSize = '20GB'
 
 const defaultRegistryUrl = 'https://quay.io?namespace=edgestack'
 const defaultImageText = t('RESOURCES_CONTAINER_IMAGE_SETTINGS_DESC')
