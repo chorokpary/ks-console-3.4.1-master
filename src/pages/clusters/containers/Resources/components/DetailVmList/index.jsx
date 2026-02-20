@@ -249,7 +249,9 @@ const DetailVmList = props => {
         <div className={styles.content}>
           <div className={styles.text}>
             <div>
-              <Link to={`/clusters/${cluster}/projects/${obj.project}/vms/${obj.name}`}>
+              <Link
+                to={`/clusters/${cluster}/projects/${obj.project}/vms/${obj.name}`}
+              >
                 {obj.name}
               </Link>
               <Tooltip content={t('VNC')}>
@@ -285,7 +287,13 @@ const DetailVmList = props => {
             </div>
             <p>{t('RESOURCES_NODE')}</p>
           </div>
-          {renderMonitorings(obj.name, obj.os_type, obj.project, isExpandFlag)}
+          {renderMonitorings(
+            obj.name,
+            obj.os_type,
+            obj.project,
+            isExpandFlag,
+            expandItem
+          )}
           <div className={styles.arrow} onClick={() => handleExpand(obj.name)}>
             <Icon
               name="chevron-down"
@@ -370,7 +378,7 @@ const DetailVmList = props => {
     )
   }
 
-  const renderMonitorings = (vmName, osType, project, isExpand) => {
+  const renderMonitorings = (vmName, osType, project, isExpand, expandItem) => {
     // const isExpand = false;
     const loading = false
 
@@ -416,7 +424,13 @@ const DetailVmList = props => {
                   width="100%"
                   height={40}
                   {...config}
-                  darkMode={isExpand}
+                  darkMode={
+                    vmName !== expandItem
+                      ? false
+                      : vmName === expandItem && isExpandFlag === false
+                      ? false
+                      : true
+                  }
                 />
               </div>
             )
