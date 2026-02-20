@@ -17,6 +17,7 @@ const Vm = ({
   setGpuXidData,
   setSelectCluster,
   setPopOpen,
+  getVmAvgData,
   ...props
 }) => {
   useEffect(() => {
@@ -31,46 +32,9 @@ const Vm = ({
 
   useEffect(() => {
     if (selectCluster) {
-      getGpuData(selectCluster)
+      getVmAvgData()
     }
   }, [range])
-
-  const getGpuData = async selectCluster => {
-    var currentTime = Math.floor(Date.now() / 1000)
-    const paramsData = {
-      start: currentTime - 1000,
-      end: currentTime - 1000,
-    }
-    // avg by (gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"gpu-wbl-upstage-580-01", namespace="default"}) / 100
-    const expr = `DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod="${selectCluster.group}"}`
-    const gpuAvgUsageData = await customStore.fetchMetric({
-      expr: expr,
-      paramsData,
-    })
-
-    setGpuDataList(gpuAvgUsageData)
-
-    // Xid Error
-    const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod="${selectCluster.group}"}`
-    const gpuXidData = await customStore.fetchMetric({
-      expr: gpuXidExpr,
-      cluster: selectCluster?.namespace,
-    })
-
-    // Xid Error - 최근 10분간 변화량이 있는지 확인
-    const gpuXidExprChangeExpr = `changes((max by (gpu, pod) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod="${selectCluster.group}"})[10m:])) > 0`
-    const gpuXidExprChangeData = await customStore.fetchMetric({
-      expr: gpuXidExprChangeExpr,
-      cluster: selectCluster?.namespace,
-      start: currentTime - range, // 1시간 기준 > 3600
-      end: currentTime,
-    })
-    const gpuXidTransform = transformXidDataToObject(
-      gpuXidData,
-      gpuXidExprChangeData
-    )
-    setGpuXidData(gpuXidTransform)
-  }
 
   return (
     <>
@@ -102,7 +66,6 @@ const Vm = ({
                 className={`gpu_tile ${getAreaColor(item.value)}`}
                 key={`${item.group} - ${index}`}
                 onClick={() => {
-                  getGpuData(item)
                   setSelectCluster(item)
                   setPopOpen(true)
                 }}
@@ -178,25 +141,26 @@ const Vm = ({
           {gpuDataList.length > 0 && (
             <div className="gpu_pop_boxes">
               {gpuDataList
-                ?.sort((a, b) => a.metric.gpu - b.metric.gpu)
-                .map((item, index) => (
-                  <div
-                    className={`gpu_pop_box ${getAreaColor(item?.value?.[1])} ${
-                      gpuXidData?.[item.metric.pod]?.[item.metric.gpu]
-                        ?.state === 'minor'
-                        ? 'gpu_alert'
-                        : ''
-                    }`}
-                    key={index}
-                  >
-                    <div className="name">GPU-{item?.metric?.gpu}</div>
-                    <div className="percent">
-                      {Number(item?.value?.[1]) || 0}%
-                    </div>
-                    {gpuXidData?.[item.metric.pod]?.[item.metric.gpu]?.state ===
-                      'minor' && <div className="badge_alert"></div>}
-                  </div>
-                ))}
+                ?.sort((a, b) => a.gpu - b.gpu)
+                .map(
+                  (item, index) =>
+                    item.group === selectCluster?.group && (
+                      <div
+                        className={`gpu_pop_box ${getAreaColor(
+                          item?.value?.[1]
+                        )} ${item?.state === 'minor' ? 'gpu_alert' : ''}`}
+                        key={index}
+                      >
+                        <div className="name">GPU-{item?.gpu}</div>
+                        <div className="percent">
+                          {Number(item?.value?.[1]) || 0}%
+                        </div>
+                        {item?.state === 'minor' && (
+                          <div className="badge_alert"></div>
+                        )}
+                      </div>
+                    )
+                )}
             </div>
           )}
 

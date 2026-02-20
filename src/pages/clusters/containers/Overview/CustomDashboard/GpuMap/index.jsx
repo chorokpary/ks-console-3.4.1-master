@@ -142,21 +142,18 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
   const getLandingData = async () => {
     setLoading(true)
 
-    const nodeData = await vmStore.fetchVmListNode({ limit: 1000, ...props })
-    const gpuNodeData = await gpuNodeStore.fetchList({ limit: 1000, ...props })
-    const gpuNodeList =
-      nodeData?.nodes?.filter(item => {
-        return gpuNodeData.map(i => i.name).includes(item.name)
-      }) || []
-    if (gpuNodeList.length > 0) getGpuNodeList(gpuNodeList, true)
+    const getData = async () => {
+      const vmData = await vmStore.fetchList({ limit: 1000, ...props })
+      const vmList = vmData.filter(item => {
+        return item.gpus.length > 0 && item.node
+      })
+      setVmList(vmList)
+    }
+    await getData()
 
-    const vmData = await vmStore.fetchList({ limit: 1000, ...props })
-    const vmList = vmData.filter(item => {
-      return item.gpus.length > 0 && item.node
-    })
-    setVmList(vmList)
+    // setLoading(false)
 
-    setLoading(false)
+    getGpuNode()
   }
 
   useEffect(() => {
@@ -165,8 +162,25 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     }
   }, [vmList])
 
+  const getGpuNode = async () => {
+    const nodeData = await vmStore.fetchVmListNode({ limit: 1000, ...props })
+    const gpuNodeData = await gpuNodeStore.fetchList({ limit: 1000, ...props })
+    const gpuNodeList =
+      nodeData?.nodes?.filter(item => {
+        return gpuNodeData.map(i => i.name).includes(item.name)
+      }) || []
+    if (gpuNodeList.length > 0) getGpuNodeList(gpuNodeList, true)
+  }
+
   const getVmAvgData = async () => {
     setVmLoading(true)
+
+    const vmNameList = vmList
+      .map(item => {
+        return item.name
+      })
+      .join('|')
+    const gpuListData = await getGpuListData2(vmNameList, clusterArr)
 
     var currentTime = Math.floor(Date.now() / 1000)
     const paramsData = {
@@ -174,11 +188,6 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       end: currentTime,
     }
 
-    const vmNameList = vmList
-      .map(item => {
-        return item.name
-      })
-      .join('|')
     const exprUtil = `(
               avg by (pod) (
                   DCGM_FI_DEV_GPU_UTIL{pod=~"${vmNameList}"}
@@ -200,15 +209,20 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     const result = vmList.map(c => {
       const metricUtil = vmAvgUsageData.find(m => m.metric.pod === c.name)
       const metricMem = vmAvgMemoryUsage.find(m => m.metric.pod === c.name)
+      const priority = { normal: 1, unknown: 2, abnormal: 3 }
+      let state = 'normal'
+      gpuListData.map(obj => {
+        if (obj.group === c.name) {
+          if (priority[obj.state] > priority[state]) {
+            state = obj.state
+          }
+        }
+      })
       return {
         group: c.name,
         value: metricUtil ? Number(Number(metricUtil.value[1]).toFixed(0)) : 0,
         valueMem: metricMem ? Number(Number(metricMem.value[1]).toFixed(0)) : 0,
-        state: metricUtil
-          ? c?.state === 'Running'
-            ? 'normal'
-            : 'abnormal'
-          : 'unknown',
+        state: state,
         node: c.node,
         namespace: c.project,
       }
@@ -218,7 +232,79 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
     setVmResultList(result)
   }
 
-  const getGpuNodeList = (nodeList, isLanding) => {
+  const getGpuListData2 = async (vmNameList, clusterArr) => {
+    let result = []
+    var currentTime = Math.floor(Date.now() / 1000)
+    const getData = async () => {
+      const gpuUtilDataExpr = `sum by (UUID, pod, gpu) (DCGM_FI_DEV_GPU_UTIL{job="launcher-dcgm-exporter", pod=~"${vmNameList}"})`
+
+      const gpuUtilData = await customStore.fetchMetric({
+        expr: gpuUtilDataExpr,
+        start: currentTime - range, // 1시간 기준 > 3600
+        end: currentTime,
+      })
+      const gpuUtilTransform = transformDataToObject(gpuUtilData)
+
+      const gpuMemDataExpr = `DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmNameList}"} / (DCGM_FI_DEV_FB_USED{job="launcher-dcgm-exporter", pod=~"${vmNameList}"} + DCGM_FI_DEV_FB_FREE{job="launcher-dcgm-exporter", pod=~"${vmNameList}"}) * 100`
+      const gpuMemData = await customStore.fetchMetric({
+        expr: gpuMemDataExpr,
+        start: currentTime - range, // 1시간 기준 > 3600
+        end: currentTime,
+      })
+      const gpuMemTransform = transformDataToObject(gpuMemData)
+
+      // Xid Error
+      const gpuXidExpr = `DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmNameList}"}`
+      const gpuXidData = await customStore.fetchMetric({
+        expr: gpuXidExpr,
+        // cluster: selectCluster?.namespace,
+      })
+
+      // Xid Error - 최근 10분간 변화량이 있는지 확인
+      const gpuXidExprChangeExpr = `changes((max by (gpu) (DCGM_FI_DEV_XID_ERRORS{job="launcher-dcgm-exporter", pod=~"${vmNameList}"})[10m:])) > 0`
+      const gpuXidExprChangeData = await customStore.fetchMetric({
+        expr: gpuXidExprChangeExpr,
+        // cluster: selectCluster?.namespace,
+        start: currentTime - range, // 1시간 기준 > 3600
+        end: currentTime,
+      })
+      const gpuXidTransform = transformXidDataToObject(
+        gpuXidData,
+        gpuXidExprChangeData,
+        gpuUtilTransform,
+        gpuMemTransform
+      )
+
+      let gpuDataList = []
+      Object.entries(gpuXidTransform).map(([vmName, gpuData]) => {
+        let nodeName = ''
+        clusterArr.map(item =>
+          item?.vmList?.map(obj => {
+            if (obj.split('/')[1] === vmName) {
+              nodeName = item.clusterName
+              return
+            }
+          })
+        )
+        Object.entries(gpuData).map(([gpuIndex, gpuItem]) => {
+          gpuDataList.push({
+            nodeName: nodeName,
+            group: vmName,
+            gpu: gpuIndex,
+            state: gpuItem?.state,
+            util: gpuItem.util,
+            mem: gpuItem.mem,
+          })
+        })
+      })
+      result = gpuDataList
+      setGpuDataList(gpuDataList)
+    }
+    await getData()
+    return result
+  }
+
+  const getGpuNodeList = async (nodeList, isLanding) => {
     setNodeLoading(true)
     let clusterArr = []
     nodeList.map(item => {
@@ -231,10 +317,10 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       })
     })
     setClusterArr(clusterArr)
-
     const vmList = clusterArr
-      .map(item => item?.vmList?.map(obj => obj.split('/')[1]))
+      .map(item => item?.vmList?.map(obj => obj.split('/')[1]).join('|'))
       .join('|')
+    const gpuListData = await getGpuListData2(vmList, clusterArr)
 
     const getData = async () => {
       var currentTime = Math.floor(Date.now() / 1000)
@@ -282,16 +368,26 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
         const metricMem = nodeAvgMemMetric.find(
           m => m.metric.group === c.clusterName
         )
+        const priority = { normal: 1, unknown: 2, abnormal: 3 }
+        let state = 'normal'
+        gpuListData.map(obj => {
+          if (obj.nodeName === c.clusterName) {
+            if (priority[obj.state] > priority[state]) {
+              state = obj.state
+            }
+          }
+        })
         return {
           group: c.clusterName,
           value: metricUtil ? Number(metricUtil.value[1]).toFixed(0) : 0,
           valueMem: metricMem ? Number(metricMem.value[1]).toFixed(0) : 0,
-          state: metricUtil ? c?.state : 'unknown',
+          state: state,
           vmList: c.vmList,
           namespace: c.namespace,
         }
       })
 
+      setLoading(false)
       setNodeLoading(false)
       setNodeList(result)
       if (isLanding) setDataList(result)
@@ -469,15 +565,15 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
       getVmAvgData()
     } else if (type === 'node' && clusterArr.length > 0) {
       // getGpuNodeList(clusterArr, false)
-      getLandingData()
+      getGpuNode()
     } else if (type === 'gpu' && vmList.length > 0) {
       getGpuListData()
     }
   }, [range])
 
-  useEffect(() => {
-    if (!popOpen) setGpuDataList([])
-  }, [popOpen])
+  // useEffect(() => {
+  //   if (!popOpen) setGpuDataList([])
+  // }, [popOpen])
 
   useEffect(() => {
     setPopOpen(false)
@@ -642,70 +738,81 @@ const GpuMap = ({ widgetKey, monitorStore, ...props }) => {
             </div>
           </div>
         </div>
-        <Loading spinning={loading || gpuLoading || vmLoading || nodeLoading}>
-          <div className="gpu_map_wrap">
-            {dataList.length === 0 && <div>{t('RESOURCES_NO_DATA')}</div>}
-            {type === 'node' && dataList.length > 0 && (
-              <Node
-                setPopOpen={setPopOpen}
-                setSelectCluster={setSelectCluster}
-                dataList={dataList}
-                filter={filter}
-                sort={sort}
-                getAreaColor={getAreaColor}
-                range={range}
-                customStore={customStore}
-                setGpuDataList={setGpuDataList}
-                setGpuXidData={setGpuXidData}
-                gpuXidData={gpuXidData}
-                transformXidDataToObject={transformXidDataToObject}
-                selectCluster={selectCluster}
-                gpuDataList={gpuDataList}
-                popOpen={popOpen}
-                backdropRef={backdropRef}
-                popoverRef={popoverRef}
-                {...props}
-              />
-            )}
-            {type === 'vm' && dataList.length > 0 && (
-              <Vm
-                setPopOpen={setPopOpen}
-                setSelectCluster={setSelectCluster}
-                dataList={dataList}
-                filter={filter}
-                sort={sort}
-                getAreaColor={getAreaColor}
-                range={range}
-                customStore={customStore}
-                setGpuDataList={setGpuDataList}
-                setGpuXidData={setGpuXidData}
-                gpuXidData={gpuXidData}
-                transformXidDataToObject={transformXidDataToObject}
-                selectCluster={selectCluster}
-                gpuDataList={gpuDataList}
-                popOpen={popOpen}
-                backdropRef={backdropRef}
-                popoverRef={popoverRef}
-                {...props}
-              />
-            )}
-            {type === 'gpu' && dataList.length > 0 && (
-              <Gpu
-                setPopOpen={setPopOpen}
-                dataList={dataList}
-                filter={filter}
-                sort={sort}
-                getAreaColor={getAreaColor}
-                range={range}
-                popOpen={popOpen}
-                vmList={vmList}
-                backdropRef={backdropRef}
-                popoverRef={popoverRef}
-                {...props}
-              />
-            )}
-          </div>
-        </Loading>
+        {type === 'node' && (
+          <Loading spinning={nodeLoading || loading}>
+            <div className="gpu_map_wrap">
+              {dataList.length === 0 && <div>{t('RESOURCES_NO_DATA')}</div>}
+              {dataList.length > 0 && (
+                <Node
+                  setPopOpen={setPopOpen}
+                  setSelectCluster={setSelectCluster}
+                  dataList={dataList}
+                  filter={filter}
+                  sort={sort}
+                  getAreaColor={getAreaColor}
+                  range={range}
+                  customStore={customStore}
+                  selectCluster={selectCluster}
+                  gpuDataList={gpuDataList}
+                  popOpen={popOpen}
+                  backdropRef={backdropRef}
+                  popoverRef={popoverRef}
+                  getGpuNode={getGpuNode}
+                  {...props}
+                />
+              )}
+            </div>
+          </Loading>
+        )}
+        {type === 'vm' && (
+          <Loading spinning={vmLoading}>
+            <div className="gpu_map_wrap">
+              {dataList.length === 0 && <div>{t('RESOURCES_NO_DATA')}</div>}
+              {dataList.length > 0 && (
+                <Vm
+                  setPopOpen={setPopOpen}
+                  setSelectCluster={setSelectCluster}
+                  dataList={dataList}
+                  filter={filter}
+                  sort={sort}
+                  getAreaColor={getAreaColor}
+                  range={range}
+                  customStore={customStore}
+                  selectCluster={selectCluster}
+                  gpuDataList={gpuDataList}
+                  popOpen={popOpen}
+                  backdropRef={backdropRef}
+                  popoverRef={popoverRef}
+                  getVmAvgData={getVmAvgData}
+                  {...props}
+                />
+              )}
+            </div>
+          </Loading>
+        )}
+
+        {type === 'gpu' && (
+          <Loading spinning={gpuLoading}>
+            <div className="gpu_map_wrap">
+              {dataList.length === 0 && <div>{t('RESOURCES_NO_DATA')}</div>}
+              {dataList.length > 0 && (
+                <Gpu
+                  setPopOpen={setPopOpen}
+                  dataList={dataList}
+                  filter={filter}
+                  sort={sort}
+                  getAreaColor={getAreaColor}
+                  range={range}
+                  popOpen={popOpen}
+                  vmList={vmList}
+                  backdropRef={backdropRef}
+                  popoverRef={popoverRef}
+                  {...props}
+                />
+              )}
+            </div>
+          </Loading>
+        )}
       </div>
     </>
   )
