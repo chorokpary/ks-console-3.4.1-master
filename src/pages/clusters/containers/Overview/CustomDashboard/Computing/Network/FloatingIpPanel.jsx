@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-const Panel = ({ floatingIp }) => {
+const Panel = ({ cluster, floatingIp }) => {
 
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-floatingip"></i>{t('RESOURCES_FLOATING_IP')}</h5>
+                <h5><i className="ico-type24-floatingip"></i><Link to={`/clusters/${cluster}/floatingip`}>{t('RESOURCES_FLOATING_IP')}</Link></h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

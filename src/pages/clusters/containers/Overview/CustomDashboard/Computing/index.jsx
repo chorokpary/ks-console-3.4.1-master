@@ -17,6 +17,7 @@ import KaasStore from 'stores/resources/containerresource'
 import KaasImageStore from 'stores/resources/containerimages'
 
 const Computing = ({ widgetKey, monitorStore, ...props }) => {
+  const cluster = props.cluster
   const vmStore = new VmStore()
   const securityGroupStore = new SecurityGroupStore()
   const loadBalancerStore = new LoadBalancerStore()
@@ -136,6 +137,7 @@ const Computing = ({ widgetKey, monitorStore, ...props }) => {
     <>
       {widgetKey === 'computingNetwork' && (
         <Network
+          cluster={cluster}
           loading={loading}
           networkList={networkList}
           routerList={routerList}
@@ -152,6 +154,7 @@ const Computing = ({ widgetKey, monitorStore, ...props }) => {
       )}
       {widgetKey === 'computingTemplate' && (
         <Template
+          cluster={cluster}
           loading={loading}
           vmList={vmList}
           imageList={imageList}
