@@ -15,17 +15,25 @@ const SystemPod = ({ widgetKey, monitorStore, ...props }) => {
   const [data, setData] = useState(pods)
   const [namespaceArr, setNamespaceArr] = useState([])
   const defaultNamespaceArr = [
-    'edgestack',
-    'cmp',
-    'harbor',
-    'kubesphere-system',
-    'kubesphere-monitoring-system',
-    'kubesphere-logging-system',
-    'kubesphere-controls-system',
-    'kubesphere-audit-system',
-    'kubevirt',
-    'ingress-nginx',
-    'weave',
+    'capi-system',
+    'cert-manager',
+    'cni-system',
+    'csi-system',
+    'kube-node-lease',
+    'kube-public',
+    'kube-system',
+    'edgestack-system',
+    'petasus-system',
+    'registry-system',
+    'petasus-system',
+    'monitoring-system',
+    'monitoring-federated',
+    'logging-system',
+    'controls-system',
+    'audit-system',
+    'virt-system',
+    'nginx-gateway',
+    'weave-system',
   ]
   const defaultConfigName = 'system-pod-config'
 
@@ -56,12 +64,12 @@ const SystemPod = ({ widgetKey, monitorStore, ...props }) => {
   const getConfigMapStore = async () => {
     setLoading(true)
     const configMapData = await configMapStore.fetchList({
-      namespace: 'default',
+      namespace: 'petasus-system',
       name: defaultConfigName,
     })
 
     if (configMapData.length > 0) {
-      const namespace = get(configMapData[0], 'data.namespace', 'default')
+      const namespace = get(configMapData[0], 'data.namespace', 'petasus-system')
 
       const namespaceArr = JSON.parse(namespace)
       setNamespaceArr(namespaceArr)
@@ -72,7 +80,7 @@ const SystemPod = ({ widgetKey, monitorStore, ...props }) => {
           apiVersion: 'v1',
           kind: 'ConfigMap',
           metadata: {
-            namespace: 'default',
+            namespace: 'petasus-system',
             name: defaultConfigName,
           },
           data: {
@@ -81,7 +89,7 @@ const SystemPod = ({ widgetKey, monitorStore, ...props }) => {
         },
         {
           cluster: props.cluster,
-          namespace: 'default',
+          namespace: 'petasus-system',
         }
       )
     }
