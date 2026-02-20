@@ -37,16 +37,15 @@ const ClusterStatus = ({ widgetKey, monitorStore, ...props }) => {
       setLoading(true)
       await componentStore.fetchList({ ...props })
       const { data } = componentStore.list
-      const kubesphereData = data['kubesphere'].filter(
+      const petasusData = data['petasus'].filter(
         arr =>
           arr.name === 'ks-apiserver' || arr.name === 'ks-controller-manager'
       )
       const componentData = data['kubernetes']
-      // kubesphere
       // kubernetes
 
       if (cleanupTrigger) {
-        setComponentData([...componentData, ...kubesphereData])
+        setComponentData([...componentData, ...petasusData])
         setLoading(false)
       }
     }
