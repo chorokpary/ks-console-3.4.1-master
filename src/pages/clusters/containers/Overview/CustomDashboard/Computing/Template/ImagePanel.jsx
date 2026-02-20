@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-const Panel = ({ image }) => {
+const Panel = ({ cluster, image }) => {
 
     return (
         <>
             <div className="box type_status">
-                <h5><i className="ico-type24-image"></i>{t('RESOURCES_IMAGE')}</h5>
+                <h5><i className="ico-type24-image"></i><Link to={`/clusters/${cluster}/images`}>{t('RESOURCES_IMAGE')}</Link></h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">
