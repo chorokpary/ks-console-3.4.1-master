@@ -650,27 +650,16 @@ const ResourceImageModal = props => {
             >
               {t('RESOURCES_PREVIOUS')}
             </Button>
-            {submitButtonFlag ? (
-              <Button
-                onClick={() => {
-                  handleOk()
-                }}
-                className={classnames(styles['btn'], styles['btn-control'])}
-                disabled
-                loading={true}
-              >
-                {t('RESOURCES_CREATE')}
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  handleOk()
-                }}
-                className={classnames(styles['btn'], styles['btn-control'])}
-              >
-                {t('RESOURCES_CREATE')}
-              </Button>
-            )}
+            <Button
+              onClick={() => {
+                handleOk()
+              }}
+              className={classnames(styles['btn'], styles['btn-control'])}
+              loading={props.store.isSubmitting}
+              disabled={props.store.isSubmitting}
+            >
+              {t('RESOURCES_CREATE')}
+            </Button>
           </>
         )}
       </>
@@ -703,13 +692,12 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 1
+                  className={`${regStep === 1
                       ? styles.current
                       : regStep > 1
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -721,8 +709,8 @@ const ResourceImageModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -734,13 +722,12 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep === 2
+                  className={`${regStep === 2
                       ? styles.current
                       : regStep > 2
-                      ? styles.done
-                      : styles.todo
-                  }`}
+                        ? styles.done
+                        : styles.todo
+                    }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -801,14 +788,13 @@ const ResourceImageModal = props => {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${
-                        publicType === 'private' &&
-                        (registryUrlInValid ||
-                          registryCheckInValid ||
-                          registryUserInvalid)
+                      className={`${styles.cont_box_wrap} ${publicType === 'private' &&
+                          (registryUrlInValid ||
+                            registryCheckInValid ||
+                            registryUserInvalid)
                           ? styles.formErrorStyle
                           : ''
-                      }`}
+                        }`}
                     >
                       <div className={styles.cont_box_section}>
                         <h6 className={styles.label}>
@@ -928,9 +914,8 @@ const ResourceImageModal = props => {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${
-                        sizeEmpty ? styles.formErrorStyle : ''
-                      }`}
+                      className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''
+                        }`}
                     >
                       <div className={styles.cont_box_section}>
                         <h6 className={styles.label}>
@@ -1063,9 +1048,8 @@ const ResourceImageModal = props => {
                   <Form.Item>
                     <div className={styles.content_box_wrap}>
                       <div
-                        className={`${styles.cont_box_wrap} ${
-                          sourceEmpty ? styles.formErrorStyle : ''
-                        }`}
+                        className={`${styles.cont_box_wrap} ${sourceEmpty ? styles.formErrorStyle : ''
+                          }`}
                       >
                         <div className={styles.cont_box_section}>
                           <div
@@ -1238,9 +1222,8 @@ const ResourceImageModal = props => {
                     <div className={styles.content_box}>
                       {/* <label>소스</label> */}
                       <div
-                        className={`${styles.cont_box_wrap} ${
-                          sourceEmpty ? styles.formErrorStyle : ''
-                        }`}
+                        className={`${styles.cont_box_wrap} ${sourceEmpty ? styles.formErrorStyle : ''
+                          }`}
                       >
                         <div className={styles.cont_box_section}>
                           <div
@@ -1297,9 +1280,8 @@ const ResourceImageModal = props => {
                                           {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
                                           <i
                                             style={{
-                                              background: `url('/assets/resources/images/icons/ico-os-${
-                                                obj.name.split('-')[0]
-                                              }.svg') center no-repeat`,
+                                              background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]
+                                                }.svg') center no-repeat`,
                                               width: '30px',
                                               height: '30px',
                                               marginRight: '5px',
