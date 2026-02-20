@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const Panel = ({ cluster, floatingIp }) => {
-    const history = useHistory();
 
     return (
         <>
-            <div className="box type_status" onClick={() => history.push(`/clusters/${cluster}/floatingip`)} style={{ cursor: 'pointer' }}>
-                <h5><i className="ico-type24-floatingip"></i>{t('RESOURCES_FLOATING_IP')}</h5>
+            <div className="box type_status">
+                <h5><i className="ico-type24-floatingip"></i><Link to={`/clusters/${cluster}/floatingip`}>{t('RESOURCES_FLOATING_IP')}</Link></h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">

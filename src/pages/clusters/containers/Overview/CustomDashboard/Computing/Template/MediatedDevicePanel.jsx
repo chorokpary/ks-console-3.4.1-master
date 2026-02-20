@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const Panel = ({ cluster, md }) => {
-    const history = useHistory();
 
     return (
         <>
-            <div className="box type_status" onClick={() => history.push(`/clusters/${cluster}/mediateddevices`)} style={{ cursor: 'pointer' }}>
-                <h5><i className="ico-type24-mediatedvgpu"></i>{t('RESOURCES_MEDIATED_DEVICE')}</h5>
+            <div className="box type_status">
+                <h5><i className="ico-type24-mediatedvgpu"></i><Link to={`/clusters/${cluster}/mediateddevices`}>{t('RESOURCES_MEDIATED_DEVICE')}</Link></h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">
