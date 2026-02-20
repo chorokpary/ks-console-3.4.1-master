@@ -8,6 +8,7 @@ import SecurityGroupPanel from './SecurityGroupPanel'
 import LbPanel from './LbPanel'
 
 const ComputingNetwork = ({
+  cluster,
   loading,
   networkList,
   routerList,
@@ -95,12 +96,12 @@ const ComputingNetwork = ({
         </div>
         <Loading spinning={loading}>
           <div className="grid_info style_status box_nth">
-            <NetworkPanel network={network} />
-            <SriovPanel sriov={sriov} />
-            <RouterPanel router={router} />
-            <LbPanel lb={lb} />
-            <SecurityGroupPanel sg={sg} />
-            <FloatingIpPanel floatingIp={floatingIp} />
+            <NetworkPanel cluster={cluster} network={network} />
+            <SriovPanel cluster={cluster} sriov={sriov} />
+            <RouterPanel cluster={cluster} router={router} />
+            <LbPanel cluster={cluster} lb={lb} />
+            <SecurityGroupPanel cluster={cluster} sg={sg} />
+            <FloatingIpPanel cluster={cluster} floatingIp={floatingIp} />
           </div>
         </Loading>
       </div>
