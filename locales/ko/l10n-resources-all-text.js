@@ -184,7 +184,8 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'KaaS 수정',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'KaaS 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_KAAS_DESC: 'Kubernetes-as-a-Service (KaaS) 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_KAAS_DESC:
+    'Kubernetes-as-a-Service (KaaS) 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_KAAS_IMAGE: 'KaaS 이미지',
   RESOURCES_CREATE_KAAS_IMAGE: 'KaaS 이미지 생성',
   RESOURCES_EDIT_KAAS_IMAGE: 'KaaS 이미지 수정',
@@ -254,8 +255,8 @@ module.exports = {
   RESOURCES_VROUTER_DESC:
     '가상 라우터의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_VM_IP: '가상 머신 IP',
-  RESOURCES_VM_NAME: '가상 머신 이름',
-  RESOURCES_SELECT_VM_NAME_TIP: '가상 머신 이름을 선택해 주세요.',
+  RESOURCES_VM_NAME: '가상머신 이름',
+  RESOURCES_SELECT_VM_NAME_TIP: '가상머신 이름을 선택해 주세요.',
   RESOURCES_VM: '가상머신',
   RESOURCES_VM_SHORT: '가상머신',
   RESOURCES_VM_MIGRATION_DESC:
@@ -496,7 +497,7 @@ module.exports = {
   RESOURCES_USE: '사용',
   RESOURCES_NOT_USE: '미사용',
   RESOURCES_USER_NAME: '사용자 이름',
-  RESOURCES_CUSTOM: '사용자 정의(고급)',
+  RESOURCES_CUSTOM: '사용자 정의 (고급)',
   RESOURCES_SPECIFY_USER: '사용자 지정',
   RESOURCES_NO_USE_KAAS_RESOURCE: '사용하는 KaaS가 없습니다.',
   RESOURCES_NO_USE_VM: '사용하는 가상머신이 없습니다.',
@@ -546,7 +547,8 @@ module.exports = {
   RESOURCES_SEGMENT_ID_EMPTY_DESC: '세그먼트 ID를 입력해주세요',
   RESOURCES_SEGMENT_ID_VALID: '0~16777215 범위에서 입력해주세요.',
   RESOURCES_SEGMENT_ID_VALID_VLAN: '2~4094 범위에서 입력해주세요.',
-  RESOURCES_INVALID_SEGMENT_ID_DESC: '잘못 된 세그먼트 ID입니다. 2~4094 범위에서 입력해주세요.',
+  RESOURCES_INVALID_SEGMENT_ID_DESC:
+    '잘못 된 세그먼트 ID입니다. 2~4094 범위에서 입력해주세요.',
   RESOURCES_DETAIL_SETTINGS: '세부 설정',
   RESOURCES_PINE_TREE: '소나무',
   RESOURCES_SOURCE: '소스',
@@ -776,11 +778,11 @@ module.exports = {
   RESOURCES_NO_DATA_CLONE_LOG: '클론 이력이 없습니다.',
   RESOURCES_CREATE_KEYPAIR: '키 페어 생성',
   RESOURCES_EDIT_KEYPAIR: '키 페어 수정',
-  RESOURCES_KEYPAIR: '키페어',
+  RESOURCES_KEYPAIR: '키 페어',
   RESOURCES_DELETE_KEYPAIR_TIP:
-    '키페어 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
-  RESOURCES_KEYPAIR_EMPTY_DESC: '키페어를 입력해 주세요.',
-  RESOURCES_KEYPAIR_DESC: '키페어의 상태와 사용현황을 관리 할 수 있습니다.',
+    '키 페어 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_KEYPAIR_EMPTY_DESC: '키 페어를 입력해 주세요.',
+  RESOURCES_KEYPAIR_DESC: '키 페어의 상태와 사용현황을 관리 할 수 있습니다.',
   RESOURCES_TYPE: '유형',
   RESOURCES_LICENSE: '라이선스',
   RESOURCES_LICENSE_KEY: '라이선스 키',
@@ -1120,9 +1122,9 @@ module.exports = {
   RESOURCES_IMAGE_BUILD_PUSH_ING_DESC: '이미지 빌드&푸시 중 상태입니다.',
   RESOURCES_IMAGE_BUILD_PUSH_COMPLETE_DESC: '이미지 빌드&푸시 완료 상태입니다.',
   RESOURCES_KEYPAIR_PASSWORD_EMPTY_DESC:
-    '키페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
+    '키 페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
   RESOURCES_KEYPAIR_PASSWORD_DESC:
-    '키페어 또는 스크립트 내 패스워드 정보 중 1개는 필수 입력 정보입니다.',
+    '키 페어 또는 스크립트 내 패스워드 정보 중 1개는 필수 입력 정보입니다.',
   RESOURCES_FILE_WIRTE_EMPTY_DESC: '파일 쓰기 정보를 입력해 주세요.',
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
   RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',
@@ -1308,13 +1310,41 @@ module.exports = {
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3:
     '원활한 서비스 이용을 위해 지금 바로 비밀번호를 변경해 주세요.',
   RESOURCES_PASSWORD_ORIGINALLY: '원래대로',
-  NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD: '변경 알림(일)이 Maximum age(일)보다 큽니다.',
+  NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD:
+    '변경 알림(일)이 Maximum age(일)보다 큽니다.',
 
   RESOURCES_CPU_AVAILABLE: 'CPU 가용률 (Cores)',
   RESOURCES_MEMORY_AVAILABLE: '메모리 가용률 (Gi)',
   RESOURCES_DISK_AVAILABLE: '디스크 가용률 (GB)',
   RESOURCES_SYSTEM_POD_PL: '시스템 파드',
 
-
-
+  RESOURCES_EXTERNAL_LB: 'External LB',
+  RESOURCES_EXTERNAL_LOAD_BALANCER_DESC:
+    'External LB의 상태와 사용현황을 관리 할 수 있습니다.',
+  RESOURCES_CREATE_EXTERNAL_LOAD_BALANCER: 'External LB 생성',
+  RESOURCES_EDIT_EXTERNAL_LOAD_BALANCER: 'External LB 수정',
+  RESOURCES_DELETE_EXTERNAL_LOAD_BALANCER_TIP:
+    'External LB 이름 <strong>{resource}</strong> 을 입력하여 이 작업의 위험을 이해하고 있는지 확인합니다.',
+  RESOURCES_LISTENER: '리스너',
+  RESOURCES_LISTENER_SETTINGS: '리스너 설정',
+  RESOURCES_POOL: '풀',
+  RESOURCES_POOL_SETTINGS: '풀 설정',
+  RESOURCES_ALREADY_SELECTED_PROTOCOL: '이미 선택한 프로토콜 입니다.',
+  RESOURCES_DUPLICATE_PROTOCOL_TIP: '중복된 프로토콜이 있습니다.',
+  RESOURCES_DUPLICATE_LISTENER_TIP: '중복된 정보로 설정된 리스너가 있습니다.',
+  RESOURCES_LISTENER_EMPTY_DESC: '리스너 정보를 입력해주세요.',
+  RESOURCES_MONITOR: '모니터',
+  RESOURCES_INTERVAL: '인터벌',
+  RESOURCES_TIME_OUT: '타임아웃',
+  RESOURCES_MEMBER: '멤버',
+  RESOURCES_SELECT_LB_METHOD_TIP: 'LB Method 을 선택해 주세요.',
+  RESOURCES_IP_VALID: 'IP 정보를 정확히 입력해주세요.',
+  RESOURCES_MEMBER_EMPTY_DESC: '멤버 정보를 입력해주세요.',
+  RESOURCES_EXTERNAL_LB_NAME: 'External LB 이름',
+  RESOURCES_EXTERNAL_DRIVER: '드라이버',
+  RESOURCES_WEIGHT_RANGE_DESC: 'WEIGHT 범위는 1~100 숫자 범위이어야 합니다.',
+  RESOURCES_ALREADY_USED_IP: '이미 사용된 IP 입니다.',
+  RESOURCES_INTERVAL_LESSS_THAN_TIMEOUT_DESC:
+    'Interval 값은 Timeout 보다 항상 작아야 합니다.',
+  RESOURCES_MONITOR_VALID: '모니터 정보를 입력해주세요.',
 }
