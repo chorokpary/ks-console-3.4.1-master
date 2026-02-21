@@ -3607,6 +3607,16 @@ body {
   background: #f9fbfd;
   padding: 0px 5px;
   border-radius: 4px;
+  border: 1px solid transparent;
+  transition: border-color 0.5s;
+}
+.grid_item .grid_info.style_status .box.type_status:hover {
+  background: #fff;
+  border: 1px solid #242e42;
+  -webkit-box-shadow: 0 0 8px 0 rgba(36, 46, 66, 0.06);
+  box-shadow: 0 0 8px 0 rgba(36, 46, 66, 0.06);
+  -webkit-transition: 0.5s ease;
+  transition: 0.5s ease;
 }
 .grid_item .grid_info.style_status .box.type_status h5 {
   height: 24px;
