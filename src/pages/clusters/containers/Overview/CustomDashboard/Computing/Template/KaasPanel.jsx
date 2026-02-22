@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const Panel = ({ cluster, kaas }) => {
+    const history = useHistory();
 
     return (
         <>
-            <div className="box type_status">
-                <h5><i className="ico-type24-kaasimage"></i><Link to={`/clusters/${cluster}/containerImages`}>{t('RESOURCES_KAAS_IMAGE')}</Link></h5>
+            <div className="box type_status" onClick={() => history.push(`/clusters/${cluster}/containerImages`)} style={{ cursor: 'pointer' }}>
+                <h5><i className="ico-type24-kaasimage"></i>{t('RESOURCES_KAAS_IMAGE')}</h5>
                 <div className="cont_group">
                     <div className="cont1">
                         <div className="number_wrap">
