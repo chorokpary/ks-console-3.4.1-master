@@ -65,6 +65,8 @@ const Status = props => {
           match="vpc_network"
           name={props.match.params.name}
           project={namespace}
+          cluster={cluster}
+          workspace={workspace}
         />
 
         {/* 라우터 */}

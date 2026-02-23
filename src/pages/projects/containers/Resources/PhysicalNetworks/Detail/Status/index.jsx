@@ -22,11 +22,7 @@ import DetailVmList from 'pages/projects/containers/Resources/components/DetailV
 
 const Status = props => {
   const store = props.detailStore;
-  const cluster = props.detailStore?.detail.cluster;
-  
-  useEffect(() => {
-    const networkId = props.match.params.id;
-  }, []);
+  const { workspace, cluster, namespace } = props.match.params;
 
   return (
     <>
@@ -36,7 +32,9 @@ const Status = props => {
           type={t('RESOURCES_NETWORK')}
           match="dedicated_network"
           name={props.match.params.name}
-          project={props.match.params.namespace}
+          project={namespace}
+          cluster={cluster}
+          workspace={workspace}
         />
       </div>
     </>

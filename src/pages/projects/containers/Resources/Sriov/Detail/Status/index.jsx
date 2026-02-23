@@ -15,7 +15,7 @@ import LoadBalancerStore from 'stores/resources/loadbalancers';
 
 const Status = props => {
   const store = props.detailStore;
-  const cluster = props.detailStore?.detail.cluster;
+  const { workspace, cluster, namespace } = props.match.params
   const routerStore = new RouterStore();
   const loadBalancerStore = new LoadBalancerStore();
 
@@ -68,6 +68,9 @@ const Status = props => {
           type={t('RESOURCES_NETWORK')}
           match="sriov_network"
           name={props.match.params.name}
+          project={namespace}
+          cluster={cluster}
+          workspace={workspace}
         />
       </div>
     </>
