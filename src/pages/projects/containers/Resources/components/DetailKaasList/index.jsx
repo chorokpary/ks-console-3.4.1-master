@@ -60,7 +60,7 @@ const DetailKaasList = props => {
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
 
-    const kaasList = await kaasStore.fetchList({ project: props.project })
+    const kaasList = await kaasStore.fetchList({ namespace: props.project })
     const imageName = props.name
 
     const kaasFilterData = kaasList?.filter(
