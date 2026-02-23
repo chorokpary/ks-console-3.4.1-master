@@ -55,11 +55,12 @@ export default class UserCreateModal extends Component {
     formTemplate: {
       apiVersion: 'iam.kubesphere.io/v1alpha2',
       kind: 'User',
-      isMfa: true,
+      isMfa: false,
       ...get(this.props, 'detail._originData', {}),
       passwordPattern: null,
       passwordErrorMessage: '',
     },
+    mfaUsed: globals.config.mfaUsed
   }
 
   globalRoleStore = new RoleStore('globalroles')
@@ -179,7 +180,7 @@ export default class UserCreateModal extends Component {
           disabled
         />
 
-        {!detail && (
+        {(!detail && this.state.mfaUsed) && (
           <Form.Item>
             <div
               className="dash_toggle"
