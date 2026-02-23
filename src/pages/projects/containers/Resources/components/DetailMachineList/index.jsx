@@ -71,7 +71,9 @@ const DetailMachineList = props => {
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
 
-    const machineList = await kaasStore.fetchMachinesAll()
+    const machineList = await kaasStore.fetchMachinesAll({
+      namespace: props.project,
+    })
     const filteredMachineList = machineList.filter(
       machine => machine.name === props.name
     )

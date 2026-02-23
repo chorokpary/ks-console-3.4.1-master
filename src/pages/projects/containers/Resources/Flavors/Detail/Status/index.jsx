@@ -8,7 +8,6 @@ const Status = props => {
   
   return (
     <>
-      {/* 가상 머신 상세 관련 샘플 */}
       <DetailVmList
         type="Flavor"
         match='flavor'
@@ -21,6 +20,7 @@ const Status = props => {
         type="Flavor"
         variables="flavor"
         name={props.match.params.name}
+        project={namespace}
         {...props.match.params}
       />
     </>
