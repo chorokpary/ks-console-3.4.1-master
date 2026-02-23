@@ -72,6 +72,9 @@ client:
   version:
     kubesphere: 3.4.1
 
+  # MFA 사용 여부
+  mfaUsed: true
+
   # kubesphere urls
   issueUrl: https://github.com/kubesphere/kubesphere/issues/new/choose
   reposUrl: https://github.com/kubesphere/kubesphere

@@ -61,11 +61,14 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
 
-    // URL 파라미터 확인 (렌더링 전)
+    // mfa 사용 여부 
+    const mfaUsed = globals.config.mfaUsed;
+
+    // localUser 
     const params = new URLSearchParams(window.location.search);
     const route = params.get('route');
-    
-    if (route != 'localuser') {   
+  
+    if (mfaUsed && route != 'localuser') {   
       const info = {
         name: get(globals,'oauthServers[0].title', ''),
         type: get(globals,'oauthServers[0].type', ''),
@@ -86,6 +89,7 @@ export default class Login extends Component {
       errorCount: 0,
       showKS: true,
       currentServer: {},
+      mfaUsed: mfaUsed,
     };
   }
 
@@ -166,6 +170,7 @@ export default class Login extends Component {
       errorMessage,
       showKS,
       currentServer,
+      mfaUsed
     } = this.state;
 
     return (
@@ -185,7 +190,7 @@ export default class Login extends Component {
                 : t('TITLE_USERNAME', { title: currentServer.title })}
             </div> */}
             <div className={styles.divider}></div>
-            {showKS &&
+            {(showKS && mfaUsed) &&
               get(globals, 'oauthServers', []).map(server => (
                 <div
                   key={server.url}
