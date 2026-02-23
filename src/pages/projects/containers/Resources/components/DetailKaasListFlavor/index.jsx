@@ -60,9 +60,9 @@ const DetailKaasListFlavor = props => {
     setIsSearchFlag(false)
     const page = get(params, 'page', 1)
 
-    const kaasList = await kaasStore.fetchList({ project: props.namespace })
+    const kaasList = await kaasStore.fetchList({ namespace: props.project })
     const machineList = await kaasStore.fetchMachinesAll({
-      project: props.namespace,
+      namespace: props.project,
     })
 
     const availableMachine = new Set()

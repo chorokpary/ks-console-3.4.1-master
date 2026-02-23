@@ -143,9 +143,6 @@ const ImageDetail = props => {
             path: `${PATH}/status`,
             title: t('RESOURCES_STATE'),
             component: Status,
-            // component: routeProps => (
-            //   <Status {...routeProps} imageDetailProps={props} />
-            // ),
             exact: true,
             name: props.match.params.name,
             params: props.match.params
@@ -162,6 +159,7 @@ export default inject('rootStore')(observer(ImageDetail));
 
 const Status = props => {
   const imageName = props.route.name;
+  const { workspace, cluster, namespace } = props.route.params;
 
   return (
     <DetailVmList

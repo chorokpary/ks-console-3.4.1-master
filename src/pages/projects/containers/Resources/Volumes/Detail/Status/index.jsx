@@ -56,6 +56,7 @@ const Status = props => {
           <DetailMachineList
             type={t('RESOURCES_VOLUME')}
             variables="volume"
+            project={namespace}
             {...props.match.params}
             name={name}
           />
