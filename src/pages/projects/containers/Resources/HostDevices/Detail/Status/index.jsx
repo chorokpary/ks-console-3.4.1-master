@@ -24,14 +24,22 @@ import DetailVmList from 'pages/projects/containers/Resources/components/DetailV
 const Status = (props) => {
     const store = props.detailStore;
     const detail = toJS(store.detail);
+    const { workspace, cluster, namespace } = props.match.params
 
     const renderVms = () => {
 
         return (
             <>
                 <div>
-                    {/* 가상 머신 상세 관련 샘플 */}
-                    <DetailVmList type={t('RESOURCES_HOST_DEVICE')} match='host_device' name={detail.host_device.name} gpu={store.detail.host_device.is_gpu} {...props.match.params} />
+                    <DetailVmList
+                        type={t('RESOURCES_HOST_DEVICE')}
+                        match='host_device'
+                        name={detail.host_device.name}
+                        gpu={store.detail.host_device.is_gpu}
+                        project={namespace}
+                        cluster={cluster}
+                        workspace={workspace}
+                    />
                 </div>
             </>
         );

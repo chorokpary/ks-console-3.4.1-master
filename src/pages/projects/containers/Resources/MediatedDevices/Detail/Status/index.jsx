@@ -23,6 +23,7 @@ import DetailVmList from 'pages/projects/containers/Resources/components/DetailV
 
 const Status = (props) => {
     const store = props.detailStore;
+    const { workspace, cluster, namespace } = props.match.params
     const detail = toJS(store.detail);
 
     if (store.isLoading) {
@@ -34,8 +35,15 @@ const Status = (props) => {
         return (
             <>
                 <div>
-                    {/* 가상 머신 상세 관련 샘플 */}
-                    <DetailVmList type={t('RESOURCES_MEDIATED_DEVICE')} match='mediated_device' name={detail.mediated_device.mediated_device_name} gpu={store.detail.mediated_device.is_gpu} {...props.match.params} />
+                    <DetailVmList
+                        type={t('RESOURCES_MEDIATED_DEVICE')}
+                        match='mediated_device'
+                        name={detail.mediated_device.mediated_device_name}
+                        gpu={store.detail.mediated_device.is_gpu}
+                        project={namespace}
+                        cluster={cluster}
+                        workspace={workspace}
+                    />
                 </div>
             </>
         );
