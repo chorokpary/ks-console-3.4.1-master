@@ -165,10 +165,12 @@ const Status = props => {
 
   return (
     <DetailVmList
-      type={t('RESOURCES_VM_IMAGE')}
-      variables="image"
-      name={imageName}
-      {...props.route.params}
+        type={t('RESOURCES_VM_IMAGE')}
+        match='image'
+        name={imageName}
+        project={namespace}
+        cluster={cluster}
+        workspace={workspace}
     />
   );
 };

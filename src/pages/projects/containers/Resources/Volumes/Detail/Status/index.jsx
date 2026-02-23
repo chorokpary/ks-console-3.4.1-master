@@ -32,8 +32,11 @@ const Status = props => {
         <div>
           <DetailVmList
             type={t('RESOURCES_VOLUME')}
-            variables="volume"
-            {...props.match.params}
+            match='volume'
+            name={props.match.params.name}
+            project={namespace}
+            cluster={cluster}
+            workspace={workspace}
           />
         </div>
       )}
