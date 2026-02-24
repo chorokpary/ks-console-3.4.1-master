@@ -24,15 +24,15 @@ import { Link } from 'react-router-dom'
 import { Icon } from '@kube-design/components'
 import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import withList, { ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+import { ListPage, withClusterList } from 'components/HOCs/withList'
+import ResourceTable from 'clusters/components/ResourceTable'
 
 import { getLocalTime, showNameAndAlias } from 'utils'
 
 import ResourceStore from 'stores/resources/containerresource'
 import styles from './index.scss'
 
-@withList({
+@withClusterList({
   store: new ResourceStore(),
   module: 'clusters',
   authKey: 'clusters',
@@ -318,7 +318,6 @@ export default class Resource extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props
-    // console.log({ ...this.props })
     return (
       <ListPage {...this.props}>
         <Banner
@@ -328,7 +327,7 @@ export default class Resource extends React.Component {
           title={t('RESOURCES_KAAS_RESOURCE')}
           description={t('RESOURCES_KAAS_DESC')}
         />
-        <Table
+        <ResourceTable
           {...tableProps}
           rowKey="project_name"
           emptyProps={this.emptyProps}
