@@ -860,10 +860,7 @@ const RegistNodePoolModal = props => {
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <div style={{ marginTop: 24, marginBottom: 24 }}>
                   <div className={styles.box_title} style={{ marginBottom: 8 }}>
-                    <label>
-                      {t('RESOURCES_SR_IOV_NETWORK')}
-                      <span className="form-item-required">*</span>
-                    </label>
+                    <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
                   </div>
                   <Form.Group>
                     <Form.Item>
@@ -932,13 +929,6 @@ const RegistNodePoolModal = props => {
                         </div>
                       </div>
                     </Form.Item>
-                    <div
-                      className={`form-item-error ${
-                        sriovCheckItems.length === 0 ? '' : 'hide'
-                      }`}
-                    >
-                      {t('RESOURCES_SELECT_NETWORK_TIP')}
-                    </div>
                   </Form.Group>
                   <Form.Item label={t('RESOURCES_DEDICATED_NETWORK')}>
                     <div className={styles.wrapper}>
@@ -1147,46 +1137,56 @@ const RegistNodePoolModal = props => {
                       ></Button>
                     </div>
                     <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
-                    {sriovNetworkList
-                      .filter(x => sriovCheckItems.includes(x.name))
-                      .map((obj, index) => (
-                        <div className={styles.greybgbox} key={index}>
-                          <div
-                            className={styles.list}
-                            style={{ width: '100%' }}
-                          >
-                            <label>{t('RESOURCES_NAME')}</label>
-                            <div>{obj.name}</div>
-                          </div>
-                          <div
-                            className={styles.list}
-                            style={{ width: '100%' }}
-                          >
-                            <label>{t('RESOURCES_TYPE_YOO')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.type}</div>
+                    <div className={styles.greybgbox}>
+                      {sriovNetworkList
+                        .filter(x => sriovCheckItems.includes(x.name))
+                        .map((obj, index) => (
+                          <div key={index}>
+                            <div
+                              className={styles.list}
+                              style={{ width: '100%' }}
+                            >
+                              <label>
+                                {index === 0 ? t('RESOURCES_NAME') : ''}
+                              </label>
+                              <div>{obj.name}</div>
+                            </div>
+                            <div
+                              className={styles.list}
+                              style={{ width: '100%' }}
+                            >
+                              <label>
+                                {index === 0 ? t('RESOURCES_TYPE_YOO') : ''}
+                              </label>
+                              <div className={styles.multiline}>
+                                <div>{obj.type}</div>
+                              </div>
+                            </div>
+                            <div
+                              className={styles.list}
+                              style={{ width: '100%' }}
+                            >
+                              <label>
+                                {index === 0 ? t('RESOURCES_CIDR') : ''}
+                              </label>
+                              <div className={styles.multiline}>
+                                <div>{obj.cidr}</div>
+                              </div>
+                            </div>
+                            <div
+                              className={styles.list}
+                              style={{ width: '100%' }}
+                            >
+                              <label>
+                                {index === 0 ? t('RESOURCES_GATEWAY') : ''}
+                              </label>
+                              <div className={styles.multiline}>
+                                <div>{obj.gateway_ip}</div>
+                              </div>
                             </div>
                           </div>
-                          <div
-                            className={styles.list}
-                            style={{ width: '100%' }}
-                          >
-                            <label>{t('RESOURCES_CIDR')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.cidr}</div>
-                            </div>
-                          </div>
-                          <div
-                            className={styles.list}
-                            style={{ width: '100%' }}
-                          >
-                            <label>{t('RESOURCES_GATEWAY')}</label>
-                            <div className={styles.multiline}>
-                              <div>{obj.gateway_ip}</div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                    </div>
                   </div>
 
                   <div className={styles.box_style}>
