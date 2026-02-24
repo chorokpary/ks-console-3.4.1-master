@@ -159,7 +159,7 @@ export default class ResourceStore extends Base {
 
     reqData.project = data.project
     reqData.external_network = data.external_network
-    reqData.sriov_network = data.sriov_network
+    reqData.sriov_networks = data.sriov_networks
     reqData.elb_network = data.elb_network
     reqData.elb_type = data.elb_type.toLowerCase()
 

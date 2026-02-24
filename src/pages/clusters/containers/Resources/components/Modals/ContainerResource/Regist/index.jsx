@@ -335,7 +335,7 @@ const RegistModal = props => {
 
       data.project = projectName
       data.external_network = networkCheckItem
-      data.sriov_network = sriovCheckItem
+      data.sriov_networks = sriovCheckItems
       data.elb_network = elbCheckItem
       data.elb_type = elbSelect
 
@@ -576,20 +576,22 @@ const RegistModal = props => {
 
   // 체크 리스트 시작 ==================================================
   const [networkCheckItem, setNetworkCheckItem] = useState('')
-  const [sriovCheckItem, setSriovCheckItem] = useState('')
+  const [sriovCheckItems, setSriovCheckItems] = useState([])
   const [elbCheckItem, setElbCheckItem] = useState('')
   const [securityGroupCheckItems, setSecurityGroupCheckItems] = useState([])
 
   const setVariables = {
     network: setNetworkCheckItem,
-    sriov: setSriovCheckItem,
+    sriov: setSriovCheckItems,
     elb: setElbCheckItem,
     security: setSecurityGroupCheckItems,
   }
   const dataListVariables = {
+    sriov: sriovNetworkList,
     security: securityGroups,
   }
   const stateVariables = {
+    sriov: sriovCheckItems,
     security: securityGroupCheckItems,
   }
 
@@ -610,13 +612,32 @@ const RegistModal = props => {
     }
   }
 
+  const handleSriovCheck = (checked, name) => {
+    if (checked) {
+      setVariables['sriov'](prev => [...prev, name])
+      setNetworkName(name)
+    } else {
+      const filtered = stateVariables['sriov'].filter(el => el !== name)
+      setVariables['sriov'](filtered)
+      if (networkFlag === 2) {
+        setNetworkName(filtered[0] || '')
+      }
+    }
+  }
+
   const handleAllCheck = (checked, type) => {
     if (checked) {
       const nameArray = []
       dataListVariables[type].forEach(el => nameArray.push(el.name))
       setVariables[type](nameArray)
+      if (type === 'sriov') {
+        setNetworkName(nameArray[0] || '')
+      }
     } else {
       setVariables[type]([])
+      if (type === 'sriov' && networkFlag === 2) {
+        setNetworkName('')
+      }
     }
   }
 
@@ -633,7 +654,7 @@ const RegistModal = props => {
   const onChangeNetwork = el => {
     setNetworkFlag(el)
     setNetworkName('')
-    handleSingleCheck('', 'sriov')
+    setSriovCheckItems([])
     handleSingleCheck('', 'network')
   }
 
@@ -846,7 +867,7 @@ const RegistModal = props => {
                           onChange={e => {
                             setProjectName(e)
                             setNetworkCheckItem('')
-                            setSriovCheckItem('')
+                            setSriovCheckItems([])
                             setElbCheckItem('')
                             setSecurityGroupCheckItems([])
                           }}
@@ -1074,7 +1095,21 @@ const RegistModal = props => {
                             </colgroup>
                             <thead>
                               <tr>
-                                <th></th>
+                                <th>
+                                  <Checkbox
+                                    name="select-all-sriov"
+                                    onChange={checked =>
+                                      handleAllCheck(checked, 'sriov')
+                                    }
+                                    checked={
+                                      !!(
+                                        dataListVariables['sriov'].length > 0 &&
+                                        stateVariables['sriov'].length ===
+                                          dataListVariables['sriov'].length
+                                      )
+                                    }
+                                  />
+                                </th>
                                 <th>
                                   <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
                                 </th>
@@ -1188,11 +1223,15 @@ const RegistModal = props => {
                               {sriovNetworkList?.map(data => (
                                 <tr key={data.name}>
                                   <td>
-                                    <Radio
+                                    <Checkbox
                                       name={`select-${data.name}`}
-                                      checked={data.name === sriovCheckItem}
-                                      onChange={() =>
-                                        handleSingleCheck(data.name, 'sriov')
+                                      checked={
+                                        !!stateVariables['sriov'].includes(
+                                          data.name
+                                        )
+                                      }
+                                      onChange={checked =>
+                                        handleSriovCheck(checked, data.name)
                                       }
                                     />
                                   </td>
@@ -1648,7 +1687,7 @@ const RegistModal = props => {
                       {t('RESOURCES_SR_IOV_NETWORK')}
                     </label>
                     {sriovNetworkList
-                      .filter(x => sriovCheckItem === x.name)
+                      .filter(x => sriovCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
                           <div
