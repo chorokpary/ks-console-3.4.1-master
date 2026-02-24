@@ -44,6 +44,7 @@ const RegistNodePoolModal = props => {
   const [imageOptionList, setImageOptionList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
 
+  const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
 
   const [kubeVersion, setKubeVersion] = useState('')
@@ -361,6 +362,8 @@ const RegistNodePoolModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type.toLowerCase() ===
+            acceleratorType.toLowerCase() &&
           obj.os_distro === osDistro &&
           obj.kube_version === kubeVersion &&
           obj.arch_type === value
@@ -369,10 +372,14 @@ const RegistNodePoolModal = props => {
   }
 
   const handleAcceleratorType = value => {
+    setAcceleratorType(value)
     setSelectImageName('')
     setImageOptionList(
       imageDataList.filter(
-        obj => obj.os_distro === osDistro && obj.kube_version === kubeVersion
+        obj =>
+          obj.accelerator_type.toLowerCase() === value.toLowerCase() &&
+          obj.os_distro === osDistro &&
+          obj.kube_version === kubeVersion
       )
     )
     setFlavorOptionList(
@@ -853,7 +860,10 @@ const RegistNodePoolModal = props => {
               <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <div style={{ marginTop: 24, marginBottom: 24 }}>
                   <div className={styles.box_title} style={{ marginBottom: 8 }}>
-                    <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
+                    <label>
+                      {t('RESOURCES_SR_IOV_NETWORK')}
+                      <span className="form-item-required">*</span>
+                    </label>
                   </div>
                   <Form.Group>
                     <Form.Item>
@@ -922,6 +932,13 @@ const RegistNodePoolModal = props => {
                         </div>
                       </div>
                     </Form.Item>
+                    <div
+                      className={`form-item-error ${
+                        sriovCheckItems.length === 0 ? '' : 'hide'
+                      }`}
+                    >
+                      {t('RESOURCES_SELECT_NETWORK_TIP')}
+                    </div>
                   </Form.Group>
                   <Form.Item label={t('RESOURCES_DEDICATED_NETWORK')}>
                     <div className={styles.wrapper}>
@@ -1134,32 +1151,36 @@ const RegistNodePoolModal = props => {
                       .filter(x => sriovCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list}>
-                            <label>
-                              {index === 0 ? t('RESOURCES_NAME') : ''}
-                            </label>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
-                          <div className={styles.list}>
-                            <label>
-                              {index === 0 ? t('RESOURCES_TYPE_YOO') : ''}
-                            </label>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
                           </div>
-                          <div className={styles.list}>
-                            <label>
-                              {index === 0 ? t('RESOURCES_CIDR') : ''}
-                            </label>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
                           </div>
-                          <div className={styles.list}>
-                            <label>
-                              {index === 0 ? t('RESOURCES_GATEWAY') : ''}
-                            </label>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_GATEWAY')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.gateway_ip}</div>
                             </div>
@@ -1167,50 +1188,7 @@ const RegistNodePoolModal = props => {
                         </div>
                       ))}
                   </div>
-                  <label>{t('RESOURCES_DEDICATED_NETWORK')}</label>
-                  {physicalNetworkList
-                    .filter(x => physicalnetworkCheckItems.includes(x.name))
-                    .map((obj, index) => (
-                      <div className={styles.greybgbox} key={index}>
-                        <div className={styles.list}>
-                          <label>
-                            {index === 0 ? t('RESOURCES_NAME') : ''}
-                          </label>
-                          <div>{obj.name}</div>
-                        </div>
-                        <div className={styles.list}>
-                          <label>
-                            {index === 0 ? t('RESOURCES_TYPE_YOO') : ''}
-                          </label>
-                          <div className={styles.multiline}>
-                            {/* <div>{obj.fabric.toUpperCase()}</div> */}
-                            <div>{obj.type.toUpperCase()}</div>
-                          </div>
-                        </div>
-                        <div className={styles.list}>
-                          <label>
-                            {index === 0 ? t('RESOURCES_IP_ASSIGNMENT') : ''}
-                          </label>
-                          <div className={styles.multiline}>
-                            <div>
-                              {`${
-                                obj.ip === undefined
-                                  ? t('RESOURCES_AUTOMATIC')
-                                  : obj.ip
-                              }`}
-                            </div>
-                          </div>
-                        </div>
-                        <div className={styles.list}>
-                          <label>
-                            {index === 0 ? t('RESOURCES_CIDR') : ''}
-                          </label>
-                          <div className={styles.multiline}>
-                            <div>{obj.cidr}</div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+
                   <div className={styles.box_style}>
                     <div className={styles.boxtitle}>
                       <div className={styles.titlename}>
