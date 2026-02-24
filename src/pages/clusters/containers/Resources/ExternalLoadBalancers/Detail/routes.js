@@ -18,7 +18,7 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
-import Status from 'clusters/containers/Resources/externalLoadBalancers/Detail/Status'
+import Status from 'clusters/containers/Resources/ExternalLoadBalancers/Detail/Status'
 
 const PATH = '/clusters/:cluster/externalLoadBalancers/:name'
 
