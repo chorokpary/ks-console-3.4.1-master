@@ -23,6 +23,7 @@ import Pods from './Pods'
 import Gateway from './Gateway'
 import Quota from './Quota'
 import Vms from './Vms'
+import Kaas from './Kaas'
 
 const PATH = '/clusters/:cluster/projects/:namespace'
 
@@ -34,6 +35,7 @@ export default [
     exact: true,
   },
   { path: `${PATH}/vms`, title: 'RESOURCES_VM', component: Vms, exact: true },
+  { path: `${PATH}/kaas`, title: 'RESOURCES_KAAS_RESOURCE', component: Kaas, exact: true },
   { path: `${PATH}/pods`, title: 'POD_PL', component: Pods, exact: true },
   {
     path: `${PATH}/gateway`,
