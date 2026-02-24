@@ -4365,7 +4365,7 @@ export const cpuUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>{t('RESOURCES_CPU_AVAILABLE')}</label>
+                        <label>${t('RESOURCES_CPU_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -4378,28 +4378,24 @@ export const cpuUsagePanel = ({ x, y, w, h }) => {
                                     src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
                                   />
                                 </div>
-                                <div class="cont_unit">
+                                <div class="cont_unit" style="justify-content: center">
                                   <div class="status_wrap">
-                                    <div class="value">43</div>
+                                    <div class="value">1,200</div>
                                     <p class="status used_gpu">
-                                      <span>사용중</span>
+                                      <span>${t('RESOURCES_USED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
-                                    <div class="value">37</div>
+                                    <div class="value">800</div>
                                     <p class="status waiting">
-                                      <span>미사용</span>
+                                      <span>${t('RESOURCES_UNUSED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
-                                    <div class="value">80</div>
+                                    <div class="value">2,000</div>
                                     <p class="status total">
-                                      <span>전체</span>
+                                      <span>${t('RESOURCES_ALL')}</span>
                                     </p>
-                                  </div>
-                                  <div class="status_wrap additional_info">
-                                    <div class="title">VM 할당 가능 최대 CPU</div>
-                                    <div class="value">8 <span class="unit">Cores</span></div>
                                   </div>
                                 </div>
                               </div>
@@ -4419,7 +4415,7 @@ export const memoryUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>{t('RESOURCES_MEMORY_AVAILABLE')}</label>
+                        <label>${t('RESOURCES_MEMORY_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -4432,28 +4428,24 @@ export const memoryUsagePanel = ({ x, y, w, h }) => {
                                     src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
                                   />
                                 </div>
-                                <div class="cont_unit">
+                                <div class="cont_unit" style="justify-content: center">
                                   <div class="status_wrap">
-                                    <div class="value">180</div>
+                                    <div class="value">1,200</div>
                                     <p class="status used_gpu">
-                                      <span>사용중</span>
+                                      <span>${t('RESOURCES_USED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
-                                    <div class="value">76</div>
+                                    <div class="value">800</div>
                                     <p class="status waiting">
-                                      <span>미사용</span>
+                                      <span>${t('RESOURCES_UNUSED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
-                                    <div class="value">256</div>
+                                    <div class="value">2,000</div>
                                     <p class="status total">
-                                      <span>전체</span>
+                                      <span>${t('RESOURCES_ALL')}</span>
                                     </p>
-                                  </div>
-                                  <div class="status_wrap additional_info">
-                                    <div class="title">VM 할당 가능 최대 메모리</div>
-                                    <div class="value">8 <span class="unit">Gi</span></div>
                                   </div>
                                 </div>
                               </div>
@@ -4473,7 +4465,7 @@ export const diskUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>{t('RESOURCES_DISK_AVAILABLE')}</label>
+                        <label>${t('RESOURCES_DISK_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -4486,28 +4478,24 @@ export const diskUsagePanel = ({ x, y, w, h }) => {
                                     src="/assets/resources/images/dummy/img-dummy-chart-pie2.svg"
                                   />
                                 </div>
-                                <div class="cont_unit">
+                                <div class="cont_unit" style="justify-content: center">
                                   <div class="status_wrap">
                                     <div class="value">1,200</div>
                                     <p class="status used_gpu">
-                                      <span>사용중</span>
+                                      <span>${t('RESOURCES_USED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">800</div>
                                     <p class="status waiting">
-                                      <span>미사용</span>
+                                      <span>${t('RESOURCES_UNUSED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">2,000</div>
                                     <p class="status total">
-                                      <span>전체</span>
+                                      <span>${t('RESOURCES_ALL')}</span>
                                     </p>
-                                  </div>
-                                  <div class="status_wrap additional_info">
-                                    <div class="title">VM 할당 가능 최대 디스크</div>
-                                    <div class="value">100 <span class="unit">GB</span></div>
                                   </div>
                                 </div>
                               </div>
@@ -4542,19 +4530,27 @@ export const systemPodPanel = ({ x, y, w, h }) => {
                 <div class="cont2">
                   <div class="status_wrap">
                     <div class="value">2</div>
-                    <p class="status waiting"><span>대기 중</span></p>
+                    <p class="status waiting"><span>${t(
+                      'RESOURCES_WAITING'
+                    )}</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">8</div>
-                    <p class="status running"><span>실행 중</span></p>
+                    <p class="status running"><span>${t(
+                      'RESOURCES_RUNNING'
+                    )}</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status completed"><span>완료 됨</span></p>
+                    <p class="status completed"><span>${t(
+                      'RESOURCES_COMPLETED'
+                    )}</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status error"><span>오류</span></p>
+                    <p class="status error"><span>${t(
+                      'RESOURCES_ERROR'
+                    )}</span></p>
                   </div>
                 </div>
               </div>
