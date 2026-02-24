@@ -122,7 +122,7 @@ export const nodePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>노드</label>
+                        <label>${t('RESOURCES_NODE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -133,13 +133,13 @@ export const nodePanel = ({ x, y, w, h }) => {
                                 <div class="cont1">
                                   <div class="number_wrap">
                                     <i class="ico-type24-clusternode-gpu"
-                                      ><span>GPU 노드</span>
+                                      ><span>${t('RESOURCES_GPU_NODE')}</span>
                                     </i>
                                     <p><span class="em">140</span>/ 140</p>
                                   </div>
                                   <div class="number_wrap">
                                     <i class="ico-type24-clusternode"
-                                      ><span>CPU 노드</span>
+                                      ><span>${t('RESOURCES_CPU_NODE')}</span>
                                     </i>
                                     <p><span class="em">10</span>/ 10</p>
                                   </div>
@@ -148,19 +148,21 @@ export const nodePanel = ({ x, y, w, h }) => {
                                   <div class="status_wrap">
                                     <div class="value">150</div>
                                     <p class="status running">
-                                      <span>실행중</span>
+                                      <span>${t('RESOURCES_RUNNING')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">0</div>
                                     <p class="status warning">
-                                      <span>주의</span>
+                                      <span>${t('RESOURCES_WARNING')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">0</div>
                                     <p class="status unschedulable">
-                                      <span>스케줄링 불가</span>
+                                      <span>${t(
+                                        'RESOURCES_UNSCHEDULABLE'
+                                      )}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -181,7 +183,7 @@ export const virtualMachinePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>가상머신</label>
+                        <label>${t('RESOURCES_VM')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -192,13 +194,13 @@ export const virtualMachinePanel = ({ x, y, w, h }) => {
                                 <div class="cont1">
                                   <div class="number_wrap">
                                     <i class="ico-type24-vm-gpu"
-                                      ><span>GPU 가상머신</span>
+                                      ><span>${t('RESOURCES_GPU_VM')}</span>
                                     </i>
                                     <p><span class="em">100</span>/ 100</p>
                                   </div>
                                   <div class="number_wrap">
                                     <i class="ico-type24-vm"
-                                      ><span>CPU 가상머신</span>
+                                      ><span>${t('RESOURCES_CPU_VM')}</span>
                                     </i>
                                     <p><span class="em">49</span>/ 49</p>
                                   </div>
@@ -207,25 +209,25 @@ export const virtualMachinePanel = ({ x, y, w, h }) => {
                                   <div class="status_wrap">
                                     <div class="value">2</div>
                                     <p class="status waiting">
-                                      <span>진행중</span>
+                                      <span>${t('RESOURCES_PROGRESSING')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">93</div>
                                     <p class="status running">
-                                      <span>실행중</span>
+                                      <span>${t('RESOURCES_RUNNING')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">1</div>
                                     <p class="status warning">
-                                      <span>정지됨</span>
+                                      <span>${t('RESOURCES_STOPPED')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">1</div>
                                     <p class="status error">
-                                      <span>오류</span>
+                                      <span>${t('RESOURCES_ERROR')}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -264,19 +266,25 @@ export const gpuStatusPanel = ({ x, y, w, h }) => {
                                   <div class="status_wrap">
                                     <div class="value">80</div>
                                     <p class="status running">
-                                      <span>정상</span>
+                                      <span>${t(
+                                        'RESOURCES_GPUCLUSTER_NORMAL'
+                                      )}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">0</div>
                                     <p class="status unknown">
-                                      <span>미확인</span>
+                                      <span>${t(
+                                        'RESOURCES_GPUCLUSTER_UNKNOWN'
+                                      )}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">10</div>
                                     <p class="status warning">
-                                      <span>경고</span>
+                                      <span>${t(
+                                        'RESOURCES_GPUCLUSTER_MINOR'
+                                      )}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -297,7 +305,7 @@ export const gpuUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>GPU 가용률</label>
+                        <label>${t('RESOURCES_GPU_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -314,13 +322,13 @@ export const gpuUsagePanel = ({ x, y, w, h }) => {
                                   <div class="status_wrap">
                                     <div class="value">43</div>
                                     <p class="status used_gpu">
-                                      <span>사용중</span>
+                                      <span>${t('RESOURCES_USING')}</span>
                                     </p>
                                   </div>
                                   <div class="status_wrap">
                                     <div class="value">37</div>
                                     <p class="status waiting">
-                                      <span>미사용</span>
+                                      <span>${t('RESOURCES_UNUSED')}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -341,24 +349,24 @@ export const gpuMapPanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                   <div class="grid_item">
                     <div class="grid_title">
-                      <label>GPU 현황 맵</label>
+                      <label>${t('RESOURCES_GPU_STATUS_MAP')}</label>
                       <div class="right">
                         <div class="select_wrap">
                           <div class="select-list-box">
                             <div class="selected-item single">
                               <p>
-                                <strong>노드</strong>
+                                <strong>${t('RESOURCES_NODE')}</strong>
                               </p>
                             </div>
                             <ul class="select-list scroll-gray">
                               <li class="selected">
                                 <p>
-                                  <strong>노드</strong>
+                                  <strong>${t('RESOURCES_NODE')}</strong>
                                 </p>
                               </li>
                               <li>
                                 <p>
-                                  <strong>가상머신</strong>
+                                  <strong>${t('RESOURCES_VM')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -380,7 +388,7 @@ export const gpuMapPanel = ({ x, y, w, h }) => {
                     <div class="grid_option_area">
                       <div class="legend_button_wrapper">
                         <button class="legend_toggle_button" onclick="toggleLegend()">
-                          범례
+                          ${t('RESOURCES_LEGEND')}
                         </button>
 
                         <div class="legend_dropdown_container" id="legendDropdown" style="display: none">
@@ -414,15 +422,21 @@ export const gpuMapPanel = ({ x, y, w, h }) => {
                         <label for="al_name_1">
                           <input type="radio" name="box-tab" id="al_name_1" value="name3" checked />
                           <!-- gpu badge number는 99 이상일때 99로만 표현 -->
-                          <span><span class="gpu_badge_number">18</span><span>전체</span></span>
+                          <span><span class="gpu_badge_number">18</span><span>${t(
+                            'RESOURCES_ALL'
+                          )}</span></span>
                         </label>
                         <label for="al_name_3">
                           <input type="radio" name="box-tab" id="al_name_3" value="name5" />
-                          <span><span class="gpu_badge_number minor">6</span><span>경고</span></span>
+                          <span><span class="gpu_badge_number minor">6</span><span>${t(
+                            'RESOURCES_GPUCLUSTER_MINOR'
+                          )}</span></span>
                         </label>
                         <label for="al_name_4">
                           <input type="radio" name="box-tab" id="al_name_4" value="name6" />
-                          <span><span class="gpu_badge_number unknown">6</span><span>주의</span></span>
+                          <span><span class="gpu_badge_number unknown">6</span><span>${t(
+                            'RESOURCES_WARNING'
+                          )}</span></span>
                         </label>
                         <div class="select_wrap">
                           <div class="select-list-box">
@@ -856,30 +870,31 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                   <div class="grid_item">
                     <div class="grid_title">
-                      <label>GPU 사용 현황</label>
+                      <label>${t('RESOURCES_GPU_USAGE_STATUS')}</label>
                       <div class="right">
                         <div class="select_wrap">
                           <div class="select-list-box">
                             <div class="selected-item single">
                               <p>
-                                <strong>최근 1주일</strong>
+                                <strong>${t(
+                                  'RESOURCES_LAST_TIME_WEEKEND'
+                                )}</strong>
                               </p>
                             </div>
 
                             <ul class="select-list scroll-gray">
                               <li class="selected">
                                 <p>
-                                  <strong>최근 1주일</strong>
+                                  <strong>${t(
+                                    'RESOURCES_LAST_TIME_WEEKEND'
+                                  )}</strong>
                                 </p>
                               </li>
                               <li>
                                 <p>
-                                  <strong>최근 1일</strong>
-                                </p>
-                              </li>
-                              <li>
-                                <p>
-                                  <strong>최근 7시간</strong>
+                                  <strong>${t(
+                                    'RESOURCES_LAST_TIME_DAY'
+                                  )}</strong>
                                 </p>
                               </li>
                             </ul>
@@ -896,7 +911,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
                             <!-- 공통 메트릭 카드 -->
                             <div class="gpu_usage_card">
                               <h3 class="gpu_usage_card_title">
-                                GPU 평균 사용률
+                                ${t('RESOURCES_GPU_AVG_USAGE')}
                               </h3>
                               <p class="gpu_usage_card_value">76%</p>
                               <div class="gpu_usage_card_chart">
@@ -908,7 +923,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
 
                             <div class="gpu_usage_card">
                               <h3 class="gpu_usage_card_title">
-                                GPU 메모리 사용률
+                                ${t('RESOURCES_GPU_AVG_MEMORY_USAGE')}
                               </h3>
                               <p class="gpu_usage_card_value">213 Bytes</p>
                               <div class="gpu_usage_card_chart">
@@ -920,7 +935,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
 
                             <div class="gpu_usage_card">
                               <h3 class="gpu_usage_card_title">
-                                GPU 온도 평균
+                                ${t('RESOURCES_GPU_TEMP_AVG')}
                               </h3>
                               <p class="gpu_usage_card_value">72℃</p>
                               <div class="gpu_usage_card_chart">
@@ -932,7 +947,7 @@ export const gpuUsageStatusPanel = ({ x, y, w, h }) => {
 
                             <div class="gpu_usage_card">
                               <h3 class="gpu_usage_card_title">
-                                전력 사용량 (Total)
+                                ${t('RESOURCES_POWER_USAGE')} (Total)
                               </h3>
                               <p class="gpu_usage_card_value">3,200 W</p>
                               <div class="gpu_usage_card_chart">
@@ -999,7 +1014,7 @@ export const gpuUsageTop5Panel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                   <div class="grid_item">
                     <div class="grid_title">
-                      <label>GPU 사용률 Top5</label>
+                      <label>${t('RESOURCES_GPU_USAGE_STATUS_TOP5')}</label>
                       <div class="right"></div>
                       <i class="ico-btn-trash"></i>
                     </div>
@@ -1007,7 +1022,9 @@ export const gpuUsageTop5Panel = ({ x, y, w, h }) => {
                         <div class="spin-container">
                           <div class="gpu_usage_top_wrap">
                             <div class="gpu_usage_top">
-                              <h3 class="gpu_usage_top_title">GPU 사용률</h3>
+                              <h3 class="gpu_usage_top_title">${t(
+                                'RESOURCES_GPU_UTILIZATION_PERCENT'
+                              )}</h3>
                               <ul class="gpu_usage_list">
                                 <li class="gpu_usage_item">
                                   <span class="gpu_name">GPU-0992322</span>
@@ -1048,7 +1065,7 @@ export const gpuUsageTop5Panel = ({ x, y, w, h }) => {
                             </div>
                             <div class="gpu_usage_top color2">
                               <h3 class="gpu_usage_top_title">
-                                GPU 메모리 사용률
+                                ${t('RESOURCES_GPU_MEMORY_UTILIZATION_PERCENT')}
                               </h3>
                               <ul class="gpu_usage_list">
                                 <li class="gpu_usage_item">
@@ -1103,20 +1120,20 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                   <div class="grid_item">
                     <div class="grid_title">
-                      <label>알림</label>
+                      <label>${t('RESOURCES_ALERTING_MESSAGE')}</label>
                       <div class="right">
                         <div class="select_wrap">
                           <div class="select-list-box">
                             <div class="selected-item single">
                               <p>
-                                <strong>노드</strong>
+                                <strong>${t('RESOURCES_NODE')}</strong>
                               </p>
                             </div>
 
                             <ul class="select-list scroll-gray">
                               <li class="selected">
                                 <p>
-                                  <strong>노드</strong>
+                                  <strong>${t('RESOURCES_NODE')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -1126,7 +1143,7 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                               </li>
                               <li>
                                 <p>
-                                  <strong>가상머신</strong>
+                                  <strong>${t('RESOURCES_VM')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -1149,19 +1166,27 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                       <label for="al_name_1">
                         <input type="radio" name="box-tab" id="al_name_1" value="name3" checked />
                         <!-- gpu badge number는 99 이상일때 99로만 표현 -->
-                        <span><span class="gpu_badge_number">18</span><span>전체</span></span>
+                        <span><span class="gpu_badge_number">18</span><span>${t(
+                          'RESOURCES_ALL'
+                        )}</span></span>
                       </label>
                       <label for="al_name_2">
                         <input type="radio" name="box-tab" id="al_name_2" value="name4" />
-                        <span><span class="gpu_badge_number critical">6</span><span>심각</span></span>
+                        <span><span class="gpu_badge_number critical">6</span><span>${t(
+                          'RESOURCES_GPUCLUSTER_CRITICAL'
+                        )}</span></span>
                       </label>
                       <label for="al_name_3">
                         <input type="radio" name="box-tab" id="al_name_3" value="name5" />
-                        <span><span class="gpu_badge_number minor">6</span><span>경고</span></span>
+                        <span><span class="gpu_badge_number minor">6</span><span>${t(
+                          'RESOURCES_GPUCLUSTER_MINOR'
+                        )}</span></span>
                       </label>
                       <label for="al_name_4">
                         <input type="radio" name="box-tab" id="al_name_4" value="name6" />
-                        <span><span class="gpu_badge_number unknown">6</span><span>주의</span></span>
+                        <span><span class="gpu_badge_number unknown">6</span><span>${t(
+                          'RESOURCES_WARNING'
+                        )}</span></span>
                       </label>
                     </div>
                     <div class="spin-nested-loading">
@@ -1249,7 +1274,7 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                   <div class="grid_item">
                     <div class="grid_title">
-                      <label>알림</label>
+                      <label>${t('RESOURCES_ALERTING_MESSAGE')}</label>
                       <div class="right">
                         <div class="alert_tab bottom">
                           <label for="al_name2_1">
@@ -1274,14 +1299,14 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                           <div class="select-list-box">
                             <div class="selected-item single">
                               <p>
-                                <strong>노드</strong>
+                                <strong>${t('RESOURCES_NODE')}</strong>
                               </p>
                             </div>
 
                             <ul class="select-list scroll-gray">
                               <li class="selected">
                                 <p>
-                                  <strong>노드</strong>
+                                  <strong>${t('RESOURCES_NODE')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -1291,7 +1316,7 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                               </li>
                               <li>
                                 <p>
-                                  <strong>가상머신</strong>
+                                  <strong>${t('RESOURCES_VM')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -1499,19 +1524,27 @@ export const podPanel = ({ x, y, w, h }) => {
                 <div class="cont2">
                   <div class="status_wrap">
                     <div class="value">2</div>
-                    <p class="status waiting"><span>대기 중</span></p>
+                    <p class="status waiting"><span>${t(
+                      'RESOURCES_WAITING'
+                    )}</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">8</div>
-                    <p class="status running"><span>실행 중</span></p>
+                    <p class="status running"><span>${t(
+                      'RESOURCES_RUNNING'
+                    )}</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status completed"><span>완료 됨</span></p>
+                    <p class="status completed"><span>${t(
+                      'RESOURCES_COMPLETED'
+                    )}</span></p>
                   </div>
                   <div class="status_wrap">
                     <div class="value">1</div>
-                    <p class="status error"><span>오류</span></p>
+                    <p class="status error"><span>${t(
+                      'RESOURCES_ERROR'
+                    )}</span></p>
                   </div>
                 </div>
               </div>
@@ -1655,7 +1688,9 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                 
                                 <div class="status_group">
                                   <div class="status_item">
-                                    <p class="status_label">가상머신</p>
+                                    <p class="status_label">${t(
+                                      'RESOURCES_VM'
+                                    )}</p>
                                     <span class="status_value">10</span>
                                   </div>
                                   <div class="status_item">
@@ -1663,15 +1698,21 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                     <span class="status_value">80</span>
                                   </div>
                                   <div class="status_item">
-                                    <p class="status_label">GPU 평균 사용률</p>
+                                    <p class="status_label">${t(
+                                      'RESOURCES_GPU_AVG_USAGE'
+                                    )}</p>
                                     <span class="status_value">52%</span>
                                   </div>
                                   <div class="status_item">
-                                    <p class="status_label">GPU 메모리 사용량</p>
+                                    <p class="status_label">${t(
+                                      'RESOURCES_GPU_AVG_MEMORY_USAGE'
+                                    )}</p>
                                     <span class="status_value">1.2/6.4 <span class="unit">TB</span></span>
                                   </div>
                                   <div class="status_item">
-                                    <p class="status_label">평균 온도</p>
+                                    <p class="status_label">${t(
+                                      'RESOURCES_GPU_TEMP_AVG'
+                                    )}</p>
                                     <span class="status_value">67<span class="unit">°C</span></span>
                                   </div>
                                 </div>
@@ -4324,7 +4365,7 @@ export const cpuUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>CPU 가용률 (Cores)</label>
+                        <label>{t('RESOURCES_CPU_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -4378,7 +4419,7 @@ export const memoryUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>메모리 가용률 (Gi)</label>
+                        <label>{t('RESOURCES_MEMORY_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
@@ -4432,7 +4473,7 @@ export const diskUsagePanel = ({ x, y, w, h }) => {
                   <div class="grid-stack-item-content">
                     <div class="grid_item">
                       <div class="grid_title">
-                        <label>디스크 가용률 (GB)</label>
+                        <label>{t('RESOURCES_DISK_AVAILABLE')}</label>
                         <i class="ico-btn-trash"></i>
                       </div>
                       <div class="spin-nested-loading">
