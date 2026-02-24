@@ -87,8 +87,8 @@ const DetailMachineList = props => {
       machineSearchData.length > 0
         ? getSliceData(machineSearchData, page)
         : params.name !== '' && params.name !== undefined
-        ? getSliceData(machineSearchData, page)
-        : getSliceData(filteredMachineList, page)
+          ? getSliceData(machineSearchData, page)
+          : getSliceData(filteredMachineList, page)
 
     setCurrentPage(page)
     setMachineSearchDataList(machineSearchData)
@@ -235,8 +235,11 @@ const DetailMachineList = props => {
               <div className={styles.text} style={{ width: '20%' }}>
                 <div>{obj.name}</div>
                 <p>
-                  {getLocalTime(obj.timestamp).format('YYYY-MM-DD HH:mm:ss')}
-                  {t('RESOURCES_CREATED')}
+                  {t('CREATED_TIME', {
+                    diff: getLocalTime(obj.timestamp).format(
+                      'YYYY-MM-DD HH:mm:ss'
+                    ),
+                  })}
                 </p>
               </div>
               <div className={styles.text} style={{ width: '10%' }}>
