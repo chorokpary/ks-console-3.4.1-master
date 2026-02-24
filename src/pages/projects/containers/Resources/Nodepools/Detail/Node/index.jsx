@@ -303,8 +303,8 @@ const Node = props => {
                     ? flavor.gpus.length === 1
                       ? `${flavor.gpus[0].quantity} ${flavor.gpus[0].name}`
                       : `${flavor.gpus[0].name} ${t(
-                          'RESOURCES_BESIDES'
-                        )} ${flavor.gpus.length - 1}${t('RESOURCES_COUNT')}`
+                        'RESOURCES_BESIDES'
+                      )} ${flavor.gpus.length - 1}${t('RESOURCES_COUNT')}`
                     : '-'
                 }
                 description={t('GPU')}
@@ -357,10 +357,11 @@ const Node = props => {
                       </Tooltip>
                     </div>
                     <p>
-                      {getLocalTime(detail.timestamp).format(
-                        'YYYY-MM-DD HH:mm:ss'
-                      )}
-                      {t('RESOURCES_CREATED')}
+                      {t('CREATED_TIME', {
+                        diff: getLocalTime(detail.timestamp).format(
+                          'YYYY-MM-DD HH:mm:ss'
+                        ),
+                      })}
                     </p>
                   </div>
                   <div className={styles.title} style={{ width: '10%' }}>
