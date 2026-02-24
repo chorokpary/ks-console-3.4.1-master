@@ -40,13 +40,11 @@ const RegistModal = props => {
   const [selectImageName, setSelectImageName] = useState('')
   const [imageOptionList, setImageOptionList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
-  const [elbNetworkDataList, setElbNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
   const [securityGroupDataList, setSecurityGroupDataList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [networkList, setNetworkList] = useState([])
-  const [elbNetworkList, setElbNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
 
   const [clusterName, setClusterName] = useState('')
@@ -74,6 +72,7 @@ const RegistModal = props => {
   const [securityGroups, setSecurityGroups] = useState([])
   const [secureBoot, setSecureBoot] = useState(false)
 
+  const [networkFlag, setNetworkFlag] = useState(1)
   const [networkName, setNetworkName] = useState('')
   const [isElb, setIsElb] = useState(false)
 
@@ -97,9 +96,6 @@ const RegistModal = props => {
       const listNetwork = await vmStore.fetchVmListNetwork({
         ...props,
       })
-      const listElbNetwork = await vmStore.fetchVmListElbNetwork({
-        ...props,
-      })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
         ...props,
       })
@@ -117,8 +113,6 @@ const RegistModal = props => {
       setImageDataList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
       setNetworkList(listNetwork.networks)
-      setElbNetworkDataList(listElbNetwork.networks)
-      setElbNetworkList(listElbNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
       setSriovNetworkList(listSriovNetwork.sriovs)
       setStorageClassDataList(listStoregeClass.user_sces)
@@ -131,10 +125,6 @@ const RegistModal = props => {
   const projectFilteredData = project => {
     const networks = networkDataList.filter(obj => obj.project === project)
     setNetworkList(networks)
-    const elbNetworks = elbNetworkDataList.filter(
-      obj => obj.project === project
-    )
-    setElbNetworkList(elbNetworks)
     const sriovNetworks = sriovNetworkDataList.filter(
       obj => obj.project === project
     )
@@ -284,7 +274,9 @@ const RegistModal = props => {
       imageDataList
         .filter(
           obj =>
-            obj.os_distro === osDistro && obj.arch_type === masterArchSelect
+            obj.os_distro === osDistro &&
+            obj.arch_type === masterArchSelect &&
+            obj.accelerator_type.toLowerCase() === 'none'
         )
         .map(obj => t(obj.kube_version))
     )
@@ -546,6 +538,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type.toLowerCase() === 'none' &&
           obj.os_distro === value &&
           obj.arch_type === masterArchSelect &&
           obj.kube_version === masterKubeVersionSelect
@@ -559,6 +552,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type.toLowerCase() === 'none' &&
           obj.os_distro === osDistro &&
           obj.arch_type === value &&
           obj.kube_version === masterKubeVersionSelect
@@ -572,6 +566,7 @@ const RegistModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
+          obj.accelerator_type.toLowerCase() === 'none' &&
           obj.os_distro === osDistro &&
           obj.arch_type === masterArchSelect &&
           obj.kube_version === value
@@ -620,8 +615,13 @@ const RegistModal = props => {
   const handleSriovCheck = (checked, name) => {
     if (checked) {
       setVariables['sriov'](prev => [...prev, name])
+      setNetworkName(name)
     } else {
-      setVariables['sriov'](stateVariables['sriov'].filter(el => el !== name))
+      const filtered = stateVariables['sriov'].filter(el => el !== name)
+      setVariables['sriov'](filtered)
+      if (networkFlag === 2) {
+        setNetworkName(filtered[0] || '')
+      }
     }
   }
 
@@ -630,8 +630,14 @@ const RegistModal = props => {
       const nameArray = []
       dataListVariables[type].forEach(el => nameArray.push(el.name))
       setVariables[type](nameArray)
+      if (type === 'sriov') {
+        setNetworkName(nameArray[0] || '')
+      }
     } else {
       setVariables[type]([])
+      if (type === 'sriov' && networkFlag === 2) {
+        setNetworkName('')
+      }
     }
   }
 
@@ -645,6 +651,13 @@ const RegistModal = props => {
   }
 
   // 스크립트 시작 ==================================================
+  const onChangeNetwork = el => {
+    setNetworkFlag(el)
+    setNetworkName('')
+    setSriovCheckItems([])
+    handleSingleCheck('', 'network')
+  }
+
   // cpu count
   const addMasterBtn = e => {
     e.preventDefault()
@@ -798,7 +811,7 @@ const RegistModal = props => {
               <div className={styles.confirm}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
-                  {t('RESOURCES_CONFIRMATION')}
+                  {t('RESOURCES_CHECK_INPUT_INFORMATION')}
                 </div>
                 <div className={styles.situation}>
                   {regStep === 4
@@ -1052,7 +1065,23 @@ const RegistModal = props => {
                 <span className="form-item-required">*</span>
                 <Form.Item>
                   <Form.Group>
-                    <Form.Item label={t('RESOURCES_NETWORK')}>
+                    <Form.Item>
+                      <div>
+                        <Select
+                          options={[
+                            { label: t('RESOURCES_NETWORK'), value: 1 },
+                            { label: t('RESOURCES_SR_IOV_NETWORK'), value: 2 },
+                          ]}
+                          onChange={e => onChangeNetwork(e)}
+                          defaultValue={1}
+                        />
+                      </div>
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('RESOURCES_NETWORK')}
+                      className={`${networkFlag === 1 ? '' : 'hide'}`}
+                    >
                       <div className={styles.wrapper}>
                         <div className={styles.table}>
                           <table>
@@ -1066,7 +1095,21 @@ const RegistModal = props => {
                             </colgroup>
                             <thead>
                               <tr>
-                                <th></th>
+                                <th>
+                                  <Checkbox
+                                    name="select-all-sriov"
+                                    onChange={checked =>
+                                      handleAllCheck(checked, 'sriov')
+                                    }
+                                    checked={
+                                      !!(
+                                        dataListVariables['sriov'].length > 0 &&
+                                        stateVariables['sriov'].length ===
+                                          dataListVariables['sriov'].length
+                                      )
+                                    }
+                                  />
+                                </th>
                                 <th>
                                   <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
                                 </th>
@@ -1132,7 +1175,10 @@ const RegistModal = props => {
                       </div>
                     </Form.Item>
 
-                    <Form.Item label={t('RESOURCES_SR_IOV_NETWORK')}>
+                    <Form.Item
+                      label={t('RESOURCES_SR_IOV_NETWORK')}
+                      className={`${networkFlag === 2 ? '' : 'hide'}`}
+                    >
                       <div className={styles.wrapper}>
                         <div className={styles.table}>
                           <table>
@@ -1366,8 +1412,7 @@ const RegistModal = props => {
                             </tr>
                           </thead>
                           <tbody>
-                            {!elbNetworkList?.filter(el => el.external)
-                              .length && (
+                            {!networkList?.filter(el => el.external).length && (
                               <tr>
                                 <td colSpan="6" className="no-data">
                                   <p>
@@ -1378,38 +1423,30 @@ const RegistModal = props => {
                                 </td>
                               </tr>
                             )}
-                            {elbNetworkList
+                            {networkList
                               ?.filter(el => el.external)
-                              .map(data => {
-                                const isElbSelectable = data.elb_used_by === ''
-
-                                return (
-                                  <tr key={data.name}>
-                                    <td>
-                                      <Radio
-                                        name={`select-${data.name}`}
-                                        checked={data.name === elbCheckItem}
-                                        disabled={!isElbSelectable}
-                                        onChange={() => {
-                                          if (!isElbSelectable) {
-                                            return
-                                          }
-                                          handleSingleCheck(data.name, 'elb')
-                                        }}
-                                      />
-                                    </td>
-                                    <td>{data.name}</td>
-                                    <td>{data.type.toUpperCase()}</td>
-                                    <td>
-                                      {data.default_route
-                                        ? t('RESOURCES_USE')
-                                        : t('RESOURCES_NOT_USE')}
-                                    </td>
-                                    <td>{data.cidr}</td>
-                                    <td>{data.gateway_ip}</td>
-                                  </tr>
-                                )
-                              })}
+                              .map(data => (
+                                <tr key={data.name}>
+                                  <td>
+                                    <Radio
+                                      name={`select-${data.name}`}
+                                      checked={data.name === elbCheckItem}
+                                      onChange={() =>
+                                        handleSingleCheck(data.name, 'elb')
+                                      }
+                                    />
+                                  </td>
+                                  <td>{data.name}</td>
+                                  <td>{data.type.toUpperCase()}</td>
+                                  <td>
+                                    {data.default_route
+                                      ? t('RESOURCES_USE')
+                                      : t('RESOURCES_NOT_USE')}
+                                  </td>
+                                  <td>{data.cidr}</td>
+                                  <td>{data.gateway_ip}</td>
+                                </tr>
+                              ))}
                           </tbody>
                         </table>
                       </div>
@@ -1603,7 +1640,9 @@ const RegistModal = props => {
                         }}
                       ></Button>
                     </div>
-                    <label>{t('RESOURCES_NETWORK')}</label>
+                    <label className={`${networkFlag === 1 ? '' : 'hide'}`}>
+                      {t('RESOURCES_NETWORK')}
+                    </label>
                     {networkList
                       .filter(x => networkCheckItem === x.name)
                       .map((obj, index) => (
@@ -1644,24 +1683,25 @@ const RegistModal = props => {
                           </div>
                         </div>
                       ))}
-                    <label>{t('RESOURCES_SR_IOV_NETWORK')}</label>
+                    <label className={`${networkFlag === 2 ? '' : 'hide'}`}>
+                      {t('RESOURCES_SR_IOV_NETWORK')}
+                    </label>
                     {sriovNetworkList
                       .filter(x => sriovCheckItems.includes(x.name))
                       .map((obj, index) => (
                         <div className={styles.greybgbox} key={index}>
-                          <div className={styles.list}>
-                            <label>
-                              {index === 0 ? t('RESOURCES_NAME') : ''}
-                            </label>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_NAME')}</label>
                             <div>{obj.name}</div>
                           </div>
                           <div
                             className={styles.list}
                             style={{ width: '100%' }}
                           >
-                            <label>
-                              {index === 0 ? t('RESOURCES_TYPE_YOO') : ''}
-                            </label>
+                            <label>{t('RESOURCES_TYPE_YOO')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.type}</div>
                             </div>
@@ -1670,17 +1710,16 @@ const RegistModal = props => {
                             className={styles.list}
                             style={{ width: '100%' }}
                           >
-                            <label>
-                              {index === 0 ? t('RESOURCES_CIDR') : ''}
-                            </label>
+                            <label>{t('RESOURCES_CIDR')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.cidr}</div>
                             </div>
                           </div>
-                          <div className={styles.list}>
-                            <label>
-                              {index === 0 ? t('RESOURCES_GATEWAY') : ''}
-                            </label>
+                          <div
+                            className={styles.list}
+                            style={{ width: '100%' }}
+                          >
+                            <label>{t('RESOURCES_GATEWAY')}</label>
                             <div className={styles.multiline}>
                               <div>{obj.gateway_ip}</div>
                             </div>
@@ -1695,7 +1734,7 @@ const RegistModal = props => {
                     </div>
                     <label
                       className={`${
-                        elbNetworkList.filter(x => elbCheckItem === x.name)
+                        networkList.filter(x => elbCheckItem === x.name)
                           .length > 0
                           ? ''
                           : 'hide'
