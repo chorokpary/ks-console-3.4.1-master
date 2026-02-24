@@ -265,10 +265,11 @@ const DetailVmList = props => {
               </Tooltip>
             </div>
             <p>
-              {getLocalTime(obj.creation_timestamp).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )}
-              {t('RESOURCES_CREATED')}
+              {t('CREATED_TIME', {
+                diff: getLocalTime(obj.creation_timestamp).format(
+                  'YYYY-MM-DD HH:mm:ss'
+                ),
+              })}
             </p>
           </div>
           <div className={styles.text}>
@@ -301,8 +302,8 @@ const DetailVmList = props => {
                 obj.name !== expandItem
                   ? ''
                   : obj.name === expandItem && isExpandFlag === false
-                  ? ''
-                  : 'light'
+                    ? ''
+                    : 'light'
               }
               size={20}
             />
@@ -363,10 +364,10 @@ const DetailVmList = props => {
                     ? obj.flavor_object.gpus.length === 1
                       ? `${obj.flavor_object.gpus[0].quantity} ${obj.flavor_object.gpus[0].name}`
                       : `${obj.flavor_object.gpus[0].name} ${t(
-                          'RESOURCES_BESIDES'
-                        )} ${obj.flavor_object.gpus.length - 1}${t(
-                          'RESOURCES_COUNT'
-                        )}`
+                        'RESOURCES_BESIDES'
+                      )} ${obj.flavor_object.gpus.length - 1}${t(
+                        'RESOURCES_COUNT'
+                      )}`
                     : '-'
                 }
                 description={t('GPU')}

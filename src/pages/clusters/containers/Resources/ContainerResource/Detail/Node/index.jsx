@@ -113,10 +113,10 @@ const Node = props => {
                       ? obj.flavor_detail.gpus.length === 1
                         ? `${obj.flavor_detail.gpus[0].quantity} ${obj.flavor_detail.gpus[0].name}`
                         : `${obj.flavor_detail.gpus[0].name} ${t(
-                            'RESOURCES_BESIDES'
-                          )} ${obj.flavor_detail.gpus.length - 1}${t(
-                            'RESOURCES_COUNT'
-                          )}`
+                          'RESOURCES_BESIDES'
+                        )} ${obj.flavor_detail.gpus.length - 1}${t(
+                          'RESOURCES_COUNT'
+                        )}`
                       : '-'
                   }
                   description={t('GPU')}
@@ -391,8 +391,8 @@ const Node = props => {
                             ? 'dark'
                             : detail.name === expandItem &&
                               isExpandFlag === false
-                            ? 'dark'
-                            : 'light'
+                              ? 'dark'
+                              : 'light'
                         }
                       />
                       <Indicator
@@ -416,10 +416,11 @@ const Node = props => {
                           </Tooltip>
                         </div>
                         <p>
-                          {getLocalTime(detail.timestamp).format(
-                            'YYYY-MM-DD HH:mm:ss'
-                          )}
-                          {t('RESOURCES_CREATED')}
+                          {t('CREATED_TIME', {
+                            diff: getLocalTime(detail.timestamp).format(
+                              'YYYY-MM-DD HH:mm:ss'
+                            ),
+                          })}
                         </p>
                       </div>
                       <div className={styles.text} style={{ width: '15%' }}>
@@ -466,8 +467,8 @@ const Node = props => {
                               ? ''
                               : detail.name === expandItem &&
                                 isExpandFlag === false
-                              ? ''
-                              : 'light'
+                                ? ''
+                                : 'light'
                           }
                           size={20}
                         />
@@ -518,8 +519,8 @@ const Node = props => {
                         detail.name !== expandItem
                           ? 'dark'
                           : detail.name === expandItem && isExpandFlag === false
-                          ? 'dark'
-                          : 'light'
+                            ? 'dark'
+                            : 'light'
                       }
                     />
                     <Indicator
@@ -538,10 +539,11 @@ const Node = props => {
                         </Link>
                       </div>
                       <p>
-                        {getLocalTime(detail.timestamp).format(
-                          'YYYY-MM-DD HH:mm:ss'
-                        )}
-                        {t('RESOURCES_CREATED')}
+                        {t('CREATED_TIME', {
+                          diff: getLocalTime(detail.timestamp).format(
+                            'YYYY-MM-DD HH:mm:ss'
+                          ),
+                        })}
                       </p>
                     </div>
                     <div className={styles.text} style={{ width: '14%' }}>
@@ -583,8 +585,8 @@ const Node = props => {
                             ? ''
                             : detail.name === expandItem &&
                               isExpandFlag === false
-                            ? ''
-                            : 'light'
+                              ? ''
+                              : 'light'
                         }
                         size={20}
                       />
