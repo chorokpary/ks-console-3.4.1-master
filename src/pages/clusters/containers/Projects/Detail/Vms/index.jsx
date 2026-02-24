@@ -18,7 +18,6 @@
 
 import React from 'react'
 import { observer, inject } from 'mobx-react'
-import PodsCard from 'components/Cards/Pods'
 import DetailVmList from 'pages/clusters/containers/Resources/components/DetailVmList'
 
 @inject('detailStore')
