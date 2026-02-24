@@ -35,11 +35,6 @@ export default class ResourceStore extends Base {
 
   getListUrl = this.getResourceUrl
 
-  getPaginatedUrl = (params = {}) =>
-    `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}/edgetron/resources/capk/clusters/paged/${params.page}/${params.limit}`
-
   @action
   async fetchList({
     cluster,
@@ -74,7 +69,7 @@ export default class ResourceStore extends Base {
     }
 
     const result = await request.get(
-      this.getPaginatedUrl({
+      this.getListUrl({
         cluster,
         workspace,
         namespace,
