@@ -44,6 +44,8 @@ const ResourceCard = (props) => {
 
   const [vmData, setVmData] = useState({});
   const [imageData, setImageData] = useState({});
+  const [kaasData, setKaasData] = useState({});
+  const [kaasImageData, setKaasImageData] = useState({});
   const [volumeData, setVolumeData] = useState({});
   const [networkStorageData, setNetworkStorageData] = useState({});
   const [flavorData, setFlavorData] = useState({});
@@ -59,37 +61,41 @@ const ResourceCard = (props) => {
   const [mediatedDevicesData, setMediatedDevicesData] = useState({});
 
   const stateVariables = {
-    vms: vmData,        
-    images: imageData,         
+    vms: vmData,
+    containerResource: kaasData,
+    images: imageData,
+    containerImages: kaasImageData,
     resourcesVolumes: volumeData,
     networkstorages: networkStorageData,
     flavors: flavorData,
-    keypairs: keypairData,   
-    networks: networkData,       
+    keypairs: keypairData,
+    networks: networkData,
     sriovs: sriovData,
-    physicalnetworks: physicalNetworkData,             
+    physicalnetworks: physicalNetworkData,
     routers: routerData,
-    floatingip: floatingData, 
-    loadBalancers: loadBalancerData,  
-    securityGroups: securityGroupData,     
+    floatingip: floatingData,
+    loadBalancers: loadBalancerData,
+    securityGroups: securityGroupData,
     hostDevices: hostDeviceData,
     mediatedDevices: mediatedDevicesData,
   };
 
   const setVariables = {
-    vms: setVmData,        
-    images: setImageData,         
+    vms: setVmData,
+    containerResource: setKaasData,
+    images: setImageData,
+    containerImages: setKaasImageData,
     resourcesVolumes: setVolumeData,
     networkstorages: setNetworkStorageData,
     flavors: setFlavorData,
-    keypairs: setKeypairData,   
-    networks: setNetworkData,       
+    keypairs: setKeypairData,
+    networks: setNetworkData,
     sriovs: setSriovData,
-    physicalnetworks: setPhysicalNetworkData, 
+    physicalnetworks: setPhysicalNetworkData,
     routers: setRouterData,
-    floatingip: setFloatingData, 
-    loadBalancers: setLoadBalancerData,  
-    securityGroups: setSecurityGroupData,     
+    floatingip: setFloatingData,
+    loadBalancers: setLoadBalancerData,
+    securityGroups: setSecurityGroupData,
     hostDevices: setHostDeviceData,
     mediatedDevices: setMediatedDevicesData,
   };
