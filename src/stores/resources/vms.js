@@ -672,6 +672,28 @@ export default class VmStore extends Base {
   }
 
   @action
+  async fetchVmListElbNetwork(params) {
+    this.isLoading = true
+
+    const result = await request.get(
+      `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
+        params
+      )}/edgetron/resources/kubevirt/elb_networks`
+    )
+    const response = { ...params, ...this.mapper(result), kind: 'networks' }
+
+    if (params?.namespace) {
+      response.networks = response.networks.filter(
+        item => item.project === params.namespace
+      )
+    }
+
+    this.networksList = response.networks
+    this.isLoading = false
+    return response
+  }
+
+  @action
   async fetchVmListNetworkStorage(params) {
     this.isLoading = true
 
