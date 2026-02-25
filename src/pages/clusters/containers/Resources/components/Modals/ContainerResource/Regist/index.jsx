@@ -40,11 +40,13 @@ const RegistModal = props => {
   const [selectImageName, setSelectImageName] = useState('')
   const [imageOptionList, setImageOptionList] = useState([])
   const [networkDataList, setNetworkDataList] = useState([])
+  const [elbNetworkDataList, setElbNetworkDataList] = useState([])
   const [sriovNetworkDataList, setSriovNetworkDataList] = useState([])
   const [securityGroupDataList, setSecurityGroupDataList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
 
   const [networkList, setNetworkList] = useState([])
+  const [elbNetworkList, setElbNetworkList] = useState([])
   const [sriovNetworkList, setSriovNetworkList] = useState([])
 
   const [clusterName, setClusterName] = useState('')
@@ -95,6 +97,9 @@ const RegistModal = props => {
       const listNetwork = await vmStore.fetchVmListNetwork({
         ...props,
       })
+      const listElbNetwork = await vmStore.fetchVmListElbNetwork({
+        ...props,
+      })
       const listSriovNetwork = await vmStore.fetchVmListSriovNetwork({
         ...props,
       })
@@ -112,6 +117,8 @@ const RegistModal = props => {
       setImageDataList(listImage._originData.images)
       setNetworkDataList(listNetwork.networks)
       setNetworkList(listNetwork.networks)
+      setElbNetworkDataList(listElbNetwork.networks)
+      setElbNetworkList(listElbNetwork.networks)
       setSriovNetworkDataList(listSriovNetwork.sriovs)
       setSriovNetworkList(listSriovNetwork.sriovs)
       setStorageClassDataList(listStoregeClass.user_sces)
@@ -124,6 +131,10 @@ const RegistModal = props => {
   const projectFilteredData = project => {
     const networks = networkDataList.filter(obj => obj.project === project)
     setNetworkList(networks)
+    const elbNetworks = elbNetworkDataList.filter(
+      obj => obj.project === project
+    )
+    setElbNetworkList(elbNetworks)
     const sriovNetworks = sriovNetworkDataList.filter(
       obj => obj.project === project
     )
@@ -1360,7 +1371,8 @@ const RegistModal = props => {
                             </tr>
                           </thead>
                           <tbody>
-                            {!networkList?.filter(el => el.external).length && (
+                            {!elbNetworkList?.filter(el => el.external)
+                              .length && (
                               <tr>
                                 <td colSpan="6" className="no-data">
                                   <p>
@@ -1371,7 +1383,7 @@ const RegistModal = props => {
                                 </td>
                               </tr>
                             )}
-                            {networkList
+                            {elbNetworkList
                               ?.filter(el => el.external)
                               .map(data => (
                                 <tr key={data.name}>
@@ -1680,7 +1692,7 @@ const RegistModal = props => {
                     </div>
                     <label
                       className={`${
-                        networkList.filter(x => elbCheckItem === x.name)
+                        elbNetworkList.filter(x => elbCheckItem === x.name)
                           .length > 0
                           ? ''
                           : 'hide'
