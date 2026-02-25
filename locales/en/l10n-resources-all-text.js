@@ -524,6 +524,9 @@ module.exports = {
   RESOURCES_SUBNET: 'Subnet',
   RESOURCES_SUBNET_EXTERNAL: 'External',
   RESOURCES_NETWORK_OFFLOAD: 'Hardware Offload',
+  RESOURCES_ELB_DEDICATED: 'ELB Dedicated',
+  RESOURCES_ELB_DEDICATED_TIP:
+    'Only FLAT type networks can be set as ELB dedicated.',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: 'Select',
   RESOURCES_NOT_SELECTED: 'Not Selected',
