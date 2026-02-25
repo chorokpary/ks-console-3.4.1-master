@@ -1,26 +1,26 @@
 import React, {
+  useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
-  useMemo,
-  useCallback,
 } from 'react'
 import { Modal } from 'components/Base'
 import { NumberInput, ProjectSelect } from 'components/Inputs'
 import {
-  PATTERN_USER_NAME,
   PATTERN_IP,
-  PATTERN_SEGMENT_ID,
   PATTERN_MTU,
+  PATTERN_SEGMENT_ID,
+  PATTERN_USER_NAME,
 } from 'utils/constants'
 import {
+  Button,
   Form,
   Input,
   Select,
-  Button,
-  Tooltip,
   TextArea,
+  Tooltip,
 } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import {
@@ -254,6 +254,7 @@ const RegistModal = props => {
       dns,
       host_routes,
       offload: data.offload,
+      elb: data.type === 'FLAT' ? data.elb || false : false,
     }
 
     // Add optional fields only if they exist
@@ -564,10 +565,27 @@ const RegistModal = props => {
     }
   }, [props.namespace, networkConfig.networkType])
 
+  const getElbDedicatedState = useCallback(() => {
+    const isFlatNetwork = networkConfig.networkType === 'FLAT'
+
+    if (isFlatNetwork) {
+      return {
+        disabled: false,
+        tooltipContent: '',
+        showTooltip: false,
+      }
+    }
+
+    return {
+      disabled: true,
+      tooltipContent: t('RESOURCES_ELB_DEDICATED_TIP'),
+      showTooltip: true,
+    }
+  }, [networkConfig.networkType])
+
   // ===== RENDER HELPERS =====
   const fnGetModalFooter = () => {
-    let elements = ''
-    elements = (
+    return (
       <>
         {regStep === 1 && (
           <>
@@ -618,7 +636,6 @@ const RegistModal = props => {
         )}
       </>
     )
-    return elements
   }
 
   const onChangeDestination = useCallback(
@@ -1091,6 +1108,46 @@ const RegistModal = props => {
                                   </RadioButton>
                                 )
                               )}
+                            </RadioGroup>
+                          </Form.Item>
+                          <Form.Item
+                            label={t('RESOURCES_ELB_DEDICATED')}
+                            rules={[{ required: true }]}
+                          >
+                            <RadioGroup
+                              name="elb"
+                              wrapClassName="radio"
+                              defaultValue={false}
+                            >
+                              {BINARY_OPTIONS.map((option, idx) => {
+                                const elbState = getElbDedicatedState()
+                                const isUseOption = idx === 1
+
+                                return elbState.showTooltip ? (
+                                  <Tooltip
+                                    key={option.value}
+                                    content={elbState.tooltipContent}
+                                    placement="right"
+                                  >
+                                    <RadioButton
+                                      value={option.value}
+                                      disabled={
+                                        isUseOption && elbState.disabled
+                                      }
+                                    >
+                                      {option.label}
+                                    </RadioButton>
+                                  </Tooltip>
+                                ) : (
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled={isUseOption && elbState.disabled}
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                )
+                              })}
                             </RadioGroup>
                           </Form.Item>
                         </Column>
