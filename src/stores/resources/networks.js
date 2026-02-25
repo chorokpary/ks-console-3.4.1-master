@@ -16,7 +16,7 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { observable, action } from 'mobx'
+import { action } from 'mobx'
 import { Notify } from '@kube-design/components'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
@@ -31,8 +31,11 @@ export default class NetworkStore extends Base {
     `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
       params
     )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/networks`
+
   getListUrl = this.getResourceUrl
+
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+
   getDeleteUrl = (params = {}) =>
     `${this.getListUrl(params)}/${params.name}/${params.project}`
 
@@ -48,7 +51,7 @@ export default class NetworkStore extends Base {
 
   @action
   async create(data, params = {}) {
-    if (data.network.type == 'FLAT') {
+    if (data.network.type === 'FLAT') {
       delete data.network.segment_id
     } else {
       delete data.network.physnet_name
@@ -158,11 +161,10 @@ export default class NetworkStore extends Base {
       if (key.includes('/')) {
         const [project, name] = key.split('/')
         return { project, name }
-      } else {
-        const project = params.namespace
-        const name = key
-        return { project, name }
       }
+      const project = params.namespace
+      const name = key
+      return { project, name }
     })
 
     await this.submitting(
