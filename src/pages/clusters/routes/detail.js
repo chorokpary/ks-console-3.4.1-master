@@ -104,7 +104,7 @@ export default [
   {
     path: `${PATH}/alerts/:name`,
     component: AlertMessagesDetail,
-  },  
+  },
   {
     path: `${PATH}/log-collections/:component/:name`,
     component: LogCollectionDetail,
@@ -234,6 +234,10 @@ export default [
         component: NetworkStorageDetail,
       },
       {
+        path: `${PATH}/projects/:namespace/sriovs/:name`,
+        component: SrIovDetail,
+      },
+      {
         path: `${PATH}/projects/:namespace/physicalnetworks/:name`,
         component: PhysicalNetworkDetail,
       },
@@ -280,10 +284,6 @@ export default [
     component: BareMetalDetail,
   },
   {
-    path: `${PATH}/sriovs/:name`,
-    component: SrIovDetail,
-  },
-  {
     path: `${PATH}/imagebuild/:name/:id`,
     component: ImageBuildDetail,
   },
@@ -306,5 +306,5 @@ export default [
   {
     path: `${PATH}/gpuclusters/:name`,
     component: GpuClustersDetail,
-  },  
+  },
 ]
