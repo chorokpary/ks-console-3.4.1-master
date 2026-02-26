@@ -35,9 +35,6 @@ export default class SriovStore extends Base {
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
-  getDeleteUrl = (params = {}) =>
-    `${this.getListUrl(params)}/${params.name}/${params.project}`
-
   @action
   async create(data, params = {}) {
     const url = this.getResourceUrl({
@@ -75,7 +72,20 @@ export default class SriovStore extends Base {
   @action
   async update({ name, ...params }, data) {
     const jsonData = {}
-    jsonData.network = data
+    const networkData = {}
+
+    networkData.name = data.resource_name
+    networkData.description = data.description
+    networkData.type = data.type
+    networkData.cidr = data.cidr
+    networkData.gateway_ip = data.gateway_ip
+    networkData.ip_pool = data.ip_pool
+    networkData.dns = data.dns
+    networkData.networks = data.networks
+    networkData.host_routes = data.host_routes
+    networkData.segment_id = data.segment_id
+
+    jsonData.network = networkData
 
     await this.submitting(
       request.put(
@@ -163,7 +173,7 @@ export default class SriovStore extends Base {
 
     return this.submitting(
       request.delete(
-        `${this.getDeleteUrl({
+        `${this.getDetailUrl({
           ...user,
           namespace: user.namespace ? user.namespace : user.project,
         })}`
