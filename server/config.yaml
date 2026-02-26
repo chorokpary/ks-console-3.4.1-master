@@ -235,12 +235,12 @@ client:
                 skipAuth: true,
                 showInDisable: true,
               }
-            - {
-                name: externalLoadBalancers,
-                title: RESOURCES_EXTERNAL_LB,
-                skipAuth: true,
-                showInDisable: true,
-              }
+            # - {
+            #     name: externalLoadBalancers,
+            #     title: RESOURCES_EXTERNAL_LB,
+            #     skipAuth: true,
+            #     showInDisable: true,
+            #   }
             - {
                 name: resourcesVolumes,
                 title: RESOURCES_VOLUME,
