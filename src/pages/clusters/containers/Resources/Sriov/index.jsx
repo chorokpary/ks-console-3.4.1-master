@@ -34,6 +34,7 @@ import styles from './index.scss';
   module: 'sriovs',
   authKey: 'sriovs',
   name: t('SR-IOV'),
+  rowKey: 'project_name',
 })
 export default class SriovNetworks extends React.Component {
   handleTabChange = value => {
@@ -133,7 +134,7 @@ export default class SriovNetworks extends React.Component {
               <div>
                 <Link
                   className={styles.title}
-                  to={`/clusters/${cluster}/sriovs/${name}`}
+                  to={`/clusters/${cluster}/projects/${record.project}/sriovs/${name}`}
                 >
                   {name}
                 </Link>
