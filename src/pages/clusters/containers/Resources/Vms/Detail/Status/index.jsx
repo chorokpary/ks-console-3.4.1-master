@@ -97,10 +97,10 @@ const Status = props => {
         const promises = sriovFilterData.filter(async network => {
           if (network.name !== 'k8s-pod-network') {
             const networkDetail = await request.get(
-              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/sriov_networks/${network.name}`
+              `kapis/edgestack.kubesphere.io/v1alpha1/klusters/${props.match.params.cluster}/edgetron/resources/kubevirt/sriov_networks/${network.name}?project=${network.project}`
             )
             networkDetail.network.endpoint = 'sriovs'
-            networkDetail.network.unique = 'name'
+            networkDetail.network.unique = 'project_name'
             setDetailNetwork(value => [...value, networkDetail.network])
           }
         })
