@@ -1380,28 +1380,36 @@ const RegistModal = props => {
                             )}
                             {elbNetworkList
                               ?.filter(el => el.external)
-                              .map(data => (
-                                <tr key={data.name}>
-                                  <td>
-                                    <Radio
-                                      name={`select-${data.name}`}
-                                      checked={data.name === elbCheckItem}
-                                      onChange={() =>
-                                        handleSingleCheck(data.name, 'elb')
-                                      }
-                                    />
-                                  </td>
-                                  <td>{data.name}</td>
-                                  <td>{data.type.toUpperCase()}</td>
-                                  <td>
-                                    {data.default_route
-                                      ? t('RESOURCES_USE')
-                                      : t('RESOURCES_NOT_USE')}
-                                  </td>
-                                  <td>{data.cidr}</td>
-                                  <td>{data.gateway_ip}</td>
-                                </tr>
-                              ))}
+                              .map(data => {
+                                const isElbSelectable = data.elb_used_by === ''
+
+                                return (
+                                  <tr key={data.name}>
+                                    <td>
+                                      <Radio
+                                        name={`select-${data.name}`}
+                                        checked={data.name === elbCheckItem}
+                                        disabled={!isElbSelectable}
+                                        onChange={() => {
+                                          if (!isElbSelectable) {
+                                            return
+                                          }
+                                          handleSingleCheck(data.name, 'elb')
+                                        }}
+                                      />
+                                    </td>
+                                    <td>{data.name}</td>
+                                    <td>{data.type.toUpperCase()}</td>
+                                    <td>
+                                      {data.default_route
+                                        ? t('RESOURCES_USE')
+                                        : t('RESOURCES_NOT_USE')}
+                                    </td>
+                                    <td>{data.cidr}</td>
+                                    <td>{data.gateway_ip}</td>
+                                  </tr>
+                                )
+                              })}
                           </tbody>
                         </table>
                       </div>
