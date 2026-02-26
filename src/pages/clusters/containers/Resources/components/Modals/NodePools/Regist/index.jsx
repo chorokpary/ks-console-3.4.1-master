@@ -44,7 +44,6 @@ const RegistNodePoolModal = props => {
   const [imageOptionList, setImageOptionList] = useState([])
   const [storageClassDataList, setStorageClassDataList] = useState([])
 
-  const [acceleratorType, setAcceleratorType] = useState('None')
   const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
 
   const [kubeVersion, setKubeVersion] = useState('')
@@ -362,8 +361,6 @@ const RegistNodePoolModal = props => {
     setImageOptionList(
       imageDataList.filter(
         obj =>
-          obj.accelerator_type.toLowerCase() ===
-            acceleratorType.toLowerCase() &&
           obj.os_distro === osDistro &&
           obj.kube_version === kubeVersion &&
           obj.arch_type === value
@@ -372,14 +369,10 @@ const RegistNodePoolModal = props => {
   }
 
   const handleAcceleratorType = value => {
-    setAcceleratorType(value)
     setSelectImageName('')
     setImageOptionList(
       imageDataList.filter(
-        obj =>
-          obj.accelerator_type.toLowerCase() === value.toLowerCase() &&
-          obj.os_distro === osDistro &&
-          obj.kube_version === kubeVersion
+        obj => obj.os_distro === osDistro && obj.kube_version === kubeVersion
       )
     )
     setFlavorOptionList(
