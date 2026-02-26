@@ -33,6 +33,8 @@ export default class SriovStore extends Base {
     )}${this.getOditLogUrl(params)}/edgetron/resources/kubevirt/sriov_networks`
   getListUrl = this.getResourceUrl
 
+  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+
   @action
   async create(data, params = {}) {
     const url = this.getResourceUrl({
@@ -85,8 +87,6 @@ export default class SriovStore extends Base {
 
     jsonData.network = networkData
 
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
-
     await this.submitting(
       request.put(
         this.getDetailUrl({
@@ -102,10 +102,10 @@ export default class SriovStore extends Base {
   @action
   async fetchDetail(params) {
     this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}`
-    )
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}`, {
+      project,
+    })
     const detail = { ...params, ...this.mapper(result), kind: 'Sriov' }
 
     // Yaml 파일 관련
@@ -119,10 +119,10 @@ export default class SriovStore extends Base {
   @action
   async fetchYaml(params) {
     this.isLoading = true
-
-    const result = await request.get(
-      `${this.getResourceUrl(params)}/${params.name}/manifest`
-    )
+    const project = params.project ? params.project : params.namespace
+    const result = await request.get(`${this.getDetailUrl(params)}/manifest`, {
+      project,
+    })
     const yamlData = { ...params, ...this.mapper(result), kind: 'Sriov' }
 
     this.yaml = yamlData.manifest
