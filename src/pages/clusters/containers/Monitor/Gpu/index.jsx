@@ -534,61 +534,61 @@ const index = props => {
         description={t('RESOURCES_GPU_MONITORING_DESC')}
       />
       {renderNav()}
-      <MonitoringController
-        title={t('RESOURCES_GPU_MONITORING')}
-        onFetch={fetchSearch}
-        loading={isLoading}
-        refreshing={isRefreshing}
-      >
-        {/* todo - 화면 분리 */}
-        <div style={{ display: 'flex' }}>
-          <div
-            style={{
-              flex: 1,
-              paddingRight: '20px',
-            }}
-          >
-            {renderRoutes(routes, {
-              ...props,
-              selected,
-              setSelected,
-              renderHeader,
-              styles,
-              gpuNodesData,
-              gpuVmsData,
-              setMonitoringType,
-              isSearchLoading,
-              setIsSearchLoading,
-            })}
-          </div>
-          <div
-            style={{
-              flex: 4,
-              overflow: 'auto',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-            }}
-          >
-            <div className="gpu_mig_monitoring">
-              {options.map(option => (
-                <MonitorStatusTab
-                  key={`${option.name}-${option.value}`}
-                  icon={option.icon}
-                  name={option.name}
-                  value={option.value}
-                />
-              ))}
-            </div>
 
+      <div style={{ display: 'flex' }}>
+        <div
+          style={{
+            flex: 1,
+            paddingRight: '20px',
+          }}
+        >
+          {renderRoutes(routes, {
+            ...props,
+            selected,
+            setSelected,
+            renderHeader,
+            styles,
+            gpuNodesData,
+            gpuVmsData,
+            setMonitoringType,
+            isSearchLoading,
+            setIsSearchLoading,
+          })}
+        </div>
+        <div
+          style={{
+            flex: 4,
+            overflow: 'auto',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <div className="gpu_mig_monitoring">
+            {options.map(option => (
+              <MonitorStatusTab
+                key={`${option.name}-${option.value}`}
+                icon={option.icon}
+                name={option.name}
+                value={option.value}
+              />
+            ))}
+          </div>
+          <MonitoringController
+            title={t('RESOURCES_GPU_MONITORING')}
+            onFetch={fetchSearch}
+            loading={isLoading}
+            refreshing={isRefreshing}
+          >
             {configs.map((item, idx) => {
               const config = getAreaChartOps(item)
               if (isEmpty(config.data)) {
                 return (
-                  <div className={styles.divwrap}>
-                    <div className={styles.empty}>
-                      {t('NO_MONITORING_DATA')}
-                    </div>
-                  </div>
+                  <div style={{ width: '1259px' }}></div>
+                  // <div className={styles.divwrap}>
+                  //   <div className={styles.empty}>
+                  //     {/* {t('NO_MONITORING_DATA')} */}
+                  //   </div>
+                  // </div>
                 )
               }
               return (
@@ -600,9 +600,9 @@ const index = props => {
                 </div>
               )
             })}
-          </div>
+          </MonitoringController>
         </div>
-      </MonitoringController>
+      </div>
     </>
   )
 }
