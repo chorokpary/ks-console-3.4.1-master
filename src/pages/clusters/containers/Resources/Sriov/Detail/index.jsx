@@ -16,7 +16,7 @@ import SriovStore from 'stores/resources/sriovs';
 
 const store = new SriovStore();
 
-const KeypairDetail = props => {
+const SriovDetail = props => {
   useEffect(() => {
     fetchData();
   }, []);
@@ -72,10 +72,12 @@ const KeypairDetail = props => {
         onClick: () =>
           props.rootStore.triggerAction('sriov.remove', {
             type: 'SRIOV_DETAIL',
-            detail: toJS(store.detail),
+            detail: toJS(store.detail.network),
             store,
             cluster: props.match.params.cluster,
             success: () => routing.push(listUrl),
+            okText: t('RESOURCES_DELETE'),
+            cancelText: t('RESOURCES_CANCEL'),
           }),
       },
     ];
@@ -177,4 +179,4 @@ const KeypairDetail = props => {
   );
 };
 
-export default inject('rootStore')(observer(KeypairDetail));
+export default inject('rootStore')(observer(SriovDetail));
