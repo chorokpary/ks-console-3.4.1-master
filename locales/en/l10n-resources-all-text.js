@@ -648,6 +648,7 @@ module.exports = {
   RESOURCES_TEMPORARY_DISK_DESC: 'Set the temporary disk.',
   RESOURCES_INPUT_SOURCE: 'Input Source',
   RESOURCES_CHECK_INPUT_INFORMATION: 'Check Input Information',
+  RESOURCES_CONFIRMATION: 'Confirmation',
   RESOURCES_INPUT_EMPTY_DESC: 'Please enter input.',
   RESOURCES_AUTO_SCALING: 'Auto Scaling',
   RESOURCES_AUTO_EXPAND: 'Auto Expand',
