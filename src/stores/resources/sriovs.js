@@ -72,20 +72,7 @@ export default class SriovStore extends Base {
   @action
   async update({ name, ...params }, data) {
     const jsonData = {}
-    const networkData = {}
-
-    networkData.name = data.resource_name
-    networkData.description = data.description
-    networkData.type = data.type
-    networkData.cidr = data.cidr
-    networkData.gateway_ip = data.gateway_ip
-    networkData.ip_pool = data.ip_pool
-    networkData.dns = data.dns
-    networkData.networks = data.networks
-    networkData.host_routes = data.host_routes
-    networkData.segment_id = data.segment_id
-
-    jsonData.network = networkData
+    jsonData.network = data
 
     await this.submitting(
       request.put(
