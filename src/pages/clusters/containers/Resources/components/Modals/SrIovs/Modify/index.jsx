@@ -90,7 +90,9 @@ const ModifyModal = props => {
       if (data.segment_id == ' ') {
         delete data.segment_id;
       }
-      // console.log("data : " + JSON.stringify(data))
+
+      data.name = data.resource_name
+      data.project = detail.project
 
       onOk({ ...data });
     });
