@@ -4208,7 +4208,9 @@ html {
   display: -ms-flexbox;
   display: flex;
   gap: 12px;
-  background: #f9fbfd;
+  /* background: #f9fbfd; */
+  background: white;
+  margin-bottom: 20px;
 }
 .gpu_mig_monitoring .data-box-card {
   -ms-flex-item-align: stretch;
