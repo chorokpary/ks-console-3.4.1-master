@@ -38,6 +38,7 @@ import styles from './index.scss';
   module: 'sriovs',
   authKey: 'sriovs',
   name: t('SR-IOV'),
+  rowKey: 'name'
 })
 export default class ResourcesVolumes extends React.Component {
   handleTabChange = value => {
@@ -64,14 +65,56 @@ export default class ResourcesVolumes extends React.Component {
   }
 
   get itemActions() {
-    return [];
+    const { getData, trigger } = this.props;
+    return [
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('RESOURCES_DELETE'),
+        action: 'delete',
+        show: this.showAction,
+        onClick: item =>
+          trigger('sriov.remove', {
+            detail: item,
+            success: getData,
+            ...this.props.match.params,
+          }),
+      },
+    ];
   }
 
   get tableActions() {
     const { trigger, getData, routing, tableProps } = this.props;
+
     return {
       ...tableProps.tableActions,
-      selectActions: [],
+      actions: [
+        {
+          key: 'regist',
+          type: 'control',
+          text: t('RESOURCES_CREATE'),
+          action: 'create',
+          onClick: () =>
+            trigger('sriov.regist', {
+              ...this.props.match.params,
+              type: this.name,
+              success: getData,
+            }),
+        },
+      ],
+      selectActions: [
+        {
+          key: 'delete',
+          type: 'danger',
+          text: t('RESOURCES_DELETE'),
+          action: 'delete',
+          onClick: () =>
+            trigger('sriov.remove.batch', {
+              success: getData,
+              ...this.props.match.params,
+            }),
+        },
+      ],
       getCheckboxProps: record => ({
         disabled: !this.showAction(record),
         name: record.name,
@@ -198,7 +241,6 @@ export default class ResourcesVolumes extends React.Component {
 
   render() {
     const { bannerProps, tableProps } = this.props;
-    // console.log({ ...this.props })
 
     return (
       <ListPage {...this.props}>

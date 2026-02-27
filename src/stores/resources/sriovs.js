@@ -35,6 +35,9 @@ export default class SriovStore extends Base {
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
+  getDeleteUrl = (params = {}) =>
+    `${this.getListUrl(params)}/${params.name}/${params.project}`
+
   @action
   async create(data, params = {}) {
     const url = this.getResourceUrl({
@@ -126,18 +129,17 @@ export default class SriovStore extends Base {
         if (key.includes('/')) {
           const [project, name] = key.split('/')
           return { project, name }
-        } else {
-          const project = params.namespace
-          const name = key
-          return { project, name }
         }
+        const project = params.namespace
+        const name = key
+        return { project, name }
       })
 
       await this.submitting(
         Promise.all(
           rowKeyDict.map(rowKey =>
             request.delete(
-              `${this.getDetailUrl({
+              `${this.getDeleteUrl({
                 name: rowKey.name,
                 namespace: rowKey.project,
                 project: rowKey.project,
@@ -160,7 +162,7 @@ export default class SriovStore extends Base {
 
     return this.submitting(
       request.delete(
-        `${this.getDetailUrl({
+        `${this.getDeleteUrl({
           ...user,
           namespace: user.namespace ? user.namespace : user.project,
         })}`
