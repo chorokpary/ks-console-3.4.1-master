@@ -13,7 +13,7 @@ import SriovStore from 'stores/resources/sriovs'
 
 const store = new SriovStore();
 
-const KeypairDetail = (props) => {
+const SriovDetail = (props) => {
 
   useEffect(() => {
     fetchData();
@@ -29,20 +29,56 @@ const KeypairDetail = (props) => {
   const routing = props.rootStore.routing;
   const showEdit = !globals.config.presetClusterRoles.includes(props.match.params.name);
 
-  const getOperations = () => [
-    {
-      key: 'viewYaml',
-      icon: 'eye',
-      text: t('VIEW_YAML'),
-      action: 'view',
-      onClick: () => {
-        props.rootStore.triggerAction('sriov.yaml.view', {
-          yaml: store.yaml,
-          readOnly: true,
-        })
+  const getOperations = () => {
+    const operations = [
+      {
+        key: 'edit',
+        icon: 'pen',
+        text: t('EDIT_INFORMATION'),
+        action: 'edit',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('sriov.edit', {
+            ...props.match.params,
+            type: 'SRIOV_DETAIL',
+            detail: toJS(store.detail),
+            store,
+            success: fetchData,
+          }),
       },
-    },
-  ]
+      {
+        key: 'viewYaml',
+        icon: 'eye',
+        text: t('VIEW_YAML'),
+        action: 'view',
+        onClick: () => {
+          props.rootStore.triggerAction('sriov.yaml.view', {
+            yaml: store.yaml,
+            readOnly: true,
+          });
+        },
+      },
+      {
+        key: 'delete',
+        icon: 'trash',
+        text: t('DELETE'),
+        action: 'delete',
+        type: 'danger',
+        show: showEdit,
+        onClick: () =>
+          props.rootStore.triggerAction('sriov.remove', {
+            type: 'SRIOV_DETAIL',
+            detail: toJS(store.detail.network),
+            store,
+            cluster: props.match.params.cluster,
+            success: () => routing.push(listUrl),
+            okText: t('RESOURCES_DELETE'),
+            cancelText: t('RESOURCES_CANCEL'),
+          }),
+      },
+    ];
+    return operations;
+  };
 
   const getAttrs = () => {
     const detail = toJS(store.detail)
@@ -130,5 +166,5 @@ const KeypairDetail = (props) => {
   )
 }
 
-export default inject('rootStore')(observer(KeypairDetail));
+export default inject('rootStore')(observer(SriovDetail));
 
