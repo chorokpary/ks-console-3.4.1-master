@@ -50,7 +50,7 @@ export default class CustomDashboardInfo {
   }
   alarmVertical = {
     x: 12,
-    y: 0,
+    y: 4,
     w: 3,
     h: 12,
   }

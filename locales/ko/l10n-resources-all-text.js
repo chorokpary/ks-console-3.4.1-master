@@ -66,6 +66,9 @@ module.exports = {
   RESOURCES_IP_EMPTY_DESC: 'IP를 입력해 주세요.',
   RESOURCES_IP_POOL_VALID: 'IP POOL 정보를 정확히 입력해주세요.',
 
+  RESOURCES_GPU_VM: 'GPU 가상머신',
+  RESOURCES_CPU_VM: 'CPU 가상머신',
+  RESOURCES_CPU_NODE: 'CPU 노드',
   RESOURCES_GPU_NODE: 'GPU 노드',
   RESOURCES_GPU_NODE_DESC:
     'GPU 노드는 Petasus AI Cloud 클러스터 노드들 중 GPU가 장착된 서버들의 집합입니다. 이 페이지에서 GPU 노드 상태를 확인하고 관리할 수 있습니다.',
@@ -1262,6 +1265,8 @@ module.exports = {
   RESOURCES_SORT_OLDEST: '오래된 순',
   RESOURCES_GPU_STATUS_MAP: 'GPU 현황 맵',
   RESOURCES_GPUCLUSTER_NO_VM_LIST: 'GPU 클러스터에 가상머신이 없습니다.',
+  RESOURCES_ALERT_VERTICAL: '알림 (세로)',
+  RESOURCES_ALERT_HORIZONTAL: '알림 (세로)',
 
   RESOURCES_PASSWORD_POLICY: '비밀번호 정책',
   RESOURCES_PASSWORD_PERIOD: '비밀번호 주기',

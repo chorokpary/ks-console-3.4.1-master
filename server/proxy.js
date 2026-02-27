@@ -285,6 +285,11 @@ const b2iFileProxy = {
   },
 }
 
+const xlbProxy = {
+  target: `${serverConfig.apiServer.xlbUrl}`,
+  changeOrigin: true,
+}
+
 module.exports = {
   k8sResourceProxy,
   devopsWebhookProxy,
@@ -295,4 +300,5 @@ module.exports = {
   webBaremetalProxy,
   webImageBuildProxy,
   webAuthentikProxy,
+  xlbProxy,
 }

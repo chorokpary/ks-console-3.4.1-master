@@ -798,7 +798,7 @@ const RegistModal = props => {
               <div className={styles.confirm}></div>
               <div className={styles.title}>
                 <div className={styles.step_name}>
-                  {t('RESOURCES_CHECK_INPUT_INFORMATION')}
+                  {t('RESOURCES_CONFIRMATION')}
                 </div>
                 <div className={styles.situation}>
                   {regStep === 4

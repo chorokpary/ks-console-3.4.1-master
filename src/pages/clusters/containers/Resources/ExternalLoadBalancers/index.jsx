@@ -1,0 +1,250 @@
+/*
+ * This file is part of KubeSphere Console.
+ * Copyright (C) 2019 The KubeSphere Console Authors.
+ *
+ * KubeSphere Console is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KubeSphere Console is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { toJS } from 'mobx'
+import { Avatar, Status } from 'components/Base'
+import Banner from 'components/Cards/Banner'
+import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
+import Table from 'components/Tables/List'
+
+import { getLocalTime } from 'utils'
+import { ICON_TYPES } from 'utils/constants'
+
+import ExternalLoadBalancerStore from 'stores/resources/externalloadbalancers'
+
+import * as common from 'utils/resources'
+
+@withClusterList({
+    store: new ExternalLoadBalancerStore(),
+    module: 'exlbs',
+    authKey: 'externalLoadBalancers',
+    name: t('RESOURCES_EXTERNAL_LB'),
+    rowKey: 'project_name'
+})
+export default class LoadBalancers extends React.Component {
+
+    showAction(record) {
+        return globals.user.username !== record.name
+    }
+
+    get itemActions() {
+        const { getData, trigger } = this.props
+        return [
+            {
+                key: 'delete',
+                icon: 'trash',
+                text: t('RESOURCES_DELETE'),
+                action: 'delete',
+                show: this.showAction,
+                onClick: item =>{
+                    trigger('externalLoadBalancer.remove', {
+                        detail: item,
+                        success: () => { setTimeout(() => { getData() }, 500) },
+                        ...this.props.match.params,
+                    })
+                }                    
+            },
+        ]
+    }
+
+    get tableActions() {
+        const { trigger, getData, routing, tableProps } = this.props
+        return {
+            ...tableProps.tableActions,
+            actions: [
+                {
+                    key: 'regist',
+                    type: 'control',
+                    text: t('RESOURCES_CREATE'),
+                    action: 'create',
+                    onClick: () =>
+                        trigger('externalLoadBalancer.regist', {
+                            ...this.props.match.params,
+                            type: this.name,
+                            success: getData,
+                        }),
+                },
+            ],
+            selectActions: [
+                // {
+                //     key: 'delete',
+                //     type: 'danger',
+                //     text: t('RESOURCES_DELETE'),
+                //     action: 'delete',
+                //     onClick: () =>
+                //         trigger('externalLoadBalancer.remove.batch', {
+                //             success: getData,
+                //             ...this.props.match.params,
+                //         }),
+                // },
+            ],
+            // getCheckboxProps: record => ({
+            //     disabled: !this.showAction(record),
+            //     name: record.name,
+            // }),
+        }
+    }
+
+    getBesidesText = (arr = [], type) => {
+        const first = type === 'O' ? arr?.[0]?.name : arr?.[0]
+        const sidesText = arr?.length
+        ? arr.length > 1
+            ? `${first} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
+            : first
+        : '-'
+        
+        return sidesText
+    }
+
+    getColumns = () => {
+        const { getSortOrder } = this.props
+        const { cluster } = this.props.match.params
+        return [
+            {
+                title: t('RESOURCES_NAME'),
+                dataIndex: 'name',
+                sorter: true,
+                search: true,
+                render: (name, record) => (
+                    <Avatar
+                        icon="loadbalancer"
+                        iconSize={40}
+                        to={`/clusters/${cluster}/externalLoadBalancers/${name}`}
+                        title={name}
+                    />
+                ),
+            },
+            {
+                title: t('PROJECT'),
+                dataIndex: 'project',
+                search: true,
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('IP'),
+                dataIndex: 'ip_address',
+                isHideable: true,
+                width: 'auto',
+            },
+            {
+                title: t('RESOURCES_LISTENER'),
+                dataIndex: 'listeners',
+                isHideable: true,
+                width: 'auto',
+                render: listeners => this.getBesidesText(listeners, 'O'),
+            },
+            {
+                title: t('RESOURCES_POOL'),
+                dataIndex: 'pools',
+                isHideable: true,
+                width: 'auto',
+                render: (pools) => this.getBesidesText(pools, 'O'),
+            },
+            {
+                title: t('RESOURCES_MEMBER'),
+                dataIndex: 'updated_at',
+                isHideable: true,
+                width: 'auto',
+                render: (updated_at, record) => {          
+                    const allMembers = record.pools.flatMap(p => p.members ?? [])
+                    const memberText = this.getBesidesText(allMembers, 'O')      
+                    return <p>{memberText}</p>
+                }
+            },
+            {
+                title: t('RESOURCES_MONITOR'),
+                dataIndex: 'monitors',
+                isHideable: true,
+                width: 'auto',
+                render: (monitors) => this.getBesidesText(monitors, 'O'),
+            },
+            {
+                title: t('RESOURCES_STATE'),
+                dataIndex: 'status',
+                isHideable: true,
+                width: 'auto',
+                render: status => (
+                    <p>{status.charAt(0).toUpperCase() + status.slice(1)}</p>
+                ),
+            },
+            // {
+            //     title: t('RESOURCES_REGIST_DATE'),
+            //     dataIndex: 'created_at',
+            //     isHideable: true,
+            //     sorter: true,
+            //     sortOrder: getSortOrder('descend'),
+            //     width: 150,
+            //     render: date => (
+            //         <p>
+            //             {date
+            //                 ? getLocalTime(date).format('YYYY-MM-DD HH:mm:ss')
+            //                 : t('-')}
+            //         </p>
+            //     ),
+            // },
+        ]
+    }
+
+    get emptyProps() {
+        return { desc: t('RESOURCES_NO_DATA') }
+    }
+
+    get columnSearch() {
+    return [
+      {
+        dataIndex: 'name',
+        title: t('RESOURCES_NAME'),
+        search: true,
+      },
+      {
+        dataIndex: 'project',
+        title: t('PROJECT'),
+        search: true,
+      },
+    ]
+  }
+
+    render() {
+
+        const { bannerProps, tableProps } = this.props
+        return (
+            <ListPage {...this.props}>
+                <Banner
+                    icon="loadbalancer"
+                    {...bannerProps}
+                    tabs={this.tabs}
+                    title={t('RESOURCES_EXTERNAL_LB')}
+                    description={t('RESOURCES_EXTERNAL_LOAD_BALANCER_DESC')}
+                />
+                <Table
+                    {...tableProps}
+                    emptyProps={this.emptyProps}
+                    tableActions={this.tableActions}
+                    itemActions={this.itemActions}
+                    columns={this.getColumns()}
+                    columnSearch={this.columnSearch}
+                />
+            </ListPage>
+        )
+    }
+}
+
+

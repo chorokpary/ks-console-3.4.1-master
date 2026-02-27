@@ -39,8 +39,15 @@ export default {
             'metadata.annotations["iam.kubesphere.io/uninitialized"]',
             'true'
           )
-
-          await store.mfaCreate(data)
+          
+          // mfa 사용 여부 
+          const mfaUsed = globals.config.mfaUsed;
+          
+          if(mfaUsed){
+            await store.mfaCreate(data)
+          }else{
+            await store.create(data)
+          }
 
           Modal.close(modal)
           Notify.success({ content: t('CREATE_SUCCESSFUL') })
