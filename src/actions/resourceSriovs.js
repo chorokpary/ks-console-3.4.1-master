@@ -116,6 +116,9 @@ export default {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
+            }).catch((e) => {
+              Modal.close(modal)
+              success()
             })
         },
         modal: DeleteModal,
@@ -128,24 +131,6 @@ export default {
             ? t.html('RESOURCES_DELETE_SR_IOV_TIP', { resource: usernames })
             : t.html('RESOURCES_DELETE_SR_IOV_TIP', { resource: usernames }),
         resource: usernames,
-        store,
-        ...props,
-      })
-    },
-  },
-  'sriov.delete': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: () => {
-          store.delete(detail).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
-        },
-        modal: DeleteModal,
-        module: store.module,
-        detail,
         store,
         ...props,
       })
