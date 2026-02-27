@@ -133,24 +133,6 @@ export default {
       })
     },
   },
-  'sriov.delete': {
-    on({ store, detail, success, ...props }) {
-      const modal = Modal.open({
-        onOk: () => {
-          store.delete(detail).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
-        },
-        modal: DeleteModal,
-        module: store.module,
-        detail,
-        store,
-        ...props,
-      })
-    },
-  },
   'sriov.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
