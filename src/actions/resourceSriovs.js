@@ -116,6 +116,9 @@ export default {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
+            }).catch((e) => {
+              Modal.close(modal)
+              success()
             })
         },
         modal: DeleteModal,
