@@ -57,22 +57,39 @@ const Presets = props => {
     await clusterResourceStore.fetchDetail(props.match.params)
   }
 
-  const handleInstall = async detail => {
+  const isPresetInstalled = detail => {
+    const addonName = detail?.name?.toLowerCase()
+    const installedAddons = clusterResourceStore.detail?.cluster?.addons || []
+
+    return installedAddons.some(
+      addon => addon?.name?.toLowerCase() === addonName
+    )
+  }
+
+  const handlePresetAction = async (detail, installed) => {
     try {
+      const labels = installed
+        ? Object.keys(detail.labels || {}).reduce((acc, key) => {
+            acc[key] = ''
+            return acc
+          }, {})
+        : detail.labels
+
       const data = {
         name: clusterResourceStore.detail.cluster.name,
         project: clusterResourceStore.detail.cluster.cp.namespace
           ? clusterResourceStore.detail.cluster.cp.namespace
           : 'default',
-        labels: detail.labels,
+        labels,
       }
       await clusterResourceStore.updateLabels({ cluster_obj: data })
+      await fetchData()
     } catch (error) {
-      console.error('Failed to install addon:', error)
+      console.error('Failed to update preset labels:', error)
     }
   }
 
-  const AddonItem = ({ detail, t, handleInstalling }) => {
+  const AddonItem = ({ detail, t, installed, handleAction }) => {
     const [imgSrc, setImgSrc] = useState(
       `/assets/${detail.vendor.toLowerCase()}.svg`
     )
@@ -111,8 +128,11 @@ const Presets = props => {
               <div>{detail.description}</div>
             </div>
             <div className={styles.text} style={{ width: '8%' }}>
-              <Button type="control" onClick={() => handleInstalling(detail)}>
-                {t('INSTALL')}
+              <Button
+                type={installed ? 'danger' : 'control'}
+                onClick={() => handleAction(detail, installed)}
+              >
+                {installed ? t('DELETE') : t('INSTALL')}
               </Button>
             </div>
           </div>
@@ -125,14 +145,18 @@ const Presets = props => {
     return (
       <Panel>
         {!!addons &&
-          addons.map((detail, index) => (
-            <AddonItem
-              key={index}
-              detail={detail}
-              t={t}
-              handleInstalling={handleInstall}
-            />
-          ))}
+          addons.map((detail, index) => {
+            const installed = isPresetInstalled(detail)
+            return (
+              <AddonItem
+                key={index}
+                detail={detail}
+                t={t}
+                installed={installed}
+                handleAction={handlePresetAction}
+              />
+            )
+          })}
       </Panel>
     )
   }
