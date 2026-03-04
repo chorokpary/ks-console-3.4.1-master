@@ -22,6 +22,7 @@ import { Notify } from '@kube-design/components'
 import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
+import axios from 'axios'
 
 import Base from '../basemm3' // mm3 관련 추가 파일
 import List from '../base.list'
@@ -42,6 +43,11 @@ export default class GpuClustersStore extends Base {
     )}${this.getOditLogUrl(params, 'dyal')}/clusters`
   getResourceListUrl = (params = {}) =>
     `kapis/gpucluster.kubesphere.io/v1alpha1/dyal/clusters`
+
+  getClusterVmResourceUrl = (params = {}) =>
+    `${this.getResourceUrl(params)}/${params.namespace}/${
+      params.name
+    }/available-vms`
 
   getListUrl = this.getResourceListUrl
 
@@ -572,6 +578,35 @@ export default class GpuClustersStore extends Base {
             })
           : []
       )
+    )
+  }
+
+  @action
+  async fetchVmsList({ cluster, workspace, ...params } = {}) {
+    const vmDetailList = await request.get(
+      `${this.getResourceUrl(params)}/${params.namespace}/${params.name}`
+    )
+    const vmDataList = vmDetailList.data?.instances || []
+    const vmAvailableList = await request.get(
+      `${this.getClusterVmResourceUrl(params)}`
+    )
+
+    const vmList = [
+      ...vmDataList.map(vm => ({ ...vm, connect: true })),
+      ...vmAvailableList.data.map(vm => ({ ...vm, connect: false })),
+    ]
+
+    return vmList
+  }
+
+  @action
+  async patchVms({ cluster, workspace, ...params } = {}) {
+    const param = {
+      vms: params.data,
+    }
+    return await request.put(
+      `${this.getResourceUrl(params)}/${params.namespace}/${params.name}/vms`,
+      param
     )
   }
 }
