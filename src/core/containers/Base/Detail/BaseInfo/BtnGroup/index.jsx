@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import { isEmpty, isFunction } from 'lodash'
 
-import { Button, Icon, Dropdown, Menu } from '@kube-design/components'
+import { Button, Icon, Dropdown, Menu, Tooltip } from '@kube-design/components'
 
 import styles from './index.scss'
 
@@ -44,7 +44,7 @@ export default class BtnGroup extends Component {
 
   renderBtn = ({ text, show = true, icon, ...rest }) => {
     if (!show) return null
-    return (
+    const button = (
       <Button
         className={styles.button}
         {...rest}
@@ -53,6 +53,12 @@ export default class BtnGroup extends Component {
         {text}
       </Button>
     )
+
+    if (rest.disabled && rest.title) {
+      return <Tooltip content={rest.title}>{button}</Tooltip>
+    }
+
+    return button
   }
 
   renderBtns() {
@@ -84,23 +90,27 @@ export default class BtnGroup extends Component {
     const { options, limit } = this.props
     const menus = options.slice(limit - 1)
 
-    const items = menus.map(({ icon, text, disabled = false, show = true, ...rest }) => {
-
-      if (!show) return null
-      return (
-        <Menu.MenuItem {...rest} disabled={disabled}>
-          {icon &&
-            (isFunction(icon) ? (
-              icon()
-            ) : (
-              icon.includes("resourceIcon") ? <i className={`ico-type16-${icon.split(":")[1]}`} style={{ marginRight: "12px" }}></i>
-                :
+    const items = menus.map(
+      ({ icon, text, disabled = false, show = true, ...rest }) => {
+        if (!show) return null
+        return (
+          <Menu.MenuItem {...rest} disabled={disabled}>
+            {icon &&
+              (isFunction(icon) ? (
+                icon()
+              ) : icon.includes('resourceIcon') ? (
+                <i
+                  className={`ico-type16-${icon.split(':')[1]}`}
+                  style={{ marginRight: '12px' }}
+                ></i>
+              ) : (
                 <Icon name={icon} type="light" />
-            ))}{' '}
-          <span data-test={`detail-${rest.key}`}>{text}</span>
-        </Menu.MenuItem>
-      )
-    })
+              ))}{' '}
+            <span data-test={`detail-${rest.key}`}>{text}</span>
+          </Menu.MenuItem>
+        )
+      }
+    )
 
     if (items.every(item => item === null)) {
       return null

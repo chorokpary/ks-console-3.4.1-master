@@ -1,24 +1,63 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toJS } from 'mobx'
 import { get, isEmpty } from 'lodash'
 import { Loading } from '@kube-design/components'
 import { observer, inject } from 'mobx-react'
 import FlavorStore from 'stores/resources/flavors'
+import VmStore from 'stores/resources/vms'
+import ContainerResourceStore from 'stores/resources/containerresource'
 import DetailPage from 'clusters/containers/Base/Detail'
 import { getLocalTime } from 'utils'
 import * as common from 'utils/resources'
 import routes from './routes'
 
 const store = new FlavorStore()
+const vmStore = new VmStore()
+const containerResourceStore = new ContainerResourceStore()
 
 const FlavorDetail = props => {
+  const [isFlavorInUse, setIsFlavorInUse] = useState(false)
+  const [isCheckingUsage, setIsCheckingUsage] = useState(true)
+
   useEffect(() => {
     fetchData()
+    checkFlavorUsage()
   }, [])
 
   const fetchData = () => {
     store.fetchDetail(props.match.params)
   }
+
+  const checkFlavorUsage = async () => {
+    setIsCheckingUsage(true)
+    const { cluster, name } = props.match.params
+
+    try {
+      const [vmResult, machines] = await Promise.all([
+        vmStore.fetchVmsDetail({
+          cluster,
+          match: 'flavor',
+          name,
+          page: 1,
+          limit: 1,
+        }),
+        containerResourceStore.fetchMachinesAll({ cluster }),
+      ])
+
+      const isUsedByVm =
+        get(vmResult, 'total', 0) > 0 || get(vmResult, 'vms.length', 0) > 0
+      const isUsedByKaas = (machines || []).some(
+        machine => machine.flavor === name
+      )
+
+      setIsFlavorInUse(isUsedByVm || isUsedByKaas)
+    } catch (e) {
+      setIsFlavorInUse(false)
+    } finally {
+      setIsCheckingUsage(false)
+    }
+  }
+
   const listUrl = () => {
     const { cluster } = props.match.params
     return `/clusters/${cluster}/flavors`
@@ -36,14 +75,24 @@ const FlavorDetail = props => {
       text: t('EDIT_INFORMATION'),
       action: 'edit',
       show: showEdit,
-      onClick: () =>
+      disabled: isCheckingUsage || isFlavorInUse,
+      title:
+        isFlavorInUse && !isCheckingUsage
+          ? '사용 중인 Flavor는 변경할 수 없습니다.'
+          : '',
+      onClick: () => {
+        if (isFlavorInUse || isCheckingUsage) {
+          return
+        }
+
         props.rootStore.triggerAction('flavor.edit', {
           type: 'FLAVOR_DETAIL',
           detail: toJS(store.detail),
           store,
           success: fetchData,
           ...props,
-        }),
+        })
+      },
     },
     {
       key: 'viewYaml',

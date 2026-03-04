@@ -5,12 +5,12 @@ import DetailKaasListFlavor from 'pages/projects/containers/Resources/components
 
 const Status = props => {
   const { workspace, cluster, namespace } = props.match.params
-  
+
   return (
     <>
       <DetailVmList
         type="Flavor"
-        match='flavor'
+        match="flavor"
         name={props.match.params.name}
         project={namespace}
         cluster={cluster}
