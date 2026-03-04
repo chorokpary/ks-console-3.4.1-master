@@ -18,7 +18,7 @@ import styles from './index.scss'
 
 const VmAddModal = props => {
   const store = props.store
-  const [vmList, setVmiList] = useState([])
+  const [vmDataList, setVmDataList] = useState([])
 
   const form = useRef()
   const [modelView, setModalView] = useState(true)
@@ -34,21 +34,24 @@ const VmAddModal = props => {
         name: store.detail.data?.name,
         limit: 1000,
       }
-      const vmDetaliData = await store.fetchVmsDetail(detailParams)
-      setVmiList(vmDetaliData.vmList)
 
       const vmList = await store.fetchVmsList(detailParams)
+      setVmDataList(vmList)
     }
     fnGetData()
   }, [])
+
+  useEffect(() => {
+    if (vmDataList.length > 0) {
+      setVmCheckItems(vmDataList.filter(vm => vm.connect).map(vm => vm.vmName))
+    }
+  }, [vmDataList])
 
   const handleOk = () => {
     const onOk = props.onOk
 
     form.current.validator(() => {
-      const { data } = form.current.props
-      const retypeList = data.retype.split(',').map(item => item.trim())
-      onOk({ retypeList })
+      onOk({ data: vmCheckItems })
     })
   }
 
@@ -71,7 +74,7 @@ const VmAddModal = props => {
   const handleAllCheck = checked => {
     if (checked) {
       const nameArray = []
-      vmList.forEach(el => nameArray.push(el.vmName))
+      vmDataList.forEach(el => nameArray.push(el.vmName))
 
       setVmCheckItems(nameArray)
     } else {
@@ -150,8 +153,8 @@ const VmAddModal = props => {
                             }
                             checked={
                               !!(
-                                vmList.length > 0 &&
-                                vmCheckItems.length === vmList.length
+                                vmDataList.length > 0 &&
+                                vmCheckItems.length === vmDataList.length
                               )
                             }
                           />
@@ -168,7 +171,7 @@ const VmAddModal = props => {
                       </tr>
                     </thead>
                     <tbody>
-                      {vmList.length == 0 && (
+                      {vmDataList.length == 0 && (
                         <tr>
                           <td
                             colSpan="4"
@@ -179,42 +182,39 @@ const VmAddModal = props => {
                           </td>
                         </tr>
                       )}
-                      {vmList.map((data, key) => {
-                        return (
-                          <tr key={data.vmName}>
-                            <td>
-                              <Checkbox
-                                name={`select-${data.vmName}`}
-                                checked={!!vmCheckItems.includes(data.vmName)}
-                                onChange={checked =>
-                                  handleSingleCheck(checked, data.vmName)
-                                }
-                              />
-                            </td>
-                            <td>{data.vmName}</td>
-                            <td>
-                              {t(`RESOURCES_${data.vmPhase.toUpperCase()}`)}
-                            </td>
-                            <td>{data.nodeName}</td>
-                          </tr>
-                        )
-                      })}
+                      {vmDataList
+                        .filter(data => {
+                          if (tab == 'vmconnect') {
+                            return !!vmCheckItems.includes(data.vmName)
+                          } else if (tab == 'vmdisconnect') {
+                            return !vmCheckItems.includes(data.vmName)
+                          } else {
+                            return data
+                          }
+                        })
+                        .sort((a, b) => a.vmName.localeCompare(b.vmName))
+                        .map((data, key) => {
+                          return (
+                            <tr key={data.vmName}>
+                              <td>
+                                <Checkbox
+                                  name={`select-${data.vmName}`}
+                                  checked={!!vmCheckItems.includes(data.vmName)}
+                                  onChange={checked =>
+                                    handleSingleCheck(checked, data.vmName)
+                                  }
+                                />
+                              </td>
+                              <td>{data.vmName}</td>
+                              <td>
+                                {t(`RESOURCES_${data.vmPhase.toUpperCase()}`)}
+                              </td>
+                              <td>{data.nodeName}</td>
+                            </tr>
+                          )
+                        })}
                     </tbody>
                   </table>
-                  {/* <div className={styles.removeCheckWrapper}>
-                    {vmCheckItems?.map(vmName => {
-                      return (
-                        <span key={vmName}>
-                          <Button
-                            icon="close"
-                            onClick={() => handleDelete(vmName)}
-                          >
-                            {vmName}
-                          </Button>{' '}
-                        </span>
-                      )
-                    })}
-                  </div> */}
                 </div>
               </div>
             </Form.Item>
@@ -226,9 +226,12 @@ const VmAddModal = props => {
             {t('CANCEL')}
           </Button>
           <Button
-            type="danger"
+            type="control"
             loading={props.store.isSubmitting}
-            disabled={props.store.isSubmitting || vmCheckItems.length === 0}
+            disabled={
+              props.store.isSubmitting
+              //  || vmCheckItems.length === 0
+            }
             onClick={handleOk}
             data-test="modal-ok"
           >

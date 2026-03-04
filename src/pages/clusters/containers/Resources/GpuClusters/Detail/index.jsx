@@ -162,21 +162,21 @@ const GpuClustersDetail = props => {
           }
         },
       },
-      {
-        key: 'edit',
-        icon: 'pen',
-        text: t('RESOURCES_VM_EDIT'),
-        action: 'view',
-        show: showEdit,
-        onClick: () =>
-          props.rootStore.triggerAction('gpuclusters.vmedit', {
-            detail: toJS(store.detail),
-            store: store,
-            namespace: store.detail.data.namespace,
-            success: fetchData,
-            ...props.match.params,
-          }),
-      },
+      // {
+      //   key: 'edit',
+      //   icon: 'pen',
+      //   text: t('RESOURCES_VM_EDIT'),
+      //   action: 'view',
+      //   show: showEdit,
+      //   onClick: () =>
+      //     props.rootStore.triggerAction('gpuclusters.vmedit', {
+      //       detail: toJS(store.detail),
+      //       store: store,
+      //       namespace: store.detail.data.namespace,
+      //       success: fetchData,
+      //       ...props.match.params,
+      //     }),
+      // },
     ]
 
     return [...attr]

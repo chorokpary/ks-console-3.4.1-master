@@ -24,6 +24,7 @@ import ConfirmModal from 'clusters/containers/Resources/components/Modals/Confir
 import ClusterModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Cluster'
 import RegistModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Regist'
 import ModifyModal from 'clusters/containers/Resources/components/Modals/GpuClusters/Modify'
+import VmAddModal from 'clusters/containers/Resources/components/Modals/GpuClusters/VmAdd'
 
 import EditYamlModal from 'components/Modals/EditYaml'
 import DeleteModal from 'components/Modals/Delete'
@@ -44,13 +45,13 @@ export default {
         onOk: data => {
           store
             .createCluster(data, { cluster, workspace, namespace, devops })
-            .then((res) => {
-              if(res.ok){
+            .then(res => {
+              if (res.ok) {
                 success && success()
                 data.createSuccess?.(success)
-              }else{
+              } else {
                 data.createFail()
-              }         
+              }
             })
         },
         title: t('RESOURCES_CREATE_GPU_CLUSTER'),
@@ -153,7 +154,7 @@ export default {
             success && success()
           })
         },
-        title: t('VM 편집'),
+        title: t('RESOURCES_VM_EDIT'),
         modal: ModifyModal,
         store,
         cluster,
@@ -177,15 +178,15 @@ export default {
       ...props
     }) {
       const modal = Modal.open({
-        onOk: retypeList => {
-          store.vmAdd({ ...props, namespace, ...retypeList }).then(() => {
+        onOk: data => {
+          store.patchVms({ ...props, namespace, ...data }).then(() => {
             Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_ADD_SUCCESSFUL') })
+            Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
             success && success()
           })
         },
-        title: t('VM 추가'),
-        modal: AddModal,
+        title: t('RESOURCES_VM_EDIT'),
+        modal: VmAddModal,
         store,
         cluster,
         workspace,
@@ -208,11 +209,13 @@ export default {
     }) {
       const modal = Modal.open({
         onOk: () => {
-          store.delete({ ...props, namespace, detail, name:detail.name }).then(() => {
-            Modal.close(modal)
-            Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
-            success && success()
-          })
+          store
+            .delete({ ...props, namespace, detail, name: detail.name })
+            .then(() => {
+              Modal.close(modal)
+              Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
+              success && success()
+            })
         },
         modal: DeleteModal,
         title: t('RESOURCES_DELETE'),
