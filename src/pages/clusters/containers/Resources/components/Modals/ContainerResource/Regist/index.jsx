@@ -141,6 +141,7 @@ const RegistModal = props => {
     setSriovNetworkList(sriovNetworks)
     const sgs = securityGroupDataList
       .filter(obj => obj.project === project)
+      .filter(obj => !(Number(obj.ingress) === 0 && Number(obj.egress) !== 0))
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
     setSecurityGroups(sgs)
   }
