@@ -68,9 +68,6 @@ module.exports = {
   RESOURCES_IP_POOL_VALID: 'Please enter IP POOL information accurately.',
   RESOURCES_IP_EMPTY_DESC: 'Please enter your IP.',
 
-  RESOURCES_GPU_VM: 'GPU VM',
-  RESOURCES_CPU_VM: 'CPU VM',
-  RESOURCES_CPU_NODE: 'CPU Node',
   RESOURCES_GPU_NODE: 'GPU Node',
   RESOURCES_GPU_NODE_DESC:
     'GPU nodes are a set of GPU-equipped servers among Petasus AI Cloud cluster nodes. You can check and manage GPU node status on this page.',
@@ -189,8 +186,7 @@ module.exports = {
   RESOURCES_EDIT_KAAS_RESOURCE: 'Edit KaaS',
   RESOURCES_DELETE_KAAS_RESOURCE_TIP:
     'Enter the KaaS name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
-  RESOURCES_KAAS_DESC:
-    'Manage the status and usage of Kubernetes-as-a-Service (KaaS).',
+  RESOURCES_KAAS_DESC: 'Manage the status and usage of Kubernetes-as-a-Service (KaaS).',
   RESOURCES_KAAS_IMAGE: 'KaaS Image',
   RESOURCES_CREATE_KAAS_IMAGE: 'Create KaaS Image',
   RESOURCES_EDIT_KAAS_IMAGE: 'Edit KaaS Image',
@@ -547,8 +543,7 @@ module.exports = {
   RESOURCES_SEGMENT_ID_EMPTY_DESC: 'Please enter the segment ID',
   RESOURCES_SEGMENT_ID_VALID: 'Please enter a value between 0 and 16777215.',
   RESOURCES_SEGMENT_ID_VALID_VLAN: 'Please enter a value between 2 and 4094.',
-  RESOURCES_INVALID_SEGMENT_ID_DESC:
-    'Invalid segment ID. Please enter a value between 2 and 4094.',
+  RESOURCES_INVALID_SEGMENT_ID_DESC: 'Invalid segment ID. Please enter a value between 2 and 4094.',
   RESOURCES_DETAIL_SETTINGS: 'Detailed Settings',
   RESOURCES_PINE_TREE: 'Pine Tree',
   RESOURCES_SOURCE: 'Source',
@@ -1278,8 +1273,6 @@ module.exports = {
   RESOURCES_GPU_STATUS_MAP: 'GPU Status Map',
   RESOURCES_GPUCLUSTER_NO_VM_LIST:
     'No virtual machines found in the GPU cluster.',
-  RESOURCES_ALERT_VERTICAL: 'Alert (Vertical)',
-  RESOURCES_ALERT_HORIZONTAL: 'Alert (Horizontal)',
 
   RESOURCES_PASSWORD_POLICY: 'Password Policy',
   RESOURCES_PASSWORD_PERIOD: 'Password Period',
@@ -1328,42 +1321,12 @@ module.exports = {
   RESOURCE_NOTICE_PASSWORD_EXPIRE_DAY_TIP_3:
     'Please change your password now to ensure smooth service use.',
   RESOURCES_PASSWORD_ORIGINALLY: 'Originally',
-  NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD:
-    'Change notification (days) is greater than Maximum age (days).',
+  NOTICE_DAY_MUST_BE_LESS_THAN_PERIOD: 'Change notification (days) is greater than Maximum age (days).',
 
   RESOURCES_CPU_AVAILABLE: 'CPU Availability (Cores)',
   RESOURCES_MEMORY_AVAILABLE: 'Memory Availability (Gi)',
   RESOURCES_DISK_AVAILABLE: 'Disk Availability (GB)',
   RESOURCES_SYSTEM_POD_PL: 'System Pods',
 
-  RESOURCES_EXTERNAL_LB: 'External LB',
-  RESOURCES_EXTERNAL_LOAD_BALANCER_DESC:
-    'Manage the status and usage of the external load balancer.',
-  RESOURCES_CREATE_EXTERNAL_LOAD_BALANCER: 'Create External Load Balancer',
-  RESOURCES_EDIT_EXTERNAL_LOAD_BALANCER: 'Edit External Load Balancer',
-  RESOURCES_DELETE_EXTERNAL_LOAD_BALANCER_TIP:
-    'Enter the external load balancer name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
-  RESOURCES_LISTENER: 'Listener',
-  RESOURCES_LISTENER_SETTINGS: 'Listener Setting',
-  RESOURCES_POOL: 'Pool',
-  RESOURCES_POOL_SETTINGS: 'Pool Setting',
-  RESOURCES_DUPLICATE_PROTOCOL_TIP: 'There is a duplicate protocol.',
-  RESOURCES_DUPLICATE_LISTENER_TIP:
-    'There is a listener set with duplicate information.',
-  RESOURCES_LISTENER_EMPTY_DESC: 'Please enter your Listener Information.',
-  RESOURCES_MONITOR: 'Monitor',
-  RESOURCES_INTERVAL: 'Interval',
-  RESOURCES_TIME_OUT: 'Timeout',
-  RESOURCES_MEMBER: 'Member',
-  RESOURCES_SELECT_LB_METHOD_TIP: 'Please select a LB method.',
-  RESOURCES_IP_VALID: 'Please enter IP information accurately.',
-  RESOURCES_MEMBER_EMPTY_DESC: 'Please enter your Member Information.',
-  RESOURCES_EXTERNAL_LB_NAME: 'External LB Name',
-  RESOURCES_EXTERNAL_DRIVER: 'Drivers',
-  RESOURCES_WEIGHT_RANGE_DESC:
-    'Weight range should be a number or a range from 1 to 100.',
-  RESOURCES_ALREADY_USED_IP: 'This IP has already been used.',
-  RESOURCES_INTERVAL_LESSS_THAN_TIMEOUT_DESC:
-    'Interval value must always be less than Timeout.',
-  RESOURCES_MONITOR_VALID: 'Please enter your Monitor Information',
+
 }
