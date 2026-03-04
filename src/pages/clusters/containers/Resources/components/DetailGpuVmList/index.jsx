@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import { Indicator, Panel, Text } from 'components/Base'
 import { TinyArea } from 'components/Charts'
 import { Link } from 'react-router-dom'
+import { toJS } from 'mobx'
 
 import CustomStore from 'stores/monitoring/custom/monitor'
 import GpuClustersStore from 'stores/resources/gpuclusters'
@@ -433,6 +434,18 @@ const DetailGpuVmList = props => {
     })
   }
 
+  const handleAdd = () => {
+    rootStore.triggerAction('gpuclusters.vmadd', {
+      detail: toJS(props.detailStore?.detail.data),
+      store: props.detailStore,
+      cluster,
+      namespace: props.detailStore?.detail.data.namespace,
+      success: fetchData,
+      name: props.detailStore?.detail.data.name,
+      // ...props.match.params,
+    })
+  }
+
   const renderHeader = () => {
     return (
       <div className={styles.header}>
@@ -454,6 +467,17 @@ const DetailGpuVmList = props => {
             className={classnames(styles['btn'], styles['btn-control'])}
           >
             {t('CREATE_BTN')}
+          </Button>
+        </div>
+        <div className={styles.actions}>
+          <Button
+            type="control"
+            onClick={() => {
+              handleAdd()
+            }}
+            className={classnames(styles['btn'], styles['btn-control'])}
+          >
+            {t('EDIT')}
           </Button>
         </div>
       </div>
