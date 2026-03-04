@@ -71,21 +71,53 @@ const ModifyFlavorModal = props => {
     getVmCreateData()
   }, [])
 
-  const flavorOptions = () => {
-    let size
-    const regex = /[^0-9]/g
-    let selectedRootDisk
+  const getResourcePrefix = resourceName => {
+    if (!resourceName) {
+      return ''
+    }
 
-    selectedRootDisk = imageDataList.find(item => item.name === selectImageName)
-    size = selectedRootDisk?.size.replace(regex, '') || 0
+    return resourceName.includes('/')
+      ? resourceName.split('/')[0]
+      : resourceName
+  }
+
+  const getFlavorGpuPrefix = flavor => {
+    const gpuName = flavor?.gpus?.[0]?.name
+    return getResourcePrefix(gpuName)
+  }
+
+  const formatAttachedResources = resources => {
+    if (!resources?.length) {
+      return 'None'
+    }
+
+    return resources
+      .map(item => `${item.name} x${item.quantity || 0}`)
+      .join(', ')
+  }
+
+  const flavorOptions = () => {
+    const regex = /[^0-9]/g
+
+    const selectedRootDisk = imageDataList.find(
+      item => item.name === selectImageName
+    )
+    const size = selectedRootDisk?.size.replace(regex, '') || 0
+    const currentFlavor =
+      flavorDataList.find(item => item.name === flavorData.name) || flavorData
+    const currentGpuPrefix = getFlavorGpuPrefix(currentFlavor)
 
     return flavorDataList.map(obj => ({
       label: t(obj.name),
       description: `CPU ${obj.vcpus} Cores / Memory ${common.fnSetBytes(
         obj.ram
-      )} GiB / Disk ${obj.root_disk} GiB`,
+      )} GiB / Disk ${obj.root_disk} GiB / GPU ${formatAttachedResources(
+        obj.gpus
+      )} / Device ${formatAttachedResources(obj.devices)}`,
       value: t(obj.name),
-      disabled: Number(obj.root_disk) < Number(size),
+      disabled:
+        Number(obj.root_disk) < Number(size) ||
+        (currentGpuPrefix && currentGpuPrefix !== getFlavorGpuPrefix(obj)),
     }))
   }
 
