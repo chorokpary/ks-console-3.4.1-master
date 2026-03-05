@@ -1199,8 +1199,12 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                             <li class="alert_card">
                               <div class="alert_content">
                                 <div class="alert_header">
-                                  <span class="alert_status critical">심각</span>
-                                  <span class="alert_resource type_node">노드</span>
+                                  <span class="alert_status critical">${t(
+                                    'RESOURCES_WARNING'
+                                  )}</span>
+                                  <span class="alert_resource type_node">${t(
+                                    'RESOURCES_NODE'
+                                  )}</span>
                                 </div>
 
                                 <div class="alert_body">
@@ -1221,14 +1225,15 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                             <li class="alert_card">
                               <div class="alert_content">
                                 <div class="alert_header">
-                                  <span class="alert_status minor">경고</span>
+                                  <span class="alert_status minor">${t(
+                                    'RESOURCES_GPUCLUSTER_MINOR'
+                                  )}</span>
                                   <span class="alert_resource type_gpu">GPU</span>
                                 </div>
 
                                 <div class="alert_body">
                                   <p class="alert_message">
-                                    GPU의 디스플레이 엔진 응답 지연을
-                                    감지했습니다.
+                                  Detected display engine response delay from gpu
                                   </p>
                                   <p class="alert_badge">
                                     <span class="alert_errorcode">Error Code: Xid 14</span>
@@ -1240,8 +1245,12 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                             <li class="alert_card">
                               <div class="alert_content">
                                 <div class="alert_header">
-                                  <span class="alert_status unknown">주의</span>
-                                  <span class="alert_resource type_vm">가상머신</span>
+                                  <span class="alert_status unknown">${t(
+                                    'RESOURCES_WARNING'
+                                  )}</span>
+                                  <span class="alert_resource type_vm">${t(
+                                    'RESOURCES_VM'
+                                  )}</span>
                                 </div>
 
                                 <div class="alert_body">
@@ -1280,19 +1289,27 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                           <label for="al_name2_1">
                             <input type="radio" name="box-tab" id="al_name2_1" value="name3" checked />
                             <!-- gpu badge number는 99 이상일때 99로만 표현 -->
-                            <span><span class="gpu_badge_number">18</span><span>전체</span></span>
+                            <span><span class="gpu_badge_number">18</span><span>${t(
+                              'RESOURCES_ALL'
+                            )}</span></span>
                           </label>
                           <label for="al_name2_2">
                             <input type="radio" name="box-tab" id="al_name2_2" value="name4" />
-                            <span><span class="gpu_badge_number critical">6</span><span>심각</span></span>
+                            <span><span class="gpu_badge_number critical">6</span><span>${t(
+                              'RESOURCES_GPUCLUSTER_CRITICAL'
+                            )}</span></span>
                           </label>
                           <label for="al_name2_3">
                             <input type="radio" name="box-tab" id="al_name2_3" value="name5" />
-                            <span><span class="gpu_badge_number minor">6</span><span>경고</span></span>
+                            <span><span class="gpu_badge_number minor">6</span><span>${t(
+                              'RESOURCES_GPUCLUSTER_MINOR'
+                            )}</span></span>
                           </label>
                           <label for="al_name2_4">
                             <input type="radio" name="box-tab" id="al_name2_4" value="name6" />
-                            <span><span class="gpu_badge_number unknown">6</span><span>주의</span></span>
+                            <span><span class="gpu_badge_number unknown">6</span><span>${t(
+                              'RESOURCES_WARNING'
+                            )}</span></span>
                           </label>
                         </div>
                         <div class="select_wrap">
@@ -1346,8 +1363,12 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                             <li class="alert_card">
                               <div class="alert_content">
                                 <div class="alert_header">
-                                  <span class="alert_status critical">심각</span>
-                                  <span class="alert_resource type_node">노드</span>
+                                  <span class="alert_status critical">${t(
+                                    'RESOURCES_WARNING'
+                                  )}</span>
+                                  <span class="alert_resource type_node">${t(
+                                    'RESOURCES_NODE'
+                                  )}</span>
                                 </div>
 
                                 <div class="alert_body">
@@ -1368,14 +1389,15 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                             <li class="alert_card">
                               <div class="alert_content">
                                 <div class="alert_header">
-                                  <span class="alert_status minor">경고</span>
+                                  <span class="alert_status minor">${t(
+                                    'RESOURCES_GPUCLUSTER_MINOR'
+                                  )}</span>
                                   <span class="alert_resource type_gpu">GPU</span>
                                 </div>
 
                                 <div class="alert_body">
                                   <p class="alert_message">
-                                    GPU의 디스플레이 엔진 응답 지연을
-                                    감지했습니다.
+                                    Detected display engine response delay from gpu
                                   </p>
                                   <p class="alert_badge">
                                     <span class="alert_errorcode">Error Code: Xid 14</span>
@@ -1387,46 +1409,12 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                             <li class="alert_card">
                               <div class="alert_content">
                                 <div class="alert_header">
-                                  <span class="alert_status minor">경고</span>
-                                  <span class="alert_resource type_gpu">GPU</span>
-                                </div>
-
-                                <div class="alert_body">
-                                  <p class="alert_message">
-                                    GPU의 디스플레이 엔진 응답 지연을
-                                    감지했습니다.
-                                  </p>
-                                  <p class="alert_badge">
-                                    <span class="alert_errorcode">Error Code: Xid 14</span>
-                                  </p>
-                                </div>
-                                <p class="alert_date">2025-08-23</p>
-                              </div>
-                            </li>
-                            <li class="alert_card">
-                              <div class="alert_content">
-                                <div class="alert_header">
-                                  <span class="alert_status minor">경고</span>
-                                  <span class="alert_resource type_gpu">GPU</span>
-                                </div>
-
-                                <div class="alert_body">
-                                  <p class="alert_message">
-                                    GPU의 디스플레이 엔진 응답 지연을
-                                    감지했습니다.
-                                  </p>
-                                  <p class="alert_badge">
-                                    <span class="alert_errorcode">Error Code: Xid 14</span>
-                                  </p>
-                                </div>
-                                <p class="alert_date">2025-08-23</p>
-                              </div>
-                            </li>
-                            <li class="alert_card">
-                              <div class="alert_content">
-                                <div class="alert_header">
-                                  <span class="alert_status unknown">주의</span>
-                                  <span class="alert_resource type_vm">가상머신</span>
+                                  <span class="alert_status unknown">${t(
+                                    'RESOURCES_WARNING'
+                                  )}</span>
+                                  <span class="alert_resource type_vm">${t(
+                                    'RESOURCES_VM'
+                                  )}</span>
                                 </div>
 
                                 <div class="alert_body">
@@ -1694,7 +1682,9 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                     <span class="status_value">10</span>
                                   </div>
                                   <div class="status_item">
-                                    <p class="status_label">총 GPU</p>
+                                    <p class="status_label">${t(
+                                      'RESOURCES_TOTAL'
+                                    )} GPU</p>
                                     <span class="status_value">80</span>
                                   </div>
                                   <div class="status_item">
@@ -2581,7 +2571,9 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                               </div>
                               <div class="gpu_panel">
                                 <div class="gpu_top">
-                                  <div class="gpu_title">GPU 현황</div>
+                                  <div class="gpu_title">${t(
+                                    'RESOURCES_GPU_STATUS'
+                                  )}</div>
                                   <div class="gpu_status">
                                     <div class="gpu_summary">
                                       <span class="gpu_summary_main">50</span><span>/</span><span class="gpu_summary_total"> 70</span>
@@ -2598,9 +2590,15 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                         <div class="dot unknown"></div>
                                       </div>
                                       <div class="gpu_legend_labels">
-                                        <div>경고</div>
-                                        <div>정상</div>
-                                        <div>미확인</div>
+                                        <div>${t(
+                                          'RESOURCES_GPUCLUSTER_MINOR'
+                                        )}</div>
+                                        <div>${t(
+                                          'RESOURCES_GPUCLUSTER_NORMAL'
+                                        )}</div>
+                                        <div>${t(
+                                          'RESOURCES_GPUCLUSTER_UNKNOWN'
+                                        )}</div>
                                       </div>
                                     </div>
                                   </div>
@@ -2608,7 +2606,9 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                             
                                 <div class="gpu_chart">
                                   <div class="chart_section">
-                                    <div class="chart_title">GPU 사용량 추이</div>
+                                    <div class="chart_title">${t(
+                                      'RESOURCES_GPU_USAGE'
+                                    )}</div>
                                     <div class="chart_values">
                                       <div class="chart_total"><span>52%</span><span></span><span></span></div>
                                     </div>
@@ -2619,11 +2619,15 @@ export const gpuClusterPanel = ({ x, y, w, h }) => {
                                     <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
                                   </div>
                                   <div class="chart_section">
-                                    <div class="chart_title">IB 인바운드 (Total)</div>
+                                    <div class="chart_title">${t(
+                                      'RESOURCES_GPU_IB_INBOUND'
+                                    )} (Total)</div>
                                     <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
                                   </div>
                                   <div class="chart_section">
-                                    <div class="chart_title">IB 아웃바운드 (Total)</div>
+                                    <div class="chart_title">${t(
+                                      'RESOURCES_GPU_IB_OUTBOUND'
+                                    )} (Total)</div>
                                     <div class="chart_gpu_trend" style="background: rgba(0, 0, 255, 0.02);"></div>
                                   </div>
                                 </div>
