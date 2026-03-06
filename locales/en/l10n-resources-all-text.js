@@ -531,6 +531,7 @@ module.exports = {
   RESOURCES_ELB_DEDICATED: 'ELB Dedicated',
   RESOURCES_ELB_DEDICATED_TIP:
     'Only FLAT type networks can be set as ELB dedicated.',
+  RESOURCES_ELB_NETWORK_IN_USE: 'This ELB network is already in use.',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: 'Select',
   RESOURCES_NOT_SELECTED: 'Not Selected',

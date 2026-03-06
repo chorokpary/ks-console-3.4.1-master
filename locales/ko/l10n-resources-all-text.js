@@ -531,6 +531,7 @@ module.exports = {
   RESOURCES_ELB_DEDICATED: 'ELB 전용',
   RESOURCES_ELB_DEDICATED_TIP:
     'FLAT 유형의 네트워크만 ELB 전용으로 설정할 수 있습니다.',
+  RESOURCES_ELB_NETWORK_IN_USE: '이미 사용 중인 ELB 네트워크입니다.',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: '선택',
   RESOURCES_NOT_SELECTED: '선택 안됨',
