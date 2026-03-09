@@ -15,22 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
-import ResourceTable from 'clusters/components/ResourceTable';
+import ResourceTable from 'clusters/components/ResourceTable'
 
-import { Link } from 'react-router-dom';
-import React from 'react';
-import { Avatar, Status } from 'components/Base';
-import Tabs from 'components/Cards/Banner/Tabs';
-import { getDocsUrl } from 'utils'
-import { ListPage, withClusterList } from 'components/HOCs/withList';
+import { Link } from 'react-router-dom'
+import React from 'react'
+import { Avatar } from 'components/Base'
+import Tabs from 'components/Cards/Banner/Tabs'
+import { getDocsUrl, getLocalTime } from 'utils'
+import { ListPage, withClusterList } from 'components/HOCs/withList'
 
-import { getLocalTime } from 'utils';
-import { Icon } from '@kube-design/components';
-import classnames from 'classnames';
+import { Icon } from '@kube-design/components'
+import classnames from 'classnames'
 
-import NetworkStore from 'stores/resources/networks';
+import NetworkStore from 'stores/resources/networks'
 
-import styles from './index.scss';
+import styles from './index.scss'
 
 @withClusterList({
   store: new NetworkStore(),
@@ -41,16 +40,16 @@ import styles from './index.scss';
 })
 export default class Networks extends React.Component {
   handleTabChange = value => {
-    const { cluster } = this.props.match.params;
-    this.props.routing.push(`/clusters/${cluster}/${value}`);
-  };
+    const { cluster } = this.props.match.params
+    this.props.routing.push(`/clusters/${cluster}/${value}`)
+  }
 
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     return [
       {
         key: 'delete',
@@ -65,11 +64,11 @@ export default class Networks extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, tableProps } = this.props
 
     return {
       ...tableProps.tableActions,
@@ -104,12 +103,12 @@ export default class Networks extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    };
+    }
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
-    const { cluster } = this.props.match.params;
+    const { getSortOrder } = this.props
+    const { cluster } = this.props.match.params
     return [
       {
         title: t('NAME'),
@@ -142,6 +141,14 @@ export default class Networks extends React.Component {
         width: 'auto',
       },
       {
+        title: t('RESOURCES_USAGE_TYPE'),
+        dataIndex: 'elb',
+        isHideable: true,
+        width: 'auto',
+        render: elb =>
+          elb ? t('RESOURCES_ELB_DEDICATED') : t('RESOURCES_GENERAL'),
+      },
+      {
         title: t('RESOURCES_MTU'),
         dataIndex: 'mtu',
         isHideable: true,
@@ -172,11 +179,11 @@ export default class Networks extends React.Component {
           </p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') };
+    return { desc: t('RESOURCES_NO_DATA') }
   }
 
   get tabs() {
@@ -197,19 +204,19 @@ export default class Networks extends React.Component {
           label: t('RESOURCES_NETWORK_TAB3'),
         },
       ],
-    };
+    }
   }
 
   modalTopology = () => {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     trigger('networks.topology', {
       success: getData,
       ...this.props.match.params,
-    });
-  };
+    })
+  }
 
   render() {
-    const { bannerProps, tableProps } = this.props;
+    const { tableProps } = this.props
     const docUrl = getDocsUrl('networks')
     return (
       <ListPage {...this.props}>
@@ -252,6 +259,6 @@ export default class Networks extends React.Component {
           searchType="name"
         />
       </ListPage>
-    );
+    )
   }
 }

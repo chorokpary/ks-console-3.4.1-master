@@ -1,36 +1,35 @@
-import React, { useEffect } from 'react';
-import DetailPage from 'clusters/containers/Base/Detail';
-import NetworkStore from 'stores/resources/networks';
-import { useParams } from 'react-router-dom';
-import { toJS } from 'mobx';
-import { get, isEmpty } from 'lodash';
-import { Loading } from '@kube-design/components';
-import { observer, inject } from 'mobx-react';
-import { getLocalTime } from 'utils';
+import React, { useEffect } from 'react'
+import DetailPage from 'clusters/containers/Base/Detail'
+import NetworkStore from 'stores/resources/networks'
+import { toJS } from 'mobx'
+import { get, isEmpty } from 'lodash'
+import { Loading } from '@kube-design/components'
+import { observer, inject } from 'mobx-react'
+import { getLocalTime } from 'utils'
 
-import { getIndexRoute } from 'utils/router.config';
-import Status from 'clusters/containers/Resources/Networks/Detail/Status';
+import { getIndexRoute } from 'utils/router.config'
+import Status from 'clusters/containers/Resources/Networks/Detail/Status'
 
-const PATH_DETAIL = '/clusters/:cluster/projects/:namespace/networks/:name';
+const PATH_DETAIL = '/clusters/:cluster/projects/:namespace/networks/:name'
 
-const store = new NetworkStore();
+const store = new NetworkStore()
 
 const NetworkDetail = props => {
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const fetchData = () => {
-    store.fetchDetail(props.match.params);
-  };
+    store.fetchDetail(props.match.params)
+  }
 
-  const { cluster } = props.match.params;
-  const listUrl = `/clusters/${cluster}/networks`;
+  const { cluster } = props.match.params
+  const listUrl = `/clusters/${cluster}/networks`
 
-  const { routing } = props.rootStore;
+  const { routing } = props.rootStore
   const showEdit = !globals.config.presetClusterRoles.includes(
     props.match.params.name
-  );
+  )
 
   const getOperations = () => [
     {
@@ -76,13 +75,13 @@ const NetworkDetail = props => {
           cancelText: t('RESOURCES_CANCEL'),
         }),
     },
-  ];
+  ]
 
   const getAttrs = () => {
-    const detail = toJS(store.detail);
+    const detail = toJS(store.detail)
 
     if (isEmpty(detail)) {
-      return;
+      return
     }
 
     return [
@@ -133,6 +132,10 @@ const NetworkDetail = props => {
           : t('RESOURCES_NOT_USE'),
       },
       {
+        name: t('RESOURCES_ELB_DEDICATED'),
+        value: detail.network.elb ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+      },
+      {
         name: t('RESOURCES_PHYSNET'),
         value: detail.network.physnet_name,
       },
@@ -160,11 +163,11 @@ const NetworkDetail = props => {
           'YYYY-MM-DD HH:mm:ss'
         ),
       },
-    ];
-  };
+    ]
+  }
 
   if (store.isLoading && !store.detail.name) {
-    return <Loading className="ks-page-loading" />;
+    return <Loading className="ks-page-loading" />
   }
 
   const sideProps = {
@@ -180,7 +183,7 @@ const NetworkDetail = props => {
         url: listUrl,
       },
     ],
-  };
+  }
 
   return (
     <>
@@ -202,7 +205,7 @@ const NetworkDetail = props => {
         {...sideProps}
       />
     </>
-  );
-};
+  )
+}
 
-export default inject('rootStore')(observer(NetworkDetail));
+export default inject('rootStore')(observer(NetworkDetail))

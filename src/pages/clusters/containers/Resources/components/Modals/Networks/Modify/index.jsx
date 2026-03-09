@@ -1,236 +1,220 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { Modal } from 'components/Base';
-import { NumberInput } from 'components/Inputs';
-import {
-  PATTERN_NAME,
-  PATTERN_IP,
-  PATTERN_IP_MASK,
-  PATTERN_MTU,
-} from 'utils/constants';
-import { Form, Input, Button, Tooltip, TextArea } from '@kube-design/components';
-import { Column, Columns } from '@kube-design/components/lib/components/Layout';
+import React, { useEffect, useReducer, useRef, useState } from 'react'
+import { Modal } from 'components/Base'
+import { NumberInput } from 'components/Inputs'
+import { PATTERN_IP, PATTERN_IP_MASK, PATTERN_MTU } from 'utils/constants'
+import { Button, Form, Input, TextArea, Tooltip } from '@kube-design/components'
+import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import {
   RadioButton,
   RadioGroup,
-} from '@kube-design/components/lib/components/Radio';
-import * as common from 'utils/resources';
-import classnames from 'classnames';
-import styles from './index.scss';
+} from '@kube-design/components/lib/components/Radio'
+import * as common from 'utils/resources'
+import classnames from 'classnames'
+import styles from './index.scss'
 
 const ModifyModal = props => {
-  const detail = props.detail;
-  const form = useRef();
-  const [formData, setFormData] = useState({});
-  const [modelView, setModalView] = useState(true);
-  const [defaultRoute, setDefaultRoute] = useState(detail.default_route);
-  const [cidrReducer, setCidrReducer] = useReducer(
-    cidrReducer => !cidrReducer,
-    false
-  );
-  const [regStep, setRegStep] = useState(1);
+  const detail = props.detail
+  const form = useRef()
+  const [formData] = useState({})
+  const [modelView, setModalView] = useState(true)
+  const [defaultRoute, setDefaultRoute] = useState(detail.default_route)
+  const [, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
+  const [regStep, setRegStep] = useState(1)
 
   const defaultOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
-  ];
+  ]
 
   const defaultRouteOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
-  ];
+  ]
 
   const handleOk = () => {
-    const onOk = props.onOk;
+    const onOk = props.onOk
 
     form.current.validator(() => {
-      const { data } = form.current.props;
+      const { data } = form.current.props
 
-      const error = document.querySelectorAll('.form-item-error');
+      const error = document.querySelectorAll('.form-item-error')
       for (const i of error) {
         if (!i.classList.contains('hide')) {
-          return;
+          return
         }
       }
 
-      const dns = [];
-      data.dns?.map(el => {
-        if (el != '') {
-          dns.push(el);
+      const dns = []
+      data.dns?.forEach(el => {
+        if (el !== '') {
+          dns.push(el)
         }
-      });
-      data.dns = dns;
+      })
+      data.dns = dns
 
-      const host_routes = [];
-      listHostRoute?.map(el => {
+      const host_routes = []
+      listHostRoute?.forEach(el => {
         if (data.Destination?.[el] && data.Nexthop?.[el]) {
           host_routes.push({
             destination: data.Destination[el],
             nexthop: data.Nexthop[el],
-          });
+          })
         }
-      });
-      data.host_routes = host_routes;
-      data.project = detail.project;
+      })
+      data.host_routes = host_routes
+      data.project = detail.project
 
       data.ip_pool = {
         start: data.ip_pool_start,
         end: data.ip_pool_end,
-      };
+      }
 
-      onOk({ ...data });
-    });
-  };
+      onOk({ ...data })
+    })
+  }
 
   const closeModal = () => {
-    setModalView(false);
-  };
+    setModalView(false)
+  }
 
   const isValidIpAddress = ip => {
-    return PATTERN_IP.test(ip);
-  };
+    return PATTERN_IP.test(ip)
+  }
   const fnCheckCidrClass = num => {
-    if (parseInt(num) > 30) {
-      return false;
+    if (parseInt(num, 10) > 30) {
+      return false
     }
     if (!PATTERN_IP_MASK.test(num)) {
-      return false;
+      return false
     }
-    const clsMaximumVal = 128;
-    const classVal = parseInt(num);
-    if (classVal < 1 || classVal > clsMaximumVal) {
-      return false;
-    }
-    return true;
-  };
+    const clsMaximumVal = 128
+    const classVal = parseInt(num, 10)
+    return !(classVal < 1 || classVal > clsMaximumVal)
+  }
 
-  const checkNetworkAddress = (value) => {
-    const cidrData = common.fnCalculateCidr(value);
-    const checkNetwork = cidrData.networkAddress == value.split('/')[0] ? true : false;
-    return checkNetwork;
+  const checkNetworkAddress = value => {
+    const cidrData = common.fnCalculateCidr(value)
+    return cidrData.networkAddress === value.split('/')[0]
   }
 
   const cidrValidator = (rule, value, callback) => {
     if (!value) {
-      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') });
+      return callback({ message: t('RESOURCES_CIDR_EMPTY_DESC') })
     }
     if (
-      value.split('/').length != 2 ||
+      value.split('/').length !== 2 ||
       !isValidIpAddress(value.split('/')[0]) ||
       !fnCheckCidrClass(value.split('/')[1]) ||
       !checkNetworkAddress(value)
     ) {
-      return callback({ message: t('RESOURCES_CIDR_VALID') });
+      return callback({ message: t('RESOURCES_CIDR_VALID') })
     }
 
-    callback();
-  };
+    callback()
+  }
 
   const onChangeCidr = e => {
-    const { data } = form.current.props;
+    const { data } = form.current.props
     if (
-      e.split('/').length != 2 ||
+      e.split('/').length !== 2 ||
       !isValidIpAddress(e.split('/')[0]) ||
       !fnCheckCidrClass(e.split('/')[1])
     ) {
-      data.ip_pool_start = '';
-      data.ip_pool_end = '';
-      data.gateway_ip = '';
+      data.ip_pool_start = ''
+      data.ip_pool_end = ''
+      data.gateway_ip = ''
 
-      const a = document.getElementById('ip_pool_start');
-      const b = document.getElementById('ip_pool_end');
-      const c = document.getElementById('gateway_ip');
+      const a = document.getElementById('ip_pool_start')
+      const b = document.getElementById('ip_pool_end')
+      const c = document.getElementById('gateway_ip')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
       ) {
-        a.nextElementSibling.classList.remove('hide');
-        a.parentElement.parentElement.classList.add('error-item');
-        b.nextElementSibling.classList.remove('hide');
-        b.parentElement.parentElement.classList.add('error-item');
-        c.nextElementSibling.classList.remove('hide');
-        c.parentElement.parentElement.classList.add('error-item');
+        a.nextElementSibling.classList.remove('hide')
+        a.parentElement.parentElement.classList.add('error-item')
+        b.nextElementSibling.classList.remove('hide')
+        b.parentElement.parentElement.classList.add('error-item')
+        c.nextElementSibling.classList.remove('hide')
+        c.parentElement.parentElement.classList.add('error-item')
       }
 
-      setCidrReducer();
+      setCidrReducer()
     } else {
-      const cidrData = common.fnCalculateCidr(e, true);
-      data.ip_pool_start = cidrData.startIp;
-      data.ip_pool_end = cidrData.endIp;
-      data.gateway_ip = cidrData.gatewayIp;
+      const cidrData = common.fnCalculateCidr(e, true)
+      data.ip_pool_start = cidrData.startIp
+      data.ip_pool_end = cidrData.endIp
+      data.gateway_ip = cidrData.gatewayIp
 
-      const a = document.getElementById('ip_pool_start');
-      const b = document.getElementById('ip_pool_end');
-      const c = document.getElementById('gateway_ip');
+      const a = document.getElementById('ip_pool_start')
+      const b = document.getElementById('ip_pool_end')
+      const c = document.getElementById('gateway_ip')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
       ) {
-        a.nextElementSibling.classList.add('hide');
-        a.parentElement.parentElement.classList.remove('error-item');
-        b.nextElementSibling.classList.add('hide');
-        b.parentElement.parentElement.classList.remove('error-item');
-        c.nextElementSibling.classList.add('hide');
-        c.parentElement.parentElement.classList.remove('error-item');
+        a.nextElementSibling.classList.add('hide')
+        a.parentElement.parentElement.classList.remove('error-item')
+        b.nextElementSibling.classList.add('hide')
+        b.parentElement.parentElement.classList.remove('error-item')
+        c.nextElementSibling.classList.add('hide')
+        c.parentElement.parentElement.classList.remove('error-item')
       }
 
-      setCidrReducer();
+      setCidrReducer()
     }
-  };
+  }
   const nextHostRoute = useRef(
-    detail?.host_routes.length == 0 ? 1 : detail?.host_routes.length - 1
-  );
+    detail?.host_routes.length === 0 ? 1 : detail?.host_routes.length - 1
+  )
   const [listHostRoute, setListHostRoute] = useState(
     Array.from({ length: detail?.host_routes.length || 1 }, (v, i) => i)
-  );
+  )
 
   const handleHostRoute = {
     addColumn: () => {
-      nextHostRoute.current += 1;
-      setListHostRoute(listHostRoute => [
-        ...listHostRoute,
-        nextHostRoute.current,
-      ]);
+      nextHostRoute.current += 1
+      setListHostRoute(hostRoutes => [...hostRoutes, nextHostRoute.current])
     },
     delColumn: id => {
-      setListHostRoute(listHostRoute.filter(el => el !== id));
+      setListHostRoute(listHostRoute.filter(el => el !== id))
     },
-  };
+  }
   useEffect(() => {
-    if (listHostRoute.length == 0) {
-      const a = document.getElementById('hostRoute');
-      a.classList.add('hide');
+    if (listHostRoute.length === 0) {
+      const a = document.getElementById('hostRoute')
+      a.classList.add('hide')
     }
-  }, [listHostRoute]);
+  }, [listHostRoute])
 
   const stepMoveCheck = step => {
-    const { data } = form.current.props;
-    if (step == 1) {
+    const { data } = form.current.props
+    if (step === 1) {
       if (
-        data.name == undefined ||
-        data.name == '' ||
+        data.name === undefined ||
+        data.name === '' ||
         !PATTERN_MTU.test(data.mtu) ||
-        data.cidr == undefined ||
-        data.cidr == '' ||
-        data.ip_pool_start == undefined ||
-        data.ip_pool_start == '' ||
-        data.ip_pool_end == undefined ||
-        data.ip_pool_end == '' ||
-        data.gateway_ip == undefined ||
-        data.gateway_ip == '' ||
+        data.cidr === undefined ||
+        data.cidr === '' ||
+        data.ip_pool_start === undefined ||
+        data.ip_pool_start === '' ||
+        data.ip_pool_end === undefined ||
+        data.ip_pool_end === '' ||
+        data.gateway_ip === undefined ||
+        data.gateway_ip === '' ||
         !checkNetworkAddress(data.cidr)
       ) {
-        handleOk();
+        handleOk()
       } else {
-        setRegStep(2);
+        setRegStep(2)
       }
     }
-  };
+  }
 
   const fnGetModalFooter = () => {
-    let elements = '';
-    elements = (
+    return (
       <>
-        {regStep == 1 && (
+        {regStep === 1 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -241,7 +225,7 @@ const ModifyModal = props => {
             <Button
               type="control"
               onClick={() => {
-                stepMoveCheck(1);
+                stepMoveCheck(1)
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
             >
@@ -249,7 +233,7 @@ const ModifyModal = props => {
             </Button>
           </>
         )}
-        {regStep == 2 && (
+        {regStep === 2 && (
           <>
             <Button
               onClick={() => closeModal()}
@@ -259,7 +243,7 @@ const ModifyModal = props => {
             </Button>
             <Button
               onClick={() => {
-                setRegStep(1);
+                setRegStep(1)
               }}
               className={classnames(styles['btn'], styles['btn-default'])}
             >
@@ -267,7 +251,7 @@ const ModifyModal = props => {
             </Button>
             <Button
               onClick={() => {
-                handleOk();
+                handleOk()
               }}
               className={classnames(styles['btn'], styles['btn-control'])}
               loading={props.store.isSubmitting}
@@ -278,48 +262,47 @@ const ModifyModal = props => {
           </>
         )}
       </>
-    );
-    return elements;
-  };
+    )
+  }
 
   const onChangeDestination = (e, idx) => {
-    const a = document.getElementById('hostRoute');
-    const nexthop = document.getElementById(`Nexthop.${idx}`).value;
+    const a = document.getElementById('hostRoute')
+    const nexthop = document.getElementById(`Nexthop.${idx}`).value
 
     if (e.length > 0 || nexthop.length > 0) {
       if (
-        e.split('/').length != 2 ||
+        e.split('/').length !== 2 ||
         !isValidIpAddress(e.split('/')[0]) ||
         !fnCheckCidrClass(e.split('/')[1]) ||
         !PATTERN_IP.test(nexthop)
       ) {
-        a.classList.remove('hide');
+        a.classList.remove('hide')
       } else {
-        a.classList.add('hide');
+        a.classList.add('hide')
       }
     } else {
-      a.classList.add('hide');
+      a.classList.add('hide')
     }
-  };
+  }
   const onChangeNexthop = (e, idx) => {
-    const a = document.getElementById('hostRoute');
-    const destination = document.getElementById(`Destination.${idx}`).value;
+    const a = document.getElementById('hostRoute')
+    const destination = document.getElementById(`Destination.${idx}`).value
 
     if (e.length > 0 || destination.length > 0) {
       if (
-        destination.split('/').length != 2 ||
+        destination.split('/').length !== 2 ||
         !isValidIpAddress(destination.split('/')[0]) ||
         !fnCheckCidrClass(destination.split('/')[1]) ||
         !PATTERN_IP.test(e)
       ) {
-        a.classList.remove('hide');
+        a.classList.remove('hide')
       } else {
-        a.classList.add('hide');
+        a.classList.add('hide')
       }
     } else {
-      a.classList.add('hide');
+      a.classList.add('hide')
     }
-  };
+  }
 
   return (
     <>
@@ -339,17 +322,18 @@ const ModifyModal = props => {
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 1 ? styles.current : ''}`
+                `${regStep === 1 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 1
-                    ? styles.current
-                    : regStep > 1
+                  className={`${
+                    regStep === 1
+                      ? styles.current
+                      : regStep > 1
                       ? styles.done
                       : styles.todo
-                    }`}
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -358,23 +342,23 @@ const ModifyModal = props => {
                   {t('RESOURCES_DEFAULT_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 1
+                  {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
             <div
               className={classnames(
                 styles.process_item,
-                `${regStep == 2 ? styles.current : ''}`
+                `${regStep === 2 ? styles.current : ''}`
               )}
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep == 2 ? styles.current : styles.todo}`}
+                  className={`${regStep === 2 ? styles.current : styles.todo}`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -383,7 +367,7 @@ const ModifyModal = props => {
                   {t('RESOURCES_DETAIL_SETTINGS')}
                 </div>
                 <div className={styles.situation}>
-                  {regStep == 2
+                  {regStep === 2
                     ? t('RESOURCES_CURRENT')
                     : t('RESOURCES_NOT_SET')}
                 </div>
@@ -395,14 +379,16 @@ const ModifyModal = props => {
           <div className={styles.pop_overflow_y}>
             <div className={styles.cont_boxwrap}>
               {/* 기본설정 설정 시작========================================== */}
-              <div className={`${regStep == 1 ? '' : 'hide'}`}>
+              <div className={`${regStep === 1 ? '' : 'hide'}`}>
                 <Columns>
                   <Column>
-
                     <Form.Item
                       label={t('RESOURCES_NAME')}
                       rules={[
-                        { required: true, message: t('RESOURCES_NAME_EMPTY_DESC') },
+                        {
+                          required: true,
+                          message: t('RESOURCES_NAME_EMPTY_DESC'),
+                        },
                       ]}
                       desc={t('NAME_DESC')}
                     >
@@ -431,8 +417,15 @@ const ModifyModal = props => {
                               defaultValue={detail.external}
                             >
                               {defaultOptions.map(option => (
-                                <Tooltip content={t('RESOURCES_NOT_EDITABLE_FIELD')} placement="right">
-                                  <RadioButton key={option.value} value={option.value} disabled="true">
+                                <Tooltip
+                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
+                                  placement="right"
+                                >
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled="true"
+                                  >
                                     {option.label}
                                   </RadioButton>
                                 </Tooltip>
@@ -464,7 +457,10 @@ const ModifyModal = props => {
                               <Form.Item
                                 label={t('RESOURCES_MTU')}
                                 rules={[
-                                  { required: true, message: t('RESOURCES_MTU_EMPTY_DESC') },
+                                  {
+                                    required: true,
+                                    message: t('RESOURCES_MTU_EMPTY_DESC'),
+                                  },
                                   {
                                     pattern: PATTERN_MTU,
                                     message: t('RESOURCES_MTU_VALID'),
@@ -499,7 +495,10 @@ const ModifyModal = props => {
                               onChange={value => setDefaultRoute(value)}
                             >
                               {defaultRouteOptions.map(option => (
-                                <RadioButton key={option.value} value={option.value}>
+                                <RadioButton
+                                  key={option.value}
+                                  value={option.value}
+                                >
                                   {option.label}
                                 </RadioButton>
                               ))}
@@ -565,8 +564,40 @@ const ModifyModal = props => {
                               defaultValue={detail.offload}
                             >
                               {defaultOptions.map(option => (
-                                <Tooltip content={t('RESOURCES_NOT_EDITABLE_FIELD')} placement="right">
-                                  <RadioButton key={option.value} value={option.value} disabled="true">
+                                <Tooltip
+                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
+                                  placement="right"
+                                >
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled="true"
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                </Tooltip>
+                              ))}
+                            </RadioGroup>
+                          </Form.Item>
+                          <Form.Item
+                            label={t('RESOURCES_ELB_DEDICATED')}
+                            rules={[{ required: true }]}
+                          >
+                            <RadioGroup
+                              name="elb"
+                              wrapClassName="radio"
+                              defaultValue={detail.elb || false}
+                            >
+                              {defaultOptions.map(option => (
+                                <Tooltip
+                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
+                                  placement="right"
+                                >
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled="true"
+                                  >
                                     {option.label}
                                   </RadioButton>
                                 </Tooltip>
@@ -588,7 +619,10 @@ const ModifyModal = props => {
                               },
                             ]}
                           >
-                            <Input name="gateway_ip" defaultValue={detail.gateway_ip} />
+                            <Input
+                              name="gateway_ip"
+                              defaultValue={detail.gateway_ip}
+                            />
                           </Form.Item>
                         </Column>
                       </Columns>
@@ -614,7 +648,7 @@ const ModifyModal = props => {
               {/* 기본설정 설정 끝========================================== */}
 
               {/* 세부 설정 시작========================================== */}
-              <div className={`${regStep == 2 ? '' : 'hide'}`}>
+              <div className={`${regStep === 2 ? '' : 'hide'}`}>
                 <Form.Item label={t('RESOURCES_DNS')}>
                   <Form.Group>
                     <Columns>
@@ -653,7 +687,7 @@ const ModifyModal = props => {
 
                 <Form.Item label={t('RESOURCES_HOST_ROUTE')}>
                   <Form.Group>
-                    {listHostRoute.map((obj, idx) => (
+                    {listHostRoute.map(obj => (
                       <div className={styles.item} key={obj}>
                         <Columns>
                           <Column>
@@ -662,7 +696,9 @@ const ModifyModal = props => {
                                 name={`Destination.${obj}`}
                                 placeholder={t('Destination')}
                                 onChange={e => onChangeDestination(e, obj)}
-                                defaultValue={detail.host_routes?.[obj]?.destination}
+                                defaultValue={
+                                  detail.host_routes?.[obj]?.destination
+                                }
                               />
                             </Form.Item>
                           </Column>
@@ -672,7 +708,9 @@ const ModifyModal = props => {
                                 name={`Nexthop.${obj}`}
                                 placeholder={t('Nexthop')}
                                 onChange={e => onChangeNexthop(e, obj)}
-                                defaultValue={detail.host_routes?.[obj]?.nexthop}
+                                defaultValue={
+                                  detail.host_routes?.[obj]?.nexthop
+                                }
                               />
                             </Form.Item>
                           </Column>
@@ -707,7 +745,7 @@ const ModifyModal = props => {
         </Form>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default ModifyModal;
+export default ModifyModal
