@@ -65,7 +65,7 @@ export default {
               success && success()
             })
         },
-        title: t('RESOURCES_EDIT__NETWORK'),
+        title: t('RESOURCES_EDIT_NETWORK'),
         modal: ModifyModal,
         store,
         detail,
