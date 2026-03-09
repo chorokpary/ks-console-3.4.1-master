@@ -1146,7 +1146,7 @@ const RegistNodePoolModal = props => {
                               {index === 0 ? t('RESOURCES_TYPE_YOO') : ''}
                             </label>
                             <div className={styles.multiline}>
-                              <div>{obj.type}</div>
+                              <div>{obj.type.toUpperCase()}</div>
                             </div>
                           </div>
                           <div className={styles.list}>
