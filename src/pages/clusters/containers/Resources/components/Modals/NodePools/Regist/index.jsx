@@ -70,6 +70,7 @@ const RegistNodePoolModal = props => {
 
   useEffect(() => {
     const getVmCreateData = async () => {
+      props.namespace = props.detailStore.detail.cluster.project
       const listFlavor = await vmStore.fetchVmListFlavor({
         sortBy: 'root_disk',
         ...props,
