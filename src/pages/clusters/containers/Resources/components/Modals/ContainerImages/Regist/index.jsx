@@ -22,7 +22,6 @@ import axios from 'axios'
 import { Base64 } from 'js-base64'
 import request from 'utils/request'
 
-import GpuNodeStore from 'stores/resources/gpunodes'
 import TypeSelect from '../../../TypeSelect'
 import styles from './index.scss'
 
@@ -47,7 +46,6 @@ const archTypeOptions = [
 
 const ResourceImageModal = props => {
   const distroTypeStore = new ClusterDistroTypeStore()
-  const gpuNodeStore = new GpuNodeStore()
 
   const { title, onOk } = props
   const form = useRef()
@@ -78,12 +76,10 @@ const ResourceImageModal = props => {
   const [sizeEmpty, setSizeEmpty] = useState(false)
 
   const [regStep, setRegStep] = useState(1)
-  const [submitButtonFlag, setSubmitButtonFlag] = useState(false)
 
   const [distroType, setDistroType] = useState('ubuntu-2404')
   const [distroTypeList, setDistroTypeList] = useState([])
-  const [acceleratorType, setAcceleratorType] = useState('None')
-  const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
+  const [docaOfedOnly, setDocaOfedOnly] = useState(false)
   const [archType, setArchType] = useState('x86_64')
 
   const [imageName, setImageName] = useState('')
@@ -305,7 +301,6 @@ const ResourceImageModal = props => {
         setUnfilteredTags([])
         setPopActive(false)
         setImageName('')
-        setSubmitButtonFlag(false)
       }
     }
   }
@@ -319,11 +314,6 @@ const ResourceImageModal = props => {
     const getDistroTypeList = async () => {
       const dist = await distroTypeStore.fetchList()
       setDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
-    }
-
-    const getAcceleratorTypeList = async () => {
-      const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
-      setAcceleratorTypeList(accelList)
     }
 
     const getStorageClassList = async () => {
@@ -343,7 +333,6 @@ const ResourceImageModal = props => {
     }
 
     getDistroTypeList()
-    getAcceleratorTypeList()
     getStorageClassList()
   }, [])
 
@@ -353,13 +342,6 @@ const ResourceImageModal = props => {
       description: t(obj.vendor),
       icon: `ico-os-${obj.name.split('-')[0]}`,
       value: t(obj.name),
-    }))
-  }
-
-  const accelTypeOptions = () => {
-    return acceleratorTypeList.map(obj => ({
-      label: t(obj),
-      value: t(obj),
     }))
   }
 
@@ -405,35 +387,34 @@ const ResourceImageModal = props => {
     )
     setUnfilteredTags(tags)
     setSourceEmpty(false)
-    getMatchingTags(tags, archType, acceleratorType)
+    getMatchingTags(tags, archType, docaOfedOnly)
   }
 
   const handleArchType = value => {
     setLoading(true)
     setArchType(value)
-    getMatchingTags(unfilteredTags, value, acceleratorType)
+    getMatchingTags(unfilteredTags, value, docaOfedOnly)
   }
 
-  const handleAcceleratorType = value => {
+  const handleDocaOfedOnly = checked => {
     setLoading(true)
-    setAcceleratorType(value)
-    getMatchingTags(unfilteredTags, archType, value)
+    setDocaOfedOnly(checked)
+    getMatchingTags(unfilteredTags, archType, checked)
   }
 
-  const getMatchingTags = (tags, arch, accel) => {
-    let tagRegex = ''
+  const getMatchingTags = (tags, arch, isDocaOfedOnly) => {
     if (arch === 'x86_64') {
       arch = 'amd64'
     }
-    if (accel === 'None') {
-      tagRegex = RegExp(`^v\\d+\\.\\d+\\.\\d+(-${arch})$`)
-    } else {
-      tagRegex = RegExp(
-        `^v\\d+\\.\\d+\\.\\d+(-${accel.toLowerCase()}(?:-\\d+)?(?:-[a-zA-Z0-9]+)*-${arch})$`
-      )
-    }
+
+    const tagRegex = RegExp(
+      `^v\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9]+(?:-\\d+)?(?:-[a-zA-Z0-9]+)*)?-${arch}$`
+    )
     const matchingTags = tags
-      .filter(ver => tagRegex.test(ver.name))
+      .filter(ver => {
+        const hasDoca = ver.name.includes('-doca')
+        return tagRegex.test(ver.name) && (isDocaOfedOnly ? hasDoca : !hasDoca)
+      })
       .sort((a, b) => b.name.localeCompare(a.name))
     setFilteredTags(matchingTags)
     setTag(matchingTags?.[0]?.name)
@@ -692,12 +673,13 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 1
+                  className={`${
+                    regStep === 1
                       ? styles.current
                       : regStep > 1
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -709,8 +691,8 @@ const ResourceImageModal = props => {
                   {regStep === 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                      ? t('RESOURCES_COMPLETED_SETTINGS')
-                      : t('RESOURCES_NOT_SET')}
+                    ? t('RESOURCES_COMPLETED_SETTINGS')
+                    : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -722,12 +704,13 @@ const ResourceImageModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${regStep === 2
+                  className={`${
+                    regStep === 2
                       ? styles.current
                       : regStep > 2
-                        ? styles.done
-                        : styles.todo
-                    }`}
+                      ? styles.done
+                      : styles.todo
+                  }`}
                 ></div>
               </div>
               <span className={styles.detail}></span>
@@ -788,13 +771,14 @@ const ResourceImageModal = props => {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${publicType === 'private' &&
-                          (registryUrlInValid ||
-                            registryCheckInValid ||
-                            registryUserInvalid)
+                      className={`${styles.cont_box_wrap} ${
+                        publicType === 'private' &&
+                        (registryUrlInValid ||
+                          registryCheckInValid ||
+                          registryUserInvalid)
                           ? styles.formErrorStyle
                           : ''
-                        }`}
+                      }`}
                     >
                       <div className={styles.cont_box_section}>
                         <h6 className={styles.label}>
@@ -914,8 +898,9 @@ const ResourceImageModal = props => {
                 <div className={styles.content_box_wrap}>
                   <div className={styles.content_box}>
                     <div
-                      className={`${styles.cont_box_wrap} ${sizeEmpty ? styles.formErrorStyle : ''
-                        }`}
+                      className={`${styles.cont_box_wrap} ${
+                        sizeEmpty ? styles.formErrorStyle : ''
+                      }`}
                     >
                       <div className={styles.cont_box_section}>
                         <h6 className={styles.label}>
@@ -1014,15 +999,21 @@ const ResourceImageModal = props => {
                         </Column>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_ACCELERATOR_TYPE')}
+                            label="DOCA-OFED 사용"
                             rules={[{ required: false }]}
                           >
-                            <Select
-                              name="accelerator_type"
-                              defaultValue={acceleratorType}
-                              options={accelTypeOptions()}
-                              onChange={e => handleAcceleratorType(e)}
-                            />
+                            <div className={styles.form_check}>
+                              <input
+                                type="checkbox"
+                                name="chk-doca-ofed"
+                                id="chk-doca-ofed"
+                                checked={docaOfedOnly}
+                                onChange={e =>
+                                  handleDocaOfedOnly(e.target.checked)
+                                }
+                              />
+                              <label htmlFor="chk-doca-ofed"></label>
+                            </div>
                           </Form.Item>
                         </Column>
                       </Columns>
@@ -1048,8 +1039,9 @@ const ResourceImageModal = props => {
                   <Form.Item>
                     <div className={styles.content_box_wrap}>
                       <div
-                        className={`${styles.cont_box_wrap} ${sourceEmpty ? styles.formErrorStyle : ''
-                          }`}
+                        className={`${styles.cont_box_wrap} ${
+                          sourceEmpty ? styles.formErrorStyle : ''
+                        }`}
                       >
                         <div className={styles.cont_box_section}>
                           <div
@@ -1166,19 +1158,6 @@ const ResourceImageModal = props => {
                             />
                           </Form.Item>
                         </Column>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_ACCELERATOR_TYPE')}
-                            rules={[{ required: false }]}
-                          >
-                            <Select
-                              name="accelerator_type"
-                              defaultValue={acceleratorType}
-                              options={accelTypeOptions()}
-                              onChange={e => setAcceleratorType(e)}
-                            />
-                          </Form.Item>
-                        </Column>
                       </Columns>
                     </Form.Item>
                     <Columns>
@@ -1222,8 +1201,9 @@ const ResourceImageModal = props => {
                     <div className={styles.content_box}>
                       {/* <label>소스</label> */}
                       <div
-                        className={`${styles.cont_box_wrap} ${sourceEmpty ? styles.formErrorStyle : ''
-                          }`}
+                        className={`${styles.cont_box_wrap} ${
+                          sourceEmpty ? styles.formErrorStyle : ''
+                        }`}
                       >
                         <div className={styles.cont_box_section}>
                           <div
@@ -1280,8 +1260,9 @@ const ResourceImageModal = props => {
                                           {/* <img src={`/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]}.svg`} /> */}
                                           <i
                                             style={{
-                                              background: `url('/assets/resources/images/icons/ico-os-${obj.name.split('-')[0]
-                                                }.svg') center no-repeat`,
+                                              background: `url('/assets/resources/images/icons/ico-os-${
+                                                obj.name.split('-')[0]
+                                              }.svg') center no-repeat`,
                                               width: '30px',
                                               height: '30px',
                                               marginRight: '5px',
