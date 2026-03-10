@@ -3,7 +3,6 @@ import { Modal } from 'components/Base'
 import { Form, Input, Select, TextArea } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import ClusterDistroTypeStore from 'stores/resources/clusterdistrotype'
-import GpuNodeStore from 'stores/resources/gpunodes'
 import styles from './index.scss'
 
 import TypeSelect from '../../../TypeSelect'
@@ -16,7 +15,6 @@ const ResourceImageModal = props => {
   const form = useRef()
   const [formData] = useState({})
   const clusterDistroTypeStore = new ClusterDistroTypeStore()
-  const gpuNodeStore = new GpuNodeStore()
 
   const [modelView, setModalView] = useState(true)
 
@@ -24,10 +22,6 @@ const ResourceImageModal = props => {
   const [distroTypeData, setDistroTypeData] = useState([])
   const [distroTypeList, setDistroTypeList] = useState([])
   const [distroType, setDistroType] = useState(store.detail.image.os_distro)
-  const [acceleratorTypeList, setAcceleratorTypeList] = useState(['None'])
-  const [acceleratorType, setAcceleratorType] = useState(
-    store.detail.image.accelerator_type
-  )
 
   useEffect(() => {
     const getDistroTypeList = async () => {
@@ -35,13 +29,7 @@ const ResourceImageModal = props => {
       setDistroTypeData(dist)
       setDistroTypeList(dist.filter(obj => obj.name !== 'windows'))
     }
-
-    const getAcceleratorTypeList = async () => {
-      const accelList = await gpuNodeStore.fetchAcceleratorTypeList(props)
-      setAcceleratorTypeList(accelList)
-    }
     getDistroTypeList()
-    getAcceleratorTypeList()
   }, [])
 
   const archTypeOptions = [
@@ -60,13 +48,6 @@ const ResourceImageModal = props => {
       description: t(obj.vendor),
       icon: `ico-os-${obj.name.split('-')[0]}`,
       value: t(obj.name),
-    }))
-  }
-
-  const accelTypeOptions = () => {
-    return acceleratorTypeList.map(obj => ({
-      label: t(obj),
-      value: t(obj),
     }))
   }
 
@@ -179,19 +160,6 @@ const ResourceImageModal = props => {
                         name="arch_type"
                         defaultValue={store.detail.image.arch_type}
                         options={archTypeOptions}
-                      />
-                    </Form.Item>
-                  </Column>
-                  <Column>
-                    <Form.Item
-                      label={t('RESOURCES_ACCELERATOR_TYPE')}
-                      rules={[{ required: false }]}
-                    >
-                      <Select
-                        name="accelerator_type"
-                        defaultValue={acceleratorType}
-                        options={accelTypeOptions()}
-                        onChange={e => setAcceleratorType(e)}
                       />
                     </Form.Item>
                   </Column>
