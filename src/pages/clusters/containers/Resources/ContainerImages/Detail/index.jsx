@@ -39,8 +39,8 @@ const ContainerImageDetail = props => {
   }, [activationTrigger])
 
   const fetchData = async () => {
-    const detail = await store.fetchDetail(props.match.params)
-    setDetail(detail)
+    const dataDetail = await store.fetchDetail(props.match.params)
+    setDetail(dataDetail)
   }
 
   const { cluster } = props.match.params
@@ -115,10 +115,6 @@ const ContainerImageDetail = props => {
       {
         name: t('RESOURCES_KUBERNETES_VERSION'),
         value: detail.image.kube_version,
-      },
-      {
-        name: t('RESOURCES_ACCELERATOR_TYPE'),
-        value: detail.image.accelerator_type,
       },
       {
         name: t('RESOURCES_STORAGE_CLASS'),

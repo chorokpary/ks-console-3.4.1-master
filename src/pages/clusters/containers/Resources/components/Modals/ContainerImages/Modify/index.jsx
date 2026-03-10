@@ -163,23 +163,21 @@ const ResourceImageModal = props => {
                       />
                     </Form.Item>
                   </Column>
+                  <Column>
+                    <Form.Item
+                      label={t('RESOURCES_KUBERNETES_VERSION')}
+                      rules={[{ required: true, validator: versionValidator }]}
+                    >
+                      <Input
+                        name="kube_version"
+                        maxLength={253}
+                        style={{ maxWidth: 'none' }}
+                        defaultValue={store.detail.image.kube_version}
+                      />
+                    </Form.Item>
+                  </Column>
                 </Columns>
               </Form.Item>
-              <Columns>
-                <Column>
-                  <Form.Item
-                    label={t('RESOURCES_KUBERNETES_VERSION')}
-                    rules={[{ required: true, validator: versionValidator }]}
-                  >
-                    <Input
-                      name="kube_version"
-                      maxLength={253}
-                      style={{ maxWidth: 'none' }}
-                      defaultValue={store.detail.image.kube_version}
-                    />
-                  </Form.Item>
-                </Column>
-              </Columns>
             </Form.Group>
           </Form.Item>
 

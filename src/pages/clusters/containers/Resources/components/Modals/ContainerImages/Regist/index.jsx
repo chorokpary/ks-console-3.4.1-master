@@ -44,6 +44,11 @@ const archTypeOptions = [
   { label: 'aarch64', value: 'aarch64' },
 ]
 
+const docaOfedOptions = [
+  { label: t('RESOURCES_NOT_USE'), value: 'disabled' },
+  { label: t('RESOURCES_USE'), value: 'enabled' },
+]
+
 const ResourceImageModal = props => {
   const distroTypeStore = new ClusterDistroTypeStore()
 
@@ -1002,18 +1007,24 @@ const ResourceImageModal = props => {
                             label="DOCA-OFED 사용"
                             rules={[{ required: false }]}
                           >
-                            <div className={styles.form_check}>
-                              <input
-                                type="checkbox"
-                                name="chk-doca-ofed"
-                                id="chk-doca-ofed"
-                                checked={docaOfedOnly}
-                                onChange={e =>
-                                  handleDocaOfedOnly(e.target.checked)
-                                }
-                              />
-                              <label htmlFor="chk-doca-ofed"></label>
-                            </div>
+                            <RadioGroup
+                              name="doca_ofed_only"
+                              wrapClassName="radio"
+                              defaultValue="disabled"
+                              value={docaOfedOnly ? 'enabled' : 'disabled'}
+                              onChange={value =>
+                                handleDocaOfedOnly(value === 'enabled')
+                              }
+                            >
+                              {docaOfedOptions.map(option => (
+                                <RadioButton
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </RadioButton>
+                              ))}
+                            </RadioGroup>
                           </Form.Item>
                         </Column>
                       </Columns>
