@@ -313,6 +313,7 @@ module.exports = {
   RESOURCES_UNUSED: 'Unused',
   RESOURCES_INTERNAL_NETWORK: 'Internal Network',
   RESOURCES_NETWORK: 'Network',
+  RESOURCES_ELB_NETWORK: 'ELB Network',
   RESOURCES_NETWORK_TAB1: 'Virtual Network',
   RESOURCES_NETWORK_TAB2: 'SR-IOV Network',
   RESOURCES_NETWORK_TAB3: 'Dedicated Network',

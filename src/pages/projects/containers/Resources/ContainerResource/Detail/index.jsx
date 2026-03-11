@@ -169,6 +169,10 @@ const ResourceDetail = props => {
         value: detail.network.name,
       },
       {
+        name: t('RESOURCES_ELB_NETWORK'),
+        value: detail.elb_network ? detail.elb_network : '-',
+      },
+      {
         name: t('RESOURCES_SECURITY_GROUP'),
         value:
           detail.security_groups.length > 0
