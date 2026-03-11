@@ -22,6 +22,7 @@ const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const baseConfig = require('./webpack.base')
 const localeConfig = require('./webpack.locale')
+const sassLoaderOptions = require('./sass-loader-options')
 
 const root = path => resolve(__dirname, `../${path}`)
 
@@ -54,13 +55,18 @@ const config = {
           },
           {
             loader: 'sass-loader',
+            options: sassLoaderOptions,
           },
         ],
       },
       {
         test: /\.s[ac]ss$/i,
         include: root('node_modules'),
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          'css-loader',
+          { loader: 'sass-loader', options: sassLoaderOptions },
+        ],
       },
       {
         test: /\.css$/,
