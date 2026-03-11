@@ -17,6 +17,13 @@ const index = props => {
   const [kaasInboundData, setKaasInboundData] = useState([])
   const [kaasOutboundData, setKaasOutboundData] = useState([])
 
+  const [kaasDiskData, setKaasDiskData] = useState([])
+  const [kaasDiskPercent, setKaasDiskPercent] = useState([])
+  const [kaasIopsReadData, setKaasIopsReadData] = useState([])
+  const [kaasIopsWriteData, setKaasIopsWriteData] = useState([])
+
+  const project = props.namespace
+
   const getMinuteValue = (timeStr = '60s', hasUnit = true) => {
     const unit = timeStr.slice(-1)
     let value = parseFloat(timeStr)
@@ -61,52 +68,96 @@ const index = props => {
     }
 
     const getKaasCpuUsageData = async () => {
-      const data = await customStore.fetchMetric({
-        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="${props.namespace}",service="launcher-node-exporter",mode="idle",pod=~"${props.kaasNodePoolName}.*"}[5m])) * 100)) / 100`,
+      const cpuData = await customStore.fetchMetric({
+        expr: `(100 - (avg by (pod) (irate(node_cpu_seconds_total{namespace="${project}",service="launcher-node-exporter",mode="idle",pod=~"${props.kaasNodePoolName}.*"}[5m])) * 100)) / 100`,
         ...paramsData,
         cluster: props.cluster,
       })
 
-      setKaasCpuData(data)
+      setKaasCpuData(cpuData)
     }
 
     // kaas memory data
     const getKaasMemoryUsageData = async () => {
-      const data = await customStore.fetchMetric({
-        expr: `sum by (pod) (node_memory_MemTotal_bytes{namespace="${props.namespace}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}-node_memory_MemFree_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}-node_memory_Cached_bytes{service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"})`,
+      const memoryData = await customStore.fetchMetric({
+        expr: `sum by (pod) (node_memory_MemTotal_bytes{namespace="${project}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}-node_memory_MemFree_bytes{namespace="${project}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}-node_memory_Cached_bytes{namespace="${project}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"})`,
         ...paramsData,
         cluster: props.cluster,
       })
 
-      setKaasMemoryData(data)
+      setKaasMemoryData(memoryData)
     }
 
     // inbound data
     const getKaasInboundData = async () => {
-      const data = await customStore.fetchMetric({
-        expr: `sum by (pod) (irate(node_network_receive_bytes_total{namespace="${props.namespace}",service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasNodePoolName}.*"}[5m]))`,
+      const inboundData = await customStore.fetchMetric({
+        expr: `sum by (pod) (irate(node_network_receive_bytes_total{namespace="${project}",service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasNodePoolName}.*"}[5m]))`,
         ...paramsData,
         cluster: props.cluster,
       })
 
-      setKaasInboundData(data)
+      setKaasInboundData(inboundData)
     }
 
     // outbound data
     const getKaasOutboundData = async () => {
-      const data = await customStore.fetchMetric({
-        expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace="${props.namespace}",service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasNodePoolName}.*"}[5m]))`,
+      const outboundData = await customStore.fetchMetric({
+        expr: `sum by (pod) (irate(node_network_transmit_bytes_total{namespace="${project}",service='launcher-node-exporter',device=~"net.*|eth.*",pod=~"${props.kaasNodePoolName}.*"}[5m]))`,
         ...paramsData,
         cluster: props.cluster,
       })
 
-      setKaasOutboundData(data)
+      setKaasOutboundData(outboundData)
+    }
+
+    const getKaasDiskUsageData = async () => {
+      const diskData = await customStore.fetchMetric({
+        expr: `sum by (pod) (node_filesystem_size_bytes{namespace="${project}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}-node_filesystem_avail_bytes{namespace="${project}",service='launcher-node-exporter',pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}})`,
+        ...paramsData,
+        cluster: props.cluster,
+      })
+
+      setKaasDiskData(diskData)
+    }
+
+    const getKaasDiskPercentData = async () => {
+      const diskData = await customStore.fetchMetric({
+        expr: `1 - (sum by (pod) (node_filesystem_avail_bytes{namespace="${project}", service="launcher-node-exporter", pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}) / (sum by (pod) (node_filesystem_size_bytes{namespace="${project}", service="launcher-node-exporter", pod!~"virt-launcher-.*",pod=~"${props.kaasNodePoolName}.*"}) + 1e-9) )`,
+        ...paramsData,
+        cluster: props.cluster,
+      })
+
+      setKaasDiskPercent(diskData)
+    }
+
+    const getKaasIopsReadData = async () => {
+      const diskData = await customStore.fetchMetric({
+        expr: `sum by (pod) (irate(node_disk_reads_completed_total{namespace="${project}",service='launcher-node-exporter',device=~"^(sd.*|nvme.*|vd.*|xvd.*)",pod=~"${props.kaasNodePoolName}.*"}[5m]))`,
+        ...paramsData,
+        cluster: props.cluster,
+      })
+
+      setKaasIopsReadData(diskData)
+    }
+
+    const getKaasIopsWriteData = async () => {
+      const diskData = await customStore.fetchMetric({
+        expr: `sum by (pod) (irate(node_disk_writes_completed_total{namespace="${project}",service='launcher-node-exporter',device=~"^(sd.*|nvme.*|vd.*|xvd.*)",pod=~"${props.kaasNodePoolName}.*"}[5m]))`,
+        ...paramsData,
+        cluster: props.cluster,
+      })
+
+      setKaasIopsWriteData(diskData)
     }
 
     getKaasCpuUsageData()
     getKaasMemoryUsageData()
     getKaasInboundData()
     getKaasOutboundData()
+    getKaasDiskUsageData()
+    getKaasDiskPercentData()
+    getKaasIopsReadData()
+    getKaasIopsWriteData()
   }
 
   const getMonitoringCfgs = () => {
@@ -139,6 +190,32 @@ const index = props => {
         unitType: 'bandwidth',
         legend: kaasOutboundData.map(item => item.metric.pod),
         data: kaasOutboundData,
+      },
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_DISK_USAGE'),
+        unitType: 'disk',
+        legend: kaasDiskData.map(item => item.metric.pod),
+        data: kaasDiskData,
+      },
+      {
+        type: 'utilisation',
+        title: t('RESOURCES_DISK_PERCENT'),
+        unit: '%',
+        legend: kaasDiskPercent.map(item => item.metric.pod),
+        data: kaasDiskPercent,
+      },
+      {
+        type: 'iops',
+        title: 'IOPS READ',
+        legend: kaasIopsReadData.map(item => item.metric.pod),
+        data: kaasIopsReadData,
+      },
+      {
+        type: 'iops',
+        title: 'IOPS WRITE',
+        legend: kaasIopsWriteData.map(item => item.metric.pod),
+        data: kaasIopsWriteData,
       },
     ]
   }
