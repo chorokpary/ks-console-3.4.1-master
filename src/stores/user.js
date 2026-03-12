@@ -117,12 +117,10 @@ export default class UsersStore extends Base {
       params.limit = -1
       params.page = 1
     }
-
-    params.limit = params.limit || 10
-
+ 
+    params.limit = 100000
     const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops }),
-      this.getFilterParams(params)
+      this.getResourceUrl({ cluster, workspace, namespace, devops })
     )
 
     let data = (get(result, 'items') || []).map(item => ({
@@ -131,13 +129,15 @@ export default class UsersStore extends Base {
       ...this.mapper(item),
     }))
 
+    let totalCount = result.totalItems || result.total_count || data.length || 0
 
     if(globals.config.mfaUsed){
 
       const resultMfa = await request.get(`/users/auth/mfa/list`)  
       const mfaList = resultMfa.data.results
 
-      const filterMfaList = mfaList.filter(user => user.last_login === null)
+      const allowPaths  = ['petasus.io','local-petasus.io']
+      const filterMfaList = mfaList.filter(user => user.last_login === null && allowPaths.includes(user.path))
       .map(user => ({ 
         username: user.username,
         name: user.name,
@@ -148,29 +148,40 @@ export default class UsersStore extends Base {
         pk: user.pk
       }));
 
-      let resultList = filterMfaList
+      let resultMfaList = filterMfaList
 
-      //검색 처리
-      if (params.name) {
-        resultList = resultList.filter(row =>
-          row.name?.toLowerCase().includes(params.name.toLowerCase())
-        )
-      }
-      const sumUserList = [
+      let sumUserList = [
         ...data,
-        ...resultList.filter(b => !data.some(a => a.name === b.name))
+        ...resultMfaList.filter(b => !data.some(a => a.name === b.name))
       ].sort((a, b) => {
         if (a.lastLoginTime === null && b.lastLoginTime !== null) return -1
         if (a.lastLoginTime !== null && b.lastLoginTime === null) return 1
         return (a.name || '').localeCompare(b.name || '')
       })
 
-      data = sumUserList
+      // 검색 처리
+      if (params.name) {
+        sumUserList = sumUserList.filter(row =>
+          row.name?.toLowerCase().includes(params.name.toLowerCase())
+        )
+      }
+
+      // page 별 Slice 처리
+      const perPage = Number(params.limit) == 100000 ? 10 : Number(params.limit) || 10
+      const currentPage = Number(params.page) || 1
+      const sumUserListSliceData = sumUserList.slice(
+        (currentPage - 1) * perPage,
+        currentPage * perPage
+      )
+
+      totalCount = sumUserList.length
+      params.limit = perPage 
+      data = sumUserListSliceData
     }
-    
+
     this.list.update({
       data: more ? [...this.list.data, ...data] : data,
-      total: result.totalItems || result.total_count || data.length || 0,
+      total: totalCount,
       ...params,
       limit: Number(params.limit) || 10,
       page: Number(params.page) || 1,
