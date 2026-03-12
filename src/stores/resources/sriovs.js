@@ -42,7 +42,7 @@ export default class SriovStore extends Base {
   async create(data, params = {}) {
     const url = this.getResourceUrl({
       ...params,
-      name: data.resource_name,
+      name: data.name,
       namespace: params.namesapce ? params.namespace : data.project,
     })
 
@@ -53,6 +53,7 @@ export default class SriovStore extends Base {
     const jsonData = {}
     const networkData = {}
 
+    networkData.name = data.name
     networkData.resource_name = data.resource_name
     networkData.description = data.description
     networkData.type = data.type
@@ -61,13 +62,12 @@ export default class SriovStore extends Base {
     networkData.ip_pool = data.ip_pool
     networkData.dns = data.dns
     networkData.project = data.project
-    networkData.networks = data.networks
+    networkData.mtu = data.mtu
     networkData.host_routes = data.host_routes
     networkData.segment_id = data.segment_id
 
     jsonData.network = networkData
 
-    // console.log("jsonData : "+ JSON.stringify(jsonData))
     const res = await this.submitting(request.post(url, jsonData))
     return res
   }
