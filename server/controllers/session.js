@@ -573,7 +573,17 @@ const handleGetUserMfaList = async ctx => {
   const result = await getUserMfaList(token)
 
   ctx.status = result.success ? 200 : result.code || 500
-  ctx.body = { result: true}
+  ctx.body = result
+}
+
+const handleDeleteUserMfa = async ctx => {
+  console.log("@@@@@@@@@@@@@@@@@@ handleDeleteUserMfa ")
+  const token = ctx.cookies.get('token')
+  const { username } = ctx.params
+  const result = await deleteUserMfa(username, token)
+
+  ctx.status = result.success ? 200 : result.code || 500
+  ctx.body = result
 }
 
 const handleDeleteUserMfa = async ctx => {
