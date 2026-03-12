@@ -578,19 +578,18 @@ const deleteUserMfa = async (userid, token) => {
   )
   
   try {
-    console.log("authentikBase : "+ authentikBase)
+
     const resUser = await send_authentik_request({
       method: 'DELETE',
-      url: `${authentikBase}/api/v3/core/users/${userid}`,
+      url: `${authentikBase}/api/v3/core/users/${userid}/`,
       token: apiToken,
     })
-
-    console.log("resUser : "+ JSON.stringify(resUser))
 
     return {
       success: true,
       message: 'user delete successful',
     }
+    
   } catch (error) {
     // console.error('[createUserMfa] Error:', error)
     return {

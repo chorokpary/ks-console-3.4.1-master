@@ -130,62 +130,12 @@ export default class UsersStore extends Base {
       namespace,
       ...this.mapper(item),
     }))
-    
-    if(globals.config.mfaUsed){
-      // const resultMfa = await request.get(`/users/auth/mfa/list`)  
-      // const mfaList = resultMfa.data.results
 
-      const mfaList = [
-                            {
-                      "pk":75,
-                      "username":"hong",
-                      "name":"hong",
-                      "is_active":true,
-                      "last_login":null,
-                      "date_joined":"2026-03-11T05:04:44.157465Z",
-                      "is_superuser":false,
-                      "groups":[
-                      ],
-                      "groups_obj":[
-                      ],
-                      "email":"hong@ntels.com",
-                      "avatar":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NHB4IiBoZWlnaHQ9IjY0cHgiIHZpZXdCb3g9IjAgMCA2NCA2NCIgdmVyc2lvbj0iMS4xIj48cmVjdCBmaWxsPSIjOWQzZjhkIiBjeD0iMzIiIGN5PSIzMiIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByPSIzMiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBzdHlsZT0iY29sb3I6ICNmZmY7IGxpbmUtaGVpZ2h0OiAxOyBmb250LWZhbWlseTogJ1JlZEhhdFRleHQnLCdPdmVycGFzcycsb3ZlcnBhc3MsaGVsdmV0aWNhLGFyaWFsLHNhbnMtc2VyaWY7ICIgZmlsbD0iI2ZmZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI0MDAiIGR5PSIuMWVtIj5ITzwvdGV4dD48L3N2Zz4=",
-                      "attributes":{
-                      "role":"platform-admin",
-                      "description":"test"
-                      },
-                      "uid":"a68ecf7e4402d1aac4bbe34c8227de3545bbf33f0fc479478fc3be976264b452",
-                      "path":"petasus.io",
-                      "type":"internal",
-                      "uuid":"74dc802b-ce68-45fd-b878-ed990d635f2c",
-                      "password_change_date":"2026-03-11T05:04:45.006031Z",
-                      "last_updated":"2026-03-11T05:04:45.283449Z"
-                      },
-                      {
-                      "pk":9,
-                      "username":"jaeyon",
-                      "name":"jaeyon",
-                      "is_active":true,
-                      "last_login": "2025-12-29T23:56:51.775789Z",
-                      "date_joined":"2025-11-12T11:25:19.765435Z",
-                      "is_superuser":false,
-                      "groups":[
-                      ],
-                      "groups_obj":[
-                      ],
-                      "email":"jaeyon@petasus.io",
-                      "avatar":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NHB4IiBoZWlnaHQ9IjY0cHgiIHZpZXdCb3g9IjAgMCA2NCA2NCIgdmVyc2lvbj0iMS4xIj48cmVjdCBmaWxsPSIjNDk1NDYxIiBjeD0iMzIiIGN5PSIzMiIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByPSIzMiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBzdHlsZT0iY29sb3I6ICNmZmY7IGxpbmUtaGVpZ2h0OiAxOyBmb250LWZhbWlseTogJ1JlZEhhdFRleHQnLCdPdmVycGFzcycsb3ZlcnBhc3MsaGVsdmV0aWNhLGFyaWFsLHNhbnMtc2VyaWY7ICIgZmlsbD0iI2ZmZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI0MDAiIGR5PSIuMWVtIj5KQTwvdGV4dD48L3N2Zz4=",
-                      "attributes":{
-                      "role":"platform-admin"
-                      },
-                      "uid":"d88861c2355b1d7ca5594c1308c16515b2f18b1ff8dcf790f3d9616e6ce2f72e",
-                      "path":"petasus.io",
-                      "type":"internal",
-                      "uuid":"647aad39-c1b8-4c50-ab9e-eb3aa38b03c8",
-                      "password_change_date":"2025-11-12T11:27:36.941424Z",
-                      "last_updated":"2025-11-12T11:27:37.099026Z"
-                      },
-      ] 
+
+    if(globals.config.mfaUsed){
+
+      const resultMfa = await request.get(`/users/auth/mfa/list`)  
+      const mfaList = resultMfa.data.results
 
       const filterMfaList = mfaList.filter(user => user.last_login === null)
       .map(user => ({ 
@@ -198,9 +148,17 @@ export default class UsersStore extends Base {
         pk: user.pk
       }));
 
+      let resultList = filterMfaList
+
+      //검색 처리
+      if (params.name) {
+        resultList = resultList.filter(row =>
+          row.name?.toLowerCase().includes(params.name.toLowerCase())
+        )
+      }
       const sumUserList = [
         ...data,
-        ...filterMfaList.filter(b => !data.some(a => a.name === b.name))
+        ...resultList.filter(b => !data.some(a => a.name === b.name))
       ].sort((a, b) => {
         if (a.lastLoginTime === null && b.lastLoginTime !== null) return -1
         if (a.lastLoginTime !== null && b.lastLoginTime === null) return 1
@@ -210,8 +168,6 @@ export default class UsersStore extends Base {
       data = sumUserList
     }
     
-    // console.log("data : "+ JSON.stringify(data))
-
     this.list.update({
       data: more ? [...this.list.data, ...data] : data,
       total: result.totalItems || result.total_count || data.length || 0,
