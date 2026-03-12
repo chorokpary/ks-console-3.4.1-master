@@ -554,7 +554,7 @@ const createUserMfa = async (params, token) => {
   }
 }
 
-const deleteUserMfa = async (username, token) => {
+const deleteUserMfa = async (userid, token) => {
   const configmap = await send_gateway_request({
     method: 'GET',
     url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
@@ -579,10 +579,9 @@ const deleteUserMfa = async (username, token) => {
   
   try {
     console.log("authentikBase : "+ authentikBase)
-    console.log("username 22 : "+ username)
     const resUser = await send_authentik_request({
       method: 'DELETE',
-      url: `${authentikBase}/api/v3/core/users/${username}`,
+      url: `${authentikBase}/api/v3/core/users/${userid}`,
       token: apiToken,
     })
 
@@ -590,13 +589,13 @@ const deleteUserMfa = async (username, token) => {
 
     return {
       success: true,
-      message: 'user create successful',
+      message: 'user delete successful',
     }
   } catch (error) {
     // console.error('[createUserMfa] Error:', error)
     return {
       success: false,
-      message: error.message || 'user create fail',
+      message: error.message || 'user delete fail',
       code: error.code || 500,
     }
   }
