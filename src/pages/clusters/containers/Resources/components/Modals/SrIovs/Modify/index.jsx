@@ -12,10 +12,9 @@ import {
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
-import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
+import { PATTERN_NAME, PATTERN_USER_NAME, PATTERN_MTU, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
 import { PropertiesInput, NumberInput } from 'components/Inputs';
 import * as common from 'utils/resources';
-import SriovStore from 'stores/resources/sriovs';
 
 import styles from './index.scss';
 
@@ -25,35 +24,13 @@ const ModifyModal = props => {
   const form = useRef();
   const [formData, setFormData] = useState({});
 
-  const sriovStore = new SriovStore();
-
   const [modelView, setModalView] = useState(true);
   const [regStep, setRegStep] = useState(1);
 
-  const [bondcheck, setBondCheck] = useState(false);
-  const [sriovBondDataList, setSriovBondDataList] = useState([]);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
   );
-  const [vfs, setVfs] = useState();
-  const [availableRange, setAvailableRange] = useState(0);
-
-  useEffect(() => {
-    const getSriovVfs = async () => {
-      const numberOfVfs = await sriovStore.fetchSriovVfs({ resourceName: detail.resource_name, ...props });
-      setVfs(numberOfVfs.number);
-    };
-    getSriovVfs();
-
-    const getSriovCreateData = async () => {
-      const listSriovBond = await sriovStore.fetchSriovBondList({ ...props });
-      setSriovBondDataList(listSriovBond.resources);
-      // setSriovBondDataList(["sriov-bond-slave1", "sriov-bond-slave2"]);
-    };
-
-    getSriovCreateData();
-  }, []);
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -84,14 +61,10 @@ const ModifyModal = props => {
       data.dns = dns;
       data.host_routes = host_routes;
 
-      data.networks = [];
-      data.networks = bondCheckItems;
-
       if (data.segment_id == ' ') {
         delete data.segment_id;
       }
 
-      data.name = data.resource_name
       data.project = detail.project
 
       onOk({ ...data });
@@ -372,45 +345,6 @@ const ModifyModal = props => {
     }
   };
 
-  // 체크 리스트 시작 ==================================================
-  const [bondCheckItems, setBondCheckItems] = useState([]);
-
-  const dataListVariables = {
-    bond: sriovBondDataList,
-  };
-
-  const stateVariables = {
-    bond: bondCheckItems,
-  };
-
-  const setVariables = {
-    bond: setBondCheckItems,
-  };
-
-  const handleSingleCheck = (checked, name, type) => {
-    if (checked) {
-      setVariables[type](prev => [...prev, name]);
-    } else {
-      setVariables[type](stateVariables[type].filter(el => el !== name));
-    }
-  };
-
-  const handleAllCheck = (checked, type) => {
-    if (checked) {
-      const nameArray = [];
-      dataListVariables[type].forEach(el => nameArray.push(el));
-      setVariables[type](nameArray);
-    } else {
-      setVariables[type]([]);
-    }
-  };
-
-  const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter(el => el !== name));
-  };
-
-  // 체크 리스트 끝 ==================================================
-
   return (
     <>
       <Modal
@@ -434,13 +368,12 @@ const ModifyModal = props => {
             >
               <div className={styles.status}>
                 <div
-                  className={`${
-                    regStep == 1
-                      ? styles.current
-                      : regStep > 1
+                  className={`${regStep == 1
+                    ? styles.current
+                    : regStep > 1
                       ? styles.done
                       : styles.todo
-                  }`}
+                    }`}
                 ></div>
               </div>
               <span className={styles.basic}></span>
@@ -452,8 +385,8 @@ const ModifyModal = props => {
                   {regStep == 1
                     ? t('RESOURCES_CURRENT')
                     : regStep > 1
-                    ? t('RESOURCES_COMPLETED_SETTINGS')
-                    : t('RESOURCES_NOT_SET')}
+                      ? t('RESOURCES_COMPLETED_SETTINGS')
+                      : t('RESOURCES_NOT_SET')}
                 </div>
               </div>
             </div>
@@ -491,18 +424,36 @@ const ModifyModal = props => {
                   <Columns>
                     <Column>
                       <Form.Item
-                        label={t('RESOURCES_RESOURCE_NAME')}
-                        rules={[{ required: true }]}
+                        label={t('RESOURCES_NAME')}
+                        rules={[
+                          { required: true, message: t('NAME_EMPTY_DESC') },
+                          {
+                            pattern: PATTERN_USER_NAME,
+                            message: t('RESOURCES_INVALID_NAME_DESC'),
+                          },
+                        ]}
+                        desc={t('NAME_DESC')}
                       >
                         <Input
-                          name="resource_name"
-                          defaultValue={props.store.detail.name}
+                          name="name"
+                          defaultValue={detail.name}
+                          maxLength={63}
+                          style={{ maxWidth: 'none' }}
                           disabled
                         />
                       </Form.Item>
                     </Column>
                     <Column>
-                      <div/>
+                      <Form.Item
+                        label={t('RESOURCES_RESOURCE_NAME')}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name="resource_name"
+                          defaultValue={detail.resource_name}
+                          disabled
+                        />
+                      </Form.Item>
                     </Column>
                   </Columns>
                 </Form.Item>
@@ -619,19 +570,33 @@ const ModifyModal = props => {
                             />
                           </Form.Item>
                         </Column>
-                        <Column>{/* 빈 컬럼 */}</Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_MTU')}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('RESOURCES_MTU_EMPTY_DESC'),
+                              },
+                              {
+                                pattern: PATTERN_MTU,
+                                message: t('RESOURCES_MTU_VALID'),
+                              },
+                            ]}
+                          >
+                            <NumberInput
+                              name="mtu"
+                              defaultValue={detail.mtu}
+                              // min={1}
+                              // max={1600}
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
+                        </Column>
                       </Columns>
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
-                {availableRange > vfs && (
-                  <div
-                    className="form-item-error"
-                    style={{ marginTop: '-10px', marginBottom: '10px' }}
-                  >
-                    {t('IP POOL 범위가 VF 개수를 넘어갑니다.')}
-                  </div>
-                )}
 
                 <Form.Item
                   className={styles.textarea}
@@ -644,111 +609,6 @@ const ModifyModal = props => {
                     defaultValue={detail.description}
                   />
                 </Form.Item>
-
-                <Form.Item>
-                  <Checkbox
-                    name="bond"
-                    value="Y"
-                    onClick={() => {
-                      setBondCheck(!bondcheck);
-                    }}
-                  >
-                    BOND
-                  </Checkbox>
-                </Form.Item>
-
-                {bondcheck && (
-                  <Form.Item>
-                    <div className={styles.wrapper}>
-                      {stateVariables['bond'].length > 0 && (
-                        <div
-                          className={classnames(
-                            styles.table_title,
-                            styles.table_title_bg
-                          )}
-                        >
-                          <Button
-                            className={styles.table_title_button}
-                            onClick={() => handleAllCheck(false, 'bond')}
-                          >
-                            {t('RESOURCES_ALL_DESELECT')}
-                          </Button>{' '}
-                          {stateVariables['bond'].length}
-                          {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
-                        </div>
-                      )}
-                      <div className={styles.table}>
-                        <table>
-                          <colgroup>
-                            <col width="5%" />
-                            <col width="95%" />
-                          </colgroup>
-                          <thead>
-                            <tr>
-                              <th>
-                                <Checkbox
-                                  name="select-all-bond"
-                                  onChange={checked =>
-                                    handleAllCheck(checked, 'bond')
-                                  }
-                                  checked={
-                                    !!(
-                                      dataListVariables['bond'].length > 0 &&
-                                      stateVariables['bond'].length ===
-                                        dataListVariables['bond'].length
-                                    )
-                                  }
-                                />
-                              </th>
-                              <th>
-                                <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {sriovBondDataList.length == 0 && (
-                              <tr>
-                                <td colSpan="2" className="no-data">
-                                  <p>{t('RESOURCES_DETAIL_NO_DATA')}</p>
-                                </td>
-                              </tr>
-                            )}
-                            {sriovBondDataList?.map((data, idx) => {
-                              return (
-                                <tr key={idx}>
-                                  <td>
-                                    <Checkbox
-                                      name={`select-${idx}`}
-                                      checked={
-                                        !!stateVariables['bond'].includes(data)
-                                      }
-                                      onChange={checked =>
-                                        handleSingleCheck(checked, data, 'bond')
-                                      }
-                                    />
-                                  </td>
-                                  <td>{data}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                        <div className={styles.removeCheckWrapper}>
-                          {bondCheckItems?.map(name => (
-                            <span key={name}>
-                              <Button
-                                icon="close"
-                                onClick={() => handleDelete(name, 'bond')}
-                              >
-                                {name}
-                              </Button>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </Form.Item>
-                )}
               </div>
               {/* 기본설정 설정 끝========================================== */}
 
