@@ -485,7 +485,8 @@ export const getDocsUrl = module => {
 export const hasChinese = str => /.*[\u4E00-\u9FA5]+.*/.test(str)
 
 export const getBrowserLang = () => {
-  const lang = (navigator.language || navigator.browserLanguage).toLowerCase()
+  // const lang = (navigator.language || navigator.browserLanguage).toLowerCase()
+  const lang = globals.config.defaultLang
 
   if (lang === 'zh-tw') {
     return 'tc'
