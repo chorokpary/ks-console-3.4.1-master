@@ -344,7 +344,7 @@ const getClusterRole = async ctx => {
   try {
     const config = await send_gateway_request({
       method: 'GET',
-      url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
+      url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
       token,
     })
     const data = config.data['kubesphere.yaml']
@@ -506,7 +506,7 @@ const createUser = (params, token) => {
 const getUserMfaList = async token => {
   const configmap = await send_gateway_request({
     method: 'GET',
-    url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
+    url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
     token,
   })
 
@@ -551,7 +551,7 @@ const getUserMfaList = async token => {
 const createUserMfa = async (params, token) => {
   const configmap = await send_gateway_request({
     method: 'GET',
-    url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
+    url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
     token,
   })
 
@@ -603,7 +603,7 @@ const createUserMfa = async (params, token) => {
 const deleteUserMfa = async (userid, token) => {
   const configmap = await send_gateway_request({
     method: 'GET',
-    url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
+    url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
     token,
   })
 
