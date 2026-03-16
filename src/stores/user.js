@@ -28,9 +28,9 @@ import Base from './base'
 import List from './base.list'
 
 import moment from 'moment-mini'
-import { getLocalTime } from 'utils';
+import { getLocalTime } from 'utils'
 
-import { getPasswordPolicy } from 'utils/passwordPattern'; 
+import { getPasswordPolicy } from 'utils/passwordPattern'
 
 export default class UsersStore extends Base {
   records = new List()
@@ -117,7 +117,7 @@ export default class UsersStore extends Base {
       params.limit = -1
       params.page = 1
     }
- 
+
     params.limit = 100000
     const result = await request.get(
       this.getResourceUrl({ cluster, workspace, namespace, devops })
@@ -131,28 +131,30 @@ export default class UsersStore extends Base {
 
     let totalCount = result.totalItems || result.total_count || data.length || 0
 
-    if(globals.config.mfaUsed){
-
-      const resultMfa = await request.get(`/users/auth/mfa/list`)  
+    if (globals.config.mfaUsed) {
+      const resultMfa = await request.get(`/users/auth/mfa/list`)
       const mfaList = resultMfa.data.results
 
-      const allowPaths  = ['petasus.io','local-petasus.io']
-      const filterMfaList = mfaList.filter(user => user.last_login === null && allowPaths.includes(user.path))
-      .map(user => ({ 
-        username: user.username,
-        name: user.name,
-        email: user.email,
-        lastLoginTime: user.last_login,
-        globalrole: user.attributes?.role,
-        status: "notlogin",
-        pk: user.pk
-      }));
+      const allowPaths = ['petasus.io', 'local-petasus.io']
+      const filterMfaList = mfaList
+        .filter(
+          user => user.last_login === null && allowPaths.includes(user.path)
+        )
+        .map(user => ({
+          username: user.username,
+          name: user.name,
+          email: user.email,
+          lastLoginTime: user.last_login,
+          globalrole: user.attributes?.role,
+          status: 'notlogin',
+          pk: user.pk,
+        }))
 
       let resultMfaList = filterMfaList
 
       let sumUserList = [
         ...data,
-        ...resultMfaList.filter(b => !data.some(a => a.name === b.name))
+        ...resultMfaList.filter(b => !data.some(a => a.name === b.name)),
       ].sort((a, b) => {
         if (a.lastLoginTime === null && b.lastLoginTime !== null) return -1
         if (a.lastLoginTime !== null && b.lastLoginTime === null) return 1
@@ -167,7 +169,8 @@ export default class UsersStore extends Base {
       }
 
       // page 별 Slice 처리
-      const perPage = Number(params.limit) == 100000 ? 10 : Number(params.limit) || 10
+      const perPage =
+        Number(params.limit) == 100000 ? 10 : Number(params.limit) || 10
       const currentPage = Number(params.page) || 1
       const sumUserListSliceData = sumUserList.slice(
         (currentPage - 1) * perPage,
@@ -175,7 +178,7 @@ export default class UsersStore extends Base {
       )
 
       totalCount = sumUserList.length
-      params.limit = perPage 
+      params.limit = perPage
       data = sumUserListSliceData
     }
 
@@ -221,7 +224,7 @@ export default class UsersStore extends Base {
     const result = await this.submitting(
       request.post(`/users/auth/create/mfa`, mfaParams)
     )
-    
+
     return result.success
   }
 
@@ -462,12 +465,12 @@ export default class UsersStore extends Base {
     }
 
     const userList = await this.fetchList()
-    const userDatga = userList.find(v => v.username === user.name);
+    const userDatga = userList.find(v => v.username === user.name)
 
     if (userDatga?.status === 'notlogin') {
       // authentik API 삭제 호출
       await request.delete(`/users/auth/mfa/delete/${user.pk}`)
-    }else{      
+    } else {
       return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
     }
   }
@@ -475,9 +478,9 @@ export default class UsersStore extends Base {
   @action
   async getUserDetail(name) {
     const result = await request.get(
-      `kapis/iam.kubesphere.io/v1alpha2/users/${name}`,      
+      `kapis/iam.kubesphere.io/v1alpha2/users/${name}`
     )
-    
+
     return result
   }
 
@@ -536,29 +539,36 @@ export default class UsersStore extends Base {
     return data
   }
 
-   @action
+  @action
   async getUserPasswordExpireInfo() {
-
     const policyData = await getPasswordPolicy()
     const userData = await this.getUserDetail(globals.user.username)
 
-    const identifyProvider = userData?.metadata?.labels?.['iam.kubesphere.io/identify-provider']
-    const lastPasswordChangeTime = userData?.metadata?.annotations?.['iam.kubesphere.io/last-password-change-time']
+    const identifyProvider =
+      userData?.metadata?.labels?.['iam.kubesphere.io/identify-provider']
+    const lastPasswordChangeTime =
+      userData?.metadata?.annotations?.[
+        'iam.kubesphere.io/last-password-change-time'
+      ]
 
     const isPetasusOidcUser = identifyProvider === 'petasus-oidc'
 
     let result = {}
     if (isPetasusOidcUser && lastPasswordChangeTime) {
-        const noticeData = this.checkPasswordPolicy( lastPasswordChangeTime, Number(policyData.period), Number(policyData.notice) )
-                
-        if (noticeData.isExpired) {
-          result.noticeData = noticeData
-          result.showNotice = true
-        }else if(noticeData.isChangedWithinPeriod){
-          result.noticeData = noticeData.isNotice ? noticeData : {}
-          result.showNotice = noticeData.isNotice ? true : false
-        }
-    }else{
+      const noticeData = this.checkPasswordPolicy(
+        lastPasswordChangeTime,
+        Number(policyData.period),
+        Number(policyData.notice)
+      )
+
+      if (noticeData.isExpired) {
+        result.noticeData = noticeData
+        result.showNotice = true
+      } else if (noticeData.isChangedWithinPeriod) {
+        result.noticeData = noticeData.isNotice ? noticeData : {}
+        result.showNotice = noticeData.isNotice ? true : false
+      }
+    } else {
       result.noticeData = {}
       result.showNotice = false
     }
@@ -566,50 +576,52 @@ export default class UsersStore extends Base {
     return result
   }
 
-  checkPasswordPolicy  = (lastPasswordChangeTime, period, notice) => {  
-        if (!lastPasswordChangeTime || !period || notice == null) {
-            return {
-                diffDays: 0,
-                remainDays: period,
-                isNotice: false,
-                noticeOverDays: 0,
-                isExpired: false,
-                expiredDays: 0,
-                isChangedWithinPeriod: false,
-            }
-        }
-
-        const lastChangedAt = getLocalTime(lastPasswordChangeTime)
-        const now = moment()
-
-        // 변경 후 경과 일수
-        const diffDays = now.startOf('day').diff(lastChangedAt.startOf('day'), 'days')
-
-        // period 안에 변경했는지 여부 (오늘 포함)
-        const isChangedWithinPeriod = diffDays <= period
-
-        // 만료까지 남은 일 수 (음수 방지)
-        const remainDays = Math.max(period - diffDays, 0)
-
-        // 알림 시작 기준일
-        const noticeStartDay = period - notice
-
-        // 알림 여부
-        const isNotice = diffDays >= noticeStartDay && diffDays < period
-        const noticeOverDays = isNotice ? diffDays - noticeStartDay : 0
-
-        // 만료 여부
-        const isExpired = diffDays >= period
-        const expiredDays = isExpired ? diffDays - period : 0
-
-        return {
-            diffDays,        // 변경 후 경과 일수
-            remainDays,      // 만료까지 남은 일 수 (D-day
-            isNotice,        // 알림 구간 진입 여부
-            noticeOverDays,  // 알림 기준 초과 일수
-            isExpired,       // 만료 여부
-            expiredDays,     // 만료 후 경과 일수    
-            isChangedWithinPeriod,    // period 이내 변경 여부    
-        }
+  checkPasswordPolicy = (lastPasswordChangeTime, period, notice) => {
+    if (!lastPasswordChangeTime || !period || notice == null) {
+      return {
+        diffDays: 0,
+        remainDays: period,
+        isNotice: false,
+        noticeOverDays: 0,
+        isExpired: false,
+        expiredDays: 0,
+        isChangedWithinPeriod: false,
+      }
     }
+
+    const lastChangedAt = getLocalTime(lastPasswordChangeTime)
+    const now = moment()
+
+    // 변경 후 경과 일수
+    const diffDays = now
+      .startOf('day')
+      .diff(lastChangedAt.startOf('day'), 'days')
+
+    // period 안에 변경했는지 여부 (오늘 포함)
+    const isChangedWithinPeriod = diffDays <= period
+
+    // 만료까지 남은 일 수 (음수 방지)
+    const remainDays = Math.max(period - diffDays, 0)
+
+    // 알림 시작 기준일
+    const noticeStartDay = period - notice
+
+    // 알림 여부
+    const isNotice = diffDays >= noticeStartDay && diffDays < period
+    const noticeOverDays = isNotice ? diffDays - noticeStartDay : 0
+
+    // 만료 여부
+    const isExpired = diffDays >= period
+    const expiredDays = isExpired ? diffDays - period : 0
+
+    return {
+      diffDays, // 변경 후 경과 일수
+      remainDays, // 만료까지 남은 일 수 (D-day
+      isNotice, // 알림 구간 진입 여부
+      noticeOverDays, // 알림 기준 초과 일수
+      isExpired, // 만료 여부
+      expiredDays, // 만료 후 경과 일수
+      isChangedWithinPeriod, // period 이내 변경 여부
+    }
+  }
 }
