@@ -34,7 +34,6 @@ import NetworkStore from 'stores/resources/networks'
 import styles from './index.scss'
 
 // ===== CONSTANTS =====
-const VF_RESOURCE_PREFIX = 'openshift.io/'
 const CIDR_PARTS_LENGTH = 2
 const MAX_CIDR_CLASS = 30
 const DEFAULT_MTU = 1500
@@ -53,14 +52,7 @@ const networkConfigReducer = (state, action) => {
         networkType: action.payload,
         isTunnelNetwork: action.payload !== 'FLAT',
       }
-    case 'SET_NETWORK_OFFLOAD':
-      return {
-        ...state,
-        networkOffload: action.payload.value,
-        networkOffloadConfigurable: action.payload.configurable,
-        networkOffloadInfo: action.payload.info,
-      }
-    case 'SET_PHYSNET':
+case 'SET_PHYSNET':
       return { ...state, physnet: action.payload }
     case 'SET_NETWORK_TYPE_OPTIONS':
       return { ...state, networkTypeOptions: action.payload }
@@ -125,9 +117,6 @@ const RegistModal = props => {
       external: true,
       networkType: '',
       isTunnelNetwork: false,
-      networkOffload: false,
-      networkOffloadConfigurable: false,
-      networkOffloadInfo: '',
       physnet: '',
       networkTypeOptions: [],
       externalInfo: t('RESOURCES_EXTERNAL_NETWORK_TIP'),
@@ -253,7 +242,6 @@ const RegistModal = props => {
       },
       dns,
       host_routes,
-      offload: data.offload,
       elb: data.type === 'FLAT' ? data.elb || false : false,
     }
 
@@ -421,87 +409,12 @@ const RegistModal = props => {
           type: 'SET_EXTERNAL_INFO',
           payload: t('RESOURCES_EXTERNAL_NETWORK_TIP'),
         })
-        refreshNetworkOffloadTooltip('tunnel')
       }
 
       // Reset radio buttons through refs instead of DOM manipulation
       // These will be handled by the component state updates
     },
-    [physnetOptions, refreshNetworkOffloadTooltip]
-  )
-
-  // Reload network offload nodes when physnet changes
-  useEffect(() => {
-    if (networkConfig.physnet.trim() !== '') {
-      refreshNetworkOffloadTooltip(networkConfig.physnet)
-    } else {
-      refreshNetworkOffloadTooltip('tunnel')
-    }
-  }, [networkConfig.physnet, refreshNetworkOffloadTooltip])
-
-  // ===== NETWORK OFFLOAD HANDLERS =====
-
-  const refreshNetworkOffloadTooltip = useCallback(
-    async resourceName => {
-      const fullResourceName = VF_RESOURCE_PREFIX + resourceName
-      const resp = await networkStore.fetchNodes({ ...props })
-
-      const nodeResource = {}
-      for (const node of resp.nodes) {
-        if (
-          'name' in node &&
-          'resource' in node &&
-          node.resource &&
-          fullResourceName in node.resource
-        ) {
-          nodeResource[node.name] = node.resource[fullResourceName]
-        }
-      }
-
-      let nodeStatus = ''
-      let totalAvailable = 0
-      for (const [key, val] of Object.entries(nodeResource)) {
-        nodeStatus += `${key}(${val.available}/${val.allocatable}), `
-        totalAvailable += val.available
-      }
-      nodeStatus = nodeStatus.slice(0, -2)
-
-      if (Object.keys(nodeResource).length === 0) {
-        dispatchNetworkConfig({
-          type: 'SET_NETWORK_OFFLOAD',
-          payload: {
-            value: false,
-            configurable: false,
-            info: `${resourceName}: ${t(
-              'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-            )}`,
-          },
-        })
-      } else if (totalAvailable === 0) {
-        dispatchNetworkConfig({
-          type: 'SET_NETWORK_OFFLOAD',
-          payload: {
-            value: false,
-            configurable: false,
-            info: `${resourceName}: ${t(
-              'RESOURCES_NO_RESOURCE_AVAILABLE_ALLOCATION'
-            )} ${nodeStatus}`,
-          },
-        })
-      } else {
-        dispatchNetworkConfig({
-          type: 'SET_NETWORK_OFFLOAD',
-          payload: {
-            value: networkConfig.networkOffload,
-            configurable: true,
-            info: `[${resourceName}] ${nodeStatus}`,
-          },
-        })
-      }
-
-      return resp
-    },
-    [networkStore, props, networkConfig.networkOffload]
+    [physnetOptions]
   )
 
   // ===== STEP NAVIGATION =====
@@ -1061,55 +974,6 @@ const RegistModal = props => {
                     <Form.Item>
                       <Columns>
                         <Column>
-                          <Form.Item
-                            label={t('RESOURCES_NETWORK_OFFLOAD')}
-                            rules={[{ required: true }]}
-                          >
-                            <RadioGroup
-                              name="offload"
-                              wrapClassName="radio"
-                              defaultValue={networkConfig.networkOffload}
-                              onChange={value =>
-                                dispatchNetworkConfig({
-                                  type: 'SET_NETWORK_OFFLOAD',
-                                  payload: {
-                                    value,
-                                    configurable:
-                                      networkConfig.networkOffloadConfigurable,
-                                    info: networkConfig.networkOffloadInfo,
-                                  },
-                                })
-                              }
-                            >
-                              {BINARY_OPTIONS.map(option =>
-                                option.value ? (
-                                  <Tooltip
-                                    content={networkConfig.networkOffloadInfo}
-                                    placement="right"
-                                  >
-                                    <RadioButton
-                                      id="radio_offload_on"
-                                      key={option.value}
-                                      value={option.value}
-                                      disabled={
-                                        !networkConfig.networkOffloadConfigurable
-                                      }
-                                    >
-                                      {option.label}
-                                    </RadioButton>
-                                  </Tooltip>
-                                ) : (
-                                  <RadioButton
-                                    id="radio_offload_off"
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </RadioButton>
-                                )
-                              )}
-                            </RadioGroup>
-                          </Form.Item>
                           <Form.Item
                             label={t('RESOURCES_ELB_DEDICATED')}
                             rules={[{ required: true }]}

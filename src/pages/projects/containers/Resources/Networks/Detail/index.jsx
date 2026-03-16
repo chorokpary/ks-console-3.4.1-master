@@ -126,12 +126,6 @@ const NetworkDetail = props => {
           : t('RESOURCES_NOT_USE'),
       },
       {
-        name: t('RESOURCES_NETWORK_OFFLOAD'),
-        value: detail.network.offload
-          ? t('RESOURCES_USE')
-          : t('RESOURCES_NOT_USE'),
-      },
-      {
         name: t('RESOURCES_ELB_DEDICATED'),
         value: detail.network.elb ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
       },

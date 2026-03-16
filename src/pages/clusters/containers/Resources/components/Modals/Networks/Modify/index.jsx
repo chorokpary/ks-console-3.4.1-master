@@ -555,31 +555,6 @@ const ModifyModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_NETWORK_OFFLOAD')}
-                            rules={[{ required: true }]}
-                          >
-                            <RadioGroup
-                              name="offload"
-                              wrapClassName="radio"
-                              defaultValue={detail.offload}
-                            >
-                              {defaultOptions.map(option => (
-                                <Tooltip
-                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
-                                  placement="right"
-                                >
-                                  <RadioButton
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled="true"
-                                  >
-                                    {option.label}
-                                  </RadioButton>
-                                </Tooltip>
-                              ))}
-                            </RadioGroup>
-                          </Form.Item>
-                          <Form.Item
                             label={t('RESOURCES_ELB_DEDICATED')}
                             rules={[{ required: true }]}
                           >

@@ -530,7 +530,6 @@ module.exports = {
   RESOURCES_SUBNET_EXTERNAL: 'External',
   RESOURCES_USAGE_TYPE: '사용 유형',
   RESOURCES_GENERAL: '범용',
-  RESOURCES_NETWORK_OFFLOAD: '하드웨어 오프로딩',
   RESOURCES_ELB_DEDICATED: 'ELB 전용',
   RESOURCES_ELB_DEDICATED_TIP:
     'FLAT 유형의 네트워크만 ELB 전용으로 설정할 수 있습니다.',
