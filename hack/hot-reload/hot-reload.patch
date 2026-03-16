@@ -1,0 +1,163 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -81,12 +81,12 @@
+     "xterm": "3.8.1"
+   },
+   "scripts": {
+-    "start": "concurrently -k --raw \"set NODE_OPTIONS=--openssl-legacy-provider && yarn dev:client\" \"set NODE_OPTIONS=--openssl-legacy-provider && yarn dev:server\"",
+-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && yarn build:client && set NODE_OPTIONS=--openssl-legacy-provider && yarn build:server",
+-    "dev:client": "cross-env NODE_ENV=development webpack-dev-server --config scripts/webpack.dev.js -w",
+-    "dev:server": "cross-env NODE_ENV=development nodemon -w ./common -w ./server -e js,yaml server/server.js",
+-    "build:client": "webpack -p --config scripts/webpack.prod.js --display errors-only",
+-    "build:server": "webpack -p --config scripts/webpack.server.js --display errors-only",
++    "start": "concurrently -k --raw \"yarn dev:client\" \"yarn dev:server\"",
++    "build": "yarn build:client && yarn build:server",
++    "dev:client": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=development webpack-dev-server --config scripts/webpack.dev.js -w",
++    "dev:server": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=development nodemon -w ./common -w ./server -e js,yaml server/server.js",
++    "build:client": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack -p --config scripts/webpack.prod.js --display errors-only",
++    "build:server": "cross-env NODE_OPTIONS=--openssl-legacy-provider webpack -p --config scripts/webpack.server.js --display errors-only",
+     "build:e2e": "webpack -p --config scripts/webpack.e2e.js --display errors-only",
+     "test": "jest",
+     "test:e2e": "cypress run",
+diff --git a/scripts/webpack.base.js b/scripts/webpack.base.js
+--- a/scripts/webpack.base.js
++++ b/scripts/webpack.base.js
+@@ -18,7 +18,6 @@
+
+ const { resolve } = require('path')
+ const autoprefixer = require('autoprefixer')
+-const HappyPack = require('happypack')
+ const WebpackBar = require('webpackbar')
+ const WebpackAssetsManifest = require('webpack-assets-manifest')
+
+@@ -35,7 +34,13 @@ module.exports = {
+     {
+       test: /\.jsx?$/,
+       include: root('src'),
+-      use: 'happypack/loader?id=jsx',
++      use: {
++        loader: 'babel-loader',
++        options: {
++          cacheDirectory: true,
++          plugins: isDev ? [require.resolve('react-refresh/babel')] : [],
++        },
++      },
+     },
+     {
+       test: /\.svg$/,
+@@ -63,18 +68,6 @@ module.exports = {
+     modules: [root('src'), root('src/pages'), 'node_modules'],
+   },
+   plugins: [
+-    new HappyPack({
+-      id: 'jsx',
+-      loaders: [
+-        {
+-          loader: 'babel-loader',
+-          options: {
+-            cacheDirectory: true,
+-            plugins: isDev ? [require.resolve('react-refresh/babel')] : [],
+-          },
+-        },
+-      ],
+-    }),
+     new WebpackAssetsManifest({
+       entrypoints: true,
+       writeToDisk: true,
+diff --git a/scripts/webpack.dev.js b/scripts/webpack.dev.js
+--- a/scripts/webpack.dev.js
++++ b/scripts/webpack.dev.js
+@@ -138,6 +138,7 @@ const config = {
+     disableHostCheck: true,
+     host: '0.0.0.0',
+     port: 8001,
++    sockPort: 8000,
+   },
+ }
+
+diff --git a/server/components/boot.js b/server/components/boot.js
+--- a/server/components/boot.js
++++ b/server/components/boot.js
+@@ -41,17 +41,32 @@ module.exports = function(app) {
+   }
+
+   if (global.MODE_DEV) {
++    const httpProxy = require('http-proxy')
++    const proxy = httpProxy.createProxyServer({
++      target: 'http://127.0.0.1:8001',
++    })
++    proxy.on('error', (_err, _req, res) => {
++      if (res.writeHead) {
++        res.writeHead(502)
++        res.end('webpack-dev-server not ready')
++      }
++    })
++
+     app.use(async (ctx, next) => {
+       if (
+-        /(\.hot-update\.)|(\.(ttf|otf|eot|woff2?)(\?.+)?$)|(\.js$)/.test(
++        /(\.hot-update\.)|(\.(ttf|otf|eot|woff2?)(\?.+)?$)|(\.js$)|(\/sockjs-node\/)/.test(
+           ctx.url
+         )
+       ) {
+-        ctx.redirect(`http://${ctx.hostname}:8001${ctx.url}`)
++        ctx.respond = false
++        proxy.web(ctx.req, ctx.res)
+       } else {
+         await next()
+       }
+     })
++
++    // Expose proxy for WebSocket upgrade handler (registered after app.listen in server.js)
++    app.devProxy = proxy
+   }
+
+   render(app, {
+diff --git a/server/server.js b/server/server.js
+--- a/server/server.js
++++ b/server/server.js
+@@ -60,4 +60,13 @@ app.server = app.listen(global.PORT, err => {
+   // console.log(`Dashboard app running at port ${global.PORT}`)
+ })
+
++// HMR WebSocket proxy: forward /sockjs-node upgrade to webpack-dev-server
++if (global.MODE_DEV && app.devProxy) {
++  app.server.on('upgrade', (req, socket, head) => {
++    if (req.url && req.url.includes('/sockjs-node')) {
++      app.devProxy.ws(req, socket, head)
++    }
++  })
++}
++
+ app.apply(wsProxy)
+diff --git a/server/views/index.html b/server/views/index.html
+--- a/server/views/index.html
++++ b/server/views/index.html
+@@ -1,4 +1,4 @@
+-<% var bundlePrefix = isDev ? '//' + hostname + ':8001' : '/dist' %>
++<% var bundlePrefix = isDev ? '' : '/dist' %>
+ <!DOCTYPE html>
+ <html lang="en">
+   <head>
+diff --git a/server/views/terminal.html b/server/views/terminal.html
+--- a/server/views/terminal.html
++++ b/server/views/terminal.html
+@@ -1,4 +1,4 @@
+-<% var bundlePrefix = isDev ? '//' + hostname + ':8001' : '/dist' %>
++<% var bundlePrefix = isDev ? '' : '/dist' %>
+ <!DOCTYPE html>
+ <html lang="en">
+   <head>
+diff --git a/server/config.yaml b/server/config.yaml
+--- a/server/config.yaml
++++ b/server/config.yaml
+@@ -73,7 +73,7 @@ client:
+     kubesphere: 3.4.1
+
+   # MFA 사용 여부
+-  mfaUsed: true
++  mfaUsed: false
+
+   # kubesphere urls
+   issueUrl: https://github.com/kubesphere/kubesphere/issues/new/choose
