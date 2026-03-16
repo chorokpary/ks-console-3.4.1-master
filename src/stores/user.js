@@ -20,7 +20,6 @@ import { get, set, uniq, isArray, intersection } from 'lodash'
 import { observable, action } from 'mobx'
 import { Notify } from '@kube-design/components'
 import { safeParseJSON } from 'utils'
-import { LIST_DEFAULT_ORDER } from 'utils/constants'
 import ObjectMapper from 'utils/object.mapper'
 import cookie from 'utils/cookie'
 
@@ -97,102 +96,6 @@ export default class UsersStore extends Base {
   getListUrl = this.getResourceUrl
 
   getAuthentikResourceUrl = '/api/v3/core/users/'
-
-  @action
-  async fetchList({
-    cluster,
-    workspace,
-    namespace,
-    more,
-    devops,
-    ...params
-  } = {}) {
-    this.list.isLoading = true
-
-    if (!params.sortBy && params.ascending === undefined) {
-      params.sortBy = LIST_DEFAULT_ORDER[this.module] || 'createTime'
-    }
-
-    if (params.limit === Infinity || params.limit === -1) {
-      params.limit = -1
-      params.page = 1
-    }
- 
-    params.limit = 100000
-    const result = await request.get(
-      this.getResourceUrl({ cluster, workspace, namespace, devops })
-    )
-
-    let data = (get(result, 'items') || []).map(item => ({
-      cluster,
-      namespace,
-      ...this.mapper(item),
-    }))
-
-    let totalCount = result.totalItems || result.total_count || data.length || 0
-
-    if(globals.config.mfaUsed){
-
-      const resultMfa = await request.get(`/users/auth/mfa/list`)  
-      const mfaList = resultMfa.data.results
-
-      const allowPaths  = ['petasus.io','local-petasus.io']
-      const filterMfaList = mfaList.filter(user => user.last_login === null && allowPaths.includes(user.path))
-      .map(user => ({ 
-        username: user.username,
-        name: user.name,
-        email: user.email,
-        lastLoginTime: user.last_login,
-        globalrole: user.attributes?.role,
-        status: "notlogin",
-        pk: user.pk
-      }));
-
-      let resultMfaList = filterMfaList
-
-      let sumUserList = [
-        ...data,
-        ...resultMfaList.filter(b => !data.some(a => a.name === b.name))
-      ].sort((a, b) => {
-        if (a.lastLoginTime === null && b.lastLoginTime !== null) return -1
-        if (a.lastLoginTime !== null && b.lastLoginTime === null) return 1
-        return (a.name || '').localeCompare(b.name || '')
-      })
-
-      // 검색 처리
-      if (params.name) {
-        sumUserList = sumUserList.filter(row =>
-          row.name?.toLowerCase().includes(params.name.toLowerCase())
-        )
-      }
-
-      // page 별 Slice 처리
-      const perPage = Number(params.limit) == 100000 ? 10 : Number(params.limit) || 10
-      const currentPage = Number(params.page) || 1
-      const sumUserListSliceData = sumUserList.slice(
-        (currentPage - 1) * perPage,
-        currentPage * perPage
-      )
-
-      totalCount = sumUserList.length
-      params.limit = perPage 
-      data = sumUserListSliceData
-    }
-
-    this.list.update({
-      data: more ? [...this.list.data, ...data] : data,
-      total: totalCount,
-      ...params,
-      limit: Number(params.limit) || 10,
-      page: Number(params.page) || 1,
-      isLoading: false,
-      ...(this.list.silent ? {} : { selectedRowKeys: [] }),
-    })
-
-    // console.log(data)
-
-    return data
-  }
 
   @action
   async mfaCreate(data, params = {}) {
@@ -455,21 +358,13 @@ export default class UsersStore extends Base {
   }
 
   @action
-  async delete(user) {
+  delete(user) {
     if (user.name === globals.user.username) {
       Notify.error(t('DELETING_CURRENT_USER_NOT_ALLOWED'))
       return
     }
 
-    const userList = await this.fetchList()
-    const userDatga = userList.find(v => v.username === user.name);
-
-    if (userDatga?.status === 'notlogin') {
-      // authentik API 삭제 호출
-      await request.delete(`/users/auth/mfa/delete/${user.pk}`)
-    }else{      
-      return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
-    }
+    return this.submitting(request.delete(`${this.getDetailUrl(user)}`))
   }
 
   @action
