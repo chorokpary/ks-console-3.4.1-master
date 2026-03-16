@@ -283,13 +283,7 @@ const RegistModal = props => {
 
   // ===== VALIDATION HELPERS =====
   const isValidIpAddress = ip => {
-    const segments = ip.split('.')
-    if (segments.length !== 4) return false
-    return segments.every((segment, idx) => {
-      const num = parseInt(segment, 10)
-      if (idx === 3 && num !== 0) return false
-      return !isNaN(num) && num >= 0 && num <= 255
-    })
+    return PATTERN_IP.test(ip)
   }
 
   const isValidCidrClass = num => {
