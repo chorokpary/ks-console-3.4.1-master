@@ -554,6 +554,52 @@ const createUserMfa = async (params, token) => {
   }
 }
 
+const deleteUserMfa = async (userid, token) => {
+  const configmap = await send_gateway_request({
+    method: 'GET',
+    url: `/api/v1/namespaces/kubesphere-system/configmaps/kubesphere-config`,
+    token,
+  })
+
+  const yamlData = yaml.safeLoadAll(
+    configmap.data['kubesphere.yaml'],
+    'utf8'
+  )[0]
+
+  const apiToken = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiToken',
+    ''
+  )
+  const authentikBase = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiURL',
+    ''
+  )
+  
+  try {
+
+    const resUser = await send_authentik_request({
+      method: 'DELETE',
+      url: `${authentikBase}/api/v3/core/users/${userid}/`,
+      token: apiToken,
+    })
+
+    return {
+      success: true,
+      message: 'user delete successful',
+    }
+    
+  } catch (error) {
+    // console.error('[createUserMfa] Error:', error)
+    return {
+      success: false,
+      message: error.message || 'user delete fail',
+      code: error.code || 500,
+    }
+  }
+}
+
 module.exports = {
   login,
   loginThird,
