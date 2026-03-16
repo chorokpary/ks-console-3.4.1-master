@@ -568,6 +568,32 @@ const handleCreateUserMfa = async ctx => {
   ctx.body = result
 }
 
+const handleGetUserMfaList = async ctx => {
+  const token = ctx.cookies.get('token')  
+  const result = await getUserMfaList(token)
+
+  ctx.status = result.success ? 200 : result.code || 500
+  ctx.body = result
+}
+
+const handleDeleteUserMfa = async ctx => {
+  const token = ctx.cookies.get('token')
+  const { userid } = ctx.params
+  const result = await deleteUserMfa(userid, token)
+
+  ctx.status = result.success ? 200 : result.code || 500
+  ctx.body = result
+}
+
+const handleDeleteUserMfa = async ctx => {
+  const token = ctx.cookies.get('token')
+  const { userid } = ctx.params
+  const result = await deleteUserMfa(userid, token)
+
+  ctx.status = result.success ? 200 : result.code || 500
+  ctx.body = result
+}
+
 module.exports = {
   handleLogin,
   handleThirdLogin,

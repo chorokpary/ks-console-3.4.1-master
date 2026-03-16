@@ -53,6 +53,8 @@ const {
   handleOAuthLogin,
   handleLoginConfirm,
   handleCreateUserMfa,
+  handleGetUserMfaList,
+  handleDeleteUserMfa,
 } = require('./controllers/session')
 
 const {
@@ -84,6 +86,8 @@ router
 
   // create user mfa
   .post('/users/auth/create/mfa', parseBody, handleCreateUserMfa)
+  .get('/users/auth/mfa/list', handleGetUserMfaList)
+  .delete('/users/auth/mfa/delete/:userid', handleDeleteUserMfa)
 
   .use(proxy('/files', webImageBuildProxy))
   .use(proxy('/files/(.*)', webImageBuildProxy))
