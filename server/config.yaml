@@ -95,7 +95,7 @@ client:
     - label: 'English'
       value: 'en'
       recommend: true
-  defaultLang: 'ko'
+  defaultLang: 'en'
   showAllLangs: true
 
   # platform management navigations

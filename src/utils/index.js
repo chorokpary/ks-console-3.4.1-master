@@ -448,13 +448,13 @@ export const getWebSocketProtocol = protocol => {
 }
 
 export const getWebsiteUrl = () => {
-  const useLang = get(globals, 'user.lang', 'ko')
+  const useLang = get(globals, 'user.lang', 'en')
   const lang = useLang === 'ko' ? 'ko' : 'en'
   return globals.config.documents[lang]
 }
 
 export const getCustomizedWebsiteUrl = () => {
-  const useLang = get(globals, 'user.lang', 'ko')
+  const useLang = get(globals, 'user.lang', 'en')
   const lang = useLang === 'ko' ? 'ko' : 'en'
 
   const host = window.location.hostname
@@ -485,8 +485,7 @@ export const getDocsUrl = module => {
 export const hasChinese = str => /.*[\u4E00-\u9FA5]+.*/.test(str)
 
 export const getBrowserLang = () => {
-  // const lang = (navigator.language || navigator.browserLanguage).toLowerCase()
-  const lang = globals.config.defaultLang
+  const lang = (navigator.language || navigator.browserLanguage).toLowerCase()
 
   if (lang === 'zh-tw') {
     return 'tc'
