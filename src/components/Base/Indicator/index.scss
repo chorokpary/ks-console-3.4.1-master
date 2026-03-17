@@ -111,6 +111,7 @@
   &.minor,
   &.paused,
   &.inactive,
+  &.notlogin,
   &.suspended {
     background-color: rgba(134, 146, 157, 0.1);
     &::before {
@@ -133,6 +134,3 @@
     opacity: 0.2;
   }
 }
-
-
-

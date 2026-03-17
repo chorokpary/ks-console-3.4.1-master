@@ -28,12 +28,18 @@ module.exports = {
   USER_DISABLED: '비활성화',
   LAST_LOGIN: '마지막 로그인',
   // List > Create
-  USERNAME_DESC: '사용자 이름은 소문자, 숫자, 하이픈(-) 및 점(.)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 32자입니다.',
-  PASSWORD_DESC: '비밀번호에는 숫자 하나, 소문자 하나, 대문자 하나 및 특수 문자 하나(!@#$%^&*(-_=+\\|[{}];:\', <.>/?)가 포함되어야 합니다. 길이는 8자에서 64자 사이여야 합니다.',
-  PASSWORD_INVALID_DESC: '비밀번호가 잘못되었습니다. 비밀번호에는 숫자, 소문자 및 대문자가 하나 이상 포함되어야 합니다. 길이는 8자에서 64자 사이여야 합니다.',
-  PLATFORM_ROLE_DESC: 'Petasus AI Cloud 플랫폼에서 사용할 사용자의 역할을 설정합니다.',
-  USER_SETTING_EMAIL_DESC: '이메일 주소는 Petasus AI Cloud 웹 콘솔에 로그인하는 데 사용할 수 있습니다.',
-  USERNAME_EXISTS: '이 사용자 이름은 이미 사용중입니다. 다른 사용자 이름을 입력하세요.',
+  USERNAME_DESC:
+    '사용자 이름은 소문자, 숫자, 하이픈(-) 및 점(.)만 포함할 수 있으며 소문자 또는 숫자로 시작하고 끝나야 합니다. 최대 길이는 32자입니다.',
+  PASSWORD_DESC:
+    "비밀번호에는 숫자 하나, 소문자 하나, 대문자 하나 및 특수 문자 하나(!@#$%^&*(-_=+\\|[{}];:', <.>/?)가 포함되어야 합니다. 길이는 8자에서 64자 사이여야 합니다.",
+  PASSWORD_INVALID_DESC:
+    '비밀번호가 잘못되었습니다. 비밀번호에는 숫자, 소문자 및 대문자가 하나 이상 포함되어야 합니다. 길이는 8자에서 64자 사이여야 합니다.',
+  PLATFORM_ROLE_DESC:
+    'Petasus AI Cloud 플랫폼에서 사용할 사용자의 역할을 설정합니다.',
+  USER_SETTING_EMAIL_DESC:
+    '이메일 주소는 Petasus AI Cloud 웹 콘솔에 로그인하는 데 사용할 수 있습니다.',
+  USERNAME_EXISTS:
+    '이 사용자 이름은 이미 사용중입니다. 다른 사용자 이름을 입력하세요.',
   USERNAME_EMPTY_DESC: '사용자 이름을 입력해 주세요.',
   PLATFORM_ROLE: '플랫폼 역할',
   CREATE_USER: '사용자 계정 생성',
@@ -46,5 +52,7 @@ module.exports = {
   EDIT_USER: '사용자 편집',
   // List > Delete
   USER_LOW: '사용자',
-  DELETING_CURRENT_USER_NOT_ALLOWED: '현재 사용자는 삭제 될 수 없습니다.'
-};
+  DELETING_CURRENT_USER_NOT_ALLOWED: '현재 사용자는 삭제 될 수 없습니다.',
+  USER_NOTLOGIN: '로그인 필요함',
+  USER_LOGIN_AT_LEAST_ONCE: '한 번이라도 로그인하면 활성화 됩니다.',
+}
