@@ -56,4 +56,5 @@ module.exports = {
   USER_LOW: 'user',
   DELETING_CURRENT_USER_NOT_ALLOWED: 'The current user cannot be deleted.',
   USER_NOTLOGIN: 'Login required',
+  USER_LOGIN_AT_LEAST_ONCE: 'Need to Login at least once to activate it.',
 }

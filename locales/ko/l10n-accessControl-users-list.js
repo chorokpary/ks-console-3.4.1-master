@@ -54,4 +54,5 @@ module.exports = {
   USER_LOW: '사용자',
   DELETING_CURRENT_USER_NOT_ALLOWED: '현재 사용자는 삭제 될 수 없습니다.',
   USER_NOTLOGIN: '로그인 필요함',
+  USER_LOGIN_AT_LEAST_ONCE: '한 번이라도 로그인하면 활성화 됩니다.',
 }
