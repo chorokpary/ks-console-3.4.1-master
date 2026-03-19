@@ -35,8 +35,20 @@ export default class ExternalLoadBalancerStore extends Base {
   loadbalancerNameList = []
   loadbalancerIpList = []
 
-  getResourceUrl = (params = {}) => `/xlb/v1`
-  getListUrl = this.getResourceUrl
+  getResourceXlbUrl = (params = {}) =>
+    `kapis/externallb.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params)}/xlb/v1`
+
+  getResourceUrl = (params = {}) =>
+    `kapis/externallb.kubesphere.io/v1alpha1${this.getPath(
+      params
+    )}${this.getOditLogUrl(params, 'externalloadbalancer')}/xlb/v1`
+
+  getResourceListUrl = (params = {}) =>
+    `kapis/externallb.kubesphere.io/v1alpha1/xlb/v1`
+
+  getListUrl = this.getResourceListUrl
   
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
   getDeleteUrl = (params = {}) =>
@@ -172,8 +184,17 @@ export default class ExternalLoadBalancerStore extends Base {
 
       // 1. 프로젝트 생성
       const projectData = { name : projectName, driver_id : driverId, description : lb.description }
-      await request.post(`${this.getListUrl()}/projects`, projectData)
-      rollbackStack.push(() => this.deleteProject(projectName))
+      if (driverId === 'haproxy') { delete projectData.description }
+
+      // 프로젝트 리스트 추출
+      const projects = await this.fetchExistedList('P')
+      const isDuplicated = projects.includes(projectName)
+
+      // 프로젝트 중복 체크해서 최조일때만 생성
+      if(!isDuplicated){
+        await request.post(`${this.getListUrl()}/projects`, projectData)
+        rollbackStack.push(() => this.deleteProject(projectName))
+      }      
 
       // 2. 모니터 생성
       await Promise.all(
@@ -181,7 +202,7 @@ export default class ExternalLoadBalancerStore extends Base {
         .filter(item => item.type) 
         .map(async (item) => {
      
-          const monitorName = `${item.poolName}-monitor-${(item.type).toLowerCase()}`
+          const monitorName = `${lbName}-${item.poolName}-monitor-${(item.type).toLowerCase()}`
           const monitorData = {
               name: monitorName,
               type: (item.type).toLowerCase(),
@@ -191,6 +212,7 @@ export default class ExternalLoadBalancerStore extends Base {
                 timeout: item.timeout ? Number(item.timeout) : 16
               }
           }
+          if (driverId === 'haproxy') { delete monitorData.description }
 
           await request.post(`${this.getListUrl()}/projects/${projectName}/monitors`, monitorData)
           rollbackStack.push(() => this.deleteMonitor(projectName, monitorName))
@@ -200,14 +222,14 @@ export default class ExternalLoadBalancerStore extends Base {
       // 3. 풀 생성
       await Promise.all(
         lb.formPoolFields.map(async (item) => {
-          const poolName = item.poolName
+          const poolName = `${lbName}-${item.poolName}`
           const poolData = {
             name: poolName,
             load_balancing_method: item.lbmethod,
           }
 
           if (item.type) {
-            poolData.monitor = `${item.poolName}-monitor-${item.type.toLowerCase()}`
+            poolData.monitor = `${lbName}-${item.poolName}-monitor-${item.type.toLowerCase()}`
           }
 
           await request.post(`${this.getListUrl()}/projects/${projectName}/pools`, poolData)
@@ -218,14 +240,13 @@ export default class ExternalLoadBalancerStore extends Base {
       // 4. 풀 모니터 업데이트
       await Promise.all(
         lb.formPoolFields.map(async (item) => {
-          const poolName = item.poolName
+          const poolName = `${lbName}-${item.poolName}`
           const poolData = {
-            name: poolName,
             load_balancing_method: item.lbmethod,
           }
 
           if (item.type) {
-            poolData.monitor = `${item.poolName}-monitor-${item.type.toLowerCase()}`
+            poolData.monitor = `${lbName}-${item.poolName}-monitor-${item.type.toLowerCase()}`
           }
 
           await request.put(`${this.getListUrl()}/projects/${projectName}/pools/${poolName}`, poolData)
@@ -235,7 +256,7 @@ export default class ExternalLoadBalancerStore extends Base {
       // 5. 풀 멤버 추가
       await Promise.all(
         lb.formPoolFields.map(async (item) => {
-          const poolName = item.poolName
+          const poolName = `${lbName}-${item.poolName}`
 
           await Promise.all(
             item.member.map(async (member) => {
@@ -255,41 +276,44 @@ export default class ExternalLoadBalancerStore extends Base {
         })
       )
 
-      // 6. 로드밸런서 생성
-      const loadbalancerData = {
-        name: lbName,
-        driver_id: driverId,
-        ip_address: lb.ip,
-        listeners: []
-      }
-      await request.post(`${this.getListUrl()}/projects/${projectName}/loadbalancers`, loadbalancerData)
-      rollbackStack.push(() => this.deleteLoadBalancer(projectName, lbName))
-
-      // 7. 리스너 생성 
+      // 6. 리스너 생성 
+      // [제약사항] (HAProxy) Listener 생성 후, Load Balancer 리소스 생성 순서로만 동작하며, Listener 이름과 Load Balancer 이름이 동일해야 합니다.
+      const listenerNames = []
       await Promise.all(
-        lb.formListenerFields.map(async (listener) => { 
-          const listenerName = `${listener.pool}-listener-${listener.protocol.toLowerCase()}`
+        lb.formListenerFields.map(async (listener, index) => { 
+          const listenerName = index === 0 ? lbName : `${lbName}-${listener.pool}-listener-${listener.protocol.toLowerCase()}`
           const listenerData = {
             name: listenerName,
             protocol: listener.protocol.toLowerCase(),
             port: Number(listener.port),
-            pool: listener.pool
+            pool: `${lbName}-${listener.pool}`
           }
+          listenerNames.push(listenerName)
           await request.post(`${this.getListUrl()}/projects/${projectName}/listeners`, listenerData)
           rollbackStack.push(() => this.deleteListener(projectName, listenerName))
         })
       )
         
-      // 8. 리스너 attach
-      await Promise.all(
-        lb.formListenerFields.map(async (listener) => { 
-          const listenerName = `${listener.pool}-listener-${listener.protocol.toLowerCase()}`
-          await request.post(`${this.getListUrl()}/projects/${projectName}/attachments?lbName=${lbName}&listenerName=${listenerName}`)
-          rollbackStack.push(() => this.detachListener(projectName, lbName, listenerName))
-        })
-      )
-      
+      // 7. 로드밸런서 생성
+      const loadbalancerData = {
+        name: lbName,
+        driver_id: driverId,
+        ip_address: lb.ip,
+        listeners: listenerNames
+      }
+      await request.post(`${this.getListUrl()}/projects/${projectName}/loadbalancers`, loadbalancerData)
+      rollbackStack.push(() => this.deleteLoadBalancer(projectName, lbName))
 
+      // 8. 리스너 attach
+      // [제약사항] (HAProxy) Listener 생성 후, Load Balancer 리소스 생성 순서로만 동작하며, Listener 이름과 Load Balancer 이름이 동일해야 합니다.
+      // await Promise.all(
+      //   lb.formListenerFields.map(async (listene, index) => { 
+      //     const listenerName = index === 0 ? lbName : `${listener.pool}-listener-${listener.protocol.toLowerCase()}`
+      //     await request.post(`${this.getListUrl()}/projects/${projectName}/attachments?lbName=${lbName}&listenerName=${listenerName}`)
+      //     rollbackStack.push(() => this.detachListener(projectName, lbName, listenerName))
+      //   })
+      // )
+      
       this.isSubmitting = false
       return { success: true }
 
@@ -313,7 +337,7 @@ export default class ExternalLoadBalancerStore extends Base {
     this.listenersDetail = detail.listeners ?? [];
     
     const detailData = { ...params, detail, kind: 'data' }
-
+  
     this.detailData = detailData
     this.isLoading = false
     return detail
@@ -345,6 +369,7 @@ export default class ExternalLoadBalancerStore extends Base {
                 timeout: item.timeout ? Number(item.timeout) : 16
               }
           }
+          if (driverId === 'haproxy') { delete monitorData.description }
           await request.put(`${this.getListUrl()}/projects/${projectName}/monitors/${monitorName}`, monitorData)
         })
       )
@@ -428,7 +453,7 @@ export default class ExternalLoadBalancerStore extends Base {
     // 리스너 detach > 리스너 삭제 > LoadBalancer 삭제 > 멤버 삭제 > 풀 삭제 > 모니터 삭제 > 프로젝트 삭제 
      
     // 프로젝트 삭제
-    deleteStack.push(() => this.deleteProject(projectName))
+    //deleteStack.push(() => this.deleteProject(projectName))
 
     // 모니터  삭제
     await Promise.all(
@@ -479,7 +504,7 @@ export default class ExternalLoadBalancerStore extends Base {
 
   @action
   async fetchDrivers() { 
-    const result = await request.get(`${this.getListUrl()}/drivers`);
+    const result = await request.get(`${this.getResourceListUrl()}/drivers`);
     return result
   }
 
@@ -493,7 +518,12 @@ export default class ExternalLoadBalancerStore extends Base {
       const projectsList = get(projectsData, 'projects', [])
       const projectsNames = projectsList.map(item => item.name)
 
-      return projectsNames
+      const exclude = ['Common',  'Tenant-A-kaas', 'Tenant-C']
+      const projects = projectsNames.filter(
+        name => !exclude.includes(name)
+      )
+
+      return projects
 
     }else if(type == "L"){      
       const loadbalancers = await this.fetchLoadbalancers()
@@ -532,16 +562,7 @@ export default class ExternalLoadBalancerStore extends Base {
   async fetchLoadbalancers () {
 
       // 프로젝트 리스트 추출
-      const projectsData = await request.get(this.getListUrl()+'/projects')
-      const projectsList = get(projectsData, 'projects', [])
-      const projectsAllName = projectsList.map(item => item.name)
-
-      const exclude = ['Common',  'Tenant-A-kaas', 'Tenant-C']
-
-      const projects = projectsAllName.filter(
-        name => !exclude.includes(name)
-      )
-
+      const projects = await this.fetchExistedList('P')
       this.projectNameList = projects
 
       // 프로젝트별 로드밸런서 데이타 추출
@@ -551,17 +572,39 @@ export default class ExternalLoadBalancerStore extends Base {
             try {
 
               const resultProjects = await request.get(`${this.getListUrl()}/projects/${projectName}/resources`)
-              return {
-                        ...resultProjects,
-                        name: resultProjects.loadbalancers[0].name,
-                        project: resultProjects.loadbalancers[0].project,
-                        driver_id: resultProjects.loadbalancers[0].driver_id,
-                        ip_address: resultProjects.loadbalancers[0].ip_address,
-                        status: resultProjects.loadbalancers[0].status,
-                        charAt: '',
-                        description: resultProjects.project.description,
-                      }              
+              
+              return resultProjects.loadbalancers.map(lb => {
+                const listeners = resultProjects.listeners.filter(
+                  l => l.name === lb.name || l.name.startsWith(lb.name)
+                )
 
+                const pools = resultProjects.pools.filter(
+                  p => p.name === lb.name || p.name.startsWith(lb.name)
+                )
+
+                const members = resultProjects.members.filter(
+                  m => m.pool_name === lb.name || m.pool_name.startsWith(lb.name)
+                )
+
+                const monitors = resultProjects.monitors.filter(
+                  m => m.name === lb.name || m.name.startsWith(lb.name)
+                )
+
+                return {
+                  ...lb,
+                  project: lb.project,
+                  driver_id: lb.driver_id,
+                  ip_address: lb.ip_address,
+                  status: lb.status,
+                  description: resultProjects.project.description,
+
+                  listeners,
+                  pools,
+                  members,
+                  monitors,
+                }
+              })     
+            
             } catch (e) {
               return []
             }
@@ -571,13 +614,12 @@ export default class ExternalLoadBalancerStore extends Base {
 
       this.loadbalancerNameList = loadbalancers.map(item => item.name)
       this.loadbalancerIpList = loadbalancers.map(item => item.ip_address)
-      
+
       return loadbalancers
   }
-
  
- // 롤백 및 삭제 처리 함수
- async rollback(stack) {
+  // 롤백 및 삭제 처리 함수
+  async rollback(stack) {
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
     while (stack.length) {

@@ -77,6 +77,7 @@ import ClusterFaultSetting from '../containers/Resources/ClusterFault/Setting'
 import GpuNodeDetail from '../containers/Resources/GpuNodes/Detail'
 import LicenseDetail from '../containers/Resources/Licenses/Detail'
 import GpuClustersDetail from '../containers/Resources/GpuClusters/Detail'
+import ExternalLoadBalancerDetail from '../containers/Resources/ExternalLoadBalancers/Detail'
 
 const PATH = '/clusters/:cluster'
 
@@ -307,4 +308,8 @@ export default [
     path: `${PATH}/gpuclusters/:name`,
     component: GpuClustersDetail,
   },
+  {
+    path: `${PATH}/externalLoadBalancers/:name`,
+    component: ExternalLoadBalancerDetail,
+  },  
 ]
