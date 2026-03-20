@@ -27,4 +27,4 @@ yarn-error.log*
 
 .env
 .vscode/
-.claude/
+.claude

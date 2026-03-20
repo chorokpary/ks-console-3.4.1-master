@@ -27,6 +27,8 @@ const ModifyModal = props => {
   const [modelView, setModalView] = useState(true);
   const [regStep, setRegStep] = useState(1);
 
+  const [availableRange, setAvailableRange] = useState(0);
+
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
