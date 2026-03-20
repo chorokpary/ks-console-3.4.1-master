@@ -39,29 +39,31 @@ export default class PasswordPolicyStore extends Base {
 
   getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
 
-  getPasswordApiUrl = () => `/kapis/config.kubesphere.io/v1alpha2/namespaces/default/policy/password-policy-config`
+  getPasswordApiUrl = () =>
+    `/kapis/config.kubesphere.io/v1alpha2/namespaces/default/policy/password-policy-config`
 
   @action
   async createPasswordPolicy() {
     const data = {
-          "data":{
-            "policy":"{\n \"minLength\": \"8\",\n \"maxLength\": \"64\",\n \"uppercaseCount\": \"1\",\n \"lowercaseCount\": 1,\n \"minNum\": 1,\n \"special\": \"1\",\n \"symbol\": \"(!@#$%^&*(-_=+\\\\|[{}];:', <.>/?)\",\n \"period\": 10,\n \"notice\": 7,\n \"errorMessage\": \"비밀번호에는 숫자 1개 이상, 소문자 1개 이상, 대문자 1개 이상, 특수 문자 1개 이상((!@#$%^&*(-_=+\\\\|[{}];:', <.>/?))이(가) 포함되어야 합니다. 길이는 8자에서 64자 사이여야 합니다.\"\n}"
-            }
-          }
+      data: {
+        policy: `{\n \"minLength\": \"8\",\n \"maxLength\": \"64\",\n \"uppercaseCount\": \"1\",\n \"lowercaseCount\": 1,\n \"minNum\": 1,\n \"special\": \"1\",\n \"symbol\": \"(!@#$%^&*(-_=+\\\\|[{}];:', <.>/?)\",\n \"period\": 10,\n \"notice\": 7,\n \"errorMessage\": \"${t(
+          'PASSWORD_DESC'
+        )}\"\n}`,
+      },
+    }
 
-    const result = await request.put(this.getPasswordApiUrl(),  data)
+    const result = await request.put(this.getPasswordApiUrl(), data)
     return result
   }
 
   @action
   async update(data) {
-
     const dataObject = {}
     dataObject['data'] = {}
 
     // 변경 데이터 추가
     dataObject['data']['policy'] = JSON.stringify(data, null, 2)
-    
+
     try {
       const res = await this.submitting(
         request.put(this.getPasswordApiUrl(), dataObject)
@@ -75,17 +77,15 @@ export default class PasswordPolicyStore extends Base {
 
   @action
   async getPasswordPolicy() {
-
     const passwordPolicyData = await request.get(this.getPasswordApiUrl())
     const policyString = get(passwordPolicyData, ['data', 'policy'])
 
-    if(!passwordPolicyData){
+    if (!passwordPolicyData) {
       const createResult = await this.createPasswordPolicy()
       const createPolicyString = get(createResult, ['data', 'policy'])
-      return yaml.load(createPolicyString)   
+      return yaml.load(createPolicyString)
     }
 
-    return yaml.load(policyString)   
+    return yaml.load(policyString)
   }
-
 }
