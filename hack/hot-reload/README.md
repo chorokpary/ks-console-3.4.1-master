@@ -11,9 +11,15 @@ The production image uses Node.js 18 (`build/Dockerfile`), so this patch must no
 
 ## Usage
 
+Run the stop commands before re-running `yarn start` to avoid orphan processes holding the ports.
+
 ```sh
 # Apply
 git apply hack/hot-reload/hot-reload.patch
+
+# Stop
+fuser -k 8000/tcp 8001/tcp 2>/dev/null
+pkill -f 'webpack-dev-server|nodemon.*server\.js' 2>/dev/null
 
 # Run
 yarn && yarn start

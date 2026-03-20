@@ -498,7 +498,7 @@ module.exports = {
   RESOURCES_USE: '사용',
   RESOURCES_NOT_USE: '미사용',
   RESOURCES_USER_NAME: '사용자 이름',
-  RESOURCES_CUSTOM: '사용자 정의 (고급)',
+  RESOURCES_BASH_SCRIPT: 'Bash Script',
   RESOURCES_SPECIFY_USER: '사용자 지정',
   RESOURCES_NO_USE_KAAS_RESOURCE: '사용하는 KaaS가 없습니다.',
   RESOURCES_NO_USE_VM: '사용하는 가상머신이 없습니다.',
@@ -827,7 +827,6 @@ module.exports = {
   RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC:
     '트래픽의 출발지 IP주소를 변경하는 NAT',
   RESOURCES_POWER: '파워',
-  RESOURCES_WRITE_FILE: '파일 쓰기',
   RESOURCES_SELECT_MIN_ONE_PANEL: '패널을 최소 1개 이상 선택해주세요.',
   RESOURCES_JUPYTER_CONFIG: 'Jupyter Lab 설정',
   RESOURCES_PASSWORD: '패스워드',
@@ -1130,9 +1129,9 @@ module.exports = {
     '키 페어 또는 패스워드 스크립트 정보를 입력해 주세요.',
   RESOURCES_KEYPAIR_PASSWORD_DESC:
     '키 페어 또는 스크립트 내 패스워드 정보 중 1개는 필수 입력 정보입니다.',
-  RESOURCES_FILE_WIRTE_EMPTY_DESC: '파일 쓰기 정보를 입력해 주세요.',
+
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC: '패키지 설치 정보를 입력해 주세요.',
-  RESOURCES_USER_SCRIPT_EMPTY_DESC: '사용자 정의 정보를 입력해 주세요.',
+  RESOURCES_BASH_SCRIPT_EMPTY_DESC: 'Bash Script를 입력해 주세요.',
   RESOURCES_INVALID_PACKAGE_SETTING_DESC:
     '패키지 이름(소스 및 바이너리 모두, 패키지 참조)은 소문자(a-z), 숫자(0-9), 더하기(+) 및 빼기(-) 기호, 마침표(.)로만 구성되어야 합니다. 길이는 2자 이상이어야 하며 영숫자 문자로 시작해야 합니다.',
   RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC:

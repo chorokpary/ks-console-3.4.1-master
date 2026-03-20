@@ -498,7 +498,7 @@ module.exports = {
   RESOURCES_USE: 'Use',
   RESOURCES_NOT_USE: 'Not Use',
   RESOURCES_USER_NAME: 'User Name',
-  RESOURCES_CUSTOM: 'Custom (Advanced)',
+  RESOURCES_BASH_SCRIPT: 'Bash Script',
   RESOURCES_SPECIFY_USER: 'Specify User',
   RESOURCES_NO_USE_KAAS_RESOURCE: 'not used by any KaaS.',
   RESOURCES_NO_USE_VM: 'not used by any Virtual Machine.',
@@ -830,7 +830,7 @@ module.exports = {
   RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC:
     'NAT that changes the source IP address of traffic.',
   RESOURCES_POWER: 'Power',
-  RESOURCES_WRITE_FILE: 'Write File',
+
   RESOURCES_SELECT_MIN_ONE_PANEL: 'Please select at least one panel.',
   RESOURCES_JUPYTER_CONFIG: 'Jupyter Lab Configuration',
   RESOURCES_PASSWORD: 'Password',
@@ -1132,10 +1132,10 @@ module.exports = {
     'Please enter keypair or password script information.',
   RESOURCES_KEYPAIR_PASSWORD_DESC:
     'One of keypair or password information in the script is required.',
-  RESOURCES_FILE_WIRTE_EMPTY_DESC: 'Please enter file write information.',
+
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC:
     'Please enter package installation information.',
-  RESOURCES_USER_SCRIPT_EMPTY_DESC: 'Please enter user-defined information.',
+  RESOURCES_BASH_SCRIPT_EMPTY_DESC: 'Please enter a bash script.',
   RESOURCES_INVALID_PACKAGE_SETTING_DESC:
     'Package name (both source and binary, package references) should only consist of lowercase (a-z), numbers (0-9), plus (+) and minus (-) signs, and dots (.). It must be at least 2 characters long and start with an alphanumeric character.',
   RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC:
