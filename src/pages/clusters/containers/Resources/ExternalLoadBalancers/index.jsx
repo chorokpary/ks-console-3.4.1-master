@@ -170,7 +170,7 @@ export default class LoadBalancers extends React.Component {
                 width: 'auto',
                 render: (updated_at, record) => {          
                     const allMembers = record.pools.flatMap(p => p.members ?? [])
-                    const memberText = this.getBesidesText(allMembers, 'O')      
+                    const memberText = this.getBesidesText(allMembers, 'O', record.name, "V" )      
                     return <p>{memberText}</p>
                 }
             },

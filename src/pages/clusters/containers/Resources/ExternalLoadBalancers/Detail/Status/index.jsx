@@ -64,7 +64,7 @@ const Status = (props) => {
                         <p>{t('LB method')}</p>
                     </div>
                     <div className={styles.text}>
-                        <div>{getBesidesText(obj.members, 'O')}</div>
+                        <div>{getBesidesText(obj.members, 'O', lbName, 'V')}</div>
                         <p>{t('RESOURCES_MEMBER')}</p>
                     </div>
                     <div className={styles.text}>

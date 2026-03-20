@@ -969,10 +969,19 @@ const RegistModal = props => {
                 {/* 기본설정 설정 끝========================================== */}
 
                 {/* 풀 설정 시작======================================== */}
-                <div className={`${regStep === 2 ? '' : 'hide'}`}>
-                
-                  {t('RESOURCES_POOL')}
-                  <span className="form-item-required">*</span>
+                <div className={`${regStep === 2 ? '' : 'hide'}`}>                
+                  
+                  <div className={styles.header}>
+                    <div className={styles.left}>
+                      {t('RESOURCES_POOL')} <span className="form-item-required">*</span>
+                    </div>
+                    <Button
+                      onClick={handlePool.handleAddFields}
+                    >
+                      {t('RESOURCES_ADD_POOL')}
+                    </Button>
+                  </div>
+                                    
                   <div style={{ padding: 10 }} />   
                   <div className={styles.wrapper_pool}>  
                     {/* Poll List Start ================================================*/}
@@ -1156,13 +1165,8 @@ const RegistModal = props => {
                     ))}
                     {/* Poll List End ================================================*/}
                     <div style={{ padding: 10 }} />                    
-                  </div>    
-
-                  <div className="text-center">
-                      <Button className={styles.add} onClick={handlePool.handleAddFields}>
-                        {t('RESOURCES_ADD')}
-                      </Button>
-                  </div>                
+                  </div> 
+                                
                 </div>
                 {/* 풀 설정 끝========================================== */}
 

@@ -35,24 +35,22 @@ export default class ExternalLoadBalancerStore extends Base {
   loadbalancerNameList = []
   loadbalancerIpList = []
 
-  getResourceXlbUrl = (params = {}) =>
-    `kapis/externallb.kubesphere.io/v1alpha1${this.getPath(
-      params
-    )}${this.getOditLogUrl(params)}/xlb/v1`
+  getOditLogUrl = (params) =>
+    `/${this.module}/${params.name ? `${params.name}` : 'resources'}`
 
   getResourceUrl = (params = {}) =>
     `kapis/externallb.kubesphere.io/v1alpha1${this.getPath(
       params
-    )}${this.getOditLogUrl(params, 'externalloadbalancer')}/xlb/v1`
+    )}${this.getOditLogUrl(params)}/xlb/v1`
 
   getResourceListUrl = (params = {}) =>
     `kapis/externallb.kubesphere.io/v1alpha1/xlb/v1`
 
-  getListUrl = this.getResourceListUrl
-  
-  getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
-  getDeleteUrl = (params = {}) =>
-    `${this.getListUrl(params)}/${params.name}/${params.project}`
+  getListUrl = this.getResourceUrl
+
+  // getDetailUrl = (params = {}) => `${this.getListUrl(params)}/${params.name}`
+  // getDeleteUrl = (params = {}) =>
+  //   `${this.getListUrl(params)}/${params.name}/${params.project}`
 
   @action
   async fetchList({
@@ -92,7 +90,7 @@ export default class ExternalLoadBalancerStore extends Base {
       params.project = namespace
     }
 
-    const loadbalancers = await this.fetchLoadbalancers()
+    const loadbalancers = await this.fetchLoadbalancers(params)
 
     const data = loadbalancers
 
@@ -192,7 +190,7 @@ export default class ExternalLoadBalancerStore extends Base {
 
       // 프로젝트 중복 체크해서 최조일때만 생성
       if(!isDuplicated){
-        await request.post(`${this.getListUrl()}/projects`, projectData)
+        await request.post(`${this.getResourceUrl({ name: projectName })}/projects`, projectData)
         rollbackStack.push(() => this.deleteProject(projectName))
       }      
 
@@ -214,7 +212,7 @@ export default class ExternalLoadBalancerStore extends Base {
           }
           if (driverId === 'haproxy') { delete monitorData.description }
 
-          await request.post(`${this.getListUrl()}/projects/${projectName}/monitors`, monitorData)
+          await request.post(`${this.getResourceUrl({ name: monitorName })}/projects/${projectName}/monitors`, monitorData)
           rollbackStack.push(() => this.deleteMonitor(projectName, monitorName))
         })
       )
@@ -232,7 +230,7 @@ export default class ExternalLoadBalancerStore extends Base {
             poolData.monitor = `${lbName}-${item.poolName}-monitor-${item.type.toLowerCase()}`
           }
 
-          await request.post(`${this.getListUrl()}/projects/${projectName}/pools`, poolData)
+          await request.post(`${this.getResourceUrl({ name: poolName })}/projects/${projectName}/pools`, poolData)
           rollbackStack.push(() => this.deletePool(projectName, poolName))
         })
       )
@@ -249,7 +247,7 @@ export default class ExternalLoadBalancerStore extends Base {
             poolData.monitor = `${lbName}-${item.poolName}-monitor-${item.type.toLowerCase()}`
           }
 
-          await request.put(`${this.getListUrl()}/projects/${projectName}/pools/${poolName}`, poolData)
+          await request.put(`${this.getResourceUrl({ name: poolName })}/projects/${projectName}/pools/${poolName}`, poolData)
         })
       )
       
@@ -269,7 +267,7 @@ export default class ExternalLoadBalancerStore extends Base {
                 weight: Number(member.memberWeight)
               }
 
-              await request.post(`${this.getListUrl()}/projects/${projectName}/members`, poolMemberData)
+              await request.post(`${this.getResourceUrl({ name: memberName })}/projects/${projectName}/members`, poolMemberData)
               rollbackStack.push(() => this.deleteMember(projectName, memberName))
             })
           )
@@ -289,7 +287,7 @@ export default class ExternalLoadBalancerStore extends Base {
             pool: `${lbName}-${listener.pool}`
           }
           listenerNames.push(listenerName)
-          await request.post(`${this.getListUrl()}/projects/${projectName}/listeners`, listenerData)
+          await request.post(`${this.getResourceUrl({ name: listenerName })}/projects/${projectName}/listeners`, listenerData)
           rollbackStack.push(() => this.deleteListener(projectName, listenerName))
         })
       )
@@ -301,7 +299,7 @@ export default class ExternalLoadBalancerStore extends Base {
         ip_address: lb.ip,
         listeners: listenerNames
       }
-      await request.post(`${this.getListUrl()}/projects/${projectName}/loadbalancers`, loadbalancerData)
+      await request.post(`${this.getResourceUrl({ name: lbName })}/projects/${projectName}/loadbalancers`, loadbalancerData)
       rollbackStack.push(() => this.deleteLoadBalancer(projectName, lbName))
 
       // 8. 리스너 attach
@@ -331,7 +329,7 @@ export default class ExternalLoadBalancerStore extends Base {
   async fetchDetail(params) {
     this.isLoading = true
     
-    const loadbalancers = await this.fetchLoadbalancers()
+    const loadbalancers = await this.fetchLoadbalancers(params)
     const detail = loadbalancers.find(item => item.name === params.name)
 
     this.listenersDetail = detail.listeners ?? [];
@@ -370,7 +368,7 @@ export default class ExternalLoadBalancerStore extends Base {
               }
           }
           if (driverId === 'haproxy') { delete monitorData.description }
-          await request.put(`${this.getListUrl()}/projects/${projectName}/monitors/${monitorName}`, monitorData)
+          await request.put(`${this.getResourceUrl({ name: monitorName })}/projects/${projectName}/monitors/${monitorName}`, monitorData)
         })
       )
 
@@ -382,7 +380,7 @@ export default class ExternalLoadBalancerStore extends Base {
             load_balancing_method: item.lbmethod,
           }
 
-          await request.put(`${this.getListUrl()}/projects/${projectName}/pools/${poolName}`, poolData)
+          await request.put(`${this.getResourceUrl({ name: poolName })}/projects/${projectName}/pools/${poolName}`, poolData)
         })
       )
 
@@ -397,7 +395,7 @@ export default class ExternalLoadBalancerStore extends Base {
                 port: Number(member.memberPort),
                 weight: Number(member.memberWeight)
               }
-              await request.put(`${this.getListUrl()}/projects/${projectName}/members/${memberName}`, poolMemberData)
+              await request.put(`${this.getResourceUrl({ name: memberName })}/projects/${projectName}/members/${memberName}`, poolMemberData)
             })
           )
         })
@@ -410,7 +408,7 @@ export default class ExternalLoadBalancerStore extends Base {
           const listenerData = {
             port: Number(listener.port),
           }
-          await request.put(`${this.getListUrl()}/projects/${projectName}/listeners/${listenerName}`, listenerData)
+          await request.put(`${this.getResourceUrl({ name: listenerName })}/projects/${projectName}/listeners/${listenerName}`, listenerData)
         })
       )
 
@@ -418,7 +416,7 @@ export default class ExternalLoadBalancerStore extends Base {
       const loadbalancerData = {
           ip_address: lb.ip,
       }
-      await request.put(`${this.getListUrl()}/projects/${projectName}/loadbalancers/${lbName}`, loadbalancerData)
+      await request.put(`${this.getResourceUrl({ name: lbName })}/projects/${projectName}/loadbalancers/${lbName}`, loadbalancerData)
 
       this.isSubmitting = false
       return { success: true }
@@ -440,7 +438,7 @@ export default class ExternalLoadBalancerStore extends Base {
     }
 
     this.isSubmitting = true
-
+    console.log("data : "+ JSON.stringify(data))
     const deleteStack = []
     const projectName = data.project
     const loadbalancerName = data.name
@@ -450,7 +448,7 @@ export default class ExternalLoadBalancerStore extends Base {
     const members = data.pools.flatMap(pool => pool?.members?.map(member => member.name) ?? [])
 
     // 삭제 순서 
-    // 리스너 detach > 리스너 삭제 > LoadBalancer 삭제 > 멤버 삭제 > 풀 삭제 > 모니터 삭제 > 프로젝트 삭제 
+    // 리스너 detach > LoadBalancer 삭제 > 리스너 삭제 > 멤버 삭제 > 풀 삭제 > 모니터 삭제 > 프로젝트 삭제 
      
     // 프로젝트 삭제
     //deleteStack.push(() => this.deleteProject(projectName))
@@ -476,15 +474,15 @@ export default class ExternalLoadBalancerStore extends Base {
       })      
     )
 
-    // 로드 밸런스 삭제
-    deleteStack.push(() => this.deleteLoadBalancer(projectName, loadbalancerName))
-
     // 리스너 삭제
     await Promise.all(
       listeners.map(listenerName => {
         deleteStack.push(() => this.deleteListener(projectName, listenerName))
       })      
     )
+
+    // 로드 밸런스 삭제
+    deleteStack.push(() => this.deleteLoadBalancer(projectName, loadbalancerName))
 
      // 리스너 분리
     await Promise.all(
@@ -514,7 +512,7 @@ export default class ExternalLoadBalancerStore extends Base {
     // P : project, L : loadbalancer, M : Member 
     
     if(type == "P"){      
-      const projectsData = await request.get(this.getListUrl()+'/projects')
+      const projectsData = await request.get(this.getResourceUrl()+'/projects')
       const projectsList = get(projectsData, 'projects', [])
       const projectsNames = projectsList.map(item => item.name)
 
@@ -559,19 +557,19 @@ export default class ExternalLoadBalancerStore extends Base {
   }
 
   // 프로젝트 전체 로드밸런서 데이터 
-  async fetchLoadbalancers () {
+  async fetchLoadbalancers (params = {}) {
 
       // 프로젝트 리스트 추출
       const projects = await this.fetchExistedList('P')
       this.projectNameList = projects
-
+      
       // 프로젝트별 로드밸런서 데이타 추출
       const loadbalancers = (
         await Promise.all(
           projects.map(async projectName => {
             try {
 
-              const resultProjects = await request.get(`${this.getListUrl()}/projects/${projectName}/resources`)
+              const resultProjects = await request.get(`${this.getListUrl(params)}/projects/${projectName}/resources`)              
               
               return resultProjects.loadbalancers.map(lb => {
                 const listeners = resultProjects.listeners.filter(
@@ -638,43 +636,43 @@ export default class ExternalLoadBalancerStore extends Base {
   @action
   async detachListener (project, lb, listener) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}/attachments?lbName=${lb}&listenerName=${listener}`
+        `${this.getResourceUrl({ name: listener })}/projects/${project}/attachments?lbName=${lb}&listenerName=${listener}`
      )
   }
   @action
   async deleteListener (project, name) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}/listeners/${name}`
+        `${this.getResourceUrl({ name: name })}/projects/${project}/listeners/${name}`
      )
   }
   @action
   async deleteLoadBalancer (project, name) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}/loadbalancers/${name}`
+        `${this.getResourceUrl({ name: name })}/projects/${project}/loadbalancers/${name}`
      )
   }
   @action
   async deleteMember (project, name) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}/members/${name}`
+        `${this.getResourceUrl({ name: name })}/projects/${project}/members/${name}`
      )
   }
   @action
   async deletePool (project, name) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}/pools/${name}`
+        `${this.getResourceUrl({ name: name })}/projects/${project}/pools/${name}`
      )
   }
   @action
   async deleteMonitor (project, name) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}/monitors/${name}`
+        `${this.getResourceUrl({ name: name })}/projects/${project}/monitors/${name}`
      )
   }
   @action
   async deleteProject (project) {
      request.delete(
-        `${this.getListUrl()}/projects/${project}`
+        `${this.getResourceUrl({ name: project })}/projects/${project}`
      )
   }
 

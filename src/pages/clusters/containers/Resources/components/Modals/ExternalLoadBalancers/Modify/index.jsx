@@ -822,6 +822,10 @@ const ModifyModal = props => {
     )
   }
 
+  const getRemoveLbName = (name) => {
+    return name.replace(`${detail.name}-`,'')
+  }
+
   return (
     <>
       <Modal
@@ -1098,7 +1102,7 @@ const ModifyModal = props => {
                                     name="poolName"
                                     maxLength={63}
                                     style={{ maxWidth: 'none' }}
-                                    value={v.poolName || ''}
+                                    value={getRemoveLbName(v.poolName) || ''}
                                     onChange={e => handlePool.handleInputChange(i,'poolName',e)}
                                     disabled={true}
                                   />
@@ -1320,7 +1324,7 @@ const ModifyModal = props => {
                                   <td>
                                     <Input
                                         type="text"
-                                        value={v.pool}
+                                        value={v.pool && getRemoveLbName(v.pool)}
                                         disabled={true}
                                       />
                                   </td>
@@ -1447,7 +1451,7 @@ const ModifyModal = props => {
                                 </thead>
                                 <tbody>  
                                     <tr>                              
-                                      <td>{v.poolName}</td>
+                                      <td>{v.poolName && getRemoveLbName(v.poolName)}</td>
                                       <td>{v.lbmethod}</td>
                                     </tr>                          
                                 </tbody>
@@ -1551,7 +1555,7 @@ const ModifyModal = props => {
                                 <tr key={`info_listener_${i}`}>                              
                                   <td>{v.protocol}</td>
                                   <td>{v.port}</td>
-                                  <td>{v.pool}</td>
+                                  <td>{v.pool && getRemoveLbName(v.pool)}</td>
                                 </tr>      
                               ))}                      
                             </tbody>

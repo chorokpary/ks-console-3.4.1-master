@@ -1366,6 +1366,7 @@ module.exports = {
   RESOURCES_ALREADY_USED_IP: 'This IP has already been used.',
   RESOURCES_INTERVAL_LESSS_THAN_TIMEOUT_DESC: 'Interval value must always be less than Timeout.',
   RESOURCES_MONITOR_VALID: 'Please enter your Monitor Information',
+  RESOURCES_ADD_POOL: 'Add Pool',
 
   RESOURCES_SELECT_DRIVER: 'Please select a Driver.',
 }

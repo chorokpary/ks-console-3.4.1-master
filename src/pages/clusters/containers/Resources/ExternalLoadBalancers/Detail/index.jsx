@@ -115,7 +115,7 @@ const ExternalLoadBalancerDetail = (props) => {
             },
             {
                 name: t('RESOURCES_MEMBER'),
-                value: getBesidesText(detail.pools.flatMap(p => p.members ?? []), 'O'),
+                value: getBesidesText(detail.pools.flatMap(p => p.members ?? []), 'O', lbName, 'V'),
             },
             {
                 name: t('RESOURCES_MONITOR'),
