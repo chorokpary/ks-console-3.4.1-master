@@ -138,8 +138,7 @@ const RegistModal = props => {
   const [isJupyterConfig, setIsJupyterConfig] = useState(false)
   const [isPassword, setIsPassword] = useState(false)
   const [isPackage, setIsPackage] = useState(false)
-  const [isFileWrite, setIsFileWrite] = useState(false)
-  const [isUserScript, setIsUserScript] = useState(false)
+  const [isBashScript, setIsBashScript] = useState(false)
 
   const [jupyterToken, setJupyterToken] = useState('')
 
@@ -147,8 +146,7 @@ const RegistModal = props => {
   const [isJupyterTokenError, setIsJupyterTokenError] = useState(false)
   const [isPasswordError, setIsPasswordError] = useState(false)
   const [isPackageError, setIsPackageError] = useState(false)
-  const [isFileWriteError, setIsFileWriteError] = useState(false)
-  const [isUserScriptError, setIsUserScriptError] = useState(false)
+  const [isBashScriptError, setIsBashScriptError] = useState(false)
   const [isKeypiarPasswordError, setIsKeypiarPasswordError] = useState(false)
 
   const [packageValidationError, setIsPackageValidationError] = useState(false)
@@ -502,12 +500,6 @@ const RegistModal = props => {
   const getScript = () => {
     const { data } = form.current.props
 
-    if (data.userScript !== '' && data.userScript !== undefined) {
-      return {
-        custom_script: data.userScript,
-      }
-    }
-
     const makeScript = {}
 
     if (listPasswordRoute.length !== 0) {
@@ -521,17 +513,24 @@ const RegistModal = props => {
       makeScript['user_password'] = userPassWord
     }
 
-    const writeFiles = []
-    listFileRoute.forEach(obj => {
-      if (!!data[`scriptPath_${obj}`] && !!data[`scriptContent_${obj}`]) {
-        writeFiles.push({
-          path: data[`scriptPath_${obj}`],
-          content: data[`scriptContent_${obj}`],
-        })
+    if (isPackage && listPackageRoute.length !== 0) {
+      const packageInstall = []
+      listPackageRoute.forEach(obj => {
+        if (data[`scriptPackage_${obj}`]) {
+          const pkg = { package: data[`scriptPackage_${obj}`] }
+          if (data[`scriptVersion_${obj}`]) {
+            pkg.version = data[`scriptVersion_${obj}`]
+          }
+          packageInstall.push(pkg)
+        }
+      })
+      if (packageInstall.length !== 0) {
+        makeScript['package_install'] = packageInstall
       }
-    })
-    if (writeFiles.length !== 0) {
-      makeScript['write_files'] = writeFiles
+    }
+
+    if (isBashScript && data.bashScript) {
+      makeScript['bash_script'] = data.bashScript
     }
 
     if (isJupyterConfig) {
@@ -616,16 +615,14 @@ const RegistModal = props => {
       if (isScript) {
         const checkFlagJupyter = checkScriptJupyter()
         const checkFlagPassword = checkScriptPassword()
-        const checkFlagFileWrite = checkScriptFilewrite()
         const checkFlagPackage = checkScriptPackage()
-        const checkFlagUserScript = checkScriptUserScript()
+        const checkFlagBashScript = checkScriptBashScript()
 
         if (
           checkFlagJupyter ||
           checkFlagPassword ||
-          checkFlagFileWrite ||
           checkFlagPackage ||
-          checkFlagUserScript
+          checkFlagBashScript
         ) {
           return false
         }
@@ -641,8 +638,7 @@ const RegistModal = props => {
       setIsJupyterTokenError(false)
       setIsPasswordError(false)
       setIsPackageError(false)
-      setIsFileWriteError(false)
-      setIsUserScriptError(false)
+      setIsBashScriptError(false)
       setIsKeypiarPasswordError(false)
       setIsPackageValidationError(false)
 
@@ -703,46 +699,18 @@ const RegistModal = props => {
     return false
   }
 
-  const checkScriptFilewrite = () => {
-    if (isFileWrite) {
-      const { data } = form.current.props
-      try {
-        listFileRoute.forEach(obj => {
-          // eslint-disable-next-line no-empty
-          if (data[`scriptPath_${obj}`]) {
-          } else {
-            setIsFileWriteError(true)
-            throw new Error(`File write error for ${obj}`)
-          }
-        })
-      } catch (e) {
-        return e
-      }
-    }
-    setIsFileWriteError(false)
-    return false
-  }
-
   const checkScriptPackage = () => {
     if (isPackage) {
       const { data } = form.current.props
       try {
         listPackageRoute.forEach(obj => {
-          if (
-            !!data[`scriptPackage_${obj}`] &&
-            !!data[`scriptVersion_${obj}`]
-          ) {
+          if (!!data[`scriptPackage_${obj}`]) {
             setIsPackageError(false)
             if (!PATTERN_PACKAGE_NAME.test(data[`scriptPackage_${obj}`])) {
               setIsPackageValidationError(true)
               throw new Error(`Package validation error for ${obj}`)
             }
           } else {
-            if (!PATTERN_PACKAGE_NAME.test(data[`scriptPackage_${obj}`])) {
-              setIsPackageValidationError(true)
-            } else {
-              setIsPackageValidationError(false)
-            }
             setIsPackageError(true)
             throw new Error(`Package error for ${obj}`)
           }
@@ -756,19 +724,19 @@ const RegistModal = props => {
     return false
   }
 
-  const checkScriptUserScript = () => {
+  const checkScriptBashScript = () => {
     let flag = false
-    if (isUserScript) {
+    if (isBashScript) {
       const { data } = form.current.props
-      if (data['userScript']) {
+      if (data['bashScript']) {
         flag = false
-        setIsUserScriptError(false)
+        setIsBashScriptError(false)
       } else {
         flag = true
-        setIsUserScriptError(true)
+        setIsBashScriptError(true)
       }
     } else {
-      setIsUserScriptError(false)
+      setIsBashScriptError(false)
     }
     return flag
   }
@@ -1060,32 +1028,6 @@ const RegistModal = props => {
     },
   }
 
-  const nextFileRoute = useRef(1)
-  const [listFileRoute, setListFileRoute] = useState([1])
-
-  useEffect(() => {
-    checkScriptFilewrite()
-  }, [listFileRoute])
-
-  const handleFileRoute = {
-    addColumn: () => {
-      if (listFileRoute.length > 4) {
-        Notify.info(t('RESOURCES_ADD_UNTIL_FIVE'))
-        return false
-      }
-      nextFileRoute.current += 1
-      setListFileRoute(fileRoutes => [...fileRoutes, nextFileRoute.current])
-    },
-    delColumn: id => {
-      if (listFileRoute.length === 1) {
-        Notify.info(t('RESOURCES_DELETING_DEFAULT_NOT_ALLOWED'))
-        return false
-      }
-      if (listFileRoute.length > 1)
-        setListFileRoute(listFileRoute.filter(el => el !== id))
-    },
-  }
-
   const nextPackageRoute = useRef(1)
   const [listPackageRoute, setlistPackageRoute] = useState([1])
 
@@ -1146,19 +1088,6 @@ const RegistModal = props => {
     return (
       <>
         {t('RESOURCES_CHANGE_PASSWORD')} - {values.join(', ')}
-      </>
-    )
-  }
-
-  const renderFiles = () => {
-    const list = document.querySelectorAll('[name^="scriptPath"]')
-    const values = []
-    for (const el of list) {
-      values.push(el.value)
-    }
-    return (
-      <>
-        {t('RESOURCES_WRITE_FILE')} - {values.join(', ')}
       </>
     )
   }
@@ -2034,14 +1963,7 @@ const RegistModal = props => {
                   }}
                   checkable
                 >
-                  <div
-                    className={isUserScript ? 'disabled' : ''}
-                    onClick={e => {
-                      if (isUserScript) {
-                        e.preventDefault()
-                      }
-                    }}
-                  >
+                  <div>
                     {preInstalledApp.toLowerCase() === 'jupyter' && (
                       <Form.Group
                         label={t('RESOURCES_JUPYTER_CONFIG')}
@@ -2186,107 +2108,31 @@ const RegistModal = props => {
                         {t('RESOURCES_PASSWORD_EMPTY_DESC')}
                       </div>
                     </Form.Group>
-
-                    <Form.Group
-                      label={t('RESOURCES_WRITE_FILE')}
-                      onChange={() => {
-                        setIsFileWrite(!isFileWrite)
-                      }}
-                      checkable
-                    >
-                      {listFileRoute.map(obj => (
-                        <div className={styles.scriptitem} key={obj}>
-                          <Columns>
-                            <Column>
-                              <Form.Item>
-                                <Input
-                                  name={`scriptPath_${obj}`}
-                                  placeholder={t('PATH')}
-                                  onChange={() => checkScriptFilewrite()}
-                                />
-                              </Form.Item>
-                            </Column>
-                            <Column>
-                              <Form.Item>
-                                <Input
-                                  name={`scriptContent_${obj}`}
-                                  placeholder={t('Content')}
-                                />
-                              </Form.Item>
-                            </Column>
-                          </Columns>
-                          {listFileRoute.length > 1 && (
-                            <Button
-                              type="flat"
-                              icon="trash"
-                              className={styles.scriptdelete}
-                              onClick={() =>
-                                // listFileRoute.length > 1 &&
-                                handleFileRoute.delColumn(obj)
-                              }
-                            />
-                          )}
-                        </div>
-                      ))}
-                      <div className="text-right">
-                        <Button
-                          className={styles.scriptadd}
-                          onClick={handleFileRoute.addColumn}
-                        >
-                          {t('RESOURCES_ADD')}
-                        </Button>
-                      </div>
-                      <div
-                        className={`form-item-error ${
-                          !isFileWriteError ? 'hide' : ''
-                        }`}
-                      >
-                        {t('RESOURCES_FILE_WIRTE_EMPTY_DESC')}
-                      </div>
-                    </Form.Group>
                   </div>
-                  <div
-                    className={
-                      isJupyterConfig || isPassword || isPackage || isFileWrite
-                        ? 'disabled'
-                        : ''
-                    }
-                    onClick={e => {
-                      if (
-                        isJupyterConfig ||
-                        isPassword ||
-                        isPackage ||
-                        isFileWrite
-                      ) {
-                        e.preventDefault()
-                      }
+                  <Form.Group
+                    label={t('RESOURCES_BASH_SCRIPT')}
+                    checkable
+                    onChange={() => {
+                      setIsBashScript(!isBashScript)
                     }}
                   >
-                    <Form.Group
-                      label={t('RESOURCES_CUSTOM')}
-                      checkable
-                      onChange={() => {
-                        setIsUserScript(!isUserScript)
-                      }}
+                    <Form.Item className={styles.textarea}>
+                      <TextArea
+                        name="bashScript"
+                        rows="5"
+                        placeholder={
+                          '#!/bin/bash\n\nsystemctl disable --now firewalld\necho \'export MY_ENV="value"\' > /etc/profile.d/custom_env.sh'
+                        }
+                      />
+                    </Form.Item>
+                    <div
+                      className={`form-item-error ${
+                        !isBashScriptError ? 'hide' : ''
+                      }`}
                     >
-                      <Form.Item className={styles.textarea}>
-                        <TextArea
-                          name="userScript"
-                          rows="5"
-                          placeholder={decodeURIComponent(
-                            '%23cloud-config%0A%20%0Assh_pwauth%3A%20true%0Ausers%3A%0A%20%20-%20default%0A%20%20-%20name%3A%20adminuser%0A%20%20%20%20sudo%3A%20ALL%3D%28ALL%29%20NOPASSWD%3AALL%0A%20%0Achpasswd%3A%0A%20%20expire%3A%20false%0A%20%20list%3A%0A%20%20%20%20-%20ubuntu%3Adefaultpassword%0A%20%20%20%20-%20adminuser%3AP0werfu1PW%0A%20%0Aruncmd%3A%0A%20%20-%20systemctl%20disable%20firewalld%0A%20%0Awrite_files%3A%0A%20%20-%20path%3A%20/home/ubuntu/simple-message.txt%0A%20%20%20%20content%3A%20%7C%0A%20%20%20%20%20%20cloud-init%20syntax%0A%20%20%20%20%20%20create%20a%20simple%20file'
-                          )}
-                        />
-                      </Form.Item>
-                      <div
-                        className={`form-item-error ${
-                          !isUserScriptError ? 'hide' : ''
-                        }`}
-                      >
-                        {t('RESOURCES_USER_SCRIPT_EMPTY_DESC')}
-                      </div>
-                    </Form.Group>
-                  </div>
+                      {t('RESOURCES_BASH_SCRIPT_EMPTY_DESC')}
+                    </div>
+                  </Form.Group>
                 </Form.Group>
               </div>
               {/* 세부 설정 끝========================================== */}
@@ -2506,10 +2352,10 @@ const RegistModal = props => {
                         {isScript && (
                           <div className={styles.multiline}>
                             <div>{isPassword && renderIds()}</div>
-                            <div>{isFileWrite && renderFiles()}</div>
                             <div>{isPackage && renderPackages()}</div>
                             <div>
-                              {isUserScript && `${t('RESOURCES_CUSTOM')} - Y`}
+                              {isBashScript &&
+                                `${t('RESOURCES_BASH_SCRIPT')} - Y`}
                             </div>
                           </div>
                         )}
