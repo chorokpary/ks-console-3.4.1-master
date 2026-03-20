@@ -55,10 +55,10 @@ module.exports = {
   DELETING_CURRENT_USER_NOT_ALLOWED: '현재 사용자는 삭제 될 수 없습니다.',
   USER_NOTLOGIN: '로그인 필요함',
   USER_LOGIN_AT_LEAST_ONCE: '한 번이라도 로그인하면 활성화 됩니다.',
-  USER_CREATE_MINDIGIT: '숫자 {minDigit}개 이상',
+  USER_CREATE_MINNUM: '숫자 {minNum}개 이상',
   USER_CREATE_MINLOWER: '소문자 {minLower}개 이상',
   USER_CREATE_MINUPPER: '대문자 {minUpper}개 이상',
-  USER_CREATE_MINSPECIAL: '특수문자 {minSpecial}개 이상({specialSet})',
+  USER_CREATE_MINSPECIAL: '특수문자 {special}개 이상({symbol})',
   USER_CREATE_RULE: '비밀번호에는 {rules}이(가) 포함되어야 합니다.',
   USER_CREATE_LENGTHTEXT:
     '길이는 {minLength}자에서 {maxLength}자 사이여야 합니다.',

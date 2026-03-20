@@ -57,10 +57,10 @@ module.exports = {
   DELETING_CURRENT_USER_NOT_ALLOWED: 'The current user cannot be deleted.',
   USER_NOTLOGIN: 'Login required',
   USER_LOGIN_AT_LEAST_ONCE: 'Need to Login at least once to activate it.',
-  USER_CREATE_MINDIGIT: '{minDigit} number',
+  USER_CREATE_MINNUM: '{minNum} number',
   USER_CREATE_MINLOWER: '{minLower} lowercase letter',
   USER_CREATE_MINUPPER: '{minUpper} uppercase letter',
-  USER_CREATE_MINSPECIAL: '{minSpecial} special character ({specialSet})',
+  USER_CREATE_MINSPECIAL: '{special} special character ({symbol})',
   USER_CREATE_RULE: 'The password must contain at least {rules}.',
   USER_CREATE_LENGTHTEXT:
     'The length must be {minLength} to {maxLength} characters',
