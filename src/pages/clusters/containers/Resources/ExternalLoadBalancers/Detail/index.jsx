@@ -71,7 +71,7 @@ const ExternalLoadBalancerDetail = (props) => {
 
     const getBesidesText = (arr = [], type, xlbName = '', col = '') => {  
         const first = type === 'O' ? arr?.[0]?.name : arr?.[0]
-        const firstTxt = col == "L" ? first : first.replace(`${xlbName}-`,'')
+        const firstTxt = col == "L" ? first : first?.replace(`${xlbName}-`,'') || ''
         const sidesText = arr?.length
                             ? arr.length > 1
                                 ? `${firstTxt} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
