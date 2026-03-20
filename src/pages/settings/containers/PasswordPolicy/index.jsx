@@ -22,6 +22,7 @@ import {
 } from '@kube-design/components'
 
 import PasswordPolicyStore from 'stores/passwordPolicy'
+import { buildPasswordPolicyMessage } from 'utils/passwordPattern'
 
 const PasswordPolicy = () => {
   const passwordPolicyStore = new PasswordPolicyStore()
@@ -67,9 +68,9 @@ const PasswordPolicy = () => {
       const maxLength = Number(data.maxLength ?? 64)
       const minUpper = Number(data.uppercaseCount ?? 0)
       const minLower = Number(data.lowercaseCount ?? 0)
-      const minDigit = Number(data.minNum ?? 0)
-      const minSpecial = Number(data.special ?? 0)
-      const specialSet = data.symbol ?? ''
+      const minNum = Number(data.minNum ?? 0)
+      const special = Number(data.special ?? 0)
+      const symbol = data.symbol ?? ''
 
       if (data.period === undefined) {
         data.period = defaultValues.period
@@ -80,35 +81,15 @@ const PasswordPolicy = () => {
         }
       }
 
-      const rules = []
-      let ruleText = ''
-
-      if (minDigit > 0) {
-        rules.push(t.html(`USER_CREATE_MINDIGIT`, { minDigit: minDigit }))
-      }
-      if (minLower > 0) {
-        rules.push(t.html(`USER_CREATE_MINLOWER`, { minLower: minLower }))
-      }
-      if (minUpper > 0) {
-        rules.push(t.html(`USER_CREATE_MINUPPER`, { minUpper: minUpper }))
-      }
-      if (minSpecial > 0) {
-        rules.push(
-          t.html(`USER_CREATE_MINSPECIAL`, {
-            minSpecial: minSpecial,
-            specialSet: specialSet,
-          })
-        )
-      }
-      if (rules.length > 0) {
-        ruleText = t.html(`USER_CREATE_RULE`, { rules: rules.join(', ') })
-      }
-
-      const lengthText = t.html(`USER_CREATE_LENGTHTEXT`, {
-        minLength: minLength,
-        maxLength: maxLength,
+      const errorText = buildPasswordPolicyMessage({
+        minNum,
+        minLower,
+        minUpper,
+        special,
+        symbol,
+        minLength,
+        maxLength,
       })
-      const errorText = ruleText + lengthText
 
       data.errorMessage = errorText
       const result = await passwordPolicyStore.update(data)
