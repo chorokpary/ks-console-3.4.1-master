@@ -345,7 +345,7 @@ export default class Vms extends React.Component {
           // we first process regular network IPs
           if (networks) {
             networkIpList = networks.map(el => {
-              if (el.name === 'k8s-pod-network') return <p></p>
+              if (el.name === 'k8s-pod-network' || el.name === 'cilium') return <p></p>
               let icon = ""
               let tooltip = ""
               switch (el.type) {
