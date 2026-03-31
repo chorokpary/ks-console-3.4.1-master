@@ -9,10 +9,6 @@ import {
 } from 'utils/constants';
 import { Form, Input, Button, Select, Tooltip, TextArea } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
-import {
-  RadioButton,
-  RadioGroup,
-} from '@kube-design/components/lib/components/Radio';
 import * as common from 'utils/resources';
 import classnames from 'classnames';
 import styles from './index.scss';
@@ -22,17 +18,11 @@ const ModifyModal = props => {
   const form = useRef();
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
-  const [defaultRoute, setDefaultRoute] = useState(detail.default_route);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
   );
   const [regStep, setRegStep] = useState(1);
-
-  const defaultRouteOptions = [
-    { label: t('RESOURCES_NOT_USE'), value: false },
-    { label: t('RESOURCES_USE'), value: true },
-  ];
 
   const fabricOptions = [
     { label: 'ETHERNET', value: 'ethernet' },
@@ -71,6 +61,9 @@ const ModifyModal = props => {
       });
       data.host_routes = host_routes;
       data.project = detail.project
+
+      // Deprecated: default_route will be removed. Kept for backward compatibility with older backend images.
+      data.default_route = !!data.gateway_ip
 
       onOk({ network: data });
     });
@@ -130,9 +123,7 @@ const ModifyModal = props => {
       if (
         data.name == undefined ||
         data.name == '' ||
-        !PATTERN_MTU.test(data.mtu) ||
-        data.gateway_ip == undefined ||
-        data.gateway_ip == ''
+        !PATTERN_MTU.test(data.mtu)
       ) {
         handleOk();
       } else {
@@ -406,10 +397,6 @@ const ModifyModal = props => {
                             label={t('RESOURCES_GATEWAY_IP')}
                             rules={[
                               {
-                                required: true,
-                                message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC'),
-                              },
-                              {
                                 pattern: PATTERN_IP,
                                 message: t('RESOURCES_IP_POOL_VALID'),
                               },
@@ -419,45 +406,22 @@ const ModifyModal = props => {
                           </Form.Item>
                         </Column>
                         <Column>
-                          <Columns>
-                            <Column>
-                              <Form.Item
-                                label={t('RESOURCES_MTU')}
-                                rules={[
-                                  { required: true, message: t('RESOURCES_MTU_EMPTY_DESC') },
-                                  {
-                                    pattern: PATTERN_MTU,
-                                    message: t('RESOURCES_MTU_VALID'),
-                                  },
-                                ]}
-                              >
-                                <NumberInput
-                                  name="mtu"
-                                  defaultValue={detail.mtu}
-                                  style={{ maxWidth: 'none' }}
-                                />
-                              </Form.Item>
-                            </Column>
-                            <Column>
-                              <Form.Item
-                                label={t('RESOURCES_DEFAULT_ROUTE')}
-                                rules={[{ required: true }]}
-                              >
-                                <RadioGroup
-                                  name="default_route"
-                                  wrapClassName="radio"
-                                  defaultValue={defaultRoute}
-                                  onChange={value => setDefaultRoute(value)}
-                                >
-                                  {defaultRouteOptions.map(option => (
-                                    <RadioButton key={option.value} value={option.value}>
-                                      {option.label}
-                                    </RadioButton>
-                                  ))}
-                                </RadioGroup>
-                              </Form.Item>
-                            </Column>
-                          </Columns>
+                          <Form.Item
+                            label={t('RESOURCES_MTU')}
+                            rules={[
+                              { required: true, message: t('RESOURCES_MTU_EMPTY_DESC') },
+                              {
+                                pattern: PATTERN_MTU,
+                                message: t('RESOURCES_MTU_VALID'),
+                              },
+                            ]}
+                          >
+                            <NumberInput
+                              name="mtu"
+                              defaultValue={detail.mtu}
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
                         </Column>
                       </Columns>
                     </Form.Item>

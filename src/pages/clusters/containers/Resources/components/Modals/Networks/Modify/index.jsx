@@ -17,16 +17,10 @@ const ModifyModal = props => {
   const form = useRef()
   const [formData] = useState({})
   const [modelView, setModalView] = useState(true)
-  const [defaultRoute, setDefaultRoute] = useState(detail.default_route)
   const [, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
   const [regStep, setRegStep] = useState(1)
 
   const defaultOptions = [
-    { label: t('RESOURCES_NOT_USE'), value: false },
-    { label: t('RESOURCES_USE'), value: true },
-  ]
-
-  const defaultRouteOptions = [
     { label: t('RESOURCES_NOT_USE'), value: false },
     { label: t('RESOURCES_USE'), value: true },
   ]
@@ -68,6 +62,9 @@ const ModifyModal = props => {
         start: data.ip_pool_start,
         end: data.ip_pool_end,
       }
+
+      // Deprecated: default_route will be removed. Kept for backward compatibility with older backend images.
+      data.default_route = !!data.gateway_ip
 
       onOk({ ...data })
     })
@@ -126,7 +123,6 @@ const ModifyModal = props => {
 
       const a = document.getElementById('ip_pool_start')
       const b = document.getElementById('ip_pool_end')
-      const c = document.getElementById('gateway_ip')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
@@ -135,8 +131,6 @@ const ModifyModal = props => {
         a.parentElement.parentElement.classList.add('error-item')
         b.nextElementSibling.classList.remove('hide')
         b.parentElement.parentElement.classList.add('error-item')
-        c.nextElementSibling.classList.remove('hide')
-        c.parentElement.parentElement.classList.add('error-item')
       }
 
       setCidrReducer()
@@ -148,7 +142,6 @@ const ModifyModal = props => {
 
       const a = document.getElementById('ip_pool_start')
       const b = document.getElementById('ip_pool_end')
-      const c = document.getElementById('gateway_ip')
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
@@ -157,8 +150,6 @@ const ModifyModal = props => {
         a.parentElement.parentElement.classList.remove('error-item')
         b.nextElementSibling.classList.add('hide')
         b.parentElement.parentElement.classList.remove('error-item')
-        c.nextElementSibling.classList.add('hide')
-        c.parentElement.parentElement.classList.remove('error-item')
       }
 
       setCidrReducer()
@@ -200,8 +191,6 @@ const ModifyModal = props => {
         data.ip_pool_start === '' ||
         data.ip_pool_end === undefined ||
         data.ip_pool_end === '' ||
-        data.gateway_ip === undefined ||
-        data.gateway_ip === '' ||
         !checkNetworkAddress(data.cidr)
       ) {
         handleOk()
@@ -485,22 +474,27 @@ const ModifyModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_DEFAULT_ROUTE')}
+                            label={t('RESOURCES_ELB_DEDICATED')}
                             rules={[{ required: true }]}
                           >
                             <RadioGroup
-                              name="default_route"
+                              name="elb"
                               wrapClassName="radio"
-                              defaultValue={defaultRoute}
-                              onChange={value => setDefaultRoute(value)}
+                              defaultValue={detail.elb || false}
                             >
-                              {defaultRouteOptions.map(option => (
-                                <RadioButton
-                                  key={option.value}
-                                  value={option.value}
+                              {defaultOptions.map(option => (
+                                <Tooltip
+                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
+                                  placement="right"
                                 >
-                                  {option.label}
-                                </RadioButton>
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled="true"
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                </Tooltip>
                               ))}
                             </RadioGroup>
                           </Form.Item>
@@ -553,41 +547,11 @@ const ModifyModal = props => {
                     </Form.Item>
                     <Form.Item>
                       <Columns>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_ELB_DEDICATED')}
-                            rules={[{ required: true }]}
-                          >
-                            <RadioGroup
-                              name="elb"
-                              wrapClassName="radio"
-                              defaultValue={detail.elb || false}
-                            >
-                              {defaultOptions.map(option => (
-                                <Tooltip
-                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
-                                  placement="right"
-                                >
-                                  <RadioButton
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled="true"
-                                  >
-                                    {option.label}
-                                  </RadioButton>
-                                </Tooltip>
-                              ))}
-                            </RadioGroup>
-                          </Form.Item>
-                        </Column>
+                        <Column />
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_GATEWAY_IP')}
                             rules={[
-                              {
-                                required: true,
-                                message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC'),
-                              },
                               {
                                 pattern: PATTERN_IP,
                                 message: t('RESOURCES_IP_POOL_VALID'),

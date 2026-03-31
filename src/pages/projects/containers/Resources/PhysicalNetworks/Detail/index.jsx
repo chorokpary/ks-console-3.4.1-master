@@ -138,12 +138,6 @@ const PhysicalNetworkDetail = props => {
         value: detail.physicalnetwork.gateway_ip,
       },
       {
-        name: t('RESOURCES_DEFAULT_ROUTE'),
-        value: detail.physicalnetwork.default_route
-          ? t('RESOURCES_USE')
-          : t('RESOURCES_NOT_USE'),
-      },
-      {
         name: t('RESOURCES_IP_POOL_INFORMATION'),
         value: `${detail.physicalnetwork.ip_pool.start}\n${detail.physicalnetwork.ip_pool.end}`,
       },

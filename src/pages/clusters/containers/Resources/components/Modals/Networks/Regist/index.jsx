@@ -130,7 +130,6 @@ const RegistModal = props => {
   )
 
   // ===== OTHER STATE =====
-  const [defaultRoute, setDefaultRoute] = useState(false)
   const [projectName, setProjectName] = useState(
     props.namespace ? props.namespace : DEFAULT_PROJECT
   )
@@ -234,7 +233,8 @@ const RegistModal = props => {
       cidr: data.cidr,
       mtu: data.mtu || DEFAULT_MTU,
       gateway_ip: data.gateway_ip,
-      default_route: data.default_route || defaultRoute,
+      // Deprecated: default_route will be removed. Kept for backward compatibility with older backend images.
+      default_route: !!data.gateway_ip,
       external: data.external,
       ip_pool: {
         start: data.ip_pool_start,
@@ -347,7 +347,6 @@ const RegistModal = props => {
         // Set errors
         setValidationError('ip_pool_start', t('RESOURCES_IP_POOL_EMPTY_DESC'))
         setValidationError('ip_pool_end', t('RESOURCES_IP_POOL_EMPTY_DESC'))
-        setValidationError('gateway_ip', t('RESOURCES_GATEWAY_IP_EMPTY_DESC'))
       } else {
         // Calculate and set CIDR values
         const cidrData = common.fnCalculateCidr(e, true)
@@ -430,8 +429,6 @@ const RegistModal = props => {
           data.ip_pool_start === '' ||
           data.ip_pool_end === undefined ||
           data.ip_pool_end === '' ||
-          data.gateway_ip === undefined ||
-          data.gateway_ip === '' ||
           !checkNetworkAddress(data.cidr)
         ) {
           handleOk()
@@ -902,23 +899,43 @@ const RegistModal = props => {
                       <Columns>
                         <Column>
                           <Form.Item
-                            label={t('RESOURCES_DEFAULT_ROUTE')}
+                            label={t('RESOURCES_ELB_DEDICATED')}
                             rules={[{ required: true }]}
                           >
                             <RadioGroup
-                              name="default_route"
+                              name="elb"
                               wrapClassName="radio"
-                              defaultValue={defaultRoute}
-                              onChange={value => setDefaultRoute(value)}
+                              defaultValue={false}
                             >
-                              {BINARY_OPTIONS.map(option => (
-                                <RadioButton
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </RadioButton>
-                              ))}
+                              {BINARY_OPTIONS.map((option, idx) => {
+                                const elbState = getElbDedicatedState()
+                                const isUseOption = idx === 1
+
+                                return elbState.showTooltip ? (
+                                  <Tooltip
+                                    key={option.value}
+                                    content={elbState.tooltipContent}
+                                    placement="right"
+                                  >
+                                    <RadioButton
+                                      value={option.value}
+                                      disabled={
+                                        isUseOption && elbState.disabled
+                                      }
+                                    >
+                                      {option.label}
+                                    </RadioButton>
+                                  </Tooltip>
+                                ) : (
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled={isUseOption && elbState.disabled}
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                )
+                              })}
                             </RadioGroup>
                           </Form.Item>
                         </Column>
@@ -967,56 +984,11 @@ const RegistModal = props => {
 
                     <Form.Item>
                       <Columns>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_ELB_DEDICATED')}
-                            rules={[{ required: true }]}
-                          >
-                            <RadioGroup
-                              name="elb"
-                              wrapClassName="radio"
-                              defaultValue={false}
-                            >
-                              {BINARY_OPTIONS.map((option, idx) => {
-                                const elbState = getElbDedicatedState()
-                                const isUseOption = idx === 1
-
-                                return elbState.showTooltip ? (
-                                  <Tooltip
-                                    key={option.value}
-                                    content={elbState.tooltipContent}
-                                    placement="right"
-                                  >
-                                    <RadioButton
-                                      value={option.value}
-                                      disabled={
-                                        isUseOption && elbState.disabled
-                                      }
-                                    >
-                                      {option.label}
-                                    </RadioButton>
-                                  </Tooltip>
-                                ) : (
-                                  <RadioButton
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled={isUseOption && elbState.disabled}
-                                  >
-                                    {option.label}
-                                  </RadioButton>
-                                )
-                              })}
-                            </RadioGroup>
-                          </Form.Item>
-                        </Column>
+                        <Column />
                         <Column>
                           <Form.Item
                             label={t('RESOURCES_GATEWAY_IP')}
                             rules={[
-                              {
-                                required: true,
-                                message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC'),
-                              },
                               {
                                 pattern: PATTERN_IP,
                                 message: t('RESOURCES_GATEWAY_IP_POOL_VALID'),

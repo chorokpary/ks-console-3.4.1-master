@@ -114,12 +114,6 @@ const NetworkDetail = props => {
         value: detail.network.gateway_ip,
       },
       {
-        name: t('RESOURCES_DEFAULT_ROUTE'),
-        value: detail.network.default_route
-          ? t('RESOURCES_USE')
-          : t('RESOURCES_NOT_USE'),
-      },
-      {
         name: t('External'),
         value: detail.network.external
           ? t('RESOURCES_USE')

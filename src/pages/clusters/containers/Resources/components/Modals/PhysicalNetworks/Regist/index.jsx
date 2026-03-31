@@ -7,7 +7,6 @@ import {
   PATTERN_IP_MASK,
   PATTERN_MTU,
 } from 'utils/constants';
-import { RadioButton, RadioGroup } from '@kube-design/components/lib/components/Radio';
 import { Form, Input, Select, Button, Tooltip, TextArea } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import * as common from 'utils/resources';
@@ -21,7 +20,6 @@ const RegistModal = props => {
   const [formData, setFormData] = useState({});
   const [modelView, setModalView] = useState(true);
   const [netResource, setNetResource] = useState([]);
-  const [defaultRoute, setDefaultRoute] = useState(false);
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
@@ -64,11 +62,6 @@ const RegistModal = props => {
     { label: '4', value: 4 },
   ]
 
-  const defaultRouteOptions = [
-    { label: t('RESOURCES_NOT_USE'), value: false },
-    { label: t('RESOURCES_USE'), value: true },
-  ];
-
   const handleOk = () => {
     const onOk = props.onOk;
 
@@ -104,6 +97,9 @@ const RegistModal = props => {
       };
       data.project = projectName;
       data.type = "flat"
+
+      // Deprecated: default_route will be removed. Kept for backward compatibility with older backend images.
+      data.default_route = !!data.gateway_ip
 
       onOk({ network: data });
     });
@@ -176,7 +172,6 @@ const RegistModal = props => {
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
-      const c = document.getElementById('gateway_ip');
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
@@ -185,8 +180,6 @@ const RegistModal = props => {
         a.parentElement.parentElement.classList.add('error-item');
         b.nextElementSibling.classList.remove('hide');
         b.parentElement.parentElement.classList.add('error-item');
-        c.nextElementSibling.classList.remove('hide');
-        c.parentElement.parentElement.classList.add('error-item');
       }
 
       setCidrReducer();
@@ -198,7 +191,6 @@ const RegistModal = props => {
 
       const a = document.getElementById('ip_pool_start');
       const b = document.getElementById('ip_pool_end');
-      const c = document.getElementById('gateway_ip');
       if (
         a.nextElementSibling &&
         a.nextElementSibling.classList.contains('form-item-error')
@@ -207,8 +199,6 @@ const RegistModal = props => {
         a.parentElement.parentElement.classList.remove('error-item');
         b.nextElementSibling.classList.add('hide');
         b.parentElement.parentElement.classList.remove('error-item');
-        c.nextElementSibling.classList.add('hide');
-        c.parentElement.parentElement.classList.remove('error-item');
       }
 
       setCidrReducer();
@@ -276,9 +266,6 @@ const RegistModal = props => {
         data.ip_pool_end == undefined ||
         !isValidIpAddress(data.ip_pool_end) ||
         data.ip_pool_end == '' ||
-        data.gateway_ip == undefined ||
-        !isValidIpAddress(data.gateway_ip) ||
-        data.gateway_ip == '' ||
         !checkNetworkAddress(data.cidr)
       ) {
         handleOk();
@@ -632,10 +619,6 @@ const RegistModal = props => {
                             label={t('RESOURCES_GATEWAY_IP')}
                             rules={[
                               {
-                                required: true,
-                                message: t('RESOURCES_GATEWAY_IP_EMPTY_DESC'),
-                              },
-                              {
                                 pattern: PATTERN_IP,
                                 message: t('RESOURCES_GATEWAY_IP_POOL_VALID'),
                               },
@@ -645,51 +628,25 @@ const RegistModal = props => {
                           </Form.Item>
                         </Column>
                         <Column>
-                          <Columns>
-                            <Column>
-                              <Form.Item
-                                label={t('RESOURCES_MTU')}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: t('RESOURCES_MTU_EMPTY_DESC'),
-                                  },
-                                  {
-                                    pattern: PATTERN_MTU,
-                                    message: t('RESOURCES_MTU_VALID'),
-                                  },
-                                ]}
-                              >
-                                <NumberInput
-                                  name="mtu"
-                                  defaultValue={9000}
-                                  style={{ maxWidth: 'none' }}
-                                />
-                              </Form.Item>
-                            </Column>
-                            <Column>
-                              <Form.Item
-                                label={t('RESOURCES_DEFAULT_ROUTE')}
-                                rules={[{ required: true }]}
-                              >
-                                <RadioGroup
-                                  name="default_route"
-                                  wrapClassName="radio"
-                                  defaultValue={defaultRoute}
-                                  onChange={value => setDefaultRoute(value)}
-                                >
-                                  {defaultRouteOptions.map(option => (
-                                    <RadioButton
-                                      key={option.value}
-                                      value={option.value}
-                                    >
-                                      {option.label}
-                                    </RadioButton>
-                                  ))}
-                                </RadioGroup>
-                              </Form.Item>
-                            </Column>
-                          </Columns>
+                          <Form.Item
+                            label={t('RESOURCES_MTU')}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('RESOURCES_MTU_EMPTY_DESC'),
+                              },
+                              {
+                                pattern: PATTERN_MTU,
+                                message: t('RESOURCES_MTU_VALID'),
+                              },
+                            ]}
+                          >
+                            <NumberInput
+                              name="mtu"
+                              defaultValue={9000}
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
                         </Column>
                       </Columns>
                     </Form.Item>
