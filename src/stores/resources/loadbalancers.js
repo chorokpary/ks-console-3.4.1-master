@@ -41,56 +41,16 @@ export default class LoadBalancerStore extends Base {
 
   @action
   async create(data, params = {}) {
-    let res = await this.submitting(
+    return this.submitting(
       request.post(
         this.getListUrl({
           ...params,
           name: data.lb.name,
-          namespace: params.namespace ? params.namespace : data.lb.project,
+          namespace: params.namespace || data.lb.project,
         }),
         data
       )
     )
-    if (res.message === 'OK') {
-      const jsonData = {}
-      const promises = data.lb.lb_rule.map(async obj => {
-        const ruleData = {}
-        ruleData.lb_name = res.name
-        ruleData.project = res.project
-        ruleData.protocol = obj.protocol.toLowerCase()
-        if (obj.portRangeMax.indexOf('-') != -1) {
-          ruleData.port_range_min = obj.portRangeMax.split('-')[0]
-          ruleData.port_range_max = obj.portRangeMax.split('-')[1]
-        } else {
-          ruleData.port_range_min = obj.portRangeMax
-          ruleData.port_range_max = obj.portRangeMax
-        }
-
-        if (obj.protocol === 'ICMP') {
-          delete ruleData.port_range_min
-          delete ruleData.port_range_max
-        }
-
-        jsonData.lb_rule = ruleData
-
-        await this.submitting(
-          request.post(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
-              ...params,
-              namespace: res.project,
-            })}${this.getOditLogUrl({
-              ...params,
-              name: res.name,
-              namespace: res.project,
-            })}/edgetron/resources/kubevirt/lb_rules`,
-            jsonData
-          )
-        )
-      })
-      await Promise.all(promises)
-    }
-
-    return res
   }
 
   @action
@@ -140,117 +100,16 @@ export default class LoadBalancerStore extends Base {
 
   @action
   async update(params, data) {
-    let res = await this.submitting(
+    return this.submitting(
       request.put(
         this.getDetailUrl({
           ...params,
           name: params.name,
-          namespace: params.namespace ? params.namespace : data.lb.project,
+          namespace: params.namespace || data.lb.project,
         }),
         data
       )
     )
-    if (res.message === 'OK') {
-      const jsonData = {}
-      if (data.lb.setAll) {
-        // 기존 rule 전체 삭제
-        await this.deleteLbRules(
-          { ...params },
-          data.lb.originRule,
-          data.lb.project
-        )
-        const [
-          port_range_min,
-          port_range_max,
-        ] = data.lb.lb_rule[0].portRangeMax.split('-')
-        jsonData.lb_rule = {
-          port_range_min,
-          port_range_max,
-          lb_name: data.lb.name,
-          project: data.lb.project,
-          protocol: 'all',
-        }
-        // all 추가
-        await this.submitting(
-          request.post(
-            `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-              params
-            )}${this.getOditLogUrl(
-              params
-            )}/edgetron/resources/kubevirt/lb_rules`,
-            jsonData
-          )
-        )
-      } else {
-        let delOriginRule = data.lb.originRule
-        const promises = data.lb.lb_rule.map(async obj => {
-          if (!obj.originRuleId) {
-            const ruleData = {}
-            ruleData.lb_name = params.name
-            ruleData.project = data.lb.project
-            ruleData.protocol = obj.protocol.toLowerCase()
-            if (obj.portRangeMax.indexOf('-') != -1) {
-              const [port_range_min, port_range_max] = obj.portRangeMax.split(
-                '-'
-              )
-              ruleData.port_range_min = port_range_min
-              ruleData.port_range_max = port_range_max
-            } else {
-              ruleData.port_range_min = obj.portRangeMax
-              ruleData.port_range_max = obj.portRangeMax
-            }
-
-            jsonData.lb_rule = ruleData
-
-            await this.submitting(
-              request.post(
-                `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath(
-                  params
-                )}${this.getOditLogUrl(
-                  params
-                )}/edgetron/resources/kubevirt/lb_rules`,
-                jsonData
-              )
-            )
-          } else {
-            // 기존 rule 중 삭제건
-            let idx = delOriginRule.indexOf(obj.originRuleId)
-            if (idx > -1) delOriginRule.splice(idx, 1)
-          }
-        })
-        await Promise.all(promises)
-
-        if (delOriginRule.length > 0) {
-          // 기존 rule 중 삭제건 처리
-          await this.deleteLbRules(
-            { ...params },
-            delOriginRule,
-            data.lb.project
-          )
-        }
-      }
-    }
-
-    return res
-  }
-
-  @action
-  async deleteLbRules({ ...params }, rules, project) {
-    const promises = rules.map(async id => {
-      await this.submitting(
-        request.delete(
-          `kapis/edgestack.kubesphere.io/v1alpha1${this.getPath({
-            ...params,
-            namespace: project,
-          })}${this.getOditLogUrl({
-            ...params,
-            name: id,
-            namespace: project,
-          })}/edgetron/resources/kubevirt/lb_rules/${id}/${project}`
-        )
-      )
-    })
-    await Promise.all(promises)
   }
 
   @action

@@ -75,7 +75,6 @@ const ModifyModal = props => {
   const [networkList, setNetworkList] = useState([]);
 
   const rules = props.store.detail?.lb?.rules || [];
-  const [rulesIds, setRulesIds] = useState([]);
 
   useEffect(() => {
     const getCreateData = async () => {
@@ -94,8 +93,6 @@ const ModifyModal = props => {
 
     getCreateData();
 
-    setRulesIds(rules.map(obj => obj.id));
-
     setFormRulesFields(
       rules.map(obj => ({
         ruleType: t('RESOURCES_SPECIFY_USER'),
@@ -112,7 +109,6 @@ const ModifyModal = props => {
           message: t('RESOURCES_PORT_RANGE_DESC'),
         },
         message: '',
-        originRuleId: obj.id,
       }))
     );
   }, []);
@@ -175,18 +171,9 @@ const ModifyModal = props => {
         data.network = lb.network.name;
         data.project = props.namespace;
         data.description = data.description || '';
-        data.lb_rule = [
-          ...formRulesFields.map(
-            ({
-              validPort,
-              validTargetPort,
-              isCustom,
-              message,
-              ...rest
-            }) => rest
-          ),
-        ];
-        data.originRule = rulesIds;
+        data.lb_rule = formRulesFields.map(
+          ({ validPort, validTargetPort, isCustom, message, ...rest }) => rest
+        );
 
         onOk({ lb: data, ...props });
       }
@@ -512,7 +499,7 @@ const ModifyModal = props => {
                           onChange={e =>
                             handleRules.handleSelectClick(i, 'ruleType', e)
                           }
-                          disabled={!!v.originRuleId}
+                          disabled={!v.isCustom}
                         />
                       </td>
                       <td>
