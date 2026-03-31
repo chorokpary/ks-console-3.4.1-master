@@ -142,8 +142,8 @@ const RegistModal = props => {
   const handleOk = () => {
     const onOk = props.onOk;
     const members = [...formMemberIpFields]
-      .filter(el => el.memberIp)
-      .map(obj => obj.memberIp);
+      .filter(el => el.vmId && el.vmId !== t('RESOURCES_SELECT'))
+      .map(obj => obj.vmId);
     const rules = [...formRulesFields].filter(el => el.port && el.targetPort);
 
     setIsMembers(members.length > 0);
@@ -169,11 +169,12 @@ const RegistModal = props => {
         data.network = networkName;
         data.members = members;
         data.project = projectName;
-        data.lb_rule = [
-          ...rules.map(
-            ({ validPort, validTargetPort, isCustom, message, ...rest }) => rest
-          ),
-        ];
+        data.lb_rule = rules.map(
+          ({ validPort, validTargetPort, isCustom, message, targetPort, ...rest }) => ({
+            ...rest,
+            target_port: targetPort,
+          })
+        );
         onOk({ lb: data });
       }
     });
@@ -245,7 +246,7 @@ const RegistModal = props => {
   };
 
   const rulsObj = {
-    ruleType: t('RESOURCES_SPECIFY_USER'),
+    ruleType: 'CUSTOM',
     protocol: 'TCP',
     port: '',
     targetPort: '',
@@ -411,7 +412,7 @@ const RegistModal = props => {
         </Form.Item>
         <div style={{ padding: 10 }} />
 
-        {t('RESOURCES_MEMBER_IP')}
+        {t('RESOURCES_LB_TARGETS')}
         <span className="form-item-required">*</span>
         <Form.Item>
           <div className={styles.wrapper}>

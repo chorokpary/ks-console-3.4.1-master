@@ -386,7 +386,7 @@ module.exports = {
   RESOURCES_MIGRATION_TIP: 'Do you want to proceed with the migration?',
   RESOURCES_MEMORY: 'Memory',
   RESOURCES_MAIN: 'Main',
-  RESOURCES_MEMBER_IP: 'Member IP',
+  RESOURCES_LB_TARGETS: 'Targets',
   RESOURCES_MONITORING: 'Monitoring',
   RESOURCES_PRESETS: 'Presets',
   RESOURCES_NO_MONITORING_DATA: 'No monitoring data available.',

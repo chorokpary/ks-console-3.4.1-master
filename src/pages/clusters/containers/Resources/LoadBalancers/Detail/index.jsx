@@ -124,7 +124,7 @@ const LoadBalancerDetail = (props) => {
                 value: detail.lb.network.name,
             },
             {
-                name: t('RESOURCES_MEMBER_IP'),
+                name: t('RESOURCES_LB_TARGETS'),
                 value: detail.lb.members.length > 1 ? detail.lb.members[0] + ' ' + t('RESOURCES_BESIDES') + ' ' + (detail.lb.members.length - 1) + t('RESOURCES_COUNT') : detail.lb.members[0],
             },
             {

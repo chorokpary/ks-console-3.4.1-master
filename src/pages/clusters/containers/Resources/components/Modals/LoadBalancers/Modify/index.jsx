@@ -94,22 +94,34 @@ const ModifyModal = props => {
     getCreateData();
 
     setFormRulesFields(
-      rules.map(obj => ({
-        ruleType: t('RESOURCES_SPECIFY_USER'),
-        protocol: obj.protocol.toUpperCase(),
-        port: `${obj.port || ''}`,
-        targetPort: `${obj.targetPort || ''}`,
-        isCustom: true,
-        validPort: {
-          isValid: false,
-          message: t('RESOURCES_PORT_RANGE_DESC'),
-        },
-        validTargetPort: {
-          isValid: false,
-          message: t('RESOURCES_PORT_RANGE_DESC'),
-        },
-        message: '',
-      }))
+      rules.map(obj => {
+        const protocol = (obj.protocol || 'TCP').toUpperCase();
+        const port = `${obj.port || ''}`;
+        const tp = `${obj.target_port || obj.targetPort || ''}`;
+        const preset = ruleTypeOptions.find(
+          opt =>
+            opt.value !== 'CUSTOM' &&
+            opt.protocol === protocol &&
+            opt.port === port &&
+            opt.targetPort === tp
+        );
+        return {
+          ruleType: preset ? preset.value : 'CUSTOM',
+          protocol,
+          port,
+          targetPort: tp,
+          isCustom: !preset,
+          validPort: {
+            isValid: false,
+            message: t('RESOURCES_PORT_RANGE_DESC'),
+          },
+          validTargetPort: {
+            isValid: false,
+            message: t('RESOURCES_PORT_RANGE_DESC'),
+          },
+          message: '',
+        };
+      })
     );
   }, []);
 
@@ -131,20 +143,20 @@ const ModifyModal = props => {
   const [formMemberIpFields, setFormMemberIpFields] = useState([]);
 
   useEffect(() => {
-    const opt = props.store.detail?.lb.members.map(obj => ({
-      vmId: vmDataList.filter(el =>
-        el.networks.map(elN => elN.ip).includes(obj)
-      )[0]?.name,
-      memberIp: obj,
-    }));
+    if (vmDataList.length === 0) return;
+    const members = props.store.detail?.lb?.members || [];
+    const opt = members.map(vmName => {
+      const vm = vmDataList.find(el => el.name === vmName);
+      return { vmId: vmName, memberIp: vm?.networks?.[0]?.ip || '' };
+    });
     setFormMemberIpFields(opt);
   }, [vmDataList]);
 
   const handleOk = () => {
     const onOk = props.onOk;
     const members = [...formMemberIpFields]
-      .filter(el => el.memberIp)
-      .map(obj => obj.memberIp);
+      .filter(el => el.vmId && el.vmId !== t('RESOURCES_SELECT'))
+      .map(obj => obj.vmId);
     const filteredRules = [...formRulesFields].filter(
       el => el.port && el.targetPort
     );
@@ -172,7 +184,10 @@ const ModifyModal = props => {
         data.project = props.namespace;
         data.description = data.description || '';
         data.lb_rule = formRulesFields.map(
-          ({ validPort, validTargetPort, isCustom, message, ...rest }) => rest
+          ({ validPort, validTargetPort, isCustom, message, targetPort, ...rest }) => ({
+            ...rest,
+            target_port: targetPort,
+          })
         );
 
         onOk({ lb: data, ...props });
@@ -246,7 +261,7 @@ const ModifyModal = props => {
   };
 
   const rulsObj = {
-    ruleType: t('RESOURCES_SPECIFY_USER'),
+    ruleType: 'CUSTOM',
     protocol: 'TCP',
     port: '',
     targetPort: '',
@@ -386,7 +401,7 @@ const ModifyModal = props => {
         </Form.Item>
         <div style={{ padding: 10 }} />
 
-        {t('RESOURCES_MEMBER_IP')}
+        {t('RESOURCES_LB_TARGETS')}
         <span className="form-item-required">*</span>
         <Form.Item>
           <div className={styles.wrapper}>

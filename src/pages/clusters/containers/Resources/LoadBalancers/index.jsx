@@ -138,15 +138,14 @@ export default class LoadBalancers extends React.Component {
                 width: 'auto',
             },
             {
-                title: t('RESOURCES_MEMBER_IP'),
+                title: t('RESOURCES_LB_TARGETS'),
                 dataIndex: 'members',
                 isHideable: true,
                 width: 'auto',
-                render: members => (
-                    members.map((member, i) => {
-                        return <p key={i}>{member}</p>
-                    })
-                )
+                render: members =>
+                    members.length > 1
+                        ? `${members[0]} ${t('RESOURCES_BESIDES')} ${members.length - 1}${t('RESOURCES_COUNT')}`
+                        : members[0]
             },
             {
                 title: t('VIP'),

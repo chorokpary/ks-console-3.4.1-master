@@ -178,7 +178,7 @@ const Status = props => {
                           ? obj.members.map(item => <p>{item}</p>)
                           : '-'}
                       </div>
-                      <p>{t('RESOURCES_MEMBER_IP')}</p>
+                      <p>{t('RESOURCES_VM_IP')}</p>
                     </div>
                     <div className={styles.title}>
                       <div>{obj.virtual_ip}</div>

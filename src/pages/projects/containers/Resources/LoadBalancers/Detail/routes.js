@@ -25,7 +25,6 @@ const PATH = '/:workspace/clusters/:cluster/projects/:namespace/loadBalancers/:n
 export default [
     {
         path: `${PATH}/status`,
-        title: t('RESOURCES_STATE'),
         component: Status,
         exact: true,
     },

@@ -383,7 +383,7 @@ module.exports = {
   RESOURCES_MIGRATION_TIP: '마이그레이션을 진행 하시겠습니까?',
   RESOURCES_MEMORY: '메모리',
   RESOURCES_MAIN: '메인',
-  RESOURCES_MEMBER_IP: '멤버 IP',
+  RESOURCES_LB_TARGETS: '대상 VM',
   RESOURCES_MONITORING: '모니터링',
   RESOURCES_PRESETS: '프리셋',
   RESOURCES_NO_MONITORING_DATA: '모니터링 데이터가 없습니다.',
