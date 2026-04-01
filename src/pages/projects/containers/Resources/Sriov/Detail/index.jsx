@@ -113,6 +113,10 @@ const SriovDetail = (props) => {
         value: detail.network.gateway_ip,
       },
       {
+        name: t('RESOURCES_DHCP_SERVER_DEPLOY'),
+        value: detail.network.dhcp_enabled ? 'On' : 'Off',
+      },
+      {
         name: t('RESOURCES_IP_POOL_INFORMATION'),
         value: detail.network.ip_pool.start + '\n' + detail.network.ip_pool.end,
       },

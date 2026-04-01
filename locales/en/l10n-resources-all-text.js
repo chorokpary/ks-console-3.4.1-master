@@ -374,6 +374,7 @@ module.exports = {
   RESOURCES_RESOURCE_CHANGE_AMOUNT: 'Resource Change Amount',
   RESOURCES_RESOURCE_USAGE_TOP: 'Top 5 Resource Usage',
   RESOURCES_RESOURCE_NAME: 'Resource Name',
+  RESOURCES_DHCP_SERVER_DEPLOY: 'DHCP Server',
   RESOURCES_SELECT_RESOURCE_NAME_TIP: 'Please select a resource name',
   RESOURCES_RESOURCE_TYPE: 'Resource Type',
   RESOURCES_RESOURCE_CURRENT_SITUATION_USAGE: 'Resource Status and Usage',

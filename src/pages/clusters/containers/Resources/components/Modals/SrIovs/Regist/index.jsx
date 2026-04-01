@@ -7,6 +7,7 @@ import {
   Select,
   TextArea,
   Button,
+  Toggle,
 } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
@@ -39,6 +40,7 @@ const RegistModal = props => {
     false
   );
   const [externalBool, setExternalBool] = useState(false);
+  const [dhcpEnabled, setDhcpEnabled] = useState(false);
   const [availableRange, setAvailableRange] = useState(0);
 
   const resourceNameOptions = sriovResourceDataList.map(name => {
@@ -97,6 +99,7 @@ const RegistModal = props => {
       data.dns = dns;
       data.host_routes = host_routes;
       data.project = projectName;
+      data.dhcp_enabled = dhcpEnabled;
       onOk({ ...data });
     });
   };
@@ -542,7 +545,17 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                     </Column>
-                    <Column/>
+                    <Column>
+                      <Form.Item label={t('RESOURCES_DHCP_SERVER_DEPLOY')}>
+                        <Toggle
+                          checked={dhcpEnabled}
+                          showText
+                          onText="on"
+                          offText="off"
+                          onChange={e => setDhcpEnabled(e)}
+                        />
+                      </Form.Item>
+                    </Column>
                   </Columns>
                 </Form.Item>
                 <Form.Item>

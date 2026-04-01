@@ -65,6 +65,7 @@ export default class SriovStore extends Base {
     networkData.mtu = data.mtu
     networkData.host_routes = data.host_routes
     networkData.segment_id = data.segment_id
+    networkData.dhcp_enabled = data.dhcp_enabled
 
     jsonData.network = networkData
 
