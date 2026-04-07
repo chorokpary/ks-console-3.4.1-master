@@ -250,7 +250,7 @@ const RegistModal = props => {
     }
 
     if (processedData.elb_management) {
-      processedData.elb_type = data.elb_type || DEFAULT_ELB_TYPE
+      processedData.elb_type = DEFAULT_ELB_TYPE
       processedData.elb_ip_pool = {
         start: data.elb_ip_pool_start,
         end: data.elb_ip_pool_end,
@@ -1153,7 +1153,6 @@ const RegistModal = props => {
                                 clearValidationError('elb_ip_pool_overlap')
 
                                 if (!value) {
-                                  data.elb_type = DEFAULT_ELB_TYPE
                                   data.elb_ip_pool_start = ''
                                   data.elb_ip_pool_end = ''
                                   clearValidationError('gateway_pool_conflict')
@@ -1239,80 +1238,6 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
-                          {elbManagementEnabled && (
-                            <Columns>
-                              <Column>
-                                <Form.Item
-                                  label={t('RESOURCES_ELB_TYPE')}
-                                  rules={[{ required: true }]}
-                                >
-                                  <Select
-                                    name="elb_type"
-                                    defaultValue={DEFAULT_ELB_TYPE}
-                                    options={[
-                                      {
-                                        label: DEFAULT_ELB_TYPE,
-                                        value: DEFAULT_ELB_TYPE,
-                                      },
-                                    ]}
-                                  />
-                                </Form.Item>
-                              </Column>
-                              <Column>
-                                <Columns>
-                                  <Column>
-                                    <Form.Item
-                                      label={t(
-                                        'RESOURCES_ELB_IP_POOL_INFORMATION'
-                                      )}
-                                      rules={[
-                                        {
-                                          required: true,
-                                          message: t(
-                                            'RESOURCES_ELB_IP_POOL_EMPTY_DESC'
-                                          ),
-                                        },
-                                        {
-                                          pattern: PATTERN_IP,
-                                          message: t('RESOURCES_IP_POOL_VALID'),
-                                        },
-                                      ]}
-                                    >
-                                      <Input name="elb_ip_pool_start" />
-                                    </Form.Item>
-                                  </Column>
-                                  <Column>
-                                    <Form.Item
-                                      rules={[
-                                        {
-                                          required: true,
-                                          message: t(
-                                            'RESOURCES_ELB_IP_POOL_EMPTY_DESC'
-                                          ),
-                                        },
-                                        {
-                                          pattern: PATTERN_IP,
-                                          message: t('RESOURCES_IP_POOL_VALID'),
-                                        },
-                                      ]}
-                                    >
-                                      <Input
-                                        name="elb_ip_pool_end"
-                                        style={{ marginTop: '24px' }}
-                                      />
-                                    </Form.Item>
-                                  </Column>
-                                </Columns>
-                              </Column>
-                            </Columns>
-                          )}
-                          {(validationErrors.elb_ip_pool ||
-                            validationErrors.elb_ip_pool_overlap) && (
-                            <div className="form-item-error">
-                              {validationErrors.elb_ip_pool ||
-                                validationErrors.elb_ip_pool_overlap}
-                            </div>
-                          )}
                         </Column>
                       </Columns>
                     </Form.Item>
@@ -1340,6 +1265,64 @@ const RegistModal = props => {
                         </Column>
                       </Columns>
                     </Form.Item>
+                    {elbManagementEnabled && (
+                      <Form.Item>
+                        <Columns>
+                          <Column />
+                          <Column>
+                            <Columns>
+                              <Column>
+                                <Form.Item
+                                  label={t('RESOURCES_ELB_IP_POOL_INFORMATION')}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: t(
+                                        'RESOURCES_ELB_IP_POOL_EMPTY_DESC'
+                                      ),
+                                    },
+                                    {
+                                      pattern: PATTERN_IP,
+                                      message: t('RESOURCES_IP_POOL_VALID'),
+                                    },
+                                  ]}
+                                >
+                                  <Input name="elb_ip_pool_start" />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Form.Item
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: t(
+                                        'RESOURCES_ELB_IP_POOL_EMPTY_DESC'
+                                      ),
+                                    },
+                                    {
+                                      pattern: PATTERN_IP,
+                                      message: t('RESOURCES_IP_POOL_VALID'),
+                                    },
+                                  ]}
+                                >
+                                  <Input
+                                    name="elb_ip_pool_end"
+                                    style={{ marginTop: '24px' }}
+                                  />
+                                </Form.Item>
+                              </Column>
+                            </Columns>
+                            {(validationErrors.elb_ip_pool ||
+                              validationErrors.elb_ip_pool_overlap) && (
+                              <div className="form-item-error">
+                                {validationErrors.elb_ip_pool ||
+                                  validationErrors.elb_ip_pool_overlap}
+                              </div>
+                            )}
+                          </Column>
+                        </Columns>
+                      </Form.Item>
+                    )}
                   </Form.Group>
                 </Form.Item>
                 <Columns>
