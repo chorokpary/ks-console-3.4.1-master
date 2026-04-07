@@ -26,7 +26,7 @@ const typeOption = [
   },
   {
     value: 'vm',
-    label: t('RESOURCES_VM'),
+    label: t('RESOURCES_VM_SHORT'),
   },
 ]
 const sortOption = [
@@ -131,7 +131,7 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     if (labels?.resource_type === 'node') {
       return t('RESOURCES_NODE')
     } else if (labels?.resource_type === 'vm') {
-      return t('RESOURCES_VM')
+      return t('RESOURCES_VM_SHORT')
     } else if (labels?.resource_type === 'gpu') {
       return 'GPU'
     } else {
@@ -200,105 +200,121 @@ const Alarm = ({ widgetKey, monitorStore, isVertical, ...props }) => {
     <>
       <div className="grid_item">
         <div className="grid_title" style={{ cursor: 'default' }}>
-          <label>{t('RESOURCES_ALERTING_MESSAGE')}</label>
-          {isVertical && (
-            <div className="alert_tab bottom" style={{ marginLeft: '830px' }}>
-              <label htmlFor="al_name2_1">
-                <input
-                  type="radio"
-                  name="box-tab2"
-                  id="al_name2_1"
-                  value="al_name2_1"
-                  defaultChecked
-                  onClick={() => setFilter('all')}
-                />
-                <span>
-                  <span className="gpu_badge_number">
-                    {criticalCount + minorCount + unknownCount}
+          <div style={{ display: 'flex' }}>
+            <label>{t('RESOURCES_ALERTING_MESSAGE')}</label>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            {isVertical && (
+              <div className="alert_tab bottom" style={{ marginRight: '5px' }}>
+                <label htmlFor="al_name2_1">
+                  <input
+                    type="radio"
+                    name="box-tab2"
+                    id="al_name2_1"
+                    value="al_name2_1"
+                    defaultChecked
+                    onClick={() => setFilter('all')}
+                  />
+                  <span>
+                    <span className="gpu_badge_number">
+                      {criticalCount + minorCount + unknownCount}
+                    </span>
+                    <span>{t('RESOURCES_ALL')}</span>
                   </span>
-                  <span>{t('RESOURCES_ALL')}</span>
-                </span>
-              </label>
-              <label htmlFor="al_name2_2">
-                <input
-                  type="radio"
-                  name="box-tab2"
-                  id="al_name2_2"
-                  value="al_name2_2"
-                  onClick={() => setFilter('critical')}
-                />
-                <span>
-                  <span className="gpu_badge_number critical">
-                    {criticalCount}
+                </label>
+                <label htmlFor="al_name2_2">
+                  <input
+                    type="radio"
+                    name="box-tab2"
+                    id="al_name2_2"
+                    value="al_name2_2"
+                    onClick={() => setFilter('critical')}
+                  />
+                  <span>
+                    <span className="gpu_badge_number critical">
+                      {criticalCount}
+                    </span>
+                    <span>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</span>
                   </span>
-                  <span>{t('RESOURCES_GPUCLUSTER_CRITICAL')}</span>
-                </span>
-              </label>
-              <label htmlFor="al_name2_3">
-                <input
-                  type="radio"
-                  name="box-tab2"
-                  id="al_name2_3"
-                  value="al_name2_3"
-                  onClick={() => setFilter('minor')}
-                />
-                <span>
-                  <span className="gpu_badge_number minor">{minorCount}</span>
-                  <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
-                </span>
-              </label>
-              <label htmlFor="al_name2_4">
-                <input
-                  type="radio"
-                  name="box-tab2"
-                  id="al_name2_4"
-                  value="al_name2_4"
-                  onClick={() => setFilter('unknown')}
-                />
-                <span>
-                  <span className="gpu_badge_number unknown">
-                    {unknownCount}
+                </label>
+                <label htmlFor="al_name2_3">
+                  <input
+                    type="radio"
+                    name="box-tab2"
+                    id="al_name2_3"
+                    value="al_name2_3"
+                    onClick={() => setFilter('minor')}
+                  />
+                  <span>
+                    <span className="gpu_badge_number minor">{minorCount}</span>
+                    <span>{t('RESOURCES_GPUCLUSTER_MINOR')}</span>
                   </span>
-                  <span>{t('RESOURCES_WARNING')}</span>
-                </span>
-              </label>
-            </div>
-          )}
-          <div className="right" style={{ width: isVertical ? '10%' : '45%' }}>
-            <div
-              className="select-list-box"
-              style={{ width: '70%', marginTop: '-7px' }}
-            >
-              <div className="usageTab">
-                <Select
-                  value={type}
-                  onChange={e => setType(e)}
-                  options={typeOption}
-                />
+                </label>
+                <label htmlFor="al_name2_4">
+                  <input
+                    type="radio"
+                    name="box-tab2"
+                    id="al_name2_4"
+                    value="al_name2_4"
+                    onClick={() => setFilter('unknown')}
+                  />
+                  <span>
+                    <span className="gpu_badge_number unknown">
+                      {unknownCount}
+                    </span>
+                    <span>{t('RESOURCES_WARNING')}</span>
+                  </span>
+                </label>
               </div>
-            </div>
-            <div className="icon_dropdown_wrap" ref={dropdownRef}>
-              <button
-                className="icon icon_dropdown_btn"
-                onClick={() => setOpen(prev => !prev)}
+            )}
+            <div
+              className="right"
+              // style={{ width: isVertical ? '10%' : '45%' }}
+            >
+              <div
+                className="select-list-box"
+                style={{
+                  // width: '70%',
+                  marginTop: '-7px',
+                }}
               >
-                <i className="ico-list-filter"></i>
-              </button>
-              <div className={`icon_dropdown_box ${open && 'open'}`}>
-                <ul className="icon_dropdown_list">
-                  {sortOption.map(opt => (
-                    <li
-                      key={opt.value}
-                      className={sort === opt.value ? 'selected' : ''}
-                      onClick={() => {
-                        setSort(opt.value)
-                        setOpen(false)
-                      }}
-                    >
-                      <span>{opt.label}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="usageTab">
+                  <Select
+                    value={type}
+                    onChange={e => setType(e)}
+                    options={typeOption}
+                    style={{ width: '70px' }}
+                  />
+                </div>
+              </div>
+              <div className="icon_dropdown_wrap" ref={dropdownRef}>
+                <button
+                  className="icon icon_dropdown_btn"
+                  onClick={() => setOpen(prev => !prev)}
+                >
+                  <i className="ico-list-filter"></i>
+                </button>
+                <div className={`icon_dropdown_box ${open && 'open'}`}>
+                  <ul className="icon_dropdown_list">
+                    {sortOption.map(opt => (
+                      <li
+                        key={opt.value}
+                        className={sort === opt.value ? 'selected' : ''}
+                        onClick={() => {
+                          setSort(opt.value)
+                          setOpen(false)
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

@@ -102,12 +102,13 @@ export default class LoadBalancers extends React.Component {
         }
     }
 
-    getBesidesText = (arr = [], type) => {
+    getBesidesText = (arr = [], type, xlbName = '', col = '') => {
         const first = type === 'O' ? arr?.[0]?.name : arr?.[0]
+        const firstTxt = col == "L" ? first : first?.replace(`${xlbName}-`,'') || ''
         const sidesText = arr?.length
         ? arr.length > 1
-            ? `${first} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
-            : first
+            ? `${firstTxt} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
+            : firstTxt
         : '-'
         
         return sidesText
@@ -149,14 +150,18 @@ export default class LoadBalancers extends React.Component {
                 dataIndex: 'listeners',
                 isHideable: true,
                 width: 'auto',
-                render: listeners => this.getBesidesText(listeners, 'O'),
+                render: (listeners, record) =>{
+                    return this.getBesidesText(listeners, 'O', record.name, "L")
+                },
             },
             {
                 title: t('RESOURCES_POOL'),
                 dataIndex: 'pools',
                 isHideable: true,
                 width: 'auto',
-                render: (pools) => this.getBesidesText(pools, 'O'),
+                render: (pools, record) =>{
+                    return this.getBesidesText(pools, 'O', record.name, "P")
+                },
             },
             {
                 title: t('RESOURCES_MEMBER'),
@@ -165,7 +170,7 @@ export default class LoadBalancers extends React.Component {
                 width: 'auto',
                 render: (updated_at, record) => {          
                     const allMembers = record.pools.flatMap(p => p.members ?? [])
-                    const memberText = this.getBesidesText(allMembers, 'O')      
+                    const memberText = this.getBesidesText(allMembers, 'O', record.name, "V" )      
                     return <p>{memberText}</p>
                 }
             },
@@ -174,7 +179,9 @@ export default class LoadBalancers extends React.Component {
                 dataIndex: 'monitors',
                 isHideable: true,
                 width: 'auto',
-                render: (monitors) => this.getBesidesText(monitors, 'O'),
+                render: (monitors, record) =>{
+                    return this.getBesidesText(monitors, 'O', record.name, "M")
+                },
             },
             {
                 title: t('RESOURCES_STATE'),

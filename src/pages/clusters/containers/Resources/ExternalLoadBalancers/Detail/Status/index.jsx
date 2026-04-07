@@ -20,8 +20,9 @@ import VmStore from 'stores/resources/vms'
 const Status = (props) => {
 
     const store = props.detailStore;
-
     const cluster = props.detailStore?.cluster
+
+    const lbName = store.detailData.detail.name
 
     const vmsStore = new VmStore()
     const customStore = new CustomStore()
@@ -38,12 +39,13 @@ const Status = (props) => {
     const [vmWinCpuData, setVmWinCpuData] = useState([])
     const [vmWinMemoryData, setVmWinMemoryData] = useState([])
 
-    const getBesidesText = (arr = [], type) => {
+    const getBesidesText = (arr = [], type, xlbName = '', col = '') => {  
         const first = type === 'O' ? arr?.[0]?.name : arr?.[0]
+        const firstTxt = col == "L" ? first : first?.replace(`${xlbName}-`,'') || ''
         const sidesText = arr?.length
                             ? arr.length > 1
-                                ? `${first} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
-                                : first
+                                ? `${firstTxt} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
+                                : firstTxt
                             : '-'
                             
         return sidesText
@@ -62,7 +64,7 @@ const Status = (props) => {
                         <p>{t('LB method')}</p>
                     </div>
                     <div className={styles.text}>
-                        <div>{getBesidesText(obj.members, 'O')}</div>
+                        <div>{getBesidesText(obj.members, 'O', lbName, 'V')}</div>
                         <p>{t('RESOURCES_MEMBER')}</p>
                     </div>
                     <div className={styles.text}>
@@ -125,7 +127,7 @@ const Status = (props) => {
                             {obj.monitors.length > 0 ?
                                 <div className={classnames(styles.item)} key={`monitor-${obj.monitor}-${index}`}>
                                     <div className={styles.title}>
-                                        <div>{obj.monitors[index].name}</div>
+                                        <div>{(obj.monitors[index].name).replace(`${lbName}-`,'')}</div>
                                         <p>{t('RESOURCES_NAME')}</p>
                                     </div>
                                     <div className={styles.title}>
@@ -165,9 +167,7 @@ const Status = (props) => {
     }
 
     const getValueByVmDataList = (vmName, fieldName) => {
-        const temVmName = 'test-vm-re-deploy-vm-work'
-
-        const getData = vmDataList.find(v => v.name === temVmName);
+        const getData = vmDataList.find(v => v.name === vmName);
         const getValue = getData?.[fieldName]
         return getValue
     }
@@ -393,7 +393,7 @@ const Status = (props) => {
                         <div className={styles.listenerWrapper} key={index}>
                             <div className={classnames(styles.item)}>
                                 <div className={classnames(styles.title, styles.name)}>
-                                    <div>{listener.name}</div>
+                                    <div>{index == 0 ? listener.name : (listener.name).replace(`${lbName}-`,'')}</div>
                                     <p>{t('RESOURCES_NAME')}</p>
                                 </div>
                                 <div className={classnames(styles.title, styles.name)}>

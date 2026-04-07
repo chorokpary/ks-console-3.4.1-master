@@ -13,6 +13,7 @@
   }
 }
 
+.check,
 .substract {
   position: absolute;
   top: 28px;
@@ -21,20 +22,14 @@
 }
 
 .check {
-  background-color: $primary;
+  background-color: #55bc8a;
 }
 
 .substract {
   background-color: $yellow;
 }
 
-.check {
-  background-color: #55bc8a;
-}
-
 .tooltip {
   min-width: 300px;
-  white-space: normal; /* ?ìŠ¤?¸ê? ì¤?ë°”ê¿ˆ?˜ë„ë¡??¤ì • */
+  white-space: normal;
 }
-
-

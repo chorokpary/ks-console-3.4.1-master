@@ -17,40 +17,40 @@
  */
 import Table from 'components/Tables/List'
 
-import { Link } from 'react-router-dom';
-import React from 'react';
-import { Avatar, Status } from 'components/Base';
-import Tabs from 'components/Cards/Banner/Tabs';
-import { getDocsUrl } from 'utils'
-import withList, { ListPage, withClusterList } from 'components/HOCs/withList'
+import React from 'react'
+import { Avatar } from 'components/Base'
+import Tabs from 'components/Cards/Banner/Tabs'
+import { getDocsUrl, getLocalTime } from 'utils'
+import withList, { ListPage } from 'components/HOCs/withList'
 
-import { getLocalTime } from 'utils';
-import { Icon } from '@kube-design/components';
-import classnames from 'classnames';
+import { Icon } from '@kube-design/components'
+import classnames from 'classnames'
 
-import NetworkStore from 'stores/resources/networks';
+import NetworkStore from 'stores/resources/networks'
 
-import styles from './index.scss';
+import styles from './index.scss'
 
 @withList({
   store: new NetworkStore(),
   module: 'networks',
   authKey: 'networks',
   name: t('RESOURCES_NETWORK'),
-  rowKey: 'name'
+  rowKey: 'name',
 })
 export default class Networks extends React.Component {
   handleTabChange = value => {
     const { cluster, workspace, namespace } = this.props.match.params
-    this.props.routing.push(`/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`);
-  };
+    this.props.routing.push(
+      `/${workspace}/clusters/${cluster}/projects/${namespace}/${value}`
+    )
+  }
 
   showAction(record) {
-    return globals.user.username !== record.name;
+    return globals.user.username !== record.name
   }
 
   get itemActions() {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     return [
       {
         key: 'delete',
@@ -65,11 +65,11 @@ export default class Networks extends React.Component {
             ...this.props.match.params,
           }),
       },
-    ];
+    ]
   }
 
   get tableActions() {
-    const { trigger, getData, routing, tableProps } = this.props;
+    const { trigger, getData, tableProps } = this.props
 
     return {
       ...tableProps.tableActions,
@@ -104,11 +104,11 @@ export default class Networks extends React.Component {
         disabled: !this.showAction(record),
         name: record.name,
       }),
-    };
+    }
   }
 
   getColumns = () => {
-    const { getSortOrder } = this.props;
+    const { getSortOrder } = this.props
     const { workspace, cluster, namespace } = this.props.match.params
     return [
       {
@@ -129,6 +129,14 @@ export default class Networks extends React.Component {
         dataIndex: 'type',
         isHideable: true,
         width: 'auto',
+      },
+      {
+        title: t('RESOURCES_USAGE_TYPE'),
+        dataIndex: 'elb',
+        isHideable: true,
+        width: 'auto',
+        render: elb =>
+          elb ? t('RESOURCES_ELB_DEDICATED') : t('RESOURCES_GENERAL'),
       },
       {
         title: t('RESOURCES_MTU'),
@@ -161,11 +169,11 @@ export default class Networks extends React.Component {
           </p>
         ),
       },
-    ];
-  };
+    ]
+  }
 
   get emptyProps() {
-    return { desc: t('RESOURCES_NO_DATA') };
+    return { desc: t('RESOURCES_NO_DATA') }
   }
 
   get tabs() {
@@ -186,20 +194,19 @@ export default class Networks extends React.Component {
           label: t('RESOURCES_NETWORK_TAB3'),
         },
       ],
-    };
+    }
   }
 
   modalTopology = () => {
-    const { getData, trigger } = this.props;
+    const { getData, trigger } = this.props
     trigger('networks.topology.project', {
       success: getData,
       ...this.props.match.params,
-    });
-  };
+    })
+  }
 
   render() {
-
-    const { bannerProps, tableProps } = this.props
+    const { tableProps } = this.props
     const docUrl = getDocsUrl('networks')
     return (
       <ListPage {...this.props}>
@@ -221,7 +228,10 @@ export default class Networks extends React.Component {
               </p>
             </div>
             <div className={styles.divRight}>
-              <div className={styles.iconRight} onClick={() => this.modalTopology()}>
+              <div
+                className={styles.iconRight}
+                onClick={() => this.modalTopology()}
+              >
                 <Icon name={'topology'} size={36} />
               </div>
               <p>{t('RESOURCES_TOPOLOGY')}</p>

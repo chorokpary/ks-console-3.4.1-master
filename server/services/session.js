@@ -503,6 +503,51 @@ const createUser = (params, token) => {
   })
 }
 
+const getUserMfaList = async token => {
+  const configmap = await send_gateway_request({
+    method: 'GET',
+    url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
+    token,
+  })
+
+  const yamlData = yaml.safeLoadAll(
+    configmap.data['kubesphere.yaml'],
+    'utf8'
+  )[0]
+
+  const apiToken = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiToken',
+    ''
+  )
+  const authentikBase = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiURL',
+    ''
+  )
+
+  try {
+    const resUser = await send_authentik_request({
+      method: 'GET',
+      url: `${authentikBase}/api/v3/core/users/`,
+      token: apiToken,
+    })
+
+    return {
+      success: true,
+      message: 'user get list successful',
+      data: resUser,
+    }
+  } catch (error) {
+    // console.error('[createUserMfa] Error:', error)
+    return {
+      success: false,
+      message: error.message || 'user get list fail',
+      code: error.code || 500,
+    }
+  }
+}
+
 const createUserMfa = async (params, token) => {
   const configmap = await send_gateway_request({
     method: 'GET',
@@ -514,6 +559,7 @@ const createUserMfa = async (params, token) => {
     configmap.data['kubesphere.yaml'],
     'utf8'
   )[0]
+
   const apiToken = get(
     yamlData,
     'authentication.oauthOptions.identityProviders[0].provider.apiToken',
@@ -533,7 +579,7 @@ const createUserMfa = async (params, token) => {
       params: params.userData,
     })
 
-    await send_authentik_request({
+    const resPassword = await send_authentik_request({
       method: 'POST',
       url: `${authentikBase}/api/v3/core/users/${resUser.pk}/set_password/`,
       token: apiToken,
@@ -554,6 +600,50 @@ const createUserMfa = async (params, token) => {
   }
 }
 
+const deleteUserMfa = async (userid, token) => {
+  const configmap = await send_gateway_request({
+    method: 'GET',
+    url: `/api/v1/namespaces/petasus-system/configmaps/kubesphere-config`,
+    token,
+  })
+
+  const yamlData = yaml.safeLoadAll(
+    configmap.data['kubesphere.yaml'],
+    'utf8'
+  )[0]
+
+  const apiToken = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiToken',
+    ''
+  )
+  const authentikBase = get(
+    yamlData,
+    'authentication.oauthOptions.identityProviders[0].provider.apiURL',
+    ''
+  )
+
+  try {
+    const resUser = await send_authentik_request({
+      method: 'DELETE',
+      url: `${authentikBase}/api/v3/core/users/${userid}/`,
+      token: apiToken,
+    })
+
+    return {
+      success: true,
+      message: 'user delete successful',
+    }
+  } catch (error) {
+    // console.error('[createUserMfa] Error:', error)
+    return {
+      success: false,
+      message: error.message || 'user delete fail',
+      code: error.code || 500,
+    }
+  }
+}
+
 module.exports = {
   login,
   loginThird,
@@ -565,6 +655,8 @@ module.exports = {
   getK8sRuntime,
   createUser,
   createUserMfa,
+  getUserMfaList,
+  deleteUserMfa,
   getClusterRole,
   getSupportGpuList,
   getGitOpsEngine,

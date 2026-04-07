@@ -92,7 +92,7 @@
 
     > li:first-child {
       &:before {
-        top: #{$tree-node-height / 2} !important;
+        top: #{$tree-node-height * 0.5} !important;
         height: 100% !important;
       }
 
@@ -112,7 +112,7 @@
 
       &:after {
         position: absolute;
-        top: $tree-node-height / 2;
+        top: $tree-node-height * 0.5;
         left: -17px;
         width: 8px;
         height: 1px;
@@ -126,7 +126,7 @@
         top: 0;
         left: -17px;
         width: 0;
-        height: calc(100% + #{$tree-node-height / 2});
+        height: calc(100% + #{$tree-node-height * 0.5});
         border-left: 1px solid $border-color;
         margin: 0;
         content: ' ';
@@ -138,7 +138,7 @@
         top: 0;
         left: -17px;
         width: 0;
-        height: #{$tree-node-height / 2};
+        height: #{$tree-node-height * 0.5};
         border-left: 1px solid $border-color;
         margin: 0;
         content: ' ';

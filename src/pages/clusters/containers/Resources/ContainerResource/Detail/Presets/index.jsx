@@ -27,10 +27,13 @@ import styles from './index.scss'
 
 const clusterAddonStore = new ClusterAddonStore()
 const clusterResourceStore = new ClusterResourceStore()
+const POLL_INTERVAL = 5000
+const POLL_MAX_ATTEMPTS = 12
 
 const Presets = props => {
   const [addons, setAddons] = useState()
   const [isLoading, setIsLoading] = useState(true)
+  const [pendingActions, setPendingActions] = useState({})
   let isMounted = false
 
   useEffect(() => {
@@ -57,6 +60,8 @@ const Presets = props => {
     await clusterResourceStore.fetchDetail(props.match.params)
   }
 
+  const getPresetKey = detail => detail?.name || ''
+
   const isPresetInstalled = detail => {
     const addonName = detail?.name?.toLowerCase()
     const installedAddons = clusterResourceStore.detail?.cluster?.addons || []
@@ -66,8 +71,29 @@ const Presets = props => {
     )
   }
 
+  const waitForPresetStatus = async (detail, expectedInstalled) => {
+    for (let i = 0; i < POLL_MAX_ATTEMPTS; i += 1) {
+      await fetchData()
+      if (isPresetInstalled(detail) === expectedInstalled) {
+        return
+      }
+      if (i < POLL_MAX_ATTEMPTS - 1) {
+        await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL))
+      }
+    }
+  }
+
   const handlePresetAction = async (detail, installed) => {
+    const presetKey = getPresetKey(detail)
+    if (pendingActions[presetKey]) {
+      return
+    }
+
     try {
+      if (installed) {
+        setPendingActions(prev => ({ ...prev, [presetKey]: 'deleting' }))
+      }
+
       const labels = installed
         ? Object.keys(detail.labels || {}).reduce((acc, key) => {
             acc[key] = ''
@@ -83,13 +109,25 @@ const Presets = props => {
         labels,
       }
       await clusterResourceStore.updateLabels({ cluster_obj: data })
-      await fetchData()
+      if (installed) {
+        await waitForPresetStatus(detail, false)
+      } else {
+        await fetchData()
+      }
     } catch (error) {
       console.error('Failed to update preset labels:', error)
+    } finally {
+      if (installed) {
+        setPendingActions(prev => {
+          const next = { ...prev }
+          delete next[presetKey]
+          return next
+        })
+      }
     }
   }
 
-  const AddonItem = ({ detail, t, installed, handleAction }) => {
+  const AddonItem = ({ detail, t, installed, actionState, handleAction }) => {
     const [imgSrc, setImgSrc] = useState(
       `/assets/${detail.vendor.toLowerCase()}.svg`
     )
@@ -130,9 +168,14 @@ const Presets = props => {
             <div className={styles.text} style={{ width: '8%' }}>
               <Button
                 type={installed ? 'danger' : 'control'}
+                disabled={actionState === 'deleting'}
                 onClick={() => handleAction(detail, installed)}
               >
-                {installed ? t('DELETE') : t('INSTALL')}
+                {actionState === 'deleting'
+                  ? t('DELETING')
+                  : installed
+                  ? t('DELETE')
+                  : t('INSTALL')}
               </Button>
             </div>
           </div>
@@ -147,12 +190,14 @@ const Presets = props => {
         {!!addons &&
           addons.map((detail, index) => {
             const installed = isPresetInstalled(detail)
+            const presetKey = getPresetKey(detail)
             return (
               <AddonItem
                 key={index}
                 detail={detail}
                 t={t}
                 installed={installed}
+                actionState={pendingActions[presetKey]}
                 handleAction={handlePresetAction}
               />
             )

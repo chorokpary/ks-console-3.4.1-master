@@ -39,15 +39,15 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
         end: currentTime - 1000,
       })
       const usage = last(cpuUsageData?.[0].values)[1]
-      setCpuUsage(Math.floor(usage))
+      setCpuUsage(Math.ceil(usage))
 
-      const vmNonUsageData = await customStore.fetchMetric({
-        expr: `count(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m])) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
-        start: currentTime - 1000,
-        end: currentTime - 1000,
-      })
-      const nonUsage = last(vmNonUsageData?.[0].values)[1]
-      setCpuNonUsage(Math.floor(nonUsage))
+      // const vmNonUsageData = await customStore.fetchMetric({
+      //   expr: `count(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m])) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",mode!="idle",pod!~"${promsql_pod_vm_list}"}[5m]))`,
+      //   start: currentTime - 1000,
+      //   end: currentTime - 1000,
+      // })
+      // const nonUsage = last(vmNonUsageData?.[0].values)[1]
+      // setCpuNonUsage(Math.floor(nonUsage))
 
       const vmUsageDataAll = await customStore.fetchMetric({
         expr: `count(node_cpu_seconds_total{service="launcher-node-exporter",mode="idle"}) - sum(rate(node_cpu_seconds_total{service="launcher-node-exporter",pod=~"${promsql_pod_vm_list}"}[5m]))`,
@@ -55,7 +55,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
         end: currentTime - 1000,
       })
       const usageAll = last(vmUsageDataAll?.[0].values)[1]
-      setCpuUsageAll(Math.floor(usageAll))
+      setCpuUsageAll(Math.ceil(usageAll))
     } catch (error) {
     } finally {
       setLoading(false)
@@ -104,7 +104,7 @@ const CpuUsage = ({ widgetKey, monitorStore, ...props }) => {
                     </p>
                   </div>
                   <div className="status_wrap">
-                    <div className="value">{cpuNonUsage}</div>
+                    <div className="value">{cpuUsageAll - cpuUsage}</div>
                     <p className="status waiting">
                       <span>{t('RESOURCES_UNUSED')}</span>
                     </p>

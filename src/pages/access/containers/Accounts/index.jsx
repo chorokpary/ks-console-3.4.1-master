@@ -19,7 +19,7 @@
 import React from 'react'
 
 import UserStore from 'stores/user'
-import { Notify } from '@kube-design/components'
+import { Notify, Tooltip } from '@kube-design/components'
 import { Avatar, Status } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import Table from 'components/Tables/List'
@@ -169,9 +169,20 @@ export default class Accounts extends React.Component {
       dataIndex: 'status',
       isHideable: true,
       width: '20%',
-      render: status => (
-        <Status type={status} name={t(`USER_${status.toUpperCase()}`)} />
-      ),
+      render: status => {
+        console.log('status', status)
+        return (
+          <>
+            <Tooltip
+              content={`${
+                status == 'notlogin' ? `${t('USER_LOGIN_AT_LEAST_ONCE')}` : ''
+              }`}
+            >
+              <Status type={status} name={t(`USER_${status.toUpperCase()}`)} />
+            </Tooltip>
+          </>
+        )
+      },
     },
     {
       title: t('PLATFORM_ROLE'),

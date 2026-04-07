@@ -470,7 +470,13 @@ const index = props => {
   const renderNav = () => {
     const { params } = props.match
     return (
-      <div className={styles.nav}>
+      <div
+        className={styles.nav}
+        style={{
+          borderRadius: '4px',
+          boxShadow: '0 4px 8px 0 rgba(36, 46, 66, 0.06)',
+        }}
+      >
         {routes.map(route => {
           if (!route.title) {
             return null
@@ -563,7 +569,14 @@ const index = props => {
             msOverflowStyle: 'none',
           }}
         >
-          <div className="gpu_mig_monitoring">
+          <div
+            className="gpu_mig_monitoring"
+            style={{
+              borderRadius: '4px',
+              backgroundColor: '#ffffff',
+              boxShadow: '0 4px 8px 0 rgba(36, 46, 66, 0.06)',
+            }}
+          >
             {options.map(option => (
               <MonitorStatusTab
                 key={`${option.name}-${option.value}`}

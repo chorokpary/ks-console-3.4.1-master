@@ -313,6 +313,7 @@ module.exports = {
   RESOURCES_UNUSED: 'Unused',
   RESOURCES_INTERNAL_NETWORK: 'Internal Network',
   RESOURCES_NETWORK: 'Network',
+  RESOURCES_ELB_NETWORK: 'ELB Network',
   RESOURCES_NETWORK_TAB1: 'Virtual Network',
   RESOURCES_NETWORK_TAB2: 'SR-IOV Network',
   RESOURCES_NETWORK_TAB3: 'Dedicated Network',
@@ -497,7 +498,7 @@ module.exports = {
   RESOURCES_USE: 'Use',
   RESOURCES_NOT_USE: 'Not Use',
   RESOURCES_USER_NAME: 'User Name',
-  RESOURCES_CUSTOM: 'Custom (Advanced)',
+  RESOURCES_BASH_SCRIPT: 'Bash Script',
   RESOURCES_SPECIFY_USER: 'Specify User',
   RESOURCES_NO_USE_KAAS_RESOURCE: 'not used by any KaaS.',
   RESOURCES_NO_USE_VM: 'not used by any Virtual Machine.',
@@ -527,10 +528,12 @@ module.exports = {
   RESOURCES_SERVER_MODEL_NAME: 'Server Model Name',
   RESOURCES_SUBNET: 'Subnet',
   RESOURCES_SUBNET_EXTERNAL: 'External',
-  RESOURCES_NETWORK_OFFLOAD: 'Hardware Offload',
+  RESOURCES_USAGE_TYPE: 'Usage Type',
+  RESOURCES_GENERAL: 'General',
   RESOURCES_ELB_DEDICATED: 'ELB Dedicated',
   RESOURCES_ELB_DEDICATED_TIP:
     'Only FLAT type networks can be set as ELB dedicated.',
+  RESOURCES_ELB_NETWORK_IN_USE: 'This ELB network is already in use.',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: 'Select',
   RESOURCES_NOT_SELECTED: 'Not Selected',
@@ -827,7 +830,7 @@ module.exports = {
   RESOURCES_SOURCE_IP_ADDRESS_NAT_TRAFFIC_DESC:
     'NAT that changes the source IP address of traffic.',
   RESOURCES_POWER: 'Power',
-  RESOURCES_WRITE_FILE: 'Write File',
+
   RESOURCES_SELECT_MIN_ONE_PANEL: 'Please select at least one panel.',
   RESOURCES_JUPYTER_CONFIG: 'Jupyter Lab Configuration',
   RESOURCES_PASSWORD: 'Password',
@@ -1129,10 +1132,10 @@ module.exports = {
     'Please enter keypair or password script information.',
   RESOURCES_KEYPAIR_PASSWORD_DESC:
     'One of keypair or password information in the script is required.',
-  RESOURCES_FILE_WIRTE_EMPTY_DESC: 'Please enter file write information.',
+
   RESOURCES_PACKAGE_SETTING_EMPTY_DESC:
     'Please enter package installation information.',
-  RESOURCES_USER_SCRIPT_EMPTY_DESC: 'Please enter user-defined information.',
+  RESOURCES_BASH_SCRIPT_EMPTY_DESC: 'Please enter a bash script.',
   RESOURCES_INVALID_PACKAGE_SETTING_DESC:
     'Package name (both source and binary, package references) should only consist of lowercase (a-z), numbers (0-9), plus (+) and minus (-) signs, and dots (.). It must be at least 2 characters long and start with an alphanumeric character.',
   RESOURCES_ENVIRONMENT_CONFIGURATION_COMPLETE_DESC:
@@ -1337,4 +1340,33 @@ module.exports = {
   RESOURCES_MEMORY_AVAILABLE: 'Memory Availability (Gi)',
   RESOURCES_DISK_AVAILABLE: 'Disk Availability (GB)',
   RESOURCES_SYSTEM_POD_PL: 'System Pods',
+
+  RESOURCES_EXTERNAL_LB: 'External LB',
+  RESOURCES_EXTERNAL_LOAD_BALANCER_DESC: 'Manage the status and usage of the external load balancer.',
+  RESOURCES_CREATE_EXTERNAL_LOAD_BALANCER: 'Create External Load Balancer',
+  RESOURCES_EDIT_EXTERNAL_LOAD_BALANCER: 'Edit External Load Balancer',
+  RESOURCES_DELETE_EXTERNAL_LOAD_BALANCER_TIP:'Enter the external load balancer name <strong>{resource}</strong> to confirm that you understand the risk of this action.',
+  RESOURCES_LISTENER: 'Listener',
+  RESOURCES_LISTENER_SETTINGS: 'Listener Setting',
+  RESOURCES_POOL: 'Pool',
+  RESOURCES_POOL_SETTINGS: 'Pool Setting',
+  RESOURCES_DUPLICATE_PROTOCOL_TIP: 'There is a duplicate protocol.',
+  RESOURCES_DUPLICATE_LISTENER_TIP: 'There is a listener set with duplicate information.',
+  RESOURCES_LISTENER_EMPTY_DESC: 'Please enter your Listener Information.',
+  RESOURCES_MONITOR: 'Monitor',
+  RESOURCES_INTERVAL: 'Interval',
+  RESOURCES_TIME_OUT: 'Timeout',
+  RESOURCES_MEMBER: 'Member',
+  RESOURCES_SELECT_LB_METHOD_TIP: 'Please select a LB method.',
+  RESOURCES_IP_VALID: 'Please enter IP information accurately.',
+  RESOURCES_MEMBER_EMPTY_DESC: 'Please enter your Member Information.',
+  RESOURCES_EXTERNAL_LB_NAME: 'External LB Name',
+  RESOURCES_EXTERNAL_DRIVER: 'Drivers',
+  RESOURCES_WEIGHT_RANGE_DESC: 'Weight range should be a number or a range from 1 to 100.',
+  RESOURCES_ALREADY_USED_IP: 'This IP has already been used.',
+  RESOURCES_INTERVAL_LESSS_THAN_TIMEOUT_DESC: 'Interval value must always be less than Timeout.',
+  RESOURCES_MONITOR_VALID: 'Please enter your Monitor Information',
+  RESOURCES_ADD_POOL: 'Add Pool',
+
+  RESOURCES_SELECT_DRIVER: 'Please select a Driver.',
 }

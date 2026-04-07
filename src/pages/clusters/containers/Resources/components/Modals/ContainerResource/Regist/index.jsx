@@ -8,6 +8,7 @@ import {
   Select,
   Tabs,
   TextArea,
+  Tooltip,
 } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import classnames from 'classnames'
@@ -141,6 +142,7 @@ const RegistModal = props => {
     setSriovNetworkList(sriovNetworks)
     const sgs = securityGroupDataList
       .filter(obj => obj.project === project)
+      .filter(obj => !(Number(obj.ingress) === 0 && Number(obj.egress) !== 0))
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
     setSecurityGroups(sgs)
   }
@@ -680,7 +682,7 @@ const RegistModal = props => {
     <>
       <Modal
         icon="templet"
-        width={840}
+        width={860}
         title={props.title}
         onCancel={closeModal}
         bodyClassName={styles.body}
@@ -1386,17 +1388,41 @@ const RegistModal = props => {
                                 return (
                                   <tr key={data.name}>
                                     <td>
-                                      <Radio
-                                        name={`select-${data.name}`}
-                                        checked={data.name === elbCheckItem}
-                                        disabled={!isElbSelectable}
-                                        onChange={() => {
-                                          if (!isElbSelectable) {
-                                            return
-                                          }
-                                          handleSingleCheck(data.name, 'elb')
-                                        }}
-                                      />
+                                      {isElbSelectable ? (
+                                        <Radio
+                                          name={`select-${data.name}`}
+                                          checked={data.name === elbCheckItem}
+                                          disabled={!isElbSelectable}
+                                          onChange={() => {
+                                            if (!isElbSelectable) {
+                                              return
+                                            }
+                                            handleSingleCheck(data.name, 'elb')
+                                          }}
+                                        />
+                                      ) : (
+                                        <Tooltip
+                                          content={t(
+                                            'RESOURCES_ELB_NETWORK_IN_USE'
+                                          )}
+                                          placement="right"
+                                        >
+                                          <Radio
+                                            name={`select-${data.name}`}
+                                            checked={data.name === elbCheckItem}
+                                            disabled={!isElbSelectable}
+                                            onChange={() => {
+                                              if (!isElbSelectable) {
+                                                return
+                                              }
+                                              handleSingleCheck(
+                                                data.name,
+                                                'elb'
+                                              )
+                                            }}
+                                          />
+                                        </Tooltip>
+                                      )}
                                     </td>
                                     <td>{data.name}</td>
                                     <td>{data.type.toUpperCase()}</td>

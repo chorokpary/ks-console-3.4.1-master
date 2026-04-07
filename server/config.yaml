@@ -95,7 +95,7 @@ client:
     - label: 'English'
       value: 'en'
       recommend: true
-  defaultLang: 'ko'
+  defaultLang: 'en'
   showAllLangs: true
 
   # platform management navigations
@@ -235,12 +235,12 @@ client:
                 skipAuth: true,
                 showInDisable: true,
               }
-            # - {
-            #     name: externalLoadBalancers,
-            #     title: RESOURCES_EXTERNAL_LB,
-            #     skipAuth: true,
-            #     showInDisable: true,
-            #   }
+            - {
+                name: externalLoadBalancers,
+                title: RESOURCES_EXTERNAL_LB,
+                skipAuth: true,
+                showInDisable: true,
+              }
             - {
                 name: resourcesVolumes,
                 title: RESOURCES_VOLUME,

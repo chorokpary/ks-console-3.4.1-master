@@ -29,17 +29,24 @@ module.exports = {
   USER_DISABLED: 'Disabled',
   LAST_LOGIN: 'Last Login',
   // List > Create
-  USERNAME_DESC: 'The username can contain only lowercase letters, numbers, hyphens (-), and dots (.), and must start and end with a lowercase letter or number. The maximum length is 32 characters.',
-  PASSWORD_DESC: 'The password must contain at least one number, one lowercase letter, one uppercase letter, and one special character (~!@#$%^&*()-_=+\\\|[{}];:\'",<.>/? or space). The length must be 8 to 64 characters.',
-  PASSWORD_INVALID_DESC: 'Invalid password. The password must contain at least one number, one lowercase letter, and one uppercase letter. The length must be 8 to 64 characters.',
-  PLATFORM_ROLE_DESC: 'Set the role of the user on the Petasus AI Cloud platform.',
-  USER_SETTING_EMAIL_DESC: 'The email address can be used to log in to the Petasus AI Cloud web console.',
-  USERNAME_EXISTS: 'The username already exists. Please enter another username.',
+  USERNAME_DESC:
+    'The username can contain only lowercase letters, numbers, hyphens (-), and dots (.), and must start and end with a lowercase letter or number. The maximum length is 32 characters.',
+  PASSWORD_DESC:
+    'The password must contain at least one number, one lowercase letter, one uppercase letter, and one special character (~!@#$%^&*()-_=+\\|[{}];:\'",<.>/? or space). The length must be 8 to 64 characters.',
+  PASSWORD_INVALID_DESC:
+    'Invalid password. The password must contain at least one number, one lowercase letter, and one uppercase letter. The length must be 8 to 64 characters.',
+  PLATFORM_ROLE_DESC:
+    'Set the role of the user on the Petasus AI Cloud platform.',
+  USER_SETTING_EMAIL_DESC:
+    'The email address can be used to log in to the Petasus AI Cloud web console.',
+  USERNAME_EXISTS:
+    'The username already exists. Please enter another username.',
   USERNAME_EMPTY_DESC: 'Please enter a username.',
   PLATFORM_ROLE: 'Platform Role',
   CREATE_USER: 'Create User',
   EMAIL: 'Email',
-  EMAIL_EXISTS: 'The email address already exists. Please enter another email address.',
+  EMAIL_EXISTS:
+    'The email address already exists. Please enter another email address.',
   USERNAME_INVALID: 'Invalid username. {message}',
   USERNAME: 'Username',
   PASSWORD: 'Password',
@@ -48,4 +55,13 @@ module.exports = {
   // List > Delete
   USER_LOW: 'user',
   DELETING_CURRENT_USER_NOT_ALLOWED: 'The current user cannot be deleted.',
+  USER_NOTLOGIN: 'Login required',
+  USER_LOGIN_AT_LEAST_ONCE: 'Need to Login at least once to activate it.',
+  USER_CREATE_MINNUM: '{minNum} number',
+  USER_CREATE_MINLOWER: '{minLower} lowercase letter',
+  USER_CREATE_MINUPPER: '{minUpper} uppercase letter',
+  USER_CREATE_MINSPECIAL: '{special} special character ({symbol})',
+  USER_CREATE_RULE: 'The password must contain at least {rules}.',
+  USER_CREATE_LENGTHTEXT:
+    'The length must be {minLength} to {maxLength} characters',
 }

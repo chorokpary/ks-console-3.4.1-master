@@ -53,6 +53,8 @@ const {
   handleOAuthLogin,
   handleLoginConfirm,
   handleCreateUserMfa,
+  handleGetUserMfaList,
+  handleDeleteUserMfa,
 } = require('./controllers/session')
 
 const {
@@ -74,7 +76,7 @@ const parseBody = convert(
 const router = new Router()
 
 router
-  .use(proxy('/xlb/v1/(.*)', xlbProxy))
+  // .use(proxy('/xlb/v1/(.*)', xlbProxy))
   .use(proxy('/devops_webhook/(.*)', devopsWebhookProxy))
   .use(proxy('/b2i_download/(.*)', b2iFileProxy))
   .post('/dockerhub/(.*)', parseBody, handleDockerhubProxy)
@@ -84,6 +86,8 @@ router
 
   // create user mfa
   .post('/users/auth/create/mfa', parseBody, handleCreateUserMfa)
+  .get('/users/auth/mfa/list', handleGetUserMfaList)
+  .delete('/users/auth/mfa/delete/:userid', handleDeleteUserMfa)
 
   .use(proxy('/files', webImageBuildProxy))
   .use(proxy('/files/(.*)', webImageBuildProxy))

@@ -7,17 +7,18 @@ import {
   Select,
   TextArea,
   Button,
-  Checkbox,
 } from '@kube-design/components';
 import { Column, Columns } from '@kube-design/components/lib/components/Layout';
 import classnames from 'classnames';
 import { Modal, TypeSelect } from 'components/Base';
 import { PropertiesInput, NumberInput, ProjectSelect } from 'components/Inputs';
-import { PATTERN_NAME, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
+import { PATTERN_NAME, PATTERN_USER_NAME, PATTERN_MTU, PATTERN_IP, PATTERN_IP_MASK } from 'utils/constants';
 import * as common from 'utils/resources';
 import SriovStore from 'stores/resources/sriovs';
 import styles from './index.scss';
-import { parse } from 'diff2html';
+
+// ===== CONSTANTS =====
+const DEFAULT_MTU = 9000
 
 const RegistModal = props => {
   const form = useRef();
@@ -31,17 +32,13 @@ const RegistModal = props => {
     props.namespace ? props.namespace : 'default'
   );
 
-  const [bondcheck, setBondCheck] = useState(false);
-
   const [sriovResourceDataList, setSriovResourceDataList] = useState([]);
-  const [sriovBondDataList, setSriovBondDataList] = useState([]);
 
   const [cidrReducer, setCidrReducer] = useReducer(
     cidrReducer => !cidrReducer,
     false
   );
   const [externalBool, setExternalBool] = useState(false);
-  const [vfs, setVfs] = useState('');
   const [availableRange, setAvailableRange] = useState(0);
 
   const resourceNameOptions = sriovResourceDataList.map(name => {
@@ -61,19 +58,10 @@ const RegistModal = props => {
       const listSriovResource = await sriovStore.fetchSriovResourceList();
       setSriovResourceDataList(listSriovResource.resources);
       // setSriovResourceDataList(['fastnet']);
-
-      const listSriovBond = await sriovStore.fetchSriovBondList();
-      setSriovBondDataList(listSriovBond.resources);
-      // setSriovBondDataList(["sriov-bond-slave1", "sriov-bond-slave2"]);
     };
 
     getSriovCreateData();
   }, []);
-
-  const getVfs = async name => {
-    const numberOfVfs = await sriovStore.fetchSriovVfs({ resourceName: name, ...props });
-    setVfs(numberOfVfs.number);
-  };
 
   const handleOk = () => {
     const onOk = props.onOk;
@@ -108,9 +96,7 @@ const RegistModal = props => {
       };
       data.dns = dns;
       data.host_routes = host_routes;
-      data.networks = bondCheckItems;
       data.project = projectName;
-      // console.log(data)
       onOk({ ...data });
     });
   };
@@ -124,11 +110,12 @@ const RegistModal = props => {
 
     if (step == 1) {
       if (
+        data.name == undefined ||
+        data.name == '' ||
         data.resource_name == undefined ||
         data.resource_name == '' ||
         data.cidr == undefined ||
         data.cidr == '' ||
-        availableRange > data.vfs ||
         data.ip_pool_start == undefined ||
         !isValidIpAddress(data.ip_pool_start) ||
         data.ip_pool_start == '' ||
@@ -380,45 +367,6 @@ const RegistModal = props => {
     }
   };
 
-  // 체크 리스트 시작 ==================================================
-  const [bondCheckItems, setBondCheckItems] = useState([]);
-
-  const dataListVariables = {
-    bond: sriovBondDataList,
-  };
-
-  const stateVariables = {
-    bond: bondCheckItems,
-  };
-
-  const setVariables = {
-    bond: setBondCheckItems,
-  };
-
-  const handleSingleCheck = (checked, name, type) => {
-    if (checked) {
-      setVariables[type](prev => [...prev, name]);
-    } else {
-      setVariables[type](stateVariables[type].filter(el => el !== name));
-    }
-  };
-
-  const handleAllCheck = (checked, type) => {
-    if (checked) {
-      const nameArray = [];
-      dataListVariables[type].forEach(el => nameArray.push(el));
-      setVariables[type](nameArray);
-    } else {
-      setVariables[type]([]);
-    }
-  };
-
-  const handleDelete = (name, type) => {
-    setVariables[type](stateVariables[type].filter(el => el !== name));
-  };
-
-  // 체크 리스트 끝 ==================================================
-
   const onChangeDestination = (e, idx) => {
     const a = document.getElementById('hostRoute');
     const nexthop = document.getElementById(`Nexthop.${idx}`).value;
@@ -536,31 +484,23 @@ const RegistModal = props => {
                 <Form.Item>
                   <Columns>
                     <Column>
-                      <Columns>
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_RESOURCE_NAME')}
-                            rules={[
-                              {
-                                required: true,
-                                message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
-                              },
-                            ]}
-                          >
-                            <Select
-                              name="resource_name"
-                              placeholder={t('RESOURCES_SELECT')}
-                              options={resourceNameOptions}
-                              onChange={e => getVfs(e)}
-                            />
-                          </Form.Item>
-                        </Column>
-                        <Column>
-                          <Form.Item label={t('VF')}>
-                            <Input name="vfs" defaultValue={vfs} disabled />
-                          </Form.Item>
-                        </Column>
-                      </Columns>
+                      <Form.Item
+                        label={t('RESOURCES_NAME')}
+                        rules={[
+                          { required: true, message: t('NAME_EMPTY_DESC') },
+                          {
+                            pattern: PATTERN_USER_NAME,
+                            message: t('RESOURCES_INVALID_NAME_DESC'),
+                          },
+                        ]}
+                        desc={t('NAME_DESC')}
+                      >
+                        <Input
+                          name="name"
+                          maxLength={63}
+                          style={{ maxWidth: 'none' }}
+                        />
+                      </Form.Item>
                     </Column>
                     <Column>
                       <Form.Item
@@ -583,7 +523,28 @@ const RegistModal = props => {
                     </Column>
                   </Columns>
                 </Form.Item>
-
+                <Form.Item>
+                  <Columns>
+                    <Column>
+                      <Form.Item
+                        label={t('RESOURCES_RESOURCE_NAME')}
+                        rules={[
+                          {
+                            required: true,
+                            message: t('RESOURCES_SELECT_RESOURCE_NAME_TIP'),
+                          },
+                        ]}
+                      >
+                        <Select
+                          name="resource_name"
+                          placeholder={t('RESOURCES_SELECT')}
+                          options={resourceNameOptions}
+                        />
+                      </Form.Item>
+                    </Column>
+                    <Column/>
+                  </Columns>
+                </Form.Item>
                 <Form.Item>
                   <Columns>
                     <Column>
@@ -699,20 +660,31 @@ const RegistModal = props => {
                             <Input name="gateway_ip" />
                           </Form.Item>
                         </Column>
-                        <Column>{/* 빈 컬럼 */}</Column>
+                        <Column>
+                          <Form.Item
+                            label={t('RESOURCES_MTU')}
+                            rules={[
+                              {
+                                required: true,
+                                message: t('RESOURCES_MTU_EMPTY_DESC'),
+                              },
+                              {
+                                pattern: PATTERN_MTU,
+                                message: t('RESOURCES_MTU_VALID'),
+                              },
+                            ]}
+                          >
+                            <NumberInput
+                              name="mtu"
+                              defaultValue={DEFAULT_MTU}
+                              style={{ maxWidth: 'none' }}
+                            />
+                          </Form.Item>
+                        </Column>
                       </Columns>
                     </Form.Item>
                   </Form.Group>
                 </Form.Item>
-                {availableRange > vfs && (
-                  <div
-                    className="form-item-error"
-                    style={{ marginTop: '-10px', marginBottom: '10px' }}
-                  >
-                    {t('IP POOL 범위가 VF 개수를 넘어갑니다.')}
-                  </div>
-                )}
-
                 <Form.Item
                   className={styles.textarea}
                   label={t('RESOURCES_DESCRIPTION')}
@@ -724,111 +696,6 @@ const RegistModal = props => {
                     defaultValue=""
                   />
                 </Form.Item>
-
-                <Form.Item>
-                  <Checkbox
-                    name="bond"
-                    value="Y"
-                    onClick={() => {
-                      setBondCheck(!bondcheck);
-                    }}
-                  >
-                    BOND
-                  </Checkbox>
-                </Form.Item>
-
-                {bondcheck && (
-                  <Form.Item>
-                    <div className={styles.wrapper}>
-                      {stateVariables['bond'].length > 0 && (
-                        <div
-                          className={classnames(
-                            styles.table_title,
-                            styles.table_title_bg
-                          )}
-                        >
-                          <Button
-                            className={styles.table_title_button}
-                            onClick={() => handleAllCheck(false, 'bond')}
-                          >
-                            {t('RESOURCES_ALL_DESELECT')}
-                          </Button>{' '}
-                          {stateVariables['bond'].length}
-                          {t('RESOURCES_COUNT')} {t('RESOURCES_SELECT')}
-                        </div>
-                      )}
-                      <div className={styles.table}>
-                        <table>
-                          <colgroup>
-                            <col width="5%" />
-                            <col width="95%" />
-                          </colgroup>
-                          <thead>
-                            <tr>
-                              <th>
-                                <Checkbox
-                                  name="select-all-bond"
-                                  onChange={checked =>
-                                    handleAllCheck(checked, 'bond')
-                                  }
-                                  checked={
-                                    !!(
-                                      dataListVariables['bond'].length > 0 &&
-                                      stateVariables['bond'].length ===
-                                      dataListVariables['bond'].length
-                                    )
-                                  }
-                                />
-                              </th>
-                              <th>
-                                <strong>{t('RESOURCES_NETWORK_NAME')}</strong>
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {sriovBondDataList.length == 0 && (
-                              <tr>
-                                <td colSpan="2" className="no-data">
-                                  <p>관련 데이터가 없습니다.</p>
-                                </td>
-                              </tr>
-                            )}
-                            {sriovBondDataList?.map((data, idx) => {
-                              return (
-                                <tr key={idx}>
-                                  <td>
-                                    <Checkbox
-                                      name={`select-${idx}`}
-                                      checked={
-                                        !!stateVariables['bond'].includes(data)
-                                      }
-                                      onChange={checked =>
-                                        handleSingleCheck(checked, data, 'bond')
-                                      }
-                                    />
-                                  </td>
-                                  <td>{data}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                        <div className={styles.removeCheckWrapper}>
-                          {bondCheckItems?.map(name => (
-                            <span key={name}>
-                              <Button
-                                icon="close"
-                                onClick={() => handleDelete(name, 'bond')}
-                              >
-                                {name}
-                              </Button>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </Form.Item>
-                )}
               </div>
               {/* 기본설정 설정 끝========================================== */}
 

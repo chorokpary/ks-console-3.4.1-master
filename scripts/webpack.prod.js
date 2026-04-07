@@ -30,6 +30,7 @@ const root = path => resolve(__dirname, `../${path}`)
 
 const baseConfig = require('./webpack.base')
 const localeConfig = require('./webpack.locale')
+const sassLoaderOptions = require('./sass-loader-options')
 
 const smp = new SpeedMeasurePlugin()
 
@@ -62,7 +63,7 @@ const config = smp.wrap({
             loader: 'postcss-loader',
             options: baseConfig.postCssOptions,
           },
-          { loader: 'sass-loader' },
+          { loader: 'sass-loader', options: sassLoaderOptions },
         ],
       },
       {
@@ -80,7 +81,7 @@ const config = smp.wrap({
             loader: 'postcss-loader',
             options: baseConfig.postCssOptions,
           },
-          'sass-loader',
+          { loader: 'sass-loader', options: sassLoaderOptions },
         ],
       },
       {

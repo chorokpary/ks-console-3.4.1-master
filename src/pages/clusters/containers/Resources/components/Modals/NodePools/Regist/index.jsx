@@ -70,6 +70,7 @@ const RegistNodePoolModal = props => {
 
   useEffect(() => {
     const getVmCreateData = async () => {
+      props.namespace = props.detailStore.detail.cluster.project
       const listFlavor = await vmStore.fetchVmListFlavor({
         sortBy: 'root_disk',
         ...props,
@@ -1145,7 +1146,7 @@ const RegistNodePoolModal = props => {
                               {index === 0 ? t('RESOURCES_TYPE_YOO') : ''}
                             </label>
                             <div className={styles.multiline}>
-                              <div>{obj.type}</div>
+                              <div>{obj.type.toUpperCase()}</div>
                             </div>
                           </div>
                           <div className={styles.list}>

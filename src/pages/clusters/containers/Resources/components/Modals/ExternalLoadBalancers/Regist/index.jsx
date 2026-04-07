@@ -79,7 +79,8 @@ const RegistModal = props => {
   useEffect(() => {
     const getCreateData = async () => {
       const result = await loadBalancerStore.fetchDrivers();
-      setDriverList(result.drivers);  
+
+      setDriverList(result.drivers || []);  
 
       const listVm = await loadBalancerStore.fetchVmList(props);
       setVmDataList(listVm.vms); 
@@ -479,6 +480,7 @@ const RegistModal = props => {
     if (step === 1) {
       if (
         (data.name === undefined ||
+          data.driverId === undefined ||
           !PATTERN_USER_NAME.test(data.name) ||
           data.projectName === undefined ||
           !PATTERN_USER_NAME.test(data.projectName) ||
@@ -703,7 +705,7 @@ const RegistModal = props => {
       </>
     )
   }
-
+  
   return (
     <>
       <Modal
@@ -858,7 +860,9 @@ const RegistModal = props => {
                             validator: (_, value) => {
                               if (!value) return Promise.resolve();
                               const name = `${value.trim()}`
-                              const isDuplicated = existedProjects.includes(name)
+                              // const isDuplicated = existedProjects.includes(name)
+                              // setIsDupProject(isDuplicated ? false : true)
+                              const isDuplicated = false; // 고정 처리
                               setIsDupProject(isDuplicated ? false : true)
                               return isDuplicated ? Promise.reject(new Error(t('RESOURCES_DUPLICATE_NAME'))) : Promise.resolve()
                             },
@@ -874,21 +878,20 @@ const RegistModal = props => {
                         />
                       </Form.Item>
                     </Column>
-                      <Column>
-                      {driverList.length > 0 &&
+                      <Column>                      
                         <Form.Item
                           label={t('RESOURCES_EXTERNAL_DRIVER')}
                           rules={[
-                            { required: true },
+                            { required: true, message: t('RESOURCES_SELECT_DRIVER') },
                           ]}
                         >
                            <Select
                               name="driverId"
                               defaultValue={driverOptions()[0]?.value}
                               options={driverOptions()}
+                              placeholder={t('RESOURCES_SELECT')}
                             />
-                        </Form.Item>
-                      }
+                        </Form.Item>                  
                       </Column>
                   </Columns>
 
@@ -966,10 +969,19 @@ const RegistModal = props => {
                 {/* 기본설정 설정 끝========================================== */}
 
                 {/* 풀 설정 시작======================================== */}
-                <div className={`${regStep === 2 ? '' : 'hide'}`}>
-                
-                  {t('RESOURCES_POOL')}
-                  <span className="form-item-required">*</span>
+                <div className={`${regStep === 2 ? '' : 'hide'}`}>                
+                  
+                  <div className={styles.header}>
+                    <div className={styles.left}>
+                      {t('RESOURCES_POOL')} <span className="form-item-required">*</span>
+                    </div>
+                    <Button
+                      onClick={handlePool.handleAddFields}
+                    >
+                      {t('RESOURCES_ADD_POOL')}
+                    </Button>
+                  </div>
+                                    
                   <div style={{ padding: 10 }} />   
                   <div className={styles.wrapper_pool}>  
                     {/* Poll List Start ================================================*/}
@@ -1153,13 +1165,8 @@ const RegistModal = props => {
                     ))}
                     {/* Poll List End ================================================*/}
                     <div style={{ padding: 10 }} />                    
-                  </div>    
-
-                  <div className="text-center">
-                      <Button className={styles.add} onClick={handlePool.handleAddFields}>
-                        {t('RESOURCES_ADD')}
-                      </Button>
-                  </div>                
+                  </div> 
+                                
                 </div>
                 {/* 풀 설정 끝========================================== */}
 
@@ -1183,10 +1190,16 @@ const RegistModal = props => {
                                   <strong>{t('RESOURCES_PROTOCOL')}</strong>
                                 </th>
                                 <th>
-                                  <strong>{t('PORT')}</strong>
+                                  <strong>
+                                    {t('PORT')}
+                                    <span className="form-item-required">*</span>
+                                  </strong>
                                 </th>
                                 <th>
-                                  <strong>{t('RESOURCES_POOL')}</strong>
+                                  <strong>
+                                    {t('RESOURCES_POOL')}
+                                    <span className="form-item-required">*</span>
+                                  </strong>
                                 </th>
                                 <th>
                                   <strong></strong>

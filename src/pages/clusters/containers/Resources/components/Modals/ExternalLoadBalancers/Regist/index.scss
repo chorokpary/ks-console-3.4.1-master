@@ -627,3 +627,13 @@ button {
 .pool_title svg {
   cursor: pointer;
 }
+
+.header {
+  display: flex;
+  justify-content: space-between; /* 좌우 끝으로 배치 */
+  align-items: center;
+}
+
+.left {
+  text-align: left;
+}

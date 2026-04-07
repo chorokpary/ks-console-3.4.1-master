@@ -1143,7 +1143,7 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                               </li>
                               <li>
                                 <p>
-                                  <strong>${t('RESOURCES_VM')}</strong>
+                                  <strong>${t('RESOURCES_VM_SHORT')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -1249,7 +1249,7 @@ export const alarmVerticalPanel = ({ x, y, w, h }) => {
                                     'RESOURCES_WARNING'
                                   )}</span>
                                   <span class="alert_resource type_vm">${t(
-                                    'RESOURCES_VM'
+                                    'RESOURCES_VM_SHORT'
                                   )}</span>
                                 </div>
 
@@ -1333,7 +1333,7 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                               </li>
                               <li>
                                 <p>
-                                  <strong>${t('RESOURCES_VM')}</strong>
+                                  <strong>${t('RESOURCES_VM_SHORT')}</strong>
                                 </p>
                               </li>
                               <li>
@@ -1413,7 +1413,7 @@ export const alarmHorizontalPanel = ({ x, y, w, h }) => {
                                     'RESOURCES_WARNING'
                                   )}</span>
                                   <span class="alert_resource type_vm">${t(
-                                    'RESOURCES_VM'
+                                    'RESOURCES_VM_SHORT'
                                   )}</span>
                                 </div>
 
