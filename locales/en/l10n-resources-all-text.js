@@ -533,6 +533,18 @@ module.exports = {
   RESOURCES_ELB_DEDICATED_TIP:
     'Only FLAT type networks can be set as ELB dedicated.',
   RESOURCES_ELB_NETWORK_IN_USE: 'This ELB network is already in use.',
+  RESOURCES_ELB_MANAGEMENT: 'ELB Management',
+  RESOURCES_ELB_MANAGEMENT_CONDITION_TIP:
+    'ELB management is available only for FLAT + External networks.',
+  RESOURCES_ELB_TYPE: 'ELB Type',
+  RESOURCES_ELB_IP_POOL_INFORMATION: 'ELB IP POOL Information',
+  RESOURCES_ELB_IP_POOL_EMPTY_DESC: 'Please enter ELB IP POOL information.',
+  RESOURCES_ELB_IP_POOL_OVERLAP_DESC:
+    'ELB IP POOL must not overlap with IP POOL.',
+  RESOURCES_GATEWAY_IP_IN_POOL_DESC:
+    'Gateway IP must not be included in IP POOL.',
+  RESOURCES_GATEWAY_IP_IN_ELB_POOL_DESC:
+    'Gateway IP must not be included in ELB IP POOL.',
   RESOURCES_MTU: 'MTU',
   RESOURCES_SELECT: 'Select',
   RESOURCES_NOT_SELECTED: 'Not Selected',

@@ -120,8 +120,29 @@ const NetworkDetail = props => {
           : t('RESOURCES_NOT_USE'),
       },
       {
-        name: t('RESOURCES_ELB_DEDICATED'),
+        name: 'ELB',
         value: detail.network.elb ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE'),
+      },
+      {
+        name: 'ELB Used By',
+        value: detail.network.elb_used_by || '-',
+      },
+      {
+        name: 'ELB Management',
+        value: detail.network.elb_management
+          ? t('RESOURCES_USE')
+          : t('RESOURCES_NOT_USE'),
+      },
+      {
+        name: 'ELB Type',
+        value: detail.network.elb_type || '-',
+      },
+      {
+        name: 'ELB IP Pool',
+        value:
+          detail.network.elb_ip_pool?.start && detail.network.elb_ip_pool?.end
+            ? `${detail.network.elb_ip_pool.start}\n${detail.network.elb_ip_pool.end}`
+            : '-',
       },
       {
         name: t('RESOURCES_IP_POOL_INFORMATION'),

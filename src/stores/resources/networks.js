@@ -91,14 +91,17 @@ export default class NetworkStore extends Base {
 
   @action
   async update(params, data) {
+    const networkData = { ...data }
+    delete networkData.elb
+
     const jsonData = {}
-    jsonData.network = data
+    jsonData.network = networkData
 
     await this.submitting(
       request.put(
         this.getDetailUrl({
           ...params,
-          namespace: params.namespace ? params.namespace : data.project,
+          namespace: params.namespace ? params.namespace : networkData.project,
         }),
         jsonData
       )

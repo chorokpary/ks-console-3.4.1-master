@@ -38,6 +38,7 @@ const CIDR_PARTS_LENGTH = 2
 const MAX_CIDR_CLASS = 30
 const DEFAULT_MTU = 1500
 const DEFAULT_PROJECT = 'default'
+const DEFAULT_ELB_TYPE = 'kubelb'
 const INITIAL_REG_STEP = 1
 const INITIAL_HOST_ROUTE_ID = 1
 
@@ -52,7 +53,7 @@ const networkConfigReducer = (state, action) => {
         networkType: action.payload,
         isTunnelNetwork: action.payload !== 'FLAT',
       }
-case 'SET_PHYSNET':
+    case 'SET_PHYSNET':
       return { ...state, physnet: action.payload }
     case 'SET_NETWORK_TYPE_OPTIONS':
       return { ...state, networkTypeOptions: action.payload }
@@ -109,6 +110,7 @@ const RegistModal = props => {
   // ===== UI STATE =====
   const [modelView, setModalView] = useState(true)
   const [regStep, setRegStep] = useState(INITIAL_REG_STEP)
+  const [elbManagementEnabled, setElbManagementEnabled] = useState(false)
 
   // ===== NETWORK CONFIGURATION STATE =====
   const [networkConfig, dispatchNetworkConfig] = useReducer(
@@ -243,6 +245,16 @@ const RegistModal = props => {
       dns,
       host_routes,
       elb: data.type === 'FLAT' ? data.elb || false : false,
+      elb_management:
+        data.type === 'FLAT' && data.external ? !!data.elb_management : false,
+    }
+
+    if (processedData.elb_management) {
+      processedData.elb_type = data.elb_type || DEFAULT_ELB_TYPE
+      processedData.elb_ip_pool = {
+        start: data.elb_ip_pool_start,
+        end: data.elb_ip_pool_end,
+      }
     }
 
     // Add optional fields only if they exist
@@ -268,7 +280,9 @@ const RegistModal = props => {
     form.current.validator(() => {
       const { data } = form.current.props
 
-      if (hasFormErrors()) {
+      const isElbValidationPassed = validateElbManagementRules(data)
+
+      if (hasFormErrors() || !isElbValidationPassed) {
         return
       }
 
@@ -312,6 +326,151 @@ const RegistModal = props => {
   const clearValidationError = useCallback(field => {
     dispatchValidation({ type: 'CLEAR_ERROR', field })
   }, [])
+
+  const ipToNumber = ip =>
+    ip.split('.').reduce((sum, octet) => sum * 256 + Number(octet), 0)
+
+  const isPoolRangeValid = useCallback(
+    (start, end) =>
+      PATTERN_IP.test(start) &&
+      PATTERN_IP.test(end) &&
+      ipToNumber(start) <= ipToNumber(end),
+    []
+  )
+
+  const isIpInPool = useCallback(
+    (ip, start, end) => {
+      if (!PATTERN_IP.test(ip) || !isPoolRangeValid(start, end)) {
+        return false
+      }
+      const target = ipToNumber(ip)
+      return target >= ipToNumber(start) && target <= ipToNumber(end)
+    },
+    [isPoolRangeValid]
+  )
+
+  const isPoolOverlap = useCallback(
+    (startA, endA, startB, endB) => {
+      if (!isPoolRangeValid(startA, endA) || !isPoolRangeValid(startB, endB)) {
+        return false
+      }
+      const maxStart = Math.max(ipToNumber(startA), ipToNumber(startB))
+      const minEnd = Math.min(ipToNumber(endA), ipToNumber(endB))
+      return maxStart <= minEnd
+    },
+    [isPoolRangeValid]
+  )
+
+  const validateGatewayPoolConflicts = useCallback(
+    data => {
+      clearValidationError('gateway_pool_conflict')
+
+      const hasGateway = PATTERN_IP.test(data.gateway_ip || '')
+      const hasIpPool = isPoolRangeValid(data.ip_pool_start, data.ip_pool_end)
+
+      if (
+        hasGateway &&
+        hasIpPool &&
+        isIpInPool(data.gateway_ip, data.ip_pool_start, data.ip_pool_end)
+      ) {
+        setValidationError(
+          'gateway_pool_conflict',
+          t('RESOURCES_GATEWAY_IP_IN_POOL_DESC')
+        )
+        return false
+      }
+
+      if (
+        hasGateway &&
+        data.elb_management &&
+        isPoolRangeValid(data.elb_ip_pool_start, data.elb_ip_pool_end) &&
+        isIpInPool(
+          data.gateway_ip,
+          data.elb_ip_pool_start,
+          data.elb_ip_pool_end
+        )
+      ) {
+        setValidationError(
+          'gateway_pool_conflict',
+          t('RESOURCES_GATEWAY_IP_IN_ELB_POOL_DESC')
+        )
+        return false
+      }
+
+      return true
+    },
+    [clearValidationError, isIpInPool, isPoolRangeValid, setValidationError]
+  )
+
+  const validateElbManagementRules = useCallback(
+    data => {
+      clearValidationError('elb_management')
+      clearValidationError('elb_ip_pool')
+      clearValidationError('elb_ip_pool_overlap')
+
+      const isElbManagementAllowed =
+        data.type === 'FLAT' && data.external === true
+      const isElbManagementEnabled = !!data.elb_management
+      let isValid = true
+
+      if (isElbManagementEnabled && !isElbManagementAllowed) {
+        setValidationError(
+          'elb_management',
+          t('RESOURCES_ELB_MANAGEMENT_CONDITION_TIP')
+        )
+        isValid = false
+      }
+
+      if (isElbManagementEnabled) {
+        if (!data.elb_type) {
+          data.elb_type = DEFAULT_ELB_TYPE
+        }
+
+        if (!data.elb_ip_pool_start || !data.elb_ip_pool_end) {
+          setValidationError(
+            'elb_ip_pool',
+            t('RESOURCES_ELB_IP_POOL_EMPTY_DESC')
+          )
+          isValid = false
+        } else if (
+          !isPoolRangeValid(data.elb_ip_pool_start, data.elb_ip_pool_end)
+        ) {
+          setValidationError('elb_ip_pool', t('RESOURCES_IP_POOL_VALID'))
+          isValid = false
+        }
+
+        if (
+          isPoolRangeValid(data.ip_pool_start, data.ip_pool_end) &&
+          isPoolRangeValid(data.elb_ip_pool_start, data.elb_ip_pool_end) &&
+          isPoolOverlap(
+            data.ip_pool_start,
+            data.ip_pool_end,
+            data.elb_ip_pool_start,
+            data.elb_ip_pool_end
+          )
+        ) {
+          setValidationError(
+            'elb_ip_pool_overlap',
+            t('RESOURCES_ELB_IP_POOL_OVERLAP_DESC')
+          )
+          isValid = false
+        }
+      }
+
+      if (!validateGatewayPoolConflicts(data)) {
+        isValid = false
+      }
+
+      return isValid
+    },
+    [
+      clearValidationError,
+      isPoolOverlap,
+      isPoolRangeValid,
+      setValidationError,
+      validateGatewayPoolConflicts,
+    ]
+  )
 
   // ===== HOST ROUTE HANDLERS =====
   const handleHostRoute = {
@@ -396,6 +555,11 @@ const RegistModal = props => {
         // Tunnel networks (VXLAN, GENEVE, GRE)
         data.segment_id = ''
         data.physnet_name = ''
+        data.elb_management = false
+        data.elb_type = DEFAULT_ELB_TYPE
+        data.elb_ip_pool_start = ''
+        data.elb_ip_pool_end = ''
+        setElbManagementEnabled(false)
 
         dispatchNetworkConfig({ type: 'SET_NETWORK_TYPE', payload: e })
         dispatchNetworkConfig({
@@ -415,6 +579,7 @@ const RegistModal = props => {
     step => {
       const { data } = form.current.props
       if (step === 1) {
+        const isElbValidationPassed = validateElbManagementRules(data)
         if (
           data.name === undefined ||
           data.name === '' ||
@@ -429,7 +594,8 @@ const RegistModal = props => {
           data.ip_pool_start === '' ||
           data.ip_pool_end === undefined ||
           data.ip_pool_end === '' ||
-          !checkNetworkAddress(data.cidr)
+          !checkNetworkAddress(data.cidr) ||
+          !isElbValidationPassed
         ) {
           handleOk()
         } else {
@@ -437,7 +603,7 @@ const RegistModal = props => {
         }
       }
     },
-    [handleOk]
+    [handleOk, validateElbManagementRules]
   )
 
   // ===== EXTERNAL NETWORK HELPERS =====
@@ -487,6 +653,25 @@ const RegistModal = props => {
     }
   }, [networkConfig.networkType])
 
+  const getElbManagementState = useCallback(() => {
+    const isAllowed =
+      networkConfig.networkType === 'FLAT' && networkConfig.external === true
+
+    if (isAllowed) {
+      return {
+        disabled: false,
+        tooltipContent: '',
+        showTooltip: false,
+      }
+    }
+
+    return {
+      disabled: true,
+      tooltipContent: t('RESOURCES_ELB_MANAGEMENT_CONDITION_TIP'),
+      showTooltip: true,
+    }
+  }, [networkConfig.external, networkConfig.networkType])
+
   // ===== RENDER HELPERS =====
   const fnGetModalFooter = () => {
     return (
@@ -534,7 +719,9 @@ const RegistModal = props => {
               loading={props.store.isSubmitting}
               disabled={props.store.isSubmitting}
             >
-              {t('RESOURCES_CREATE')}
+              {props.store.isSubmitting
+                ? t('RESOURCES_CREATING')
+                : t('RESOURCES_CREATE')}
             </Button>
           </>
         )}
@@ -807,12 +994,22 @@ const RegistModal = props => {
                               name="external"
                               wrapClassName="radio"
                               defaultValue={networkConfig.external}
-                              onChange={e =>
+                              onChange={e => {
+                                const { data } = form.current.props
+
                                 dispatchNetworkConfig({
                                   type: 'SET_EXTERNAL',
                                   payload: e,
                                 })
-                              }
+
+                                if (!e) {
+                                  data.elb_management = false
+                                  data.elb_type = DEFAULT_ELB_TYPE
+                                  data.elb_ip_pool_start = ''
+                                  data.elb_ip_pool_end = ''
+                                  setElbManagementEnabled(false)
+                                }
+                              }}
                             >
                               {BINARY_OPTIONS.map((option, idx) => {
                                 const externalState = getExternalNetworkState()
@@ -938,6 +1135,70 @@ const RegistModal = props => {
                               })}
                             </RadioGroup>
                           </Form.Item>
+                          <Form.Item
+                            label={t('RESOURCES_ELB_MANAGEMENT')}
+                            rules={[{ required: true }]}
+                          >
+                            <RadioGroup
+                              name="elb_management"
+                              wrapClassName="radio"
+                              defaultValue={false}
+                              onChange={value => {
+                                const { data } = form.current.props
+                                data.elb_management = value
+                                setElbManagementEnabled(value)
+
+                                clearValidationError('elb_management')
+                                clearValidationError('elb_ip_pool')
+                                clearValidationError('elb_ip_pool_overlap')
+
+                                if (!value) {
+                                  data.elb_type = DEFAULT_ELB_TYPE
+                                  data.elb_ip_pool_start = ''
+                                  data.elb_ip_pool_end = ''
+                                  clearValidationError('gateway_pool_conflict')
+                                }
+                              }}
+                            >
+                              {BINARY_OPTIONS.map((option, idx) => {
+                                const elbManagementState = getElbManagementState()
+                                const isUseOption = idx === 1
+
+                                return elbManagementState.showTooltip ? (
+                                  <Tooltip
+                                    key={option.value}
+                                    content={elbManagementState.tooltipContent}
+                                    placement="right"
+                                  >
+                                    <RadioButton
+                                      value={option.value}
+                                      disabled={
+                                        isUseOption &&
+                                        elbManagementState.disabled
+                                      }
+                                    >
+                                      {option.label}
+                                    </RadioButton>
+                                  </Tooltip>
+                                ) : (
+                                  <RadioButton
+                                    key={option.value}
+                                    value={option.value}
+                                    disabled={
+                                      isUseOption && elbManagementState.disabled
+                                    }
+                                  >
+                                    {option.label}
+                                  </RadioButton>
+                                )
+                              })}
+                            </RadioGroup>
+                          </Form.Item>
+                          {validationErrors.elb_management && (
+                            <div className="form-item-error">
+                              {validationErrors.elb_management}
+                            </div>
+                          )}
                         </Column>
                         <Column>
                           <Columns>
@@ -978,6 +1239,80 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
+                          {elbManagementEnabled && (
+                            <Columns>
+                              <Column>
+                                <Form.Item
+                                  label={t('RESOURCES_ELB_TYPE')}
+                                  rules={[{ required: true }]}
+                                >
+                                  <Select
+                                    name="elb_type"
+                                    defaultValue={DEFAULT_ELB_TYPE}
+                                    options={[
+                                      {
+                                        label: DEFAULT_ELB_TYPE,
+                                        value: DEFAULT_ELB_TYPE,
+                                      },
+                                    ]}
+                                  />
+                                </Form.Item>
+                              </Column>
+                              <Column>
+                                <Columns>
+                                  <Column>
+                                    <Form.Item
+                                      label={t(
+                                        'RESOURCES_ELB_IP_POOL_INFORMATION'
+                                      )}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: t(
+                                            'RESOURCES_ELB_IP_POOL_EMPTY_DESC'
+                                          ),
+                                        },
+                                        {
+                                          pattern: PATTERN_IP,
+                                          message: t('RESOURCES_IP_POOL_VALID'),
+                                        },
+                                      ]}
+                                    >
+                                      <Input name="elb_ip_pool_start" />
+                                    </Form.Item>
+                                  </Column>
+                                  <Column>
+                                    <Form.Item
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: t(
+                                            'RESOURCES_ELB_IP_POOL_EMPTY_DESC'
+                                          ),
+                                        },
+                                        {
+                                          pattern: PATTERN_IP,
+                                          message: t('RESOURCES_IP_POOL_VALID'),
+                                        },
+                                      ]}
+                                    >
+                                      <Input
+                                        name="elb_ip_pool_end"
+                                        style={{ marginTop: '24px' }}
+                                      />
+                                    </Form.Item>
+                                  </Column>
+                                </Columns>
+                              </Column>
+                            </Columns>
+                          )}
+                          {(validationErrors.elb_ip_pool ||
+                            validationErrors.elb_ip_pool_overlap) && (
+                            <div className="form-item-error">
+                              {validationErrors.elb_ip_pool ||
+                                validationErrors.elb_ip_pool_overlap}
+                            </div>
+                          )}
                         </Column>
                       </Columns>
                     </Form.Item>
@@ -997,6 +1332,11 @@ const RegistModal = props => {
                           >
                             <Input name="gateway_ip" />
                           </Form.Item>
+                          {validationErrors.gateway_pool_conflict && (
+                            <div className="form-item-error">
+                              {validationErrors.gateway_pool_conflict}
+                            </div>
+                          )}
                         </Column>
                       </Columns>
                     </Form.Item>

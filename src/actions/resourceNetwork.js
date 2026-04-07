@@ -29,6 +29,14 @@ import ModifyModal from 'clusters/containers/Resources/components/Modals/Network
 import TopologyModal from 'clusters/containers/Resources/components/Modals/Topology'
 import TopologyModalProject from 'projects/containers/Resources/components/Modals/Topology'
 
+const notifyNetworkApiError = error => {
+  Notify.error({
+    title: error?.reason || t('ERROR'),
+    content: error?.message || t('ERROR'),
+    duration: 8000,
+  })
+}
+
 export default {
   'networks.regist': {
     on({ store, cluster, workspace, namespace, success, devops, ...props }) {
@@ -38,8 +46,13 @@ export default {
             .create(data, { cluster, workspace, namespace, devops })
             .then(() => {
               Modal.close(modal)
-              Notify.success({ content: t('RESOURCES_SAVE_SUCCESSFUL') })
+              Notify.success({
+                content: t('RESOURCES_CREATE_REQUEST_SUCCESSFUL'),
+              })
               success && success()
+            })
+            .catch(error => {
+              notifyNetworkApiError(error)
             })
         },
         title: t('RESOURCES_CREATE_NETWORK'),
@@ -54,15 +67,31 @@ export default {
     },
   },
   'networks.edit': {
-    on({ store, module, detail, cluster, workspace, namespace, success, devops, ...props }) {
+    on({
+      store,
+      module,
+      detail,
+      cluster,
+      workspace,
+      namespace,
+      success,
+      devops,
+      ...props
+    }) {
       const modal = Modal.open({
         onOk: data => {
           store
-            .update({ ...detail, cluster, workspace, namespace, devops, id: data.id }, data)
+            .update(
+              { ...detail, cluster, workspace, namespace, devops, id: data.id },
+              data
+            )
             .then(() => {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
               success && success()
+            })
+            .catch(error => {
+              notifyNetworkApiError(error)
             })
         },
         title: t('RESOURCES_EDIT_NETWORK'),
@@ -118,7 +147,8 @@ export default {
               Modal.close(modal)
               Notify.success({ content: t('RESOURCES_DELETE_SUCCESSFUL') })
               success && success()
-            }).catch((e) => {
+            })
+            .catch(() => {
               Modal.close(modal)
               success()
             })
@@ -141,7 +171,7 @@ export default {
   'networks.yaml.view': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Notify.success({ content: t('RESOURCES_EDIT_SUCCESSFUL') })
           Modal.close(modal)
           success && success()
@@ -156,7 +186,7 @@ export default {
   'networks.topology': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Modal.close(modal)
         },
         detail,
@@ -169,7 +199,7 @@ export default {
   'networks.topology.project': {
     on({ store, detail, success, ...props }) {
       const modal = Modal.open({
-        onOk: async data => {
+        onOk: async () => {
           Modal.close(modal)
         },
         detail,

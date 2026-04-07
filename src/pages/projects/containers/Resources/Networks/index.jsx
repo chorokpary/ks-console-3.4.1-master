@@ -131,12 +131,40 @@ export default class Networks extends React.Component {
         width: 'auto',
       },
       {
-        title: t('RESOURCES_USAGE_TYPE'),
+        title: 'ELB',
         dataIndex: 'elb',
         isHideable: true,
         width: 'auto',
-        render: elb =>
-          elb ? t('RESOURCES_ELB_DEDICATED') : t('RESOURCES_GENERAL'),
+        render: elb => (elb ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')),
+      },
+      {
+        title: 'ELB Used By',
+        dataIndex: 'elb_used_by',
+        isHideable: true,
+        width: 'auto',
+        render: value => value || '-',
+      },
+      {
+        title: 'ELB Management',
+        dataIndex: 'elb_management',
+        isHideable: true,
+        width: 'auto',
+        render: value => (value ? t('RESOURCES_USE') : t('RESOURCES_NOT_USE')),
+      },
+      {
+        title: 'ELB Type',
+        dataIndex: 'elb_type',
+        isHideable: true,
+        width: 'auto',
+        render: value => value || '-',
+      },
+      {
+        title: 'ELB IP Pool',
+        dataIndex: 'elb_ip_pool',
+        isHideable: true,
+        width: 'auto',
+        render: pool =>
+          pool?.start && pool?.end ? `${pool.start} ~ ${pool.end}` : '-',
       },
       {
         title: t('RESOURCES_MTU'),
