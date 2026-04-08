@@ -1238,14 +1238,6 @@ const RegistModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
-                        </Column>
-                      </Columns>
-                    </Form.Item>
-
-                    <Form.Item>
-                      <Columns>
-                        <Column />
-                        <Column>
                           <Form.Item
                             label={t('RESOURCES_GATEWAY_IP')}
                             rules={[

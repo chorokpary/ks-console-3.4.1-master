@@ -2,14 +2,7 @@ import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { Modal } from 'components/Base'
 import { NumberInput } from 'components/Inputs'
 import { PATTERN_IP, PATTERN_IP_MASK, PATTERN_MTU } from 'utils/constants'
-import {
-  Button,
-  Form,
-  Input,
-  Select,
-  TextArea,
-  Tooltip,
-} from '@kube-design/components'
+import { Button, Form, Input, TextArea, Tooltip } from '@kube-design/components'
 import { Column, Columns } from '@kube-design/components/lib/components/Layout'
 import {
   RadioButton,
@@ -39,9 +32,7 @@ const ModifyModal = props => {
   const [modelView, setModalView] = useState(true)
   const [, setCidrReducer] = useReducer(cidrReducer => !cidrReducer, false)
   const [regStep, setRegStep] = useState(1)
-  const [elbManagementEnabled, setElbManagementEnabled] = useState(
-    !!detail.elb_management
-  )
+  const [elbManagementEnabled] = useState(!!detail.elb_management)
   const [validationErrors, dispatchValidation] = useReducer(
     validationReducer,
     {}
@@ -130,9 +121,15 @@ const ModifyModal = props => {
     clearValidationError('elb_ip_pool')
     clearValidationError('elb_ip_pool_overlap')
 
+    const effectiveElbManagement =
+      data.elb_management !== undefined
+        ? !!data.elb_management
+        : !!detail.elb_management
+    data.elb_management = effectiveElbManagement
+
     const isElbManagementAllowed =
       detail.type === 'FLAT' && detail.external === true
-    const isElbManagementEnabled = !!data.elb_management
+    const isElbManagementEnabled = effectiveElbManagement
     let isValid = true
 
     if (isElbManagementEnabled && !isElbManagementAllowed) {
@@ -233,11 +230,14 @@ const ModifyModal = props => {
         description: data.description,
         // Deprecated: default_route will be removed. Kept for backward compatibility with older backend images.
         default_route: !!data.gateway_ip,
-        elb_management: !!data.elb_management,
+        elb_management:
+          data.elb_management !== undefined
+            ? !!data.elb_management
+            : !!detail.elb_management,
       }
 
       if (updatedData.elb_management) {
-        updatedData.elb_type = data.elb_type || DEFAULT_ELB_TYPE
+        updatedData.elb_type = DEFAULT_ELB_TYPE
         updatedData.elb_ip_pool = {
           start: data.elb_ip_pool_start,
           end: data.elb_ip_pool_end,
@@ -690,44 +690,16 @@ const ModifyModal = props => {
                               name="elb_management"
                               wrapClassName="radio"
                               defaultValue={detail.elb_management || false}
-                              onChange={value => {
-                                const { data } = form.current.props
-                                data.elb_management = value
-                                setElbManagementEnabled(value)
-                                clearValidationError('elb_management')
-                                clearValidationError('elb_ip_pool')
-                                clearValidationError('elb_ip_pool_overlap')
-
-                                if (!value) {
-                                  data.elb_type = DEFAULT_ELB_TYPE
-                                  data.elb_ip_pool_start = ''
-                                  data.elb_ip_pool_end = ''
-                                  clearValidationError('gateway_pool_conflict')
-                                }
-                              }}
                             >
-                              {defaultOptions.map((option, idx) => (
+                              {defaultOptions.map(option => (
                                 <Tooltip
-                                  content={
-                                    idx === 1 &&
-                                    !(detail.type === 'FLAT' && detail.external)
-                                      ? t(
-                                          'RESOURCES_ELB_MANAGEMENT_CONDITION_TIP'
-                                        )
-                                      : ''
-                                  }
+                                  content={t('RESOURCES_NOT_EDITABLE_FIELD')}
                                   placement="right"
                                 >
                                   <RadioButton
                                     key={option.value}
                                     value={option.value}
-                                    disabled={
-                                      idx === 1 &&
-                                      !(
-                                        detail.type === 'FLAT' &&
-                                        detail.external
-                                      )
-                                    }
+                                    disabled
                                   >
                                     {option.label}
                                   </RadioButton>
@@ -784,27 +756,27 @@ const ModifyModal = props => {
                               </Form.Item>
                             </Column>
                           </Columns>
+                          <Form.Item
+                            label={t('RESOURCES_GATEWAY_IP')}
+                            rules={[
+                              {
+                                pattern: PATTERN_IP,
+                                message: t('RESOURCES_IP_POOL_VALID'),
+                              },
+                            ]}
+                          >
+                            <Input
+                              name="gateway_ip"
+                              defaultValue={detail.gateway_ip}
+                            />
+                          </Form.Item>
+                          {validationErrors.gateway_pool_conflict && (
+                            <div className="form-item-error">
+                              {validationErrors.gateway_pool_conflict}
+                            </div>
+                          )}
                           {elbManagementEnabled && (
                             <Columns>
-                              <Column>
-                                <Form.Item
-                                  label={t('RESOURCES_ELB_TYPE')}
-                                  rules={[{ required: true }]}
-                                >
-                                  <Select
-                                    name="elb_type"
-                                    defaultValue={
-                                      detail.elb_type || DEFAULT_ELB_TYPE
-                                    }
-                                    options={[
-                                      {
-                                        label: DEFAULT_ELB_TYPE,
-                                        value: DEFAULT_ELB_TYPE,
-                                      },
-                                    ]}
-                                  />
-                                </Form.Item>
-                              </Column>
                               <Column>
                                 <Columns>
                                   <Column>
@@ -866,32 +838,6 @@ const ModifyModal = props => {
                             <div className="form-item-error">
                               {validationErrors.elb_ip_pool ||
                                 validationErrors.elb_ip_pool_overlap}
-                            </div>
-                          )}
-                        </Column>
-                      </Columns>
-                    </Form.Item>
-                    <Form.Item>
-                      <Columns>
-                        <Column />
-                        <Column>
-                          <Form.Item
-                            label={t('RESOURCES_GATEWAY_IP')}
-                            rules={[
-                              {
-                                pattern: PATTERN_IP,
-                                message: t('RESOURCES_IP_POOL_VALID'),
-                              },
-                            ]}
-                          >
-                            <Input
-                              name="gateway_ip"
-                              defaultValue={detail.gateway_ip}
-                            />
-                          </Form.Item>
-                          {validationErrors.gateway_pool_conflict && (
-                            <div className="form-item-error">
-                              {validationErrors.gateway_pool_conflict}
                             </div>
                           )}
                         </Column>
