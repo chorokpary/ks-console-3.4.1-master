@@ -69,12 +69,13 @@ const ExternalLoadBalancerDetail = (props) => {
         },
     ]
 
-    const getBesidesText = (arr = [], type) => {
+    const getBesidesText = (arr = [], type, xlbName = '', col = '') => {  
         const first = type === 'O' ? arr?.[0]?.name : arr?.[0]
+        const firstTxt = col == "L" ? first : first?.replace(`${xlbName}-`,'') || ''
         const sidesText = arr?.length
                             ? arr.length > 1
-                                ? `${first} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
-                                : first
+                                ? `${firstTxt} ${t('RESOURCES_BESIDES')} ${arr.length - 1} ${t('RESOURCES_COUNT')}`
+                                : firstTxt
                             : '-'
                             
         return sidesText
@@ -82,12 +83,12 @@ const ExternalLoadBalancerDetail = (props) => {
 
     const getAttrs = () => {
         const detail = toJS(store.detailData.detail)
-    
+        const driverId = detail.driver_id
         if (isEmpty(detail)) {
             return
         }
 
-        return [
+        const items = [
             {
                 name: t('RESOURCES_NAME'),
                 value: lbName,
@@ -97,34 +98,43 @@ const ExternalLoadBalancerDetail = (props) => {
                 value: detail.project,
             },
             {
+                name: t('DRIVER'),
+                value: driverId,
+            },
+            {
                 name: t('IP'),
                 value: detail.ip_address,
             },
             {
                 name: t('RESOURCES_LISTENER'),
-                value: getBesidesText(detail.listeners, 'O'),
+                value: getBesidesText(detail.listeners, 'O', lbName, 'L'),
             },
             {
                 name: t('RESOURCES_POOL'),
-                value: getBesidesText(detail.pools, 'O'),
+                value: getBesidesText(detail.pools, 'O', lbName, 'P'),
             },
             {
                 name: t('RESOURCES_MEMBER'),
-                value: getBesidesText(detail.pools.flatMap(p => p.members ?? []), 'O'),
+                value: getBesidesText(detail.pools.flatMap(p => p.members ?? []), 'O', lbName, 'V'),
             },
             {
                 name: t('RESOURCES_MONITOR'),
-                value: getBesidesText(detail.monitors, 'O'),
+                value: getBesidesText(detail.monitors, 'O', lbName, 'M'),
             },
             {
                 name: t('STATE'),
                 value: detail.status.charAt(0).toUpperCase() + detail.status.slice(1)
             },
-            {
+        ]
+
+        if (driverId !== 'haproxy') {
+            items.push({
                 name: t('RESOURCES_DESCRIPTION'),
                 value: detail.description,
-            },
-        ]
+            })
+        }
+
+        return items
     }
 
     if (store.isLoading) {

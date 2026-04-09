@@ -18,6 +18,7 @@ const CustomDashboardEdit = props => {
   const queryObj = queryString.parse(search)
 
   const { idx } = queryObj
+  const lang = globals.user.lang
 
   const [isNew, setIsNew] = useState(idx ? false : true)
   const [activeDashboard, setActiveDashboard] = useState(
@@ -334,7 +335,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -369,7 +370,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -402,7 +403,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -436,7 +437,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -470,7 +471,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -504,7 +505,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -538,7 +539,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -572,7 +573,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -606,7 +607,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -640,7 +641,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -674,7 +675,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -708,7 +709,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -749,7 +750,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -785,7 +786,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -823,7 +824,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -859,7 +860,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -895,7 +896,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -933,7 +934,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -971,7 +972,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -1009,7 +1010,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -1047,7 +1048,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -1085,7 +1086,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -1123,7 +1124,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     {/* 팝오버 내용  */}
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
@@ -1168,7 +1169,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1205,7 +1206,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1243,7 +1244,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1286,7 +1287,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1320,7 +1321,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1354,7 +1355,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1388,7 +1389,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1423,7 +1424,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1458,7 +1459,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1492,7 +1493,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1526,7 +1527,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">
@@ -1565,7 +1566,7 @@ const CustomDashboardEdit = props => {
                   <i className="ico-etc-preview"></i>
                 </button>
 
-                <div className="popover-container">
+                <div className={`popover-container lang-${lang}`}>
                   <div className="popover-content">
                     <h5>{t('RESOURCES_PREVIEW')}</h5>
                     <div className="preview_cont">

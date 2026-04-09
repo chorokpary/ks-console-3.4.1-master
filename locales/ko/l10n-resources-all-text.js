@@ -1364,4 +1364,7 @@ module.exports = {
   RESOURCES_INTERVAL_LESSS_THAN_TIMEOUT_DESC:
     'Interval 값은 Timeout 보다 항상 작아야 합니다.',
   RESOURCES_MONITOR_VALID: '모니터 정보를 입력해주세요.',
+  RESOURCES_ADD_POOL: '풀 추가',
+
+  RESOURCES_SELECT_DRIVER: '드라이버를 선택해 주세요.'
 }

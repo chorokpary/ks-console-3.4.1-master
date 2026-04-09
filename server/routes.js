@@ -76,7 +76,7 @@ const parseBody = convert(
 const router = new Router()
 
 router
-  .use(proxy('/xlb/v1/(.*)', xlbProxy))
+  // .use(proxy('/xlb/v1/(.*)', xlbProxy))
   .use(proxy('/devops_webhook/(.*)', devopsWebhookProxy))
   .use(proxy('/b2i_download/(.*)', b2iFileProxy))
   .post('/dockerhub/(.*)', parseBody, handleDockerhubProxy)
